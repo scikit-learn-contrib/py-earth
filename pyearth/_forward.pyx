@@ -1,8 +1,6 @@
 # distutils: language = c
 
 from _util cimport gcv
-#def gcv(*args):
-#    return 1.0
 
 cdef class ForwardPasser:
     
