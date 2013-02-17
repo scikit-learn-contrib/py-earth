@@ -6,6 +6,7 @@ cdef class BasisFunction:
         self.pruned = False
         self.children = []
         self.prunable = True
+        self.child_map = {}
         
     cpdef bint is_prunable(BasisFunction self):
         return self.prunable
@@ -29,7 +30,7 @@ cdef class BasisFunction:
         if var in self.child_map:
             self.child_map[var].append(n)
         else:
-            self.child_map[var].append([n])
+            self.child_map[var] = [n]
         
     cpdef prune(self):
         self.pruned = True

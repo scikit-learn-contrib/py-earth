@@ -9,7 +9,7 @@ cdef class BasisFunction:
     '''Abstract.  Subclasses must implement the apply, translate, scale, and __init__ methods.'''
     
     cdef BasisFunction parent
-    cdef dict child_map #TODO: Why can't unsigned int work here?
+    cdef dict child_map
     cdef list children
     cdef bint pruned
     cdef bint prunable
