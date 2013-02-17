@@ -1,0 +1,8 @@
+
+.project
+
+.pydevproject
+
+*.o
+
+*.so
