@@ -14,6 +14,8 @@ cdef class BasisFunction:
     cdef bint pruned
     cdef bint prunable
     
+    cpdef bint has_knot(BasisFunction self)
+    
     cpdef bint is_prunable(BasisFunction self)
     
     cpdef bint is_pruned(BasisFunction self)
@@ -34,6 +36,8 @@ cdef class BasisFunction:
     
     cpdef apply(self, np.ndarray[FLOAT_t,ndim=2] X, np.ndarray[FLOAT_t,ndim=1] b, bint recurse = ?)
         
+    cpdef np.ndarray[INT_t, ndim=1] valid_knots(BasisFunction self, np.ndarray[FLOAT_t,ndim=1] values, np.ndarray[FLOAT_t,ndim=1] variable, int variable_idx, unsigned int check_every, int endspan, int minspan, FLOAT_t minspan_alpha, unsigned int n, np.ndarray[INT_t,ndim=1] workspace)
+    
 
 cdef class ConstantBasisFunction(BasisFunction):
     
@@ -49,10 +53,13 @@ cdef class ConstantBasisFunction(BasisFunction):
             
     
 cdef class HingeBasisFunction(BasisFunction):
-    cdef FLOAT_t knot #@DuplicatedSignature
-    cdef unsigned int variable #@DuplicatedSignature
+    cdef FLOAT_t knot
+    cdef unsigned int knot_idx
+    cdef unsigned int variable
     cdef bint reverse
     cdef str label
+    
+    cpdef bint has_knot(HingeBasisFunction self)
     
     cpdef translate(HingeBasisFunction self, np.ndarray[FLOAT_t,ndim=1] slopes, np.ndarray[FLOAT_t,ndim=1] intercepts, bint recurse)
             
@@ -60,9 +67,23 @@ cdef class HingeBasisFunction(BasisFunction):
     
     cpdef unsigned int get_variable(self)
     
-    cpdef FLOAT_t get_knot(self)
+    cpdef unsigned int get_knot(self)
     
     cpdef apply(self, np.ndarray[FLOAT_t,ndim=2] X, np.ndarray[FLOAT_t,ndim=1] b, bint recurse = ?)
+
+cdef class LinearBasisFunction(BasisFunction):
+    cdef unsigned int variable
+    cdef str label
+    
+    cpdef translate(LinearBasisFunction self, np.ndarray[FLOAT_t,ndim=1] slopes, np.ndarray[FLOAT_t,ndim=1] intercepts, bint recurse)
+            
+    cpdef FLOAT_t scale(LinearBasisFunction self, np.ndarray[FLOAT_t,ndim=1] slopes, np.ndarray[FLOAT_t,ndim=1] intercepts)
+    
+    cpdef unsigned int get_variable(self)
+    
+    cpdef apply(self, np.ndarray[FLOAT_t,ndim=2] X, np.ndarray[FLOAT_t,ndim=1] b, bint recurse = ?)
+
+
 
 cdef class Basis:
     '''A wrapper that provides functionality related to a set of BasisFunctions with a 

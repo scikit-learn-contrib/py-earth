@@ -1,33 +1,140 @@
 # distutils: language = c
+#cython: cdivision = True
+#cython: boundscheck = True
+#cython: wraparound = True
 
-from _util cimport gcv
+from _util cimport gcv, reorderxby, fastr
+from _basis cimport Basis, BasisFunction, ConstantBasisFunction, LinearBasisFunction, HingeBasisFunction
+from numpy cimport ndarray
+from numpy import std, ones, empty, argsort
+from libc.math cimport sqrt
+from libc.math cimport abs
+from libc.math cimport log
+from libc.math cimport log2
 
 cdef class ForwardPasser:
     
-    def __init__(ForwardPasser self, np.ndarray[FLOAT_t, ndim=2] X, np.ndarray[FLOAT_t, ndim=1] y, **kwargs):
+    def __init__(ForwardPasser self, ndarray[FLOAT_t, ndim=2] X, ndarray[FLOAT_t, ndim=1] y, **kwargs):
+        cdef unsigned int i
         self.X = X
         self.y = y
+        self.m = self.X.shape[0]
+        self.n = self.X.shape[1]
         self.endspan = kwargs['endspan'] if 'endspan' in kwargs else -1
-        self.endspan = kwargs['minspan'] if 'minspan' in kwargs else -1
-        self.endspan = kwargs['endspan_alpha'] if 'endspan_alpha' in kwargs else -1
-        self.endspan = kwargs['minspan_alpha'] if 'minspan_alpha' in kwargs else -1
-        self.endspan = kwargs['max_terms'] if 'max_terms' in kwargs else -1
-        self.endspan = kwargs['max_degree'] if 'max_degree' in kwargs else -1
-        self.endspan = kwargs['thresh'] if 'thresh' in kwargs else -1
-        self.endspan = kwargs['penalty'] if 'penalty' in kwargs else -1
-        self.endspan = kwargs['check_every'] if 'check_every' in kwargs else -1
-        self.endspan = kwargs['min_search_points'] if 'min_search_points' in kwargs else -1
-        self.record = ForwardPassRecord()
+        self.minspan = kwargs['minspan'] if 'minspan' in kwargs else -1
+        self.endspan_alpha = kwargs['endspan_alpha'] if 'endspan_alpha' in kwargs else -1
+        self.minspan_alpha = kwargs['minspan_alpha'] if 'minspan_alpha' in kwargs else -1
+        self.max_terms = kwargs['max_terms'] if 'max_terms' in kwargs else -1
+        self.max_degree = kwargs['max_degree'] if 'max_degree' in kwargs else 1
+        self.thresh = kwargs['thresh'] if 'thresh' in kwargs else 0.001
+        self.penalty = kwargs['penalty'] if 'penalty' in kwargs else 3.0
+        self.check_every = kwargs['check_every'] if 'check_every' in kwargs else -1
+        self.min_search_points = kwargs['min_search_points'] if 'min_search_points' in kwargs else 100
+        self.xlabels = kwargs['xlabels'] if 'xlabels' in kwargs else ['x'+str(i) for i in range(self.n)]
+        sst = std(self.y)**2
+        self.record = ForwardPassRecord(self.m,self.n,self.penalty,sst)
         self.basis = Basis()
-    
+        self.B = ones(shape=(self.m,self.max_terms+1))
+        self.sort_tracker = empty(shape=self.m, dtype=int)
+        for i in range(self.m):
+            self.sort_tracker[i] = i
+        self.sorting = empty(shape=self.m, dtype=int)
+        self.mwork = empty(shape=self.m, dtype=int)
+            
     cpdef run(ForwardPasser self):
-        pass
+        while True:
+            self.next_pair()
+            if self.stopCheck():
+                break
         
     cdef next_pair(ForwardPasser self):
-        pass
+        cdef unsigned int variable
+        cdef unsigned int parent_idx
+        cdef unsigned int parent_degree
+        cdef unsigned int nonzero_count
+        cdef BasisFunction parent
+        cdef ndarray[FLOAT_t,ndim=1] candidates_idx
+        cdef FLOAT_t knot
+        cdef FLOAT_t mse
+        cdef unsigned int knot_idx
+        cdef FLOAT_t knot_choice
+        cdef FLOAT_t mse_choice
+        cdef unsigned int knot_idx_choice
+        cdef unsigned int parent_choice
+        cdef unsigned int variable_choice
+        cdef bint first = True
+        cdef BasisFunction bf1
+        cdef BasisFunction bf2
+        cdef unsigned int k = len(self.basis)
+        cdef ndarray[FLOAT_t,ndim=2] R = empty(shape=(k+3,k+3))
+        if self.endspan < 0:
+            endspan = round(3 - log2(self.endspan_alpha/self.n))
         
-    cdef best_knot(ForwardPasser self):
-        pass
+        #Iterate over variables
+        for variable in range(self.n):
+            
+            #Sort the data
+            self.sorting[:] = argsort(self.X[:,variable])[::-1] #TODO: eliminate Python call / data copy
+            reorderxby(self.X,self.B,self.y,self.sorting,self.sort_tracker)
+            
+            #Iterate over parents
+            for parent_idx in range(k):
+                parent = self.basis.get(parent)
+                if self.max_degree >= 0:
+                    parent_degree = parent.degree()
+                    if parent_degree >= self.max_degree:
+                        continue
+                
+                #Add the linear term to B
+                self.B[:,k] = self.B[:,parent_idx]*self.X[:,parent_idx] #TODO: Optimize
+                
+                #Calculate the MSE with just the linear term
+                mse = fastr(self.B,self.y,k+1) / self.m
+                knot_idx = -1
+                
+                #Find the valid knot candidates
+                candidates_idx = parent.valid_knots(self.B[:,parent_idx], self.X[:,variable],variable, self.check_every, self.endspan, self.minspan, self.minspan_alpha, self.n, self.mwork)
+                
+                #Choose the best candidate (or None)
+                if len(candidates_idx) > 1:
+                    self.best_knot(parent_idx,variable,candidates_idx,&mse,&knot,&knot_idx)
+                
+                #TODO: Recalculate the MSE
+                
+                
+                #Update the choices
+                if first:
+                    knot_choice = knot
+                    mse_choice = mse
+                    knot_idx_choice = knot_idx
+                    parent_choice = parent_idx
+                    variable_choice = variable
+                    first = False
+                if mse < mse_choice:
+                    knot_choice = knot
+                    mse_choice = mse
+                    knot_idx_choice = knot_idx
+                    parent_choice = parent_idx
+                    variable_choice = variable
+        
+        #Add the new basis functions
+        parent = self.basis.get(parent_idx)
+        label = self.xlabels[variable_choice]
+        if knot_idx_choice == -1: #Selected linear term
+            self.basis.append(LinearBasisFunction(parent,variable_choice,label))
+        else:
+            bf1 = HingeBasisFunction(parent,knot_choice,variable_choice,False,label)
+            bf2 = HingeBasisFunction(parent,knot_choice,variable_choice,True,label)
+            bf1.apply(self.X,self.B[:,k])
+            bf1.apply(self.X,self.B[:,k+1])
+            self.basis.append(bf1)
+            self.basis.append(bf2)
+        
+    cdef best_knot(ForwardPasser self, unsigned int parent, unsigned int variable, ndarray[INT_t,ndim=1] candidates, FLOAT_t * mse, FLOAT_t * knot, unsigned int * knot_idx):
+        #TODO: Write this method
+        mse[0] = 10.5
+        knot_idx[0] = candidates[0]
+        knot[0] = self.X[knot_idx[0],variable]
     
 cdef class ForwardPassRecord:
 

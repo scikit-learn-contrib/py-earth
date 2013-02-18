@@ -1,6 +1,8 @@
 
 cimport numpy as np
 ctypedef np.float64_t FLOAT_t
+ctypedef np.int_t INT_t
+ctypedef np.uint8_t BOOL_t
 from _basis cimport Basis
 
 cdef class ForwardPasser:
@@ -17,14 +19,18 @@ cdef class ForwardPasser:
     cdef list record
     cdef np.ndarray X
     cdef np.ndarray y
+    cdef unsigned int m
+    cdef unsigned int n
     cdef Basis basis
+    cdef np.ndarray B
+    cdef list xlabels
     
     cpdef run(ForwardPasser self)
     
     cdef next_pair(ForwardPasser self)
     
-    cdef best_knot(ForwardPasser self)
-    
+    cdef best_knot(ForwardPasser self, unsigned int parent, unsigned int variable, np.ndarray[INT_t,ndim=1] candidates, FLOAT_t * mse, FLOAT_t * knot, unsigned int * knot_idx)
+        
 cdef class ForwardPassRecord:
     cdef int stopping_condition
     cdef list iterations
