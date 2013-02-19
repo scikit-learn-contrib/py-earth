@@ -4,7 +4,7 @@ Created on Feb 17, 2013
 @author: jasonrudy
 '''
 import unittest
-from _basis import Basis, ConstantBasisFunction, HingeBasisFunction
+from pyearth._basis import Basis, ConstantBasisFunction, HingeBasisFunction
 import numpy
 import pandas
 

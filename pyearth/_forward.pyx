@@ -10,13 +10,11 @@ from libc.math cimport sqrt
 from libc.math cimport abs
 from libc.math cimport log
 from libc.math cimport log2
-
+import numpy as np
 cnp.import_array()
 cdef class ForwardPasser:
     
     def __init__(ForwardPasser self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] y, **kwargs):
-        print 0
-        print np
         cdef unsigned int i
         cdef FLOAT_t sst
         self.X = X
@@ -32,28 +30,12 @@ cdef class ForwardPasser:
         self.thresh = kwargs['thresh'] if 'thresh' in kwargs else 0.001
         self.penalty = kwargs['penalty'] if 'penalty' in kwargs else 3.0
         self.check_every = kwargs['check_every'] if 'check_every' in kwargs else -1
-        print 0.5
         self.min_search_points = kwargs['min_search_points'] if 'min_search_points' in kwargs else 100
-        print 0.58
         self.xlabels = kwargs['xlabels'] if 'xlabels' in kwargs else ['x'+str(i) for i in range(self.n)]
-        print 0.6
-        print self.y
-        print 'okay'
-        cdef FLOAT_t mn = 0
-        for i in range(self.m):
-            mn += self.y[i]
-        mn /= self.m
-        for i in range(self.m):
-            sst += (self.y[i] - mn)**2
-        sst /= self.m
-        
-        print 0.625
+        sst = np.std(self.y)**2
         self.record = ForwardPassRecord(self.m,self.n,self.penalty,sst)
-        print 0.63
         self.basis = Basis()
-        print 0.65
         self.basis.append(ConstantBasisFunction())
-        print 0.75
         self.B = np.ones(shape=(self.m,self.max_terms+1), order='F')
         self.sort_tracker = np.empty(shape=self.m, dtype=int)
         for i in range(self.m):
@@ -61,11 +43,9 @@ cdef class ForwardPasser:
         self.sorting = np.empty(shape=self.m, dtype=int)
         self.mwork = np.empty(shape=self.m, dtype=int)
         self.delta = np.empty(shape=self.m, dtype=float)
-        print 1
         
     cpdef run(ForwardPasser self):
         while True:
-            print 2
             self.next_pair()
             if self.stop_check():
                 break
@@ -143,19 +123,18 @@ cdef class ForwardPasser:
                 knot_idx = -1
                 
                 #Find the valid knot candidates
-                print 3
                 candidates_idx = parent.valid_knots(self.B[:,parent_idx], self.X[:,variable],variable, self.check_every, self.endspan, self.minspan, self.minspan_alpha, self.n, self.mwork)
-                print 4
+
                 #Choose the best candidate (or None)
                 if len(candidates_idx) > 1:
                     self.best_knot(parent_idx,variable,candidates_idx,&mse,&knot,&knot_idx)
-                print 5
+
                 #TODO: Recalculate the MSE
                 if knot_idx >= 0:
                     bf1 = HingeBasisFunction(parent,knot_choice,variable_choice,False)
                     bf1.apply(self.X,self.B[:,k+1])
                     mse = fastr(self.B,self.y,k+2) / self.m
-                print 6
+
                 #Update the choices
                 if first:
                     knot_choice = knot
@@ -291,14 +270,11 @@ cdef class ForwardPasser:
     
 cdef class ForwardPassRecord:
     def __init__(ForwardPassRecord self, unsigned int num_samples, unsigned int num_variables, FLOAT_t penalty, FLOAT_t sst):
-        print 1.1
         self.num_samples = num_samples
         self.num_variables = num_variables
-        print 1.2
         self.penalty = penalty
         self.sst = sst
         self.iterations = []
-        print 1.3
     
     cpdef set_stopping_condition(ForwardPassRecord self, int stopping_condition):
         self.stopping_condition = stopping_condition
@@ -346,7 +322,6 @@ cdef class ForwardPassIteration:
         self.mse = mse
         self.size = size
         self.code = code
-        
         
     def __str__(self):
         result = '%s\t%s\t%s\t%.4f\t%s\t%s' % (self.selectedParent,self.selectedVariable,'%.4f' % self.selectedKnot if self.selectedKnot is not None else None,self.mse,self.basisSize,self.returnCode)

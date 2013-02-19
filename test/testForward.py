@@ -4,9 +4,9 @@ Created on Feb 16, 2013
 @author: jasonrudy
 '''
 import unittest
-from _forward import ForwardPassRecord, ForwardPassIteration, ForwardPasser
-from _util import gcv
-from _basis import Basis, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
+from pyearth._forward import ForwardPassRecord, ForwardPassIteration, ForwardPasser
+from pyearth._util import gcv
+from pyearth._basis import Basis, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
 import numpy
 
 class TestForwardPassRecord(unittest.TestCase):
@@ -57,7 +57,6 @@ class TestForwardPasser(unittest.TestCase):
         self.beta = numpy.random.normal(size=4)
         self.y = numpy.empty(shape=100,dtype=numpy.float64)
         self.y[:] = numpy.dot(self.B,self.beta) + numpy.random.normal(size=100)
-        print 'std:', numpy.std(self.y)
         self.forwardPasser = ForwardPasser(self.X,self.y)
         
     def testRun(self):
