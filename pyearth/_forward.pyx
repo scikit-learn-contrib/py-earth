@@ -100,7 +100,10 @@ cdef class ForwardPasser:
                     self.best_knot(parent_idx,variable,candidates_idx,&mse,&knot,&knot_idx)
                 
                 #TODO: Recalculate the MSE
-                
+                if knot_idx >= 0:
+                    bf1 = HingeBasisFunction(parent,knot_choice,variable_choice,False)
+                    bf1.apply(self.X,self.B[:,k+1])
+                    mse = fastr(self.B,self.y,k+2) / self.m
                 
                 #Update the choices
                 if first:
@@ -126,7 +129,7 @@ cdef class ForwardPasser:
             bf1 = HingeBasisFunction(parent,knot_choice,variable_choice,False,label)
             bf2 = HingeBasisFunction(parent,knot_choice,variable_choice,True,label)
             bf1.apply(self.X,self.B[:,k])
-            bf1.apply(self.X,self.B[:,k+1])
+            bf2.apply(self.X,self.B[:,k+1])
             self.basis.append(bf1)
             self.basis.append(bf2)
         
@@ -135,6 +138,7 @@ cdef class ForwardPasser:
         mse[0] = 10.5
         knot_idx[0] = candidates[0]
         knot[0] = self.X[knot_idx[0],variable]
+        
     
 cdef class ForwardPassRecord:
 
