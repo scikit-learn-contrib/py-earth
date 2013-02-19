@@ -20,6 +20,7 @@ setup(
     cmdclass = {'build_ext': build_ext},
     ext_modules = cythonize([Extension("pyearth._blas", ["pyearth/_blas.pyx"],include_dirs = [blas_inc]),
                              Extension("pyearth._lapack", ["pyearth/_lapack.pyx"],include_dirs = [lapack_inc]),
+                             Extension("pyearth._choldate", ["pyearth/_choldate.pyx"],include_dirs = [numpy_inc]),
                              Extension("pyearth._util", ["pyearth/_util.pyx"],include_dirs = [numpy_inc]),
                              Extension("pyearth._basis", ["pyearth/_basis.pyx"],include_dirs = [numpy_inc]),
                              Extension("pyearth._forward", ["pyearth/_forward.pyx"],include_dirs = [local_inc, numpy_inc])
