@@ -1,9 +1,19 @@
 
-cimport numpy as np
-ctypedef np.float64_t FLOAT_t
-ctypedef np.int_t INT_t
-ctypedef np.uint8_t BOOL_t
+cimport numpy as cnp
+import numpy as np
+ctypedef cnp.float64_t FLOAT_t
+ctypedef cnp.int_t INT_t
+ctypedef cnp.uint8_t BOOL_t
 from _basis cimport Basis
+
+ctypedef enum StoppingCondition:
+    MAXTERMS=0,
+    MAXRSQ=1,
+    NOIMPRV=2,
+    LOWGRSQ=3,
+    NUMDIFF=4,
+    NUMERR=5
+    
 
 cdef class ForwardPasser:
     cdef int endspan
@@ -16,20 +26,22 @@ cdef class ForwardPasser:
     cdef FLOAT_t penalty
     cdef int check_every
     cdef int min_search_points
-    cdef list record
-    cdef np.ndarray X
-    cdef np.ndarray y
+    cdef ForwardPassRecord record
+    cdef cnp.ndarray X
+    cdef cnp.ndarray y
     cdef unsigned int m
     cdef unsigned int n
     cdef Basis basis
-    cdef np.ndarray B
+    cdef cnp.ndarray B
     cdef list xlabels
     
     cpdef run(ForwardPasser self)
     
+    cdef stop_check(ForwardPasser self)
+    
     cdef next_pair(ForwardPasser self)
     
-    cdef best_knot(ForwardPasser self, unsigned int parent, unsigned int variable, np.ndarray[INT_t,ndim=1] candidates, FLOAT_t * mse, FLOAT_t * knot, unsigned int * knot_idx)
+    cdef best_knot(ForwardPasser self, unsigned int parent, unsigned int variable, cnp.ndarray[INT_t,ndim=1] candidates, FLOAT_t * mse, FLOAT_t * knot, unsigned int * knot_idx)
         
 cdef class ForwardPassRecord:
     cdef int stopping_condition

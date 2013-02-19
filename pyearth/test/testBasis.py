@@ -46,7 +46,7 @@ class TestHingeBasisFunction(Test):
     def setUp(self):
         super(self.__class__,self).setUp()
         parent = ConstantBasisFunction()
-        self.bf = HingeBasisFunction(parent,1.0,1,False)
+        self.bf = HingeBasisFunction(parent,1.0,10,1,False)
         
     def testApply(self):
         m,n = self.X.shape
@@ -62,9 +62,9 @@ class TestBasis(Test):
         super(self.__class__,self).setUp()
         self.basis = Basis()
         self.parent = ConstantBasisFunction()
-        self.bf = HingeBasisFunction(self.parent,1.0,1,False)
-        self.basis.add(self.parent)
-        self.basis.add(self.bf)
+        self.bf = HingeBasisFunction(self.parent,1.0,10,1,False)
+        self.basis.append(self.parent)
+        self.basis.append(self.bf)
         
     def testAdd(self):
         self.assertEqual(len(self.basis),2)

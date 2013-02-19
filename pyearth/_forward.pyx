@@ -1,23 +1,24 @@
 # distutils: language = c
 #cython: cdivision = True
-#cython: boundscheck = True
-#cython: wraparound = True
+
 
 from _util cimport gcv, reorderxby, fastr
 from _basis cimport Basis, BasisFunction, ConstantBasisFunction, LinearBasisFunction, HingeBasisFunction
 from _choldate cimport cholupdate, choldowndate
-from numpy cimport ndarray
-from numpy import std, ones, empty, argsort, dot, sqrt as npsqrt
-from numpy.linalg import qr
+
 from libc.math cimport sqrt
 from libc.math cimport abs
 from libc.math cimport log
 from libc.math cimport log2
 
+cnp.import_array()
 cdef class ForwardPasser:
     
-    def __init__(ForwardPasser self, ndarray[FLOAT_t, ndim=2] X, ndarray[FLOAT_t, ndim=1] y, **kwargs):
+    def __init__(ForwardPasser self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] y, **kwargs):
+        print 0
+        print np
         cdef unsigned int i
+        cdef FLOAT_t sst
         self.X = X
         self.y = y
         self.m = self.X.shape[0]
@@ -31,25 +32,67 @@ cdef class ForwardPasser:
         self.thresh = kwargs['thresh'] if 'thresh' in kwargs else 0.001
         self.penalty = kwargs['penalty'] if 'penalty' in kwargs else 3.0
         self.check_every = kwargs['check_every'] if 'check_every' in kwargs else -1
+        print 0.5
         self.min_search_points = kwargs['min_search_points'] if 'min_search_points' in kwargs else 100
+        print 0.58
         self.xlabels = kwargs['xlabels'] if 'xlabels' in kwargs else ['x'+str(i) for i in range(self.n)]
-        sst = std(self.y)**2
+        print 0.6
+        print self.y
+        print 'okay'
+        cdef FLOAT_t mn = 0
+        for i in range(self.m):
+            mn += self.y[i]
+        mn /= self.m
+        for i in range(self.m):
+            sst += (self.y[i] - mn)**2
+        sst /= self.m
+        
+        print 0.625
         self.record = ForwardPassRecord(self.m,self.n,self.penalty,sst)
+        print 0.63
         self.basis = Basis()
-        self.B = ones(shape=(self.m,self.max_terms+1), order='F')
-        self.sort_tracker = empty(shape=self.m, dtype=int)
+        print 0.65
+        self.basis.append(ConstantBasisFunction())
+        print 0.75
+        self.B = np.ones(shape=(self.m,self.max_terms+1), order='F')
+        self.sort_tracker = np.empty(shape=self.m, dtype=int)
         for i in range(self.m):
             self.sort_tracker[i] = i
-        self.sorting = empty(shape=self.m, dtype=int)
-        self.mwork = empty(shape=self.m, dtype=int)
-        self.delta = empty(shape=self.m, dtype=float)
+        self.sorting = np.empty(shape=self.m, dtype=int)
+        self.mwork = np.empty(shape=self.m, dtype=int)
+        self.delta = np.empty(shape=self.m, dtype=float)
+        print 1
         
-            
     cpdef run(ForwardPasser self):
         while True:
+            print 2
             self.next_pair()
-            if self.stopCheck():
+            if self.stop_check():
                 break
+        
+    cdef stop_check(ForwardPasser self):
+        last = self.build_record.__len__() - 1
+        if self.build_record.iterations[last].code == NUMERR:
+            self.build_record.stopping_condition = NUMDIFF
+            return True
+        if self.build_record.iterations[last].code != 0:
+            self.build_record.stopping_condition = NUMDIFF
+            return True
+        if self.build_record.iterations[last].size + 2 > self.max_terms:
+            self.build_record.stopping_condition = MAXTERMS
+            return True
+        rsq = self.build_record.rsq(last)
+        if rsq > 1 - self.thresh:
+            self.build_record.stopping_condition = MAXRSQ
+            return True
+        previous_rsq = self.build_record.rsq(last - 1)
+        if rsq - previous_rsq < self.thresh:
+            self.build_record.stopping_condition = NOIMPRV
+            return True
+        if self.build_record.grsq(last) < -10:
+            self.build_record.stopping_condition = LOWGRSQ
+            return True
+        return False
         
     cdef next_pair(ForwardPasser self):
         cdef unsigned int variable
@@ -57,7 +100,7 @@ cdef class ForwardPasser:
         cdef unsigned int parent_degree
         cdef unsigned int nonzero_count
         cdef BasisFunction parent
-        cdef ndarray[FLOAT_t,ndim=1] candidates_idx
+        cdef cnp.ndarray[FLOAT_t,ndim=1] candidates_idx
         cdef FLOAT_t knot
         cdef FLOAT_t mse
         cdef unsigned int knot_idx
@@ -70,9 +113,9 @@ cdef class ForwardPasser:
         cdef BasisFunction bf1
         cdef BasisFunction bf2
         cdef unsigned int k = len(self.basis)
-        self.R = empty(shape=(k+3,k+3))
-        self.u = empty(shape=k+3, dtype=float)
-        self.v = empty(shape=k+3, dtype=float)
+        self.R = np.empty(shape=(k+3,k+3))
+        self.u = np.empty(shape=k+3, dtype=float)
+        self.v = np.empty(shape=k+3, dtype=float)
         
         if self.endspan < 0:
             endspan = round(3 - log2(self.endspan_alpha/self.n))
@@ -81,7 +124,7 @@ cdef class ForwardPasser:
         for variable in range(self.n):
             
             #Sort the data
-            self.sorting[:] = argsort(self.X[:,variable])[::-1] #TODO: eliminate Python call / data copy
+            self.sorting[:] = np.argsort(self.X[:,variable])[::-1] #TODO: eliminate Python call / data copy
             reorderxby(self.X,self.B,self.y,self.sorting,self.sort_tracker)
             
             #Iterate over parents
@@ -100,18 +143,19 @@ cdef class ForwardPasser:
                 knot_idx = -1
                 
                 #Find the valid knot candidates
+                print 3
                 candidates_idx = parent.valid_knots(self.B[:,parent_idx], self.X[:,variable],variable, self.check_every, self.endspan, self.minspan, self.minspan_alpha, self.n, self.mwork)
-                
+                print 4
                 #Choose the best candidate (or None)
                 if len(candidates_idx) > 1:
                     self.best_knot(parent_idx,variable,candidates_idx,&mse,&knot,&knot_idx)
-                
+                print 5
                 #TODO: Recalculate the MSE
                 if knot_idx >= 0:
                     bf1 = HingeBasisFunction(parent,knot_choice,variable_choice,False)
                     bf1.apply(self.X,self.B[:,k+1])
                     mse = fastr(self.B,self.y,k+2) / self.m
-                
+                print 6
                 #Update the choices
                 if first:
                     knot_choice = knot
@@ -140,7 +184,7 @@ cdef class ForwardPasser:
             self.basis.append(bf1)
             self.basis.append(bf2)
         
-    cdef best_knot(ForwardPasser self, unsigned int parent, unsigned int variable, ndarray[INT_t,ndim=1] candidates, FLOAT_t * mse, FLOAT_t * knot, unsigned int * knot_idx):
+    cdef best_knot(ForwardPasser self, unsigned int parent, unsigned int variable, cnp.ndarray[INT_t,ndim=1] candidates, FLOAT_t * mse, FLOAT_t * knot, unsigned int * knot_idx):
         '''
         Find the best knot location (in terms of squared error).
         
@@ -160,6 +204,8 @@ cdef class ForwardPasser:
         cdef FLOAT_t last_candidate
         cdef bint bool_tmp
         cdef FLOAT_t float_tmp
+        cdef FLOAT_t delta_squared
+        cdef FLOAT_t delta_y
         
         #Put the first candidate into B
         candidate_idx = candidates[0]
@@ -174,7 +220,7 @@ cdef class ForwardPasser:
             self.B[i,k+2] = self.y[i]#TODO: BLAS
         
         #Get the cholesky factor using QR decomposition
-        self.R[:] = qr(self.B[:,0:k+3],mode='r')
+        self.R[:] = np.linalg.qr(self.B[:,0:k+3],mode='r')
         
         #The lower right corner of the cholesky factor is the norm of the residual
         current_mse = (self.R[k+2,k+2] ** 2) / self.m
@@ -218,11 +264,11 @@ cdef class ForwardPasser:
                 delta_y += float_tmp * self.y[j]
                 
             #Compute the u vector
-            self.u[0:k+2] = dot(self.B[:,0:k+2],self.delta)
+            self.u[0:k+2] = np.dot(self.B[:,0:k+2],self.delta) #TODO: BLAS
             self.u[k+1] *= 2
             self.u[k+1] += delta_squared
             self.u[k+2] = delta_y
-            self.u[:] = npsqrt(self.u)
+            self.u[:] = np.sqrt(self.u) #TODO: BLAS
             
             #Compute the v vector, which is just u with element k+1 zeroed out
             self.v[:] = self.u[:]
@@ -245,11 +291,14 @@ cdef class ForwardPasser:
     
 cdef class ForwardPassRecord:
     def __init__(ForwardPassRecord self, unsigned int num_samples, unsigned int num_variables, FLOAT_t penalty, FLOAT_t sst):
+        print 1.1
         self.num_samples = num_samples
         self.num_variables = num_variables
+        print 1.2
         self.penalty = penalty
         self.sst = sst
         self.iterations = []
+        print 1.3
     
     cpdef set_stopping_condition(ForwardPassRecord self, int stopping_condition):
         self.stopping_condition = stopping_condition

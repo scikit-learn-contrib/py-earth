@@ -361,7 +361,7 @@ cdef class Basis:
     cpdef BasisFunction get_root(Basis self):
         return self.root
     
-    cpdef add(Basis self, BasisFunction basis_function):
+    cpdef append(Basis self, BasisFunction basis_function):
         self.order.append(basis_function)
         
     def __iter__(Basis self):

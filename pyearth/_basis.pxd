@@ -89,7 +89,7 @@ cdef class Basis:
     '''A wrapper that provides functionality related to a set of BasisFunctions with a 
     common ConstantBasisFunction ancestor.  Retains the order in which BasisFunctions are 
     added.'''
-    cdef ConstantBasisFunction root
+    
     cdef list order
     
     cpdef translate(Basis self, np.ndarray[FLOAT_t,ndim=1] slopes, np.ndarray[FLOAT_t,ndim=1] intercepts)
@@ -98,7 +98,7 @@ cdef class Basis:
     
     cpdef BasisFunction get_root(Basis self)
     
-    cpdef add(Basis self, BasisFunction basis_function)
+    cpdef append(Basis self, BasisFunction basis_function)
     
     cpdef unsigned int plen(Basis self)
         
