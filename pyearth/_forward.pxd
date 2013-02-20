@@ -34,6 +34,13 @@ cdef class ForwardPasser:
     cdef Basis basis
     cdef cnp.ndarray B
     cdef list xlabels
+    cdef cnp.ndarray sort_tracker
+    cdef cnp.ndarray sorting
+    cdef cnp.ndarray mwork
+    cdef cnp.ndarray delta
+    cdef cnp.ndarray R
+    cdef cnp.ndarray u
+    cdef cnp.ndarray v
     
     cpdef run(ForwardPasser self)
     
@@ -71,6 +78,14 @@ cdef class ForwardPassIteration:
     cdef FLOAT_t mse
     cdef unsigned int size
     cdef int code
+    
+    cpdef FLOAT_t get_mse(ForwardPassIteration self)
+    
+    cpdef unsigned int get_size(ForwardPassIteration self)
+    
+cdef class FirstForwardPassIteration(ForwardPassIteration):
+    cpdef unsigned int get_size(FirstForwardPassIteration self)
+
     
     
     

@@ -23,20 +23,22 @@ cdef class ForwardPasser:
         self.n = self.X.shape[1]
         self.endspan = kwargs['endspan'] if 'endspan' in kwargs else -1
         self.minspan = kwargs['minspan'] if 'minspan' in kwargs else -1
-        self.endspan_alpha = kwargs['endspan_alpha'] if 'endspan_alpha' in kwargs else -1
-        self.minspan_alpha = kwargs['minspan_alpha'] if 'minspan_alpha' in kwargs else -1
-        self.max_terms = kwargs['max_terms'] if 'max_terms' in kwargs else -1
+        self.endspan_alpha = kwargs['endspan_alpha'] if 'endspan_alpha' in kwargs else .05
+        self.minspan_alpha = kwargs['minspan_alpha'] if 'minspan_alpha' in kwargs else .05
+        self.max_terms = kwargs['max_terms'] if 'max_terms' in kwargs else 10
         self.max_degree = kwargs['max_degree'] if 'max_degree' in kwargs else 1
         self.thresh = kwargs['thresh'] if 'thresh' in kwargs else 0.001
         self.penalty = kwargs['penalty'] if 'penalty' in kwargs else 3.0
         self.check_every = kwargs['check_every'] if 'check_every' in kwargs else -1
         self.min_search_points = kwargs['min_search_points'] if 'min_search_points' in kwargs else 100
         self.xlabels = kwargs['xlabels'] if 'xlabels' in kwargs else ['x'+str(i) for i in range(self.n)]
+        if self.check_every < 0:
+            self.check_every = <int> (self.m / self.min_search_points) if self.m > self.min_search_points else 1
         sst = np.std(self.y)**2
         self.record = ForwardPassRecord(self.m,self.n,self.penalty,sst)
         self.basis = Basis()
         self.basis.append(ConstantBasisFunction())
-        self.B = np.ones(shape=(self.m,self.max_terms+1), order='F')
+        self.B = np.ones(shape=(self.m,self.max_terms+1), order='F',dtype=np.float)
         self.sort_tracker = np.empty(shape=self.m, dtype=int)
         for i in range(self.m):
             self.sort_tracker[i] = i
@@ -51,26 +53,26 @@ cdef class ForwardPasser:
                 break
         
     cdef stop_check(ForwardPasser self):
-        last = self.build_record.__len__() - 1
-        if self.build_record.iterations[last].code == NUMERR:
-            self.build_record.stopping_condition = NUMDIFF
+        last = self.record.__len__() - 1
+#        if self.record.iterations[last].code == NUMERR:
+#            self.record.stopping_condition = NUMDIFF
+#            return True
+#        if self.record.iterations[last].code != 0:
+#            self.record.stopping_condition = NUMDIFF
+#            return True
+        if self.record.iterations[last].get_size() + 2 > self.max_terms:
+            self.record.stopping_condition = MAXTERMS
             return True
-        if self.build_record.iterations[last].code != 0:
-            self.build_record.stopping_condition = NUMDIFF
-            return True
-        if self.build_record.iterations[last].size + 2 > self.max_terms:
-            self.build_record.stopping_condition = MAXTERMS
-            return True
-        rsq = self.build_record.rsq(last)
+        rsq = self.record.rsq(last)
         if rsq > 1 - self.thresh:
-            self.build_record.stopping_condition = MAXRSQ
+            self.record.stopping_condition = MAXRSQ
             return True
-        previous_rsq = self.build_record.rsq(last - 1)
+        previous_rsq = self.record.rsq(last - 1)
         if rsq - previous_rsq < self.thresh:
-            self.build_record.stopping_condition = NOIMPRV
+            self.record.stopping_condition = NOIMPRV
             return True
-        if self.build_record.grsq(last) < -10:
-            self.build_record.stopping_condition = LOWGRSQ
+        if self.record.grsq(last) < -10:
+            self.record.stopping_condition = LOWGRSQ
             return True
         return False
         
@@ -80,22 +82,27 @@ cdef class ForwardPasser:
         cdef unsigned int parent_degree
         cdef unsigned int nonzero_count
         cdef BasisFunction parent
-        cdef cnp.ndarray[FLOAT_t,ndim=1] candidates_idx
+        cdef cnp.ndarray[INT_t,ndim=1] candidates_idx
         cdef FLOAT_t knot
         cdef FLOAT_t mse
         cdef unsigned int knot_idx
         cdef FLOAT_t knot_choice
         cdef FLOAT_t mse_choice
-        cdef unsigned int knot_idx_choice
+        cdef int knot_idx_choice
         cdef unsigned int parent_choice
         cdef unsigned int variable_choice
         cdef bint first = True
         cdef BasisFunction bf1
         cdef BasisFunction bf2
         cdef unsigned int k = len(self.basis)
+        cdef unsigned int endspan
         self.R = np.empty(shape=(k+3,k+3))
         self.u = np.empty(shape=k+3, dtype=float)
         self.v = np.empty(shape=k+3, dtype=float)
+        
+        cdef cnp.ndarray[FLOAT_t,ndim=2] X = <cnp.ndarray[FLOAT_t,ndim=2]> self.X
+        cdef cnp.ndarray[FLOAT_t,ndim=2] B = <cnp.ndarray[FLOAT_t,ndim=2]> self.B
+        cdef cnp.ndarray[FLOAT_t,ndim=1] y = <cnp.ndarray[FLOAT_t,ndim=1]> self.y
         
         if self.endspan < 0:
             endspan = round(3 - log2(self.endspan_alpha/self.n))
@@ -104,36 +111,39 @@ cdef class ForwardPasser:
         for variable in range(self.n):
             
             #Sort the data
-            self.sorting[:] = np.argsort(self.X[:,variable])[::-1] #TODO: eliminate Python call / data copy
-            reorderxby(self.X,self.B,self.y,self.sorting,self.sort_tracker)
+            self.sorting[:] = np.argsort(X[:,variable])[::-1] #TODO: eliminate Python call / data copy
+            reorderxby(X,B,y,self.sorting,self.sort_tracker)
             
             #Iterate over parents
             for parent_idx in range(k):
-                parent = self.basis.get(parent)
+                parent = self.basis.get(parent_idx)
                 if self.max_degree >= 0:
                     parent_degree = parent.degree()
                     if parent_degree >= self.max_degree:
                         continue
                 
                 #Add the linear term to B
-                self.B[:,k] = self.B[:,parent_idx]*self.X[:,parent_idx] #TODO: Optimize
+                B[:,k] = B[:,parent_idx]*X[:,parent_idx] #TODO: Optimize
                 
                 #Calculate the MSE with just the linear term
-                mse = fastr(self.B,self.y,k+1) / self.m
+                mse = fastr(B,y,k+1) / self.m
                 knot_idx = -1
                 
                 #Find the valid knot candidates
-                candidates_idx = parent.valid_knots(self.B[:,parent_idx], self.X[:,variable],variable, self.check_every, self.endspan, self.minspan, self.minspan_alpha, self.n, self.mwork)
+                candidates_idx = parent.valid_knots(B[:,parent_idx], X[:,variable], variable, self.check_every, endspan, self.minspan, self.minspan_alpha, self.n, self.mwork)
 
-                #Choose the best candidate (or None)
+                #Choose the best candidate (if no candidate is an improvement on the linear term, knot_idx is left as -1)
                 if len(candidates_idx) > 1:
                     self.best_knot(parent_idx,variable,candidates_idx,&mse,&knot,&knot_idx)
 
-                #TODO: Recalculate the MSE
+                #Recalculate the MSE
                 if knot_idx >= 0:
-                    bf1 = HingeBasisFunction(parent,knot_choice,variable_choice,False)
-                    bf1.apply(self.X,self.B[:,k+1])
-                    mse = fastr(self.B,self.y,k+2) / self.m
+                    B[:,k+1] = X[:,k+1] - knot
+                    B[:,k+1] *= (B[:,k+1] > 0)
+                    B[:,k+1] *= B[:,parent_idx]
+#                    bf1 = HingeBasisFunction(parent,knot,knot_idx,variable_choice,False)
+#                    bf1.apply(X,B[:,k+1])
+                    mse = fastr(B,y,k+2) / self.m
 
                 #Update the choices
                 if first:
@@ -156,12 +166,16 @@ cdef class ForwardPasser:
         if knot_idx_choice == -1: #Selected linear term
             self.basis.append(LinearBasisFunction(parent,variable_choice,label))
         else:
-            bf1 = HingeBasisFunction(parent,knot_choice,variable_choice,False,label)
-            bf2 = HingeBasisFunction(parent,knot_choice,variable_choice,True,label)
-            bf1.apply(self.X,self.B[:,k])
-            bf2.apply(self.X,self.B[:,k+1])
+            bf1 = HingeBasisFunction(parent,knot_choice,knot_idx_choice,variable_choice,False,label)
+            bf2 = HingeBasisFunction(parent,knot_choice,knot_idx_choice,variable_choice,True,label)
+            bf1.apply(X,B[:,k])
+            bf2.apply(X,B[:,k+1])
             self.basis.append(bf1)
             self.basis.append(bf2)
+        
+        #Update the build record
+        self.record.append(ForwardPassIteration(parent_choice,variable_choice,knot_idx_choice,mse_choice,len(self.basis)))
+        
         
     cdef best_knot(ForwardPasser self, unsigned int parent, unsigned int variable, cnp.ndarray[INT_t,ndim=1] candidates, FLOAT_t * mse, FLOAT_t * knot, unsigned int * knot_idx):
         '''
@@ -243,10 +257,11 @@ cdef class ForwardPasser:
                 delta_y += float_tmp * self.y[j]
                 
             #Compute the u vector
-            self.u[0:k+2] = np.dot(self.B[:,0:k+2],self.delta) #TODO: BLAS
+            self.u[0:k+2] = np.dot(self.delta,self.B[:,0:k+2]) #TODO: BLAS
             self.u[k+1] *= 2
             self.u[k+1] += delta_squared
             self.u[k+2] = delta_y
+            print self.u
             self.u[:] = np.sqrt(self.u) #TODO: BLAS
             
             #Compute the v vector, which is just u with element k+1 zeroed out
@@ -274,10 +289,13 @@ cdef class ForwardPassRecord:
         self.num_variables = num_variables
         self.penalty = penalty
         self.sst = sst
-        self.iterations = []
+        self.iterations = [FirstForwardPassIteration(self.sst)]
     
     cpdef set_stopping_condition(ForwardPassRecord self, int stopping_condition):
         self.stopping_condition = stopping_condition
+    
+    def __getitem__(ForwardPassRecord self, int idx):
+        return self.iterations[idx]
     
     def __str__(ForwardPassRecord self):
         result = ''
@@ -294,36 +312,54 @@ cdef class ForwardPassRecord:
         return len(self.iterations)
     
     cpdef append(ForwardPassRecord self, ForwardPassIteration iteration):
-        pass
+        self.iterations.append(iteration)
     
     cpdef FLOAT_t mse(ForwardPassRecord self, unsigned int iteration):
-        return self.iterations[iteration].mse
-    
-    cpdef FLOAT_t rsq(ForwardPassRecord self, unsigned int iteration):
-        cdef ForwardPassIteration it = self.iterations[iteration]
-        cdef FLOAT_t mse = it.mse
-        return gcv(mse,it.basisSize,self.num_samples,self.penalty)
+        return self.iterations[iteration].get_mse()
     
     cpdef FLOAT_t gcv(ForwardPassRecord self, unsigned int iteration):
-        cdef FLOAT_t base = gcv(self.sst,1,self.num_samples,self.penalty)
-        cdef FLOAT_t it = self.gcv(iteration)
-        return 1 - (it / base)
+        cdef ForwardPassIteration it = self.iterations[iteration]
+        cdef FLOAT_t mse = it.mse
+        return gcv(mse,it.get_size(),self.num_samples,self.penalty)
+    
+    cpdef FLOAT_t rsq(ForwardPassRecord self, unsigned int iteration):
+        cdef FLOAT_t mse0 = self.mse(0)#gcv(self.sst,1,self.num_samples,self.penalty)
+        cdef FLOAT_t mse = self.mse(iteration)#gcv(self.mse(iteration):,self.iterations[iteration].get_size(),self.num_samples,self.penalty)#self.gcv(iteration)
+        return 1 - (mse / mse0)
     
     cpdef FLOAT_t grsq(ForwardPassRecord self, unsigned int iteration):
-        cdef FLOAT_t mse0 = self.sst
-        cdef FLOAT_t mse = self.mse(iteration)
-        return 1 - (mse/mse0)
+        cdef FLOAT_t gcv0 = self.gcv(0)
+        cdef FLOAT_t gcv_ = self.gcv(iteration)
+        return 1 - (gcv_/gcv0)
     
 cdef class ForwardPassIteration:
-    def __init__(ForwardPassIteration self, unsigned int parent, unsigned int variable, FLOAT_t knot, unsigned int mse, unsigned int size, int code):
+    def __init__(ForwardPassIteration self, unsigned int parent, unsigned int variable, int knot, FLOAT_t mse, unsigned int size):
         self.parent = parent
         self.variable = variable
         self.knot = knot
         self.mse = mse
         self.size = size
-        self.code = code
+        
+    cpdef FLOAT_t get_mse(ForwardPassIteration self):
+        return self.mse
+        
+    cpdef unsigned int get_size(ForwardPassIteration self):
+        return self.size
         
     def __str__(self):
-        result = '%s\t%s\t%s\t%.4f\t%s\t%s' % (self.selectedParent,self.selectedVariable,'%.4f' % self.selectedKnot if self.selectedKnot is not None else None,self.mse,self.basisSize,self.returnCode)
+        result = '%d\t%d\t%d\t%4f\t%d' % (self.parent,self.variable,self.knot,self.mse,self.size)
         return result
+    
+    
+cdef class FirstForwardPassIteration(ForwardPassIteration):
+    def __init__(FirstForwardPassIteration self, FLOAT_t mse):
+        self.mse = mse
+        
+    cpdef unsigned int get_size(FirstForwardPassIteration self):
+        return 1
+        
+    def __str__(self):
+        result = '%s\t%s\t%s\t%4f\t%s' % ('-','-','-',self.mse,1)
+        return result
+    
     

@@ -7,6 +7,7 @@ from libc.math cimport log2
 from libc.math cimport log
 from libc.math cimport abs
 cdef FLOAT_t ZERO_TOL = 1e-16
+import numpy as np
 
 cdef class BasisFunction:
     
@@ -71,7 +72,7 @@ cdef class BasisFunction:
     cpdef unsigned int degree(BasisFunction self):
         return self.parent.degree() + 1
     
-    cpdef apply(self, np.ndarray[FLOAT_t,ndim=2] X, np.ndarray[FLOAT_t,ndim=1] b, bint recurse = True):
+    cpdef apply(self, cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=1] b, bint recurse = True):
         '''
         X - Data matrix
         b - parent vector
@@ -81,7 +82,7 @@ cdef class BasisFunction:
     
     
     
-    cpdef np.ndarray[INT_t, ndim=1] valid_knots(BasisFunction self, np.ndarray[FLOAT_t,ndim=1] values, np.ndarray[FLOAT_t,ndim=1] variable, int variable_idx, unsigned int check_every, int endspan, int minspan, FLOAT_t minspan_alpha, unsigned int n, np.ndarray[INT_t,ndim=1] workspace):
+    cpdef cnp.ndarray[INT_t, ndim=1] valid_knots(BasisFunction self, cnp.ndarray[FLOAT_t,ndim=1] values, cnp.ndarray[FLOAT_t,ndim=1] variable, int variable_idx, unsigned int check_every, int endspan, int minspan, FLOAT_t minspan_alpha, unsigned int n, cnp.ndarray[INT_t,ndim=1] workspace):
         '''
         values - The unsorted values of self in the data set
         variable - The sorted values of variable in the data set
@@ -96,10 +97,12 @@ cdef class BasisFunction:
         cdef INT_t int_tmp
         cdef unsigned int count
         cdef int minspan_
-        cdef np.ndarray[INT_t, ndim=1] result
+        cdef cnp.ndarray[INT_t, ndim=1] result
         cdef unsigned int num_used
         cdef unsigned int prev
         cdef unsigned int start
+        cdef int idx
+        cdef int last_idx
         
         #Calculate the used knots
         cdef list used_knots = self.knots(variable_idx)
@@ -123,14 +126,17 @@ cdef class BasisFunction:
         #Take out the used points and apply minspan
         num_used = len(used_knots)
         prev = 0
+        last_idx = -1
         for i in range(num_used):
             idx = used_knots[i]
+            if last_idx == idx:
+                continue
             workspace[idx] = 0
-            j = idx - 1
+            j = idx
             k = 0
-            while j > prev and k < minspan:
-                if workspace[j]:
-                    workspace[j] = False
+            while j > prev + 1 and k < minspan:
+                if workspace[j-1]:
+                    workspace[j-1] = False
                     k += 1
                 j -= 1
             j = idx + 1
@@ -141,6 +147,7 @@ cdef class BasisFunction:
                     k += 1
                 j += 1
             prev = idx
+            last_idx = idx
         
         #Apply endspan
         i = 0
@@ -201,17 +208,17 @@ cdef class ConstantBasisFunction(BasisFunction):
     cpdef unsigned int degree(ConstantBasisFunction self):
         return 0
     
-    cpdef translate(ConstantBasisFunctionself, np.ndarray[FLOAT_t,ndim=1] slopes, np.ndarray[FLOAT_t,ndim=1] intercepts, bint recurse):
+    cpdef translate(ConstantBasisFunctionself, cnp.ndarray[FLOAT_t,ndim=1] slopes, cnp.ndarray[FLOAT_t,ndim=1] intercepts, bint recurse):
         pass
     
-    cpdef FLOAT_t scale(ConstantBasisFunctionself, np.ndarray[FLOAT_t,ndim=1] slopes, np.ndarray[FLOAT_t,ndim=1] intercepts):
+    cpdef FLOAT_t scale(ConstantBasisFunctionself, cnp.ndarray[FLOAT_t,ndim=1] slopes, cnp.ndarray[FLOAT_t,ndim=1] intercepts):
         return <FLOAT_t> 1.0
     
     cpdef _set_parent(self,BasisFunction parent):
         '''Calls _add_child.'''
         raise NotImplementedError
 
-    cpdef apply(self, np.ndarray[FLOAT_t,ndim=2] X, np.ndarray[FLOAT_t,ndim=1] b, bint recurse = False):
+    cpdef apply(self, cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=1] b, bint recurse = False):
         '''
         X - Data matrix
         b - parent vector
@@ -241,14 +248,14 @@ cdef class HingeBasisFunction(BasisFunction):
     cpdef bint has_knot(HingeBasisFunction self):
         return True
     
-    cpdef translate(HingeBasisFunction self, np.ndarray[FLOAT_t,ndim=1] slopes, np.ndarray[FLOAT_t,ndim=1] intercepts, bint recurse):
+    cpdef translate(HingeBasisFunction self, cnp.ndarray[FLOAT_t,ndim=1] slopes, cnp.ndarray[FLOAT_t,ndim=1] intercepts, bint recurse):
         self.knot = slopes[self.variable]*self.knot + intercepts[self.variable]
         if slopes[self.variable] < 0:
             self.reverse = not self.reverse
         if recurse:
             self.parent.translate(slopes,intercepts)
             
-    cpdef FLOAT_t scale(HingeBasisFunction self, np.ndarray[FLOAT_t,ndim=1] slopes, np.ndarray[FLOAT_t,ndim=1] intercepts):
+    cpdef FLOAT_t scale(HingeBasisFunction self, cnp.ndarray[FLOAT_t,ndim=1] slopes, cnp.ndarray[FLOAT_t,ndim=1] intercepts):
         result = self.parent.scale(slopes,intercepts)
         result /= slopes[self.variable]
         return result
@@ -274,7 +281,7 @@ cdef class HingeBasisFunction(BasisFunction):
     cpdef unsigned int get_knot(self):
         return self.knot_idx
     
-    cpdef apply(self, np.ndarray[FLOAT_t,ndim=2] X, np.ndarray[FLOAT_t,ndim=1] b, bint recurse = True):
+    cpdef apply(self, cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=1] b, bint recurse = True):
         '''
         X - Data matrix
         b - parent vector
@@ -305,10 +312,10 @@ cdef class LinearBasisFunction(BasisFunction):
         self.label = label if label is not None else 'x'+str(variable)
         self._set_parent(parent)
         
-    cpdef translate(LinearBasisFunctionself, np.ndarray[FLOAT_t,ndim=1] slopes, np.ndarray[FLOAT_t,ndim=1] intercepts, bint recurse):
+    cpdef translate(LinearBasisFunctionself, cnp.ndarray[FLOAT_t,ndim=1] slopes, cnp.ndarray[FLOAT_t,ndim=1] intercepts, bint recurse):
         pass
 
-    cpdef FLOAT_t scale(LinearBasisFunction self, np.ndarray[FLOAT_t,ndim=1] slopes, np.ndarray[FLOAT_t,ndim=1] intercepts):
+    cpdef FLOAT_t scale(LinearBasisFunction self, cnp.ndarray[FLOAT_t,ndim=1] slopes, cnp.ndarray[FLOAT_t,ndim=1] intercepts):
         result = self.parent.scale(slopes,intercepts)
         result /= slopes[self.variable]
         return result
@@ -319,7 +326,7 @@ cdef class LinearBasisFunction(BasisFunction):
     cpdef unsigned int get_variable(self):
         return self.variable
     
-    cpdef apply(self, np.ndarray[FLOAT_t,ndim=2] X, np.ndarray[FLOAT_t,ndim=1] b, bint recurse = True):
+    cpdef apply(self, cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=1] b, bint recurse = True):
         '''
         X - Data matrix
         b - parent vector
@@ -342,13 +349,13 @@ cdef class Basis:
     def __init__(Basis self): #@DuplicatedSignature
         self.order = []
     
-    cpdef translate(Basis self, np.ndarray[FLOAT_t,ndim=1] slopes, np.ndarray[FLOAT_t,ndim=1] intercepts):
+    cpdef translate(Basis self, cnp.ndarray[FLOAT_t,ndim=1] slopes, cnp.ndarray[FLOAT_t,ndim=1] intercepts):
         cdef unsigned int n = len(self)
         cdef unsigned int i #@DuplicatedSignature
         for i in range(n):
             self.order[i].translate(slopes,intercepts,False)
         
-    cpdef scale(Basis self, np.ndarray[FLOAT_t,ndim=1] slopes, np.ndarray[FLOAT_t,ndim=1] intercepts, np.ndarray[FLOAT_t,ndim=1] beta):
+    cpdef scale(Basis self, cnp.ndarray[FLOAT_t,ndim=1] slopes, cnp.ndarray[FLOAT_t,ndim=1] intercepts, cnp.ndarray[FLOAT_t,ndim=1] beta):
         cdef unsigned int n = len(self) #@DuplicatedSignature
         cdef unsigned int i #@DuplicatedSignature
         cdef unsigned int j = 0
@@ -385,7 +392,7 @@ cdef class Basis:
                 length += 1
         return length
     
-    cpdef transform(Basis self, np.ndarray[FLOAT_t,ndim=2] X, np.ndarray[FLOAT_t,ndim=2] B):
+    cpdef transform(Basis self, cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=2] B):
         cdef unsigned int i #@DuplicatedSignature
         cdef unsigned int n = self.__len__()
         cdef BasisFunction bf
