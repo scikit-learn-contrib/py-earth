@@ -258,11 +258,12 @@ cdef class ForwardPasser:
                 
             #Compute the u vector
             self.u[0:k+2] = np.dot(self.delta,self.B[:,0:k+2]) #TODO: BLAS
-            self.u[k+1] *= 2
-            self.u[k+1] += delta_squared
-            self.u[k+2] = delta_y
-            print self.u
-            self.u[:] = np.sqrt(self.u) #TODO: BLAS
+            float_tmp = self.u[k+1] * 2
+            float_tmp += delta_squared
+            float_tmp = sqrt(float_tmp)
+            self.u[k+1] = float_tmp
+            self.u[k+2] = delta_y / float_tmp
+            self.u[0:k+1] /= float_tmp #TOD): BLAS
             
             #Compute the v vector, which is just u with element k+1 zeroed out
             self.v[:] = self.u[:]
