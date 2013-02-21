@@ -63,6 +63,14 @@ class TestForwardPasser(unittest.TestCase):
         
     def testRun(self):
         self.forwardPasser.run()
+        res = str(self.forwardPasser.get_basis()) + '\n' + str(self.forwardPasser.trace())
+#        with open('regress.txt','w') as fl:
+#            fl.write(res)
+        with open('regress.txt','r') as fl:
+            prev = fl.read()
+        self.assertEqual(res,prev)
+        
+        
         
 
 if __name__ == "__main__":

@@ -205,12 +205,15 @@ cdef class ForwardPasser:
         cdef unsigned int candidate_idx
         cdef FLOAT_t candidate
         cdef unsigned int last_candidate_idx
+        cdef unsigned int last_last_candidate_idx
         cdef FLOAT_t last_candidate
         cdef bint bool_tmp
         cdef FLOAT_t float_tmp
         cdef FLOAT_t delta_squared
         cdef FLOAT_t delta_y
         cdef FLOAT_t current_mse
+        cdef FLOAT_t y_cum
+        cdef FLOAT_t diff
         
         cdef cnp.ndarray[FLOAT_t,ndim=2] X = <cnp.ndarray[FLOAT_t,ndim=2]> self.X
         cdef cnp.ndarray[FLOAT_t,ndim=2] B = <cnp.ndarray[FLOAT_t,ndim=2]> self.B
@@ -219,11 +222,11 @@ cdef class ForwardPasser:
         cdef cnp.ndarray[FLOAT_t,ndim=1] delta = <cnp.ndarray[FLOAT_t,ndim=1]> self.delta
         cdef cnp.ndarray[FLOAT_t,ndim=1] u = <cnp.ndarray[FLOAT_t,ndim=1]> self.u
         cdef cnp.ndarray[FLOAT_t,ndim=1] v = <cnp.ndarray[FLOAT_t,ndim=1]> self.v
+        cdef cnp.ndarray[FLOAT_t,ndim=1] B_cum = np.empty(shape=k+2,dtype=np.float)
         
         #Put the first candidate into B
         candidate_idx = candidates[0]
         candidate = X[candidate_idx,variable]
-        
         for i in range(self.m): #TODO: BLAS
             float_tmp = X[i,variable] - candidate
             float_tmp = float_tmp if float_tmp > 0 else 0.0
@@ -249,11 +252,17 @@ cdef class ForwardPasser:
         for i in range(self.m):
             delta[i] = 0 #TODO: BLAS
 
+        #Initialize the accumulators
+        last_candidate_idx = 0
+        y_cum = y[0]
+        B_cum[:] = B[0,0:k+2]
+
         #Iterate over remaining candidates
         num_candidates = candidates.shape[0]
         for i in range(1,num_candidates):
             
             #Update the candidate
+            last_last_candidate_idx = last_candidate_idx
             last_candidate_idx = candidate_idx
             last_candidate = candidate
             candidate_idx = candidates[i]
@@ -262,24 +271,25 @@ cdef class ForwardPasser:
             #Compute the delta vector
             #TODO: BLAS
             #TODO: Optimize
-            float_tmp = last_candidate - candidate
+            diff = last_candidate - candidate
             delta_squared = 0.0
             delta_y = 0.0
-            for j in range(last_candidate_idx+1):
-                delta[j] = float_tmp
-#                self.B[j,k+1] += float_tmp
-                delta_squared += float_tmp**2
-                delta_y += float_tmp * y[j]
+            for j in range(last_last_candidate_idx+1,last_candidate_idx+1):
+                y_cum += y[j]
+                B_cum += B[j,0:k+2]
+            delta_y += diff * y_cum
+            delta_squared = (diff**2)*(last_candidate_idx+1)
             for j in range(last_candidate_idx+1,candidate_idx):
                 float_tmp = X[j,variable] - candidate
                 delta[j] = float_tmp
-#                self.B[j,k+1] += float_tmp
                 delta_squared += float_tmp**2
                 delta_y += float_tmp * y[j]
 
             #Compute the u vector
-            u[0:k+2] = np.dot(delta,B[:,0:k+2]) #TODO: BLAS
-            B[:,k+1] += delta #TODO: BLAS
+            u[0:k+2] = np.dot(delta[last_candidate_idx+1:candidate_idx],B[last_candidate_idx+1:candidate_idx,0:k+2]) #TODO: BLAS
+            u[0:k+2] += diff*B_cum
+            B_cum[k+1] += (last_candidate_idx+1) * diff
+            B[last_candidate_idx+1:candidate_idx,k+1] += delta[last_candidate_idx+1:candidate_idx] #TODO: BLAS
             float_tmp = u[k+1] * 2
             float_tmp += delta_squared
             float_tmp = sqrt(float_tmp)
@@ -288,7 +298,7 @@ cdef class ForwardPasser:
             u[0:k+1] /= float_tmp #TODO: BLAS
             
             #Compute the v vector, which is just u with element k+1 zeroed out
-            v[:] = u[:]
+            v[:] = u[:]#TODO: BLAS
             v[k+1] = 0
             
             #Update the cholesky factor
