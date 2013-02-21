@@ -41,6 +41,7 @@ cdef class ForwardPasser:
     cdef cnp.ndarray R
     cdef cnp.ndarray u
     cdef cnp.ndarray v
+    cdef cnp.ndarray B_cum
     
     cpdef Basis get_basis(ForwardPasser self)
     

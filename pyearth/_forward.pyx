@@ -108,6 +108,7 @@ cdef class ForwardPasser:
         self.R = np.empty(shape=(k+3,k+3))
         self.u = np.empty(shape=k+3, dtype=float)
         self.v = np.empty(shape=k+3, dtype=float)
+        self.B_cum = np.empty(shape=k+2,dtype=np.float)
         
         cdef cnp.ndarray[FLOAT_t,ndim=2] X = <cnp.ndarray[FLOAT_t,ndim=2]> self.X
         cdef cnp.ndarray[FLOAT_t,ndim=2] B = <cnp.ndarray[FLOAT_t,ndim=2]> self.B
@@ -222,7 +223,7 @@ cdef class ForwardPasser:
         cdef cnp.ndarray[FLOAT_t,ndim=1] delta = <cnp.ndarray[FLOAT_t,ndim=1]> self.delta
         cdef cnp.ndarray[FLOAT_t,ndim=1] u = <cnp.ndarray[FLOAT_t,ndim=1]> self.u
         cdef cnp.ndarray[FLOAT_t,ndim=1] v = <cnp.ndarray[FLOAT_t,ndim=1]> self.v
-        cdef cnp.ndarray[FLOAT_t,ndim=1] B_cum = np.empty(shape=k+2,dtype=np.float)
+        cdef cnp.ndarray[FLOAT_t,ndim=1] B_cum = <cnp.ndarray[FLOAT_t,ndim=1]> self.B_cum
         
         #Put the first candidate into B
         candidate_idx = candidates[0]
