@@ -199,6 +199,7 @@ cdef class ForwardPasser:
         candidates is in increasing order (it is an array of indices into X[:,variable]
         mse is a pointer to the mean squared error of including just the linear term in B[:,k]
         '''
+        cdef unsigned int h
         cdef unsigned int i
         cdef unsigned int k = len(self.basis)
         cdef unsigned int j
@@ -277,7 +278,8 @@ cdef class ForwardPasser:
             delta_y = 0.0
             for j in range(last_last_candidate_idx+1,last_candidate_idx+1):
                 y_cum += y[j]
-                B_cum += B[j,0:k+2]
+                for h in range(k+2):#TODO: BLAS
+                    B_cum[h] += B[j,h]
             delta_y += diff * y_cum
             delta_squared = (diff**2)*(last_candidate_idx+1)
             for j in range(last_candidate_idx+1,candidate_idx):
