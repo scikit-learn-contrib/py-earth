@@ -11,3 +11,5 @@ from pyearth._forward import ForwardPasser
 X = numpy.random.normal(size=(100,10))
 y = numpy.random.normal(size=100)
 forwardPasser = ForwardPasser(X,y)
+forwardPasser.run()
+print forwardPasser.trace()

@@ -76,6 +76,9 @@ cdef class ForwardPasser:
             return True
         return False
         
+    def trace(self):
+        return self.record
+        
     cdef next_pair(ForwardPasser self):
         cdef unsigned int variable
         cdef unsigned int parent_idx
@@ -203,6 +206,7 @@ cdef class ForwardPasser:
         #Put the first candidate into B
         candidate_idx = candidates[0]
         candidate = self.X[candidate_idx,variable]
+        
         for i in range(self.m): #TODO: BLAS
             float_tmp = self.X[i,variable] - candidate
             float_tmp = float_tmp if float_tmp > 0 else 0.0
@@ -241,19 +245,19 @@ cdef class ForwardPasser:
             #Compute the delta vector
             #TODO: BLAS
             #TODO: Optimize
-            float_tmp = candidate - last_candidate
+            float_tmp = last_candidate - candidate
             delta_squared = 0.0
             delta_y = 0.0
             for j in range(last_candidate_idx+1):
                 self.delta[j] = float_tmp
                 self.B[j,k+1] += float_tmp
-                delta_squared += float_tmp
+                delta_squared += float_tmp**2
                 delta_y += float_tmp * self.y[j]
             for j in range(last_candidate_idx+1,candidate_idx):
                 float_tmp = self.X[j,variable] - candidate
                 self.delta[j] = float_tmp
                 self.B[j,k+1] += float_tmp
-                delta_squared += float_tmp
+                delta_squared += float_tmp**2
                 delta_y += float_tmp * self.y[j]
                 
             #Compute the u vector
@@ -263,7 +267,7 @@ cdef class ForwardPasser:
             float_tmp = sqrt(float_tmp)
             self.u[k+1] = float_tmp
             self.u[k+2] = delta_y / float_tmp
-            self.u[0:k+1] /= float_tmp #TOD): BLAS
+            self.u[0:k+1] /= float_tmp #TODO: BLAS
             
             #Compute the v vector, which is just u with element k+1 zeroed out
             self.v[:] = self.u[:]
@@ -271,19 +275,19 @@ cdef class ForwardPasser:
             
             #Update the cholesky factor
             cholupdate(self.R,self.u)
-            
+
             #Downdate the cholesky factor
             choldowndate(self.R,self.v)
-            
+
             #The lower right corner of the cholesky factor is the norm of the residual
             current_mse = (self.R[k+2,k+2] ** 2) / self.m
-            
+
             #Update the choices
             if current_mse < mse[0]:
                 mse[0] = current_mse
                 knot_idx[0] = candidate_idx
                 knot[0] = candidate
-    
+            
 cdef class ForwardPassRecord:
     def __init__(ForwardPassRecord self, unsigned int num_samples, unsigned int num_variables, FLOAT_t penalty, FLOAT_t sst):
         self.num_samples = num_samples
@@ -302,7 +306,7 @@ cdef class ForwardPassRecord:
         result = ''
         result += 'Forward Pass\n'
         result += '-'*80 + '\n'
-        result += 'iter\tparent\tvar\tz-knot\tmse\tterms\tcode\tgcv\trsq\tgrsq\n'
+        result += 'iter\tparent\tvar\tknot\tmse\tterms\tgcv\trsq\tgrsq\n'
         result += '-'*80 + '\n'
         for i, iteration in enumerate(self.iterations):
             result += str(i) + '\t' + str(iteration) + '\t%.3f\t%.3f\t%.3f\n' % (self.gcv(i),self.rsq(i),self.grsq(i) if i>0 else float('-inf'))
