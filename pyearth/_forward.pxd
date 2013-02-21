@@ -42,6 +42,8 @@ cdef class ForwardPasser:
     cdef cnp.ndarray u
     cdef cnp.ndarray v
     
+    cpdef Basis get_basis(ForwardPasser self)
+    
     cpdef run(ForwardPasser self)
     
     cdef stop_check(ForwardPasser self)

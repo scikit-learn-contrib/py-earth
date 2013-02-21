@@ -1,6 +1,8 @@
 # distutils: language = c
-#cython: cdivision = True
-
+# cython: cdivision = True
+# cython: boundscheck = False
+# cython: wraparound = False
+# cython: profile=True
 
 from _util cimport gcv, reorderxby, fastr
 from _basis cimport Basis, BasisFunction, ConstantBasisFunction, LinearBasisFunction, HingeBasisFunction
@@ -52,6 +54,9 @@ cdef class ForwardPasser:
             if self.stop_check():
                 break
         
+    cpdef Basis get_basis(ForwardPasser self):
+        return self.basis
+        
     cdef stop_check(ForwardPasser self):
         last = self.record.__len__() - 1
 #        if self.record.iterations[last].code == NUMERR:
@@ -92,7 +97,8 @@ cdef class ForwardPasser:
         cdef FLOAT_t knot_choice
         cdef FLOAT_t mse_choice
         cdef int knot_idx_choice
-        cdef unsigned int parent_choice
+        cdef unsigned int parent_idx_choice
+        cdef BasisFunction parent_choice
         cdef unsigned int variable_choice
         cdef bint first = True
         cdef BasisFunction bf1
@@ -126,7 +132,7 @@ cdef class ForwardPasser:
                         continue
                 
                 #Add the linear term to B
-                B[:,k] = B[:,parent_idx]*X[:,parent_idx] #TODO: Optimize
+                B[:,k] = B[:,parent_idx]*X[:,variable] #TODO: Optimize
                 
                 #Calculate the MSE with just the linear term
                 mse = fastr(B,y,k+1) / self.m
@@ -153,14 +159,16 @@ cdef class ForwardPasser:
                     knot_choice = knot
                     mse_choice = mse
                     knot_idx_choice = knot_idx
-                    parent_choice = parent_idx
+                    parent_idx_choice = parent_idx
+                    parent_choice = parent
                     variable_choice = variable
                     first = False
                 if mse < mse_choice:
                     knot_choice = knot
                     mse_choice = mse
                     knot_idx_choice = knot_idx
-                    parent_choice = parent_idx
+                    parent_idx_choice = parent_idx
+                    parent_choice = parent
                     variable_choice = variable
         
         #Add the new basis functions
@@ -169,15 +177,15 @@ cdef class ForwardPasser:
         if knot_idx_choice == -1: #Selected linear term
             self.basis.append(LinearBasisFunction(parent,variable_choice,label))
         else:
-            bf1 = HingeBasisFunction(parent,knot_choice,knot_idx_choice,variable_choice,False,label)
-            bf2 = HingeBasisFunction(parent,knot_choice,knot_idx_choice,variable_choice,True,label)
+            bf1 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,False,label)
+            bf2 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,True,label)
             bf1.apply(X,B[:,k])
             bf2.apply(X,B[:,k+1])
             self.basis.append(bf1)
             self.basis.append(bf2)
         
         #Update the build record
-        self.record.append(ForwardPassIteration(parent_choice,variable_choice,knot_idx_choice,mse_choice,len(self.basis)))
+        self.record.append(ForwardPassIteration(parent_idx_choice,variable_choice,knot_idx_choice,mse_choice,len(self.basis)))
         
         
     cdef best_knot(ForwardPasser self, unsigned int parent, unsigned int variable, cnp.ndarray[INT_t,ndim=1] candidates, FLOAT_t * mse, FLOAT_t * knot, unsigned int * knot_idx):
@@ -202,25 +210,34 @@ cdef class ForwardPasser:
         cdef FLOAT_t float_tmp
         cdef FLOAT_t delta_squared
         cdef FLOAT_t delta_y
+        cdef FLOAT_t current_mse
+        
+        cdef cnp.ndarray[FLOAT_t,ndim=2] X = <cnp.ndarray[FLOAT_t,ndim=2]> self.X
+        cdef cnp.ndarray[FLOAT_t,ndim=2] B = <cnp.ndarray[FLOAT_t,ndim=2]> self.B
+        cdef cnp.ndarray[FLOAT_t,ndim=2] R = <cnp.ndarray[FLOAT_t,ndim=2]> self.R
+        cdef cnp.ndarray[FLOAT_t,ndim=1] y = <cnp.ndarray[FLOAT_t,ndim=1]> self.y
+        cdef cnp.ndarray[FLOAT_t,ndim=1] delta = <cnp.ndarray[FLOAT_t,ndim=1]> self.delta
+        cdef cnp.ndarray[FLOAT_t,ndim=1] u = <cnp.ndarray[FLOAT_t,ndim=1]> self.u
+        cdef cnp.ndarray[FLOAT_t,ndim=1] v = <cnp.ndarray[FLOAT_t,ndim=1]> self.v
         
         #Put the first candidate into B
         candidate_idx = candidates[0]
-        candidate = self.X[candidate_idx,variable]
+        candidate = X[candidate_idx,variable]
         
         for i in range(self.m): #TODO: BLAS
-            float_tmp = self.X[i,variable] - candidate
+            float_tmp = X[i,variable] - candidate
             float_tmp = float_tmp if float_tmp > 0 else 0.0
-            self.B[i,k+1] = self.B[i,parent]*float_tmp
+            B[i,k+1] = B[i,parent]*float_tmp
             
         #Put y into B to form the augmented data matrix
         for i in range(self.m):
-            self.B[i,k+2] = self.y[i]#TODO: BLAS
+            B[i,k+2] = self.y[i]#TODO: BLAS
         
         #Get the cholesky factor using QR decomposition
-        self.R[:] = np.linalg.qr(self.B[:,0:k+3],mode='r')
+        R[:] = np.linalg.qr(B[:,0:k+3],mode='r')
         
         #The lower right corner of the cholesky factor is the norm of the residual
-        current_mse = (self.R[k+2,k+2] ** 2) / self.m
+        current_mse = (R[k+2,k+2] ** 2) / self.m
         
         #Update the choices
         if current_mse < mse[0]:
@@ -230,8 +247,8 @@ cdef class ForwardPasser:
         
         #Initialize the delta vector to 0
         for i in range(self.m):
-            self.delta[i] = 0 #TODO: BLAS
-        
+            delta[i] = 0 #TODO: BLAS
+
         #Iterate over remaining candidates
         num_candidates = candidates.shape[0]
         for i in range(1,num_candidates):
@@ -240,7 +257,7 @@ cdef class ForwardPasser:
             last_candidate_idx = candidate_idx
             last_candidate = candidate
             candidate_idx = candidates[i]
-            candidate = self.X[candidate_idx,variable]
+            candidate = X[candidate_idx,variable]
             
             #Compute the delta vector
             #TODO: BLAS
@@ -249,38 +266,39 @@ cdef class ForwardPasser:
             delta_squared = 0.0
             delta_y = 0.0
             for j in range(last_candidate_idx+1):
-                self.delta[j] = float_tmp
-                self.B[j,k+1] += float_tmp
+                delta[j] = float_tmp
+#                self.B[j,k+1] += float_tmp
                 delta_squared += float_tmp**2
-                delta_y += float_tmp * self.y[j]
+                delta_y += float_tmp * y[j]
             for j in range(last_candidate_idx+1,candidate_idx):
-                float_tmp = self.X[j,variable] - candidate
-                self.delta[j] = float_tmp
-                self.B[j,k+1] += float_tmp
+                float_tmp = X[j,variable] - candidate
+                delta[j] = float_tmp
+#                self.B[j,k+1] += float_tmp
                 delta_squared += float_tmp**2
-                delta_y += float_tmp * self.y[j]
-                
+                delta_y += float_tmp * y[j]
+
             #Compute the u vector
-            self.u[0:k+2] = np.dot(self.delta,self.B[:,0:k+2]) #TODO: BLAS
-            float_tmp = self.u[k+1] * 2
+            u[0:k+2] = np.dot(delta,B[:,0:k+2]) #TODO: BLAS
+            B[:,k+1] += delta #TODO: BLAS
+            float_tmp = u[k+1] * 2
             float_tmp += delta_squared
             float_tmp = sqrt(float_tmp)
-            self.u[k+1] = float_tmp
-            self.u[k+2] = delta_y / float_tmp
-            self.u[0:k+1] /= float_tmp #TODO: BLAS
+            u[k+1] = float_tmp
+            u[k+2] = delta_y / float_tmp
+            u[0:k+1] /= float_tmp #TODO: BLAS
             
             #Compute the v vector, which is just u with element k+1 zeroed out
-            self.v[:] = self.u[:]
-            self.v[k+1] = 0
+            v[:] = u[:]
+            v[k+1] = 0
             
             #Update the cholesky factor
-            cholupdate(self.R,self.u)
+            cholupdate(R,u)
 
             #Downdate the cholesky factor
-            choldowndate(self.R,self.v)
+            choldowndate(R,v)
 
             #The lower right corner of the cholesky factor is the norm of the residual
-            current_mse = (self.R[k+2,k+2] ** 2) / self.m
+            current_mse = (R[k+2,k+2] ** 2) / self.m
 
             #Update the choices
             if current_mse < mse[0]:

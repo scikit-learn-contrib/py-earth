@@ -1,7 +1,7 @@
 # distutils: language = c
 #cython: cdivision = True
-#cython: boundscheck = True
-#cython: wraparound = True
+#cython: boundscheck = False
+#cython: wraparound = False
 
 from libc.math cimport log2
 from libc.math cimport log
@@ -348,6 +348,15 @@ cdef class Basis:
 
     def __init__(Basis self): #@DuplicatedSignature
         self.order = []
+    
+    def __str__(Basis self):
+        cdef unsigned int i
+        cdef unsigned int n = len(self)
+        result = ''
+        for i in range(n):
+            result += str(self[i])
+            result += '\n'
+        return result
     
     cpdef translate(Basis self, cnp.ndarray[FLOAT_t,ndim=1] slopes, cnp.ndarray[FLOAT_t,ndim=1] intercepts):
         cdef unsigned int n = len(self)
