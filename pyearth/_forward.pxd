@@ -5,6 +5,7 @@ ctypedef cnp.float64_t FLOAT_t
 ctypedef cnp.int_t INT_t
 ctypedef cnp.uint8_t BOOL_t
 from _basis cimport Basis
+from _record cimport ForwardPassRecord
 
 ctypedef enum StoppingCondition:
     MAXTERMS=0,
@@ -52,45 +53,7 @@ cdef class ForwardPasser:
     cdef next_pair(ForwardPasser self)
     
     cdef best_knot(ForwardPasser self, unsigned int parent, unsigned int variable, cnp.ndarray[INT_t,ndim=1] candidates, FLOAT_t * mse, FLOAT_t * knot, unsigned int * knot_idx)
-        
-cdef class ForwardPassRecord:
-    cdef int stopping_condition
-    cdef list iterations
-    cdef int num_samples
-    cdef int num_variables
-    cdef FLOAT_t penalty
-    cdef FLOAT_t sst #Sum of squares total
-    
-    cpdef append(ForwardPassRecord self, ForwardPassIteration iteration)
-    
-    cpdef set_stopping_condition(ForwardPassRecord self, int stopping_condition)
-    
-    cpdef FLOAT_t mse(ForwardPassRecord self, unsigned int iteration)
-    
-    cpdef FLOAT_t rsq(ForwardPassRecord self, unsigned int iteration)
-    
-    cpdef FLOAT_t gcv(ForwardPassRecord self, unsigned int iteration)
-    
-    cpdef FLOAT_t grsq(ForwardPassRecord self, unsigned int iteration)
-    
-    
-cdef class ForwardPassIteration:
-    cdef unsigned int parent
-    cdef unsigned int variable
-    cdef FLOAT_t knot
-    cdef FLOAT_t mse
-    cdef unsigned int size
-    cdef int code
-    
-    cpdef FLOAT_t get_mse(ForwardPassIteration self)
-    
-    cpdef unsigned int get_size(ForwardPassIteration self)
-    
-cdef class FirstForwardPassIteration(ForwardPassIteration):
-    cpdef unsigned int get_size(FirstForwardPassIteration self)
 
-    
-    
     
     
     

@@ -4,9 +4,11 @@
 # cython: wraparound = False
 # cython: profile=True
 
-from _util cimport gcv, reorderxby, fastr
+from _util cimport reorderxby, fastr
 from _basis cimport Basis, BasisFunction, ConstantBasisFunction, LinearBasisFunction, HingeBasisFunction
 from _choldate cimport cholupdate, choldowndate
+from _blas cimport cblas_daxpy, cblas_dcopy
+from _record cimport ForwardPassIteration
 
 from libc.math cimport sqrt
 from libc.math cimport abs
@@ -40,7 +42,7 @@ cdef class ForwardPasser:
         self.record = ForwardPassRecord(self.m,self.n,self.penalty,sst)
         self.basis = Basis()
         self.basis.append(ConstantBasisFunction())
-        self.B = np.ones(shape=(self.m,self.max_terms+1), order='F',dtype=np.float)
+        self.B = np.ones(shape=(self.m,self.max_terms+1), order='C',dtype=np.float)
         self.sort_tracker = np.empty(shape=self.m, dtype=int)
         for i in range(self.m):
             self.sort_tracker[i] = i
@@ -146,14 +148,14 @@ cdef class ForwardPasser:
                 if len(candidates_idx) > 1:
                     self.best_knot(parent_idx,variable,candidates_idx,&mse,&knot,&knot_idx)
 
-                #Recalculate the MSE
-                if knot_idx >= 0:
-                    B[:,k+1] = X[:,k+1] - knot
-                    B[:,k+1] *= (B[:,k+1] > 0)
-                    B[:,k+1] *= B[:,parent_idx]
-#                    bf1 = HingeBasisFunction(parent,knot,knot_idx,variable_choice,False)
-#                    bf1.apply(X,B[:,k+1])
-                    mse = fastr(B,y,k+2) / self.m
+#                #Recalculate the MSE
+#                if knot_idx >= 0:
+#                    B[:,k+1] = X[:,k+1] - knot
+#                    B[:,k+1] *= (B[:,k+1] > 0)
+#                    B[:,k+1] *= B[:,parent_idx]
+##                    bf1 = HingeBasisFunction(parent,knot,knot_idx,variable_choice,False)
+##                    bf1.apply(X,B[:,k+1])
+#                    mse = fastr(B,y,k+2) / self.m
 
                 #Update the choices
                 if first:
@@ -229,17 +231,22 @@ cdef class ForwardPasser:
         #Put the first candidate into B
         candidate_idx = candidates[0]
         candidate = X[candidate_idx,variable]
-        for i in range(self.m): #TODO: BLAS
+        for i in range(self.m):#TODO: Vectorize?
+            B[i,k+1] = 0
+        for i in range(self.m):
             float_tmp = X[i,variable] - candidate
-            float_tmp = float_tmp if float_tmp > 0 else 0.0
-            B[i,k+1] = B[i,parent]*float_tmp
+            if float_tmp > 0:
+                B[i,k+1] = B[i,parent]*float_tmp
+            else:
+                break
             
         #Put y into B to form the augmented data matrix
+#        cblas_dcopy(<int>self.m,<double *>self.y.data,1,self.B)
         for i in range(self.m):
             B[i,k+2] = self.y[i]#TODO: BLAS
         
         #Get the cholesky factor using QR decomposition
-        R[:] = np.linalg.qr(B[:,0:k+3],mode='r')
+        R[:] = np.linalg.qr(B[:,0:k+3],mode='r') #TODO: Lapack
         
         #The lower right corner of the cholesky factor is the norm of the residual
         current_mse = (R[k+2,k+2] ** 2) / self.m
@@ -319,83 +326,5 @@ cdef class ForwardPasser:
                 knot_idx[0] = candidate_idx
                 knot[0] = candidate
             
-cdef class ForwardPassRecord:
-    def __init__(ForwardPassRecord self, unsigned int num_samples, unsigned int num_variables, FLOAT_t penalty, FLOAT_t sst):
-        self.num_samples = num_samples
-        self.num_variables = num_variables
-        self.penalty = penalty
-        self.sst = sst
-        self.iterations = [FirstForwardPassIteration(self.sst)]
-    
-    cpdef set_stopping_condition(ForwardPassRecord self, int stopping_condition):
-        self.stopping_condition = stopping_condition
-    
-    def __getitem__(ForwardPassRecord self, int idx):
-        return self.iterations[idx]
-    
-    def __str__(ForwardPassRecord self):
-        result = ''
-        result += 'Forward Pass\n'
-        result += '-'*80 + '\n'
-        result += 'iter\tparent\tvar\tknot\tmse\tterms\tgcv\trsq\tgrsq\n'
-        result += '-'*80 + '\n'
-        for i, iteration in enumerate(self.iterations):
-            result += str(i) + '\t' + str(iteration) + '\t%.3f\t%.3f\t%.3f\n' % (self.gcv(i),self.rsq(i),self.grsq(i) if i>0 else float('-inf'))
-        result += 'Stopping Condition: %s\n' % (self.stopping_condition)
-        return result
-    
-    def __len__(ForwardPassRecord self):
-        return len(self.iterations)
-    
-    cpdef append(ForwardPassRecord self, ForwardPassIteration iteration):
-        self.iterations.append(iteration)
-    
-    cpdef FLOAT_t mse(ForwardPassRecord self, unsigned int iteration):
-        return self.iterations[iteration].get_mse()
-    
-    cpdef FLOAT_t gcv(ForwardPassRecord self, unsigned int iteration):
-        cdef ForwardPassIteration it = self.iterations[iteration]
-        cdef FLOAT_t mse = it.mse
-        return gcv(mse,it.get_size(),self.num_samples,self.penalty)
-    
-    cpdef FLOAT_t rsq(ForwardPassRecord self, unsigned int iteration):
-        cdef FLOAT_t mse0 = self.mse(0)#gcv(self.sst,1,self.num_samples,self.penalty)
-        cdef FLOAT_t mse = self.mse(iteration)#gcv(self.mse(iteration):,self.iterations[iteration].get_size(),self.num_samples,self.penalty)#self.gcv(iteration)
-        return 1 - (mse / mse0)
-    
-    cpdef FLOAT_t grsq(ForwardPassRecord self, unsigned int iteration):
-        cdef FLOAT_t gcv0 = self.gcv(0)
-        cdef FLOAT_t gcv_ = self.gcv(iteration)
-        return 1 - (gcv_/gcv0)
-    
-cdef class ForwardPassIteration:
-    def __init__(ForwardPassIteration self, unsigned int parent, unsigned int variable, int knot, FLOAT_t mse, unsigned int size):
-        self.parent = parent
-        self.variable = variable
-        self.knot = knot
-        self.mse = mse
-        self.size = size
-        
-    cpdef FLOAT_t get_mse(ForwardPassIteration self):
-        return self.mse
-        
-    cpdef unsigned int get_size(ForwardPassIteration self):
-        return self.size
-        
-    def __str__(self):
-        result = '%d\t%d\t%d\t%4f\t%d' % (self.parent,self.variable,self.knot,self.mse,self.size)
-        return result
-    
-    
-cdef class FirstForwardPassIteration(ForwardPassIteration):
-    def __init__(FirstForwardPassIteration self, FLOAT_t mse):
-        self.mse = mse
-        
-    cpdef unsigned int get_size(FirstForwardPassIteration self):
-        return 1
-        
-    def __str__(self):
-        result = '%s\t%s\t%s\t%4f\t%s' % ('-','-','-',self.mse,1)
-        return result
-    
+
     

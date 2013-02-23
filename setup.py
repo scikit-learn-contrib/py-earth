@@ -23,6 +23,7 @@ setup(
                              Extension("pyearth._choldate", ["pyearth/_choldate.pyx"],include_dirs = [numpy_inc]),
                              Extension("pyearth._util", ["pyearth/_util.pyx"],include_dirs = [numpy_inc]),
                              Extension("pyearth._basis", ["pyearth/_basis.pyx"],include_dirs = [numpy_inc]),
-                             Extension("pyearth._forward", ["pyearth/_forward.pyx"],include_dirs = [local_inc, numpy_inc])
+                             Extension("pyearth._record", ["pyearth/_record.pyx"],include_dirs = [numpy_inc]),
+                             Extension("pyearth._forward", ["pyearth/_forward.pyx"],include_dirs = [local_inc, numpy_inc, blas_inc])
     ]), requires=['numpy','cython']
 )
