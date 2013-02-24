@@ -2,6 +2,7 @@ cimport numpy as cnp
 ctypedef cnp.float64_t FLOAT_t
 ctypedef cnp.int_t INT_t
 ctypedef cnp.uint8_t BOOL_t
+from _basis cimport Basis
 
 cdef class Record:
     cdef list iterations
@@ -25,6 +26,8 @@ cdef class PruningPassRecord(Record):
 
     cpdef set_selected(PruningPassRecord self, unsigned int selected)
 
+    cpdef roll_back(PruningPassRecord self, Basis basis)
+	
 cdef class ForwardPassRecord(Record):
     cdef int stopping_condition
     
@@ -40,6 +43,8 @@ cdef class Iteration:
     
 cdef class PruningPassIteration(Iteration):
     cdef unsigned int pruned
+    
+    cpdef unsigned int get_pruned(PruningPassIteration self)
     
 cdef class FirstPruningPassIteration(PruningPassIteration):
     pass

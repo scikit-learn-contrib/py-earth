@@ -45,6 +45,12 @@ cdef class PruningPassRecord(Record):
         
     cpdef set_selected(PruningPassRecord self, unsigned int selected):
         self.selected = selected
+        
+    cpdef roll_back(PruningPassRecord self, Basis basis):
+        cdef unsigned int n = len(self.iterations)
+        cdef unsigned int i
+        for i in range(n - self.selected):
+            basis[self.iterations[n - i - 1].get_pruned()].unprune()
     
     def __str__(PruningPassRecord self):
         result = ''
@@ -93,6 +99,9 @@ cdef class PruningPassIteration(Iteration):
         self.size = size
         self.mse = mse
         
+    cpdef unsigned int get_pruned(PruningPassIteration self):
+        return self.pruned
+        
     def __str__(PruningPassIteration self):
         result = '%s\t%s\t%s' % (str(self.pruned),self.size,'%.2f' % self.mse if self.mse is not None else None)
         return result
@@ -101,7 +110,7 @@ cdef class FirstPruningPassIteration(PruningPassIteration):
     def __init__(PruningPassIteration self, unsigned int size, FLOAT_t mse):
         self.size = size
         self.mse = mse
-
+        
     def __str__(PruningPassIteration self):
         result = '%s\t%s\t%s' % ('-',self.size,'%.2f' % self.mse if self.mse is not None else None)
         return result

@@ -9,6 +9,8 @@ import unittest
 from testBasis import *
 from testForward import *
 from testUtil import *
+from testPruning import *
+from testEarth import *
 
 
 if __name__ == "__main__":
