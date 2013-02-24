@@ -22,3 +22,9 @@
 *.pyc
 
 *.pyc
+
+pyearth/__init__.pyc
+
+test/testAll.pyc
+
+test/testForward.pyc
