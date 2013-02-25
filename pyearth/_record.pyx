@@ -81,7 +81,7 @@ cdef class ForwardPassRecord(Record):
         result += 'iter\tparent\tvar\tknot\tmse\tterms\tgcv\trsq\tgrsq\n'
         result += '-'*80 + '\n'
         for i, iteration in enumerate(self.iterations):
-            result += str(i) + '\t' + str(iteration) + '\t%.3f\t%.3f\t%.3f\n' % (self.gcv(i),self.rsq(i),self.grsq(i) if i>0 else float('-inf'))
+            result += str(i) + '\t' + str(iteration) + '\t%.3f\t%.3f\t%.3f\n' % (self.gcv(i),self.rsq(i),self.grsq(i))
         result += 'Stopping Condition: %s\n' % (self.stopping_condition)
         return result
 
