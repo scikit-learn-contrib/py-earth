@@ -75,7 +75,7 @@ class Earth(object):
     
     def linear_fit(self, X, y):
         B = self.transform(X)
-        self.beta = np.linalg.lstsq(X,y)[0]
+        self.beta = np.linalg.lstsq(B,y)[0]
     
     def predict(self, X):
         B = self.transform(X)
@@ -85,6 +85,12 @@ class Earth(object):
         B = np.empty(shape=(X.shape[0],self.basis.plen()))
         self.basis.transform(X,B)
         return B
+
+    def __str__(self):
+        result = 'Earth Model\n'+'-'*80+'\n'
+        for i, bf in enumerate(self.basis.piter()):
+            result += str(bf) + '\t\t\t' + str(self.beta[i]) + '\n'
+        return result
 
 class EarthTrace(object):
     def __init__(self, forward_trace, pruning_trace):

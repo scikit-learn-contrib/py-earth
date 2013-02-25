@@ -1,7 +1,7 @@
 # distutils: language = c
-#cython: cdivision = True
-#cython: boundscheck = False
-#cython: wraparound = False
+# cython: cdivision = True
+# cython: boundscheck = False
+# cython: wraparound = False
 # cython: profile=True
 
 from libc.math cimport log2
@@ -349,6 +349,11 @@ cdef class Basis:
 
     def __init__(Basis self): #@DuplicatedSignature
         self.order = []
+    
+    def piter(Basis self):
+        for bf in self.order:
+            if not bf.is_pruned():
+                yield bf
     
     def __str__(Basis self):
         cdef unsigned int i
