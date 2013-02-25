@@ -1,6 +1,8 @@
-#cython: cdivision=True
-#cython: boundscheck=True
-#cython: wraparound=True
+# distutils: language = c
+# cython: cdivision = True
+# cython: boundscheck = False
+# cython: wraparound = False
+# cython: profile = True
 
 from libc.math cimport sqrt
 from libc.math cimport abs as cabs

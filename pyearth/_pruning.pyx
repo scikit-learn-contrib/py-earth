@@ -2,7 +2,7 @@
 # cython: cdivision = True
 # cython: boundscheck = False
 # cython: wraparound = False
-# cython: profile=True
+# cython: profile = True
 
 from _record cimport PruningPassIteration
 from _util import gcv

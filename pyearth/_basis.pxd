@@ -1,5 +1,3 @@
-# distutils: language = c++
-
 cimport numpy as cnp
 ctypedef cnp.float64_t FLOAT_t
 ctypedef cnp.int_t INT_t

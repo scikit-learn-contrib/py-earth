@@ -99,9 +99,3 @@ class EarthTrace(object):
         
     def __str__(self):
         return str(self.forward_trace) + '\n' + str(self.pruning_trace)
-        
-    
-    
-    
-    
-

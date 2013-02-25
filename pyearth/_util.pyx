@@ -1,15 +1,17 @@
 # distutils: language = c
+# cython: cdivision = True
 # cython: boundscheck = False
 # cython: wraparound = False
 # cython: profile = True
+
 import numpy as np
-#from _blas cimport cblas_dcopy, cblas_dswap
 
 cpdef inline FLOAT_t gcv(FLOAT_t mse, unsigned int basis_size, unsigned int data_size, FLOAT_t penalty):
     return mse / ((1 - ((basis_size + penalty*(basis_size - 1))/data_size)) ** 2)
 
 
 cpdef reorderxby(cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=2] B, cnp.ndarray[FLOAT_t, ndim=1] y, cnp.ndarray[INT_t, ndim=1] order, cnp.ndarray[INT_t, ndim=1] inv):
+    #TODO: This is a bottleneck for large m.  Optimize row copies and swaps with BLAS.
     cdef unsigned int i
     cdef unsigned int j
     cdef unsigned int k

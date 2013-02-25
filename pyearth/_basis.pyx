@@ -2,7 +2,7 @@
 # cython: cdivision = True
 # cython: boundscheck = False
 # cython: wraparound = False
-# cython: profile=True
+# cython: profile = True
 
 from libc.math cimport log2
 from libc.math cimport log
