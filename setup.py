@@ -1,7 +1,6 @@
 from distutils.core import setup
 from distutils.extension import Extension
 import numpy
-from numpy.distutils.system_info import get_info
 import sys
 
 #Determine whether to use Cython
