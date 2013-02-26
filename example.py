@@ -1,8 +1,6 @@
 
 import numpy
 import cProfile
-#import pyearth._forward
-#import _basis
 from pyearth import Earth
 from matplotlib import pyplot
 
