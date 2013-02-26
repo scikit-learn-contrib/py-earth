@@ -7,13 +7,9 @@
 from _util cimport reorderxby, fastr
 from _basis cimport Basis, BasisFunction, ConstantBasisFunction, LinearBasisFunction, HingeBasisFunction
 from _choldate cimport cholupdate, choldowndate
-from _blas cimport cblas_daxpy, cblas_dcopy
 from _record cimport ForwardPassIteration
 
-from libc.math cimport sqrt
-from libc.math cimport abs
-from libc.math cimport log
-from libc.math cimport log2
+from libc.math cimport sqrt, abs, log, log2
 import numpy as np
 cnp.import_array()
 cdef class ForwardPasser:
@@ -147,15 +143,6 @@ cdef class ForwardPasser:
                 #Choose the best candidate (if no candidate is an improvement on the linear term, knot_idx is left as -1)
                 if len(candidates_idx) > 1:
                     self.best_knot(parent_idx,variable,candidates_idx,&mse,&knot,&knot_idx)
-
-#                #Recalculate the MSE
-#                if knot_idx >= 0:
-#                    B[:,k+1] = X[:,k+1] - knot
-#                    B[:,k+1] *= (B[:,k+1] > 0)
-#                    B[:,k+1] *= B[:,parent_idx]
-##                    bf1 = HingeBasisFunction(parent,knot,knot_idx,variable_choice,False)
-##                    bf1.apply(X,B[:,k+1])
-#                    mse = fastr(B,y,k+2) / self.m
 
                 #Update the choices
                 if first:

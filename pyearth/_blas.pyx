@@ -1,1 +1,0 @@
-# distutils: language = c
