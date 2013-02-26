@@ -1,8 +1,6 @@
 from distutils.core import setup
 from distutils.extension import Extension
-from Cython.Distutils import build_ext
 import numpy
-from Cython.Build import cythonize
 from numpy.distutils.system_info import get_info
 import sys
 
@@ -19,6 +17,8 @@ numpy_inc = numpy.get_include()
 
 #Set up the ext_modules for Cython or not, depending
 if cythonize_switch:
+    from Cython.Distutils import build_ext
+    from Cython.Build import cythonize
     ext_modules = cythonize([Extension("pyearth._choldate", ["pyearth/_choldate.pyx"],include_dirs = [numpy_inc]),
                              Extension("pyearth._util", ["pyearth/_util.pyx"],include_dirs = [numpy_inc]),
                              Extension("pyearth._basis", ["pyearth/_basis.pyx"],include_dirs = [numpy_inc]),
@@ -34,19 +34,24 @@ else:
                    Extension("pyearth._pruning", ["pyearth/_pruning.c"],include_dirs = [local_inc, numpy_inc]),
                    Extension("pyearth._forward", ["pyearth/_forward.c"],include_dirs = [local_inc, numpy_inc])
                    ]
-        
-setup(
-    name='py-earth',
-    version='0.1.0',
-    author='Jason Rudy',
-    author_email='jcrudy@gmail.com',
-    packages=['pyearth','pyearth.test'],
-    scripts=['examples/vFunctionExample.py'],
-    license='LICENSE.txt',
-    description='A Python implementation of Jerome Friedman\'s MARS algorithm.',
-    long_description=open('README.md','r').read(),
-    py_modules = ['pyearth.earth'],
-    cmdclass = {'build_ext': build_ext},
-    ext_modules = ext_modules,
-    requires=['numpy']
-)
+    
+#Create a dictionary of arguments for setup
+setup_args = {'name':'py-earth',
+    'version':'0.1.0',
+    'author':'Jason Rudy',
+    'author_email':'jcrudy@gmail.com',
+    'packages':['pyearth','pyearth.test'],
+    'scripts':['examples/vFunctionExample.py'],
+    'license':'LICENSE.txt',
+    'description':'A Python implementation of Jerome Friedman\'s MARS algorithm.',
+    'long_description':open('README.md','r').read(),
+    'py_modules' : ['pyearth.earth'],
+    'ext_modules' : ext_modules,
+    'requires':['numpy']} 
+
+#Add the build_ext command only if cythonizing
+if cythonize_switch:
+    setup_args['cmdclass'] = {'build_ext': build_ext}
+
+#Finally
+setup(**setup_args)
