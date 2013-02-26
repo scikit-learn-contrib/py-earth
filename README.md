@@ -7,7 +7,6 @@ A Python implementation of Jerome Friedman's MARS algorithm, in the style of sci
 ##Usage
 
     import numpy
-    import cProfile
     from pyearth import Earth
     from matplotlib import pyplot
     
