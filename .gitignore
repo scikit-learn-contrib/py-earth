@@ -58,3 +58,7 @@ pyearth/test/testBasis.pyc
 pyearth/test/testRecord.pyc
 
 pyearth/test/testUtil.pyc
+
+MANIFEST
+
+dist/py-earth-0.1.0.tar.gz
