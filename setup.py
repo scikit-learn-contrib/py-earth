@@ -38,9 +38,15 @@ else:
 setup(
     name='py-earth',
     version='0.1.0',
+    author='Jason Rudy',
+    author_email='jcrudy@gmail.com',
     packages=['pyearth','pyearth.test'],
+    scripts=['examples/vFunctionExample.py'],
+    license='LICENSE.txt',
+    description='A Python implementation of Jerome Friedman\'s MARS algorithm.',
+    long_description=open('README.md','r').read(),
     py_modules = ['pyearth.earth'],
     cmdclass = {'build_ext': build_ext},
     ext_modules = ext_modules,
-    requires=['numpy','cython']
+    requires=['numpy']
 )
