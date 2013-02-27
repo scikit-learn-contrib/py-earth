@@ -57,12 +57,6 @@ cdef class ForwardPasser:
         
     cdef stop_check(ForwardPasser self):
         last = self.record.__len__() - 1
-#        if self.record.iterations[last].code == NUMERR:
-#            self.record.stopping_condition = NUMDIFF
-#            return True
-#        if self.record.iterations[last].code != 0:
-#            self.record.stopping_condition = NUMDIFF
-#            return True
         if self.record.iterations[last].get_size() + 2 > self.max_terms:
             self.record.stopping_condition = MAXTERMS
             return True
@@ -133,17 +127,21 @@ cdef class ForwardPasser:
                 #Add the linear term to B
                 B[:,k] = B[:,parent_idx]*X[:,variable] #TODO: Optimize
                 
-                #Calculate the MSE with just the linear term
-                mse = fastr(B,y,k+1) / self.m
-                knot_idx = -1
-                
                 #Find the valid knot candidates
                 candidates_idx = parent.valid_knots(B[:,parent_idx], X[:,variable], variable, self.check_every, endspan, self.minspan, self.minspan_alpha, self.n, self.mwork)
 
                 #Choose the best candidate (if no candidate is an improvement on the linear term, knot_idx is left as -1)
                 if len(candidates_idx) > 1:
                     self.best_knot(parent_idx,variable,candidates_idx,&mse,&knot,&knot_idx)
+                
+                #Recalculate the MSE
+                if knot_idx >= 0:
+                    B[:,k+1] = X[:,k+1] - knot
+                    B[:,k+1] *= (B[:,k+1] > 0)
+                    B[:,k+1] *= B[:,parent_idx]
+                    mse = fastr(B,y,k+2) / self.m
 
+                
                 #Update the choices
                 if first:
                     knot_choice = knot
@@ -228,7 +226,6 @@ cdef class ForwardPasser:
                 break
             
         #Put y into B to form the augmented data matrix
-#        cblas_dcopy(<int>self.m,<double *>self.y.data,1,self.B)
         for i in range(self.m):
             B[i,k+2] = self.y[i]#TODO: BLAS
         
@@ -238,11 +235,10 @@ cdef class ForwardPasser:
         #The lower right corner of the cholesky factor is the norm of the residual
         current_mse = (R[k+2,k+2] ** 2) / self.m
         
-        #Update the choices
-        if current_mse < mse[0]:
-            mse[0] = current_mse
-            knot_idx[0] = candidate_idx
-            knot[0] = candidate
+        #Initialize the choices
+        mse[0] = current_mse
+        knot_idx[0] = candidate_idx
+        knot[0] = candidate
         
         #Initialize the delta vector to 0
         for i in range(self.m):

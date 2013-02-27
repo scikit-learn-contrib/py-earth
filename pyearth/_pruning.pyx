@@ -29,7 +29,6 @@ cdef class PruningPasser:
         cdef unsigned int j
         cdef unsigned int basis_size = len(self.basis)
         cdef unsigned int pruned_basis_size = len(self.basis)
-        cdef FLOAT_t mse
         cdef FLOAT_t gcv_
         cdef unsigned int best_iteration
         cdef unsigned int best_bf_to_prune
