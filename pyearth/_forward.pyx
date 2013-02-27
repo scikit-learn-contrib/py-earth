@@ -4,7 +4,7 @@
 # cython: wraparound = False
 # cython: profile = True
 
-from _util cimport reorderxby, fastr
+from _util cimport reorderxby, fastr, update_uv
 from _basis cimport Basis, BasisFunction, ConstantBasisFunction, LinearBasisFunction, HingeBasisFunction
 from _choldate cimport cholupdate, choldowndate
 from _record cimport ForwardPassIteration
@@ -131,16 +131,16 @@ cdef class ForwardPasser:
                 candidates_idx = parent.valid_knots(B[:,parent_idx], X[:,variable], variable, self.check_every, endspan, self.minspan, self.minspan_alpha, self.n, self.mwork)
 
                 #Choose the best candidate (if no candidate is an improvement on the linear term, knot_idx is left as -1)
-                if len(candidates_idx) > 1:
+                if len(candidates_idx) > 0:
                     self.best_knot(parent_idx,variable,candidates_idx,&mse,&knot,&knot_idx)
+                else:
+                    continue
                 
-                #Recalculate the MSE
                 if knot_idx >= 0:
                     B[:,k+1] = X[:,k+1] - knot
                     B[:,k+1] *= (B[:,k+1] > 0)
                     B[:,k+1] *= B[:,parent_idx]
                     mse = fastr(B,y,k+2) / self.m
-
                 
                 #Update the choices
                 if first:
@@ -261,38 +261,9 @@ cdef class ForwardPasser:
             candidate = X[candidate_idx,variable]
             
             #Compute the delta vector
-            #TODO: BLAS
-            #TODO: Optimize
-            diff = last_candidate - candidate
-            delta_squared = 0.0
-            delta_y = 0.0
-            for j in range(last_last_candidate_idx+1,last_candidate_idx+1):
-                y_cum += y[j]
-                for h in range(k+2):#TODO: BLAS
-                    B_cum[h] += B[j,h]
-            delta_y += diff * y_cum
-            delta_squared = (diff**2)*(last_candidate_idx+1)
-            for j in range(last_candidate_idx+1,candidate_idx):
-                float_tmp = X[j,variable] - candidate
-                delta[j] = float_tmp
-                delta_squared += float_tmp**2
-                delta_y += float_tmp * y[j]
-
-            #Compute the u vector
-            u[0:k+2] = np.dot(delta[last_candidate_idx+1:candidate_idx],B[last_candidate_idx+1:candidate_idx,0:k+2]) #TODO: BLAS
-            u[0:k+2] += diff*B_cum
-            B_cum[k+1] += (last_candidate_idx+1) * diff
-            B[last_candidate_idx+1:candidate_idx,k+1] += delta[last_candidate_idx+1:candidate_idx] #TODO: BLAS
-            float_tmp = u[k+1] * 2
-            float_tmp += delta_squared
-            float_tmp = sqrt(float_tmp)
-            u[k+1] = float_tmp
-            u[k+2] = delta_y / float_tmp
-            u[0:k+1] /= float_tmp #TODO: BLAS
-            
-            #Compute the v vector, which is just u with element k+1 zeroed out
-            v[:] = u[:]#TODO: BLAS
-            v[k+1] = 0
+            update_uv(last_candidate, candidate, candidate_idx, 
+                last_candidate_idx, last_last_candidate_idx, k, variable, parent,
+                X, y, B, &y_cum, B_cum, u, v, delta)
             
             #Update the cholesky factor
             cholupdate(R,u)

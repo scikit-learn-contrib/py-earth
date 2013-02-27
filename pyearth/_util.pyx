@@ -5,6 +5,7 @@
 # cython: profile = True
 
 import numpy as np
+from libc.math cimport sqrt
 
 cpdef inline FLOAT_t gcv(FLOAT_t mse, unsigned int basis_size, unsigned int data_size, FLOAT_t penalty):
     return mse / ((1 - ((basis_size + penalty*(basis_size - 1))/data_size)) ** 2)
@@ -68,3 +69,49 @@ cpdef FLOAT_t fastr(cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1]
         y[i] = tmp
         
     return R[k,k] ** 2
+
+
+cdef update_uv(FLOAT_t last_candidate, FLOAT_t candidate, unsigned int candidate_idx, 
+                unsigned int last_candidate_idx, unsigned int last_last_candidate_idx, unsigned int k, unsigned int variable, unsigned int parent,
+                cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] y, cnp.ndarray[FLOAT_t, ndim=2] B,
+                FLOAT_t *y_cum, cnp.ndarray[FLOAT_t, ndim=1] B_cum, cnp.ndarray[FLOAT_t, ndim=1] u, 
+                cnp.ndarray[FLOAT_t, ndim=1] v, cnp.ndarray[FLOAT_t, ndim=1] delta):
+    
+    #TODO: BLAS
+    #TODO: Optimize
+    cdef FLOAT_t diff
+    cdef FLOAT_t delta_squared
+    cdef FLOAT_t delta_y
+    cdef FLOAT_t float_tmp
+    
+    diff = last_candidate - candidate
+    delta_squared = 0.0
+    delta_y = 0.0
+    for j in range(last_last_candidate_idx+1,last_candidate_idx+1):
+        y_cum[0] += y[j]
+        for h in range(k+1):#TODO: BLAS
+            B_cum[h] += B[j,h]
+        B_cum[k+1] += B[j,k+1]*B[j,parent]
+    delta_y += diff * y_cum[0]
+    delta_squared = (diff**2)*(last_candidate_idx+1)
+    for j in range(last_candidate_idx+1,candidate_idx):
+        float_tmp = (X[j,variable] - candidate) * B[j, parent]
+        delta[j] = float_tmp
+        delta_squared += float_tmp**2
+        delta_y += float_tmp * y[j]
+
+    #Compute the u vector
+    u[0:k+2] = np.dot(delta[last_candidate_idx+1:candidate_idx],B[last_candidate_idx+1:candidate_idx,0:k+2]) #TODO: BLAS
+    u[0:k+2] += diff*B_cum
+    B_cum[k+1] += B_cum[parent] * diff
+    B[last_candidate_idx+1:candidate_idx,k+1] += delta[last_candidate_idx+1:candidate_idx] #TODO: BLAS
+    float_tmp = u[k+1] * 2
+    float_tmp += delta_squared
+    float_tmp = sqrt(float_tmp)
+    u[k+1] = float_tmp
+    u[k+2] = delta_y / float_tmp
+    u[0:k+1] /= float_tmp #TODO: BLAS
+    
+    #Compute the v vector, which is just u with element k+1 zeroed out
+    v[:] = u[:]#TODO: BLAS
+    v[k+1] = 0

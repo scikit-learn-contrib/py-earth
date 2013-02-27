@@ -154,7 +154,7 @@ cdef class BasisFunction:
         i = 0
         j = 0
         while i < endspan:
-            if abs(values[j]) > ZERO_TOL:
+            if workspace[j]:
                 workspace[j] = 0
                 i += 1
             j += 1
@@ -163,7 +163,7 @@ cdef class BasisFunction:
         i = 0
         j = m - 1
         while i < endspan:
-            if abs(values[j]) > ZERO_TOL:
+            if workspace[j]:
                 workspace[j] = 0
                 i += 1
             if j == 0:
