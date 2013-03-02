@@ -7,6 +7,41 @@
 import numpy as np
 from libc.math cimport sqrt
 
+cpdef int augmented_normal(cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] y, cnp.ndarray[FLOAT_t, ndim=2] V, FLOAT_t alpha):
+    cdef unsigned int i #@DuplicatedSignature
+    cdef unsigned int j #@DuplicatedSignature
+    cdef unsigned int k #@DuplicatedSignature
+    cdef unsigned int m = y.shape[0]
+    cdef unsigned int p = V.shape[0]
+    cdef unsigned int n = p - 1
+    cdef FLOAT_t tmp #@DuplicatedSignature
+    
+    #Zero out V
+    for i in range(p):
+        for j in range(p):
+            V[i,j] = 0.0
+    
+    #Fill in the first n rows and columns (0:n)
+    for i in range(m):
+        for j in range(n):
+            if X[i,j] == 0:
+                continue
+            for k in range(n):
+                V[j,k] += X[i,j] * X[i,k]
+                
+    #Regularize
+    for j in range(n):
+        V[j,j] += alpha
+                
+    #Fill in row and column n
+    for i in range(m):
+        tmp = y[i]
+        for j in range(n):
+            V[n,j] += X[i,j] * tmp
+            V[j,n] += X[i,j] * tmp
+        V[n,n] += tmp * tmp
+
+
 cpdef inline FLOAT_t gcv(FLOAT_t mse, unsigned int basis_size, unsigned int data_size, FLOAT_t penalty):
     return mse / ((1 - ((basis_size + penalty*(basis_size - 1))/data_size)) ** 2)
 
@@ -115,3 +150,24 @@ cdef update_uv(FLOAT_t last_candidate, FLOAT_t candidate, unsigned int candidate
     #Compute the v vector, which is just u with element k+1 zeroed out
     v[:] = u[:]#TODO: BLAS
     v[k+1] = 0
+    
+#cdef class OrthogonalMatrix:
+#    '''
+#    Implements an orthogonal matrix as, conceptually, a list of columns.  When a new column is added,
+#    only its orthogonal component is retained.
+#    '''
+#    def __init__(OrthogonalMatrix self, unsigned int m, unsigned int n):
+#        self.data = np.empty(shape=(m,n),dtype=np.float)
+#        self.cursor = 0
+#
+#    cpdef append(OrthogonalMatrix self, cnp.ndarray[FLOAT_t,ndim=1] column):
+#        cdef cnp.ndarray[FLOAT_t, ndim=2] data = <cnp.ndarray[FLOAT_t, ndim=2]> self.get_data()
+#    
+#    cpdef get_data(OrthodonalMatrix self):
+#        return self.data
+    
+    
+
+
+
+

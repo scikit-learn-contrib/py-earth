@@ -4,13 +4,14 @@
 # cython: wraparound = False
 # cython: profile = True
 
-from _util cimport reorderxby, fastr, update_uv
+from _util cimport reorderxby, fastr, update_uv, augmented_normal
 from _basis cimport Basis, BasisFunction, ConstantBasisFunction, LinearBasisFunction, HingeBasisFunction
 from _choldate cimport cholupdate, choldowndate
 from _record cimport ForwardPassIteration
 
 from libc.math cimport sqrt, abs, log, log2
 import numpy as np
+import scipy.linalg
 cnp.import_array()
 cdef class ForwardPasser:
     
@@ -97,7 +98,7 @@ cdef class ForwardPasser:
         cdef BasisFunction bf2
         cdef unsigned int k = len(self.basis)
         cdef unsigned int endspan
-        self.R = np.empty(shape=(k+3,k+3))
+        self.R = np.empty(shape=(k+3,k+3),order='F')
         self.u = np.empty(shape=k+3, dtype=float)
         self.v = np.empty(shape=k+3, dtype=float)
         self.B_cum = np.empty(shape=k+2,dtype=np.float)
@@ -134,14 +135,22 @@ cdef class ForwardPasser:
                 if len(candidates_idx) > 0:
                     self.best_knot(parent_idx,variable,candidates_idx,&mse,&knot,&knot_idx)
                 else:
+                    print 'skipping %s, %s' %(parent,variable)
+                    print endspan
                     continue
+                if variable == 6:
+                    print 'using %s, %s' %(parent,variable)
+                
+                #The mse from bestKnot should not be trusted.  Recalculate it here.
+                B[:,k+1] = B[:,parent_idx]*(X[:,variable] - knot) * (X[:,variable] > knot)
+                mse = fastr(B,y,k+2) / self.m
                 
                 if knot_idx >= 0:
                     B[:,k+1] = X[:,k+1] - knot
                     B[:,k+1] *= (B[:,k+1] > 0)
                     B[:,k+1] *= B[:,parent_idx]
                     mse = fastr(B,y,k+2) / self.m
-                
+                print '%s, %s mse: %f' % (parent, variable, mse)
                 #Update the choices
                 if first:
                     knot_choice = knot
@@ -165,12 +174,15 @@ cdef class ForwardPasser:
         if knot_idx_choice == -1: #Selected linear term
             self.basis.append(LinearBasisFunction(parent,variable_choice,label))
         else:
+            print 'Choose: %s, %s' % (parent_choice, variable_choice)
             bf1 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,False,label)
             bf2 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,True,label)
             bf1.apply(X,B[:,k])
             bf2.apply(X,B[:,k+1])
             self.basis.append(bf1)
             self.basis.append(bf2)
+            #Orthogonalize the new basis
+            
         
         #Update the build record
         self.record.append(ForwardPassIteration(parent_idx_choice,variable_choice,knot_idx_choice,mse_choice,len(self.basis)))
@@ -229,8 +241,14 @@ cdef class ForwardPasser:
         for i in range(self.m):
             B[i,k+2] = self.y[i]#TODO: BLAS
         
-        #Get the cholesky factor using QR decomposition
-        R[:] = np.linalg.qr(B[:,0:k+3],mode='r') #TODO: Lapack
+        #Form the augmented normal matrix
+        augmented_normal(B,y,R,1)
+        
+        #Get the cholesky factor# using QR decomposition
+        scipy.linalg.cholesky(R,overwrite_a=True)
+#        np.linalg.lapack_lite.dpotrf('U',k+3,R,k+3,0)
+#        np.linalg.cholesky(R)
+#        R[:] = np.linalg.qr(B[:,0:k+3],mode='r') #TODO: Lapack
         
         #The lower right corner of the cholesky factor is the norm of the residual
         current_mse = (R[k+2,k+2] ** 2) / self.m
