@@ -116,7 +116,6 @@ cdef class ForwardPasser:
         #Normalize
         nrm = sqrt(np.dot(B_orth[:,k],B_orth[:,k]))
         if nrm <= self.zero_tol:
-            print 'nrm < zero_tol'
             B_orth[:,k] = 0
             c[k] = 0
             return 1 #The new column is in the column space of the previous columns
@@ -196,14 +195,17 @@ cdef class ForwardPasser:
                 
                 #Orthonormalize
                 B_orth[:,k] = B[:,k]
-                if self.orthonormal_update(k) == 1: #TODO: Check return value and handle appropriately
-                    linear_dependence = True
-                    print 'dependence'
-                    k -= 1
-                    
-#                print np.dot(B_orth[:,0:k+1].transpose(),B_orth[:,0:k+1])
+                
                 print [str(bf) for bf in self.basis]
-                print parent, variable, k
+                print parent, variable
+                
+                #If the new term is in the column space of the previous terms, decrement
+                #k so that best_knot doesn't have to deal with the new term.  I'm not 
+                #actually sure this is necessary.
+                if self.orthonormal_update(k) == 1:
+                    linear_dependence = True
+                    print 'dependency!'
+                    k -= 1
                 
                 #Find the valid knot candidates
                 candidates_idx = parent.valid_knots(B[:,parent_idx], X[:,variable], variable, self.check_every, endspan, self.minspan, self.minspan_alpha, self.n, self.mwork)
@@ -214,13 +216,12 @@ cdef class ForwardPasser:
                         self.best_knot(parent_idx,variable,k,candidates_idx,&mse,&knot,&knot_idx)
                     except:
                         print [str(bf) for bf in self.basis]
-                        print k
                         print parent, variable
                         raise
                 else:
                     continue
                 
-                
+                #If there was a linear dependency, reset k to normal
                 if linear_dependence:
                     k += 1
                 
@@ -301,8 +302,6 @@ cdef class ForwardPasser:
         mse is a pointer to the mean squared error of including just the linear term in B[:,k]
         '''
         
-#        cdef unsigned int k = len(self.basis)
-        
         cdef cnp.ndarray[FLOAT_t, ndim=1] b = <cnp.ndarray[FLOAT_t, ndim=1]> self.B[:,k+1]
         cdef cnp.ndarray[FLOAT_t, ndim=1] b_parent = <cnp.ndarray[FLOAT_t, ndim=1]> self.B[:,parent]
         cdef cnp.ndarray[FLOAT_t, ndim=1] u = <cnp.ndarray[FLOAT_t, ndim=1]> self.u
@@ -339,8 +338,6 @@ cdef class ForwardPasser:
         cdef FLOAT_t parent_squared_cum
         cdef FLOAT_t parent_times_y_cum
         
-        print '#'*80
-        
         #Compute the initial basis function
         candidate_idx = candidates[0]
         candidate = X[candidate_idx,variable]
@@ -366,45 +363,6 @@ cdef class ForwardPasser:
         
         #Compute the last element of z (the others are identical to c)
         z_end_squared = ((c_end - np.dot(u[0:k+1],c[0:k+1]))**2) / (u_end - np.dot(u[0:k+1],u[0:k+1]))
-#        
-#        c[k+1] = c_end
-#        try:
-#            R = np.linalg.qr(B_orth[:,0:k+2],mode='r').transpose()
-#            print R
-#            print np.dot(B_orth[:,0:k+2].transpose(),B_orth[:,0:k+2])
-#            print np.linalg.cholesky(np.dot(B_orth[:,0:k+2].transpose(),B_orth[:,0:k+2]))
-#            print np.linalg.svd(B_orth[:,0:k+2])[1]
-#            print np.linalg.eig(np.dot(B_orth[:,0:k+2].transpose(),B_orth[:,0:k+2]))[0]
-#            print 'c:',c[0:k+2]
-#            print 'u:',u[0:k+1]
-#            z = np.linalg.solve(R,c[0:k+2])
-#            print 'z[-1]**2: %f, z_end_squared: %f' % (z[-1]**2, z_end_squared)
-#        except: 
-#            pass
-##        
-#        if z_end_squared**2 > self.m*self.sst - self.c_squared:
-#            print 'ZZOMG!'
-#            c[k+1] = c_end
-#            try:
-#                R = np.linalg.qr(B_orth[:,0:k+2],mode='r').transpose()
-#                print R
-#                print np.dot(B_orth[:,0:k+2].transpose(),B_orth[:,0:k+2])
-#                print np.linalg.cholesky(np.dot(B_orth[:,0:k+2].transpose(),B_orth[:,0:k+2]))
-#                print np.linalg.svd(np.dot(B_orth[:,0:k+2].transpose(),B_orth[:,0:k+2]))[1]
-#                print np.linalg.eig(np.dot(B_orth[:,0:k+2].transpose(),B_orth[:,0:k+2]))[0]
-#                print 'c:',c[0:k+2]
-#                print 'u:',u[0:k+1]
-#                print 'u_end:', u_end
-#                z = np.linalg.solve(R,c[0:k+2])
-#                print 'z[-1]**2: %f, z_end_squared: %f' % (z[-1]**2, z_end_squared)
-#            except: 
-#                pass
-            
-            
-#        if z_end_squared < 0:
-#            print 'z_end_squared < 0 prior'
-#        else:
-#            print 'z_end_squared > 0 prior'
         
         #Minimizing the norm is actually equivalent to maximizing z_end_squared
         #Store z_end_squared and the current candidate as the best knot choice
@@ -508,6 +466,10 @@ cdef class ForwardPasser:
             z_end_squared = ((c_end - np.dot(u[0:k+1],c[0:k+1]))**2) / (u_end - np.dot(u[0:k+1],u[0:k+1]))
             #END HYPER-OPTIMIZED
             
+            #Check for negative-definiteness
+            if z_end_squared > self.m*self.sst - self.c_squared:
+                print "ZOMG!", self.sst - ((self.c_squared + best_z_end_squared)/self.m), 
+            
             for i in range(self.m):#TODO: Vectorize?
                 B_orth[i,k+1]  = 0
             for i in range(self.m):
@@ -516,19 +478,19 @@ cdef class ForwardPasser:
                     B_orth[i,k+1] = b_parent[i]*float_tmp
                 else:
                     break
-            
+        
 #            B_orth[last_candidate_idx+1:candidate_idx,k+1] += delta_b[last_candidate_idx+1:candidate_idx]
-            b[0:last_candidate_idx+1] += b_parent[0:last_candidate_idx+1]*diff
-            c[k+1] = c_end
+            c_ = c[0:k+2].copy()
+            c_[k+1] = np.dot(B_orth[:,k+1],y)
             
-            if np.max(np.abs(b - B_orth[:,k+1])) > .0000001:
-                print 'dude!'
-                raise ValueError
+#            if np.max(np.abs(b - B_orth[:,k+1])) > .0000001:
+#                print 'dude!'
+#                raise ValueError
 ##            
             try:
                 R = np.linalg.qr(B_orth[:,0:k+2],mode='r').transpose()
                 
-                z = np.linalg.solve(R,c[0:k+2])
+                z = np.linalg.solve(R,c_[0:k+2])
                 
             except:
                 pass
@@ -538,45 +500,16 @@ cdef class ForwardPasser:
                 print np.linalg.cholesky(np.dot(B_orth[:,0:k+2].transpose(),B_orth[:,0:k+2]))
                 print np.linalg.svd(B_orth[:,0:k+2])[1]
                 print np.linalg.eig(np.dot(B_orth[:,0:k+2].transpose(),B_orth[:,0:k+2]))[0]
-                print 'c:',c[0:k+2]
+                print 'c_:',c_[0:k+2]
+                print 'c:', c[0:k+1]
+                print 'c_end:', c_end
                 print 'u:',u[0:k+1]
                 print 'u_end:', u_end
                 print 'z[-1]: %f, z_end: %f' % (z[-1]**2, z_end_squared)
                 print candidate, last_candidate
                 print candidate_idx, last_candidate_idx, last_last_candidate_idx
                 raise ValueError
-#            
-            #Check for negative-definiteness
-#            if z_end_squared**2 > self.m*self.sst - self.c_squared:
-#                print "ZOMG!"
-#                print z_end_squared**2 , self.m*self.sst - self.c_squared
-##                B_orth[last_candidate_idx+1:candidate_idx,k+1] += delta_b[last_candidate_idx+1:candidate_idx]
-##                B_orth[0:last_candidate_idx+1,k+1] += b_parent[0:last_candidate_idx+1]*diff
-##                c[k+1] = c_end
-#                
-#                try:
-#                    R = np.linalg.qr(B_orth[:,0:k+2],mode='r').transpose()
-#                    print R
-#                    print np.dot(B_orth[:,0:k+2].transpose(),B_orth[:,0:k+2])
-#                    print np.linalg.cholesky(np.dot(B_orth[:,0:k+2].transpose(),B_orth[:,0:k+2]))
-#                    print np.linalg.svd(B_orth[:,0:k+2])[1]
-#                    print np.linalg.eig(np.dot(B_orth[:,0:k+2].transpose(),B_orth[:,0:k+2]))[0]
-#                    print 'c:',c[0:k+2]
-#                    print 'u:',u[0:k+1]
-#                    print 'u_end:', u_end
-#                    z = np.linalg.solve(R,c[0:k+2])
-#                    print 'z[-1]: %f, z_end_squared: %f' % (z[-1]**2, z_end_squared)
-#                    print candidate, last_candidate
-#                    print candidate_idx, last_candidate_idx, last_last_candidate_idx
-#                except:
-#                    pass
-#                raise ValueError
-                
-#            if z_end_squared < 0:
-#                print 'z_end_squared < 0'
-#                continue
-#            else:
-#                print 'z_end_squared > 0'
+##        
                 
             #Update the best if necessary
             if z_end_squared > best_z_end_squared:
@@ -585,7 +518,6 @@ cdef class ForwardPasser:
                 best_candidate = candidate
             
         #Compute the mse for the best z_end and set return values
-        print best_z_end_squared
         mse[0] = self.sst - ((self.c_squared + best_z_end_squared)/self.m)
         if mse[0] < 0:
             raise ValueError
