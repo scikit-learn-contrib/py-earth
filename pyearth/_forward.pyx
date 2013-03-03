@@ -35,7 +35,7 @@ cdef class ForwardPasser:
         self.xlabels = kwargs['xlabels'] if 'xlabels' in kwargs else ['x'+str(i) for i in range(self.n)]
         if self.check_every < 0:
             self.check_every = <int> (self.m / self.min_search_points) if self.m > self.min_search_points else 1
-        self.sst = np.std(self.y)**2
+        self.sst = np.dot(self.y,self.y)/self.m
         self.record = ForwardPassRecord(self.m,self.n,self.penalty,self.sst)
         self.basis = Basis()
         self.basis.append(ConstantBasisFunction())
@@ -162,7 +162,7 @@ cdef class ForwardPasser:
             
             #Sort the data
             self.sorting[:] = np.argsort(X[:,variable])[::-1] #TODO: eliminate Python call / data copy
-            reorderxby(X,B,y,self.sorting,self.sort_tracker)
+            reorderxby(X,B,B_orth,y,self.sorting,self.sort_tracker)
             
             #Iterate over parents
             for parent_idx in range(k):
@@ -236,7 +236,7 @@ cdef class ForwardPasser:
             B_orth[:,k+1] = B[:,k+1]
             self.orthonormal_update(k+1)#TODO: Check return value and handle appropriately
             
-            
+        #TODO: Undo the sorting
         
         #Update the build record
         self.record.append(ForwardPassIteration(parent_idx_choice,variable_choice,knot_idx_choice,mse_choice,len(self.basis)))
@@ -280,12 +280,12 @@ cdef class ForwardPasser:
         cdef FLOAT_t best_candidate
         cdef FLOAT_t best_z_end
         cdef FLOAT_t y_cum
+        cdef FLOAT_t b_times_parent_cum
         cdef FLOAT_t diff
         cdef FLOAT_t delta_b_squared
         cdef FLOAT_t delta_c_end
         cdef FLOAT_t delta_u_end
-        
-        print 'ENTER\n' + '#'*80
+        cdef FLOAT_t parent_squared_cum
         
         #Compute the initial basis function
         candidate_idx = candidates[0]
@@ -322,7 +322,9 @@ cdef class ForwardPasser:
         #Initialize the accumulators
         last_candidate_idx = 0
         y_cum = y[0]
-        B_orth_cum[0:k+2] = B_orth[0,0:k+2]
+        B_orth_cum[0:k+1] = B_orth[0,0:k+1]
+        b_times_parent_cum = b[0] * b_parent[0]
+        parent_squared_cum = b_parent[0] ** 2
         
         #Now loop over the remaining candidates and update z_end for each, looking for the greatest value
         for i in range(1,num_candidates):
@@ -336,6 +338,39 @@ cdef class ForwardPasser:
             
             #Update the accumulators and compute delta_b
             diff = last_candidate - candidate
+            delta_c_end = 0.0
+            
+            
+            
+            #What follows is a section of code that has been optimized for speed at the expense of 
+            #some readability.  To make it easier to understand this code in the future, I have included a 
+            #"simple" block that implements the same math in a more straightforward (but much less efficient) 
+            #way.  The (commented out) code between "BEGIN SIMPLE" and "END SIMPLE" should always produce the same output as the
+            #code between "BEGIN HYPER-OPTIMIZED" and "END HYPER-OPTIMIZED".
+            
+            #BEGIN SIMPLE
+#            #Calculate delta_b
+#            for j  in range(0,last_candidate_idx+1):
+#                delta_b[j] = diff
+#            for j in range(last_candidate_idx+1,candidate_idx):
+#                float_tmp = (X[j,variable] - candidate) * b_parent[j]
+#                delta_b[j] = float_tmp
+#            
+#            #Update u and z_end
+#            u[0:k+1] += np.dot(delta_b,B_orth[:,0:k+1])
+#            u_end += 2*np.dot(delta_b,b) + np.dot(delta_b, delta_b)
+#            
+#            #Update c_end
+#            c_end += np.dot(delta_b,y)
+#            
+#            #Update z_end
+#            z_end = (c_end - np.dot(u[0:k+1],c[0:k+1])) / sqrt(u_end)
+#            
+#            #Update b
+#            b += delta_b
+            #END SIMPLE
+            
+            #BEGIN HYPER-OPTIMIZED
             delta_b_squared = 0.0
             delta_c_end = 0.0
             delta_u_end = 0.0
@@ -343,9 +378,10 @@ cdef class ForwardPasser:
                 y_cum += y[j]
                 for h in range(k+1):#TODO: BLAS
                     B_orth_cum[h] += B_orth[j,h]
-                B_orth_cum[k+1] += b[j]*b_parent[j]
+                b_times_parent_cum += b[j]*b_parent[j]
+                parent_squared_cum += b_parent[j] ** 2
             delta_c_end += diff * y_cum
-            delta_u_end += diff * B_orth_cum[k+1]
+            delta_u_end += 2*diff * b_times_parent_cum
             delta_b_squared = (diff**2)*(last_candidate_idx+1)
             for j in range(last_candidate_idx+1,candidate_idx):
                 float_tmp = (X[j,variable] - candidate) * b_parent[j]
@@ -365,18 +401,17 @@ cdef class ForwardPasser:
             u[0:k+1] += np.dot(delta_b[last_candidate_idx+1:candidate_idx],B_orth[last_candidate_idx+1:candidate_idx,0:k+1]) #TODO: BLAS
             u[0:k+1] += diff*B_orth_cum[0:k+1]
             
-            #Update the B_orth accumulator and b
-            B_orth_cum[k+1] += B_orth_cum[parent] * diff
+            #Update b and b_times_parent_cum
             b[last_candidate_idx+1:candidate_idx] += delta_b[last_candidate_idx+1:candidate_idx]
+            b_times_parent_cum += parent_squared_cum * diff
             
             #Compute the new z_end (this is the quantity we're optimizing)
             z_end = (c_end - np.dot(u[0:k+1],c[0:k+1])) / sqrt(u_end)
+            #END HYPER-OPTIMIZED
             
             #Check for negative-definiteness
-            if z_end > self.sst - self.c_squared:
-                print 'OMGOMG!'
-            else:
-                print 'Okay'
+#            if z_end**2 > self.m*self.sst - self.c_squared:
+#                pass #TODO: How should this case be handled?
                 
             #Update the best if necessary
             if z_end > best_z_end:
