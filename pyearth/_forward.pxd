@@ -1,4 +1,3 @@
-
 cimport numpy as cnp
 import numpy as np
 ctypedef cnp.float64_t FLOAT_t
@@ -14,9 +13,10 @@ ctypedef enum StoppingCondition:
     LOWGRSQ=3,
     NUMDIFF=4,
     NUMERR=5
-    
 
 cdef class ForwardPasser:
+
+	#User selected parameters
     cdef int endspan
     cdef int minspan
     cdef FLOAT_t endspan_alpha
@@ -27,22 +27,33 @@ cdef class ForwardPasser:
     cdef FLOAT_t penalty
     cdef int check_every
     cdef int min_search_points
-    cdef ForwardPassRecord record
+    cdef list xlabels
+    cdef FLOAT_t zero_tol
+    
+    #Input data
     cdef cnp.ndarray X
     cdef cnp.ndarray y
     cdef unsigned int m
     cdef unsigned int n
-    cdef Basis basis
-    cdef cnp.ndarray B
-    cdef list xlabels
+    cdef FLOAT_t sst
+    
+    #Working floating point data 
+    cdef cnp.ndarray B #Data matrix in basis space
+    cdef cnp.ndarray B_orth #Orthogonalized version of B
+    cdef cnp.ndarray delta
+    cdef cnp.ndarray c
+    cdef cnp.ndarray u
+    cdef cnp.ndarray B_orth_cum
+    cdef FLOAT_t c_squared
+    
+    #Working integer data
     cdef cnp.ndarray sort_tracker
     cdef cnp.ndarray sorting
     cdef cnp.ndarray mwork
-    cdef cnp.ndarray delta
-    cdef cnp.ndarray R
-    cdef cnp.ndarray u
-    cdef cnp.ndarray v
-    cdef cnp.ndarray B_cum
+    
+    #Object construction
+    cdef ForwardPassRecord record
+    cdef Basis basis
     
     cpdef Basis get_basis(ForwardPasser self)
     
@@ -50,10 +61,12 @@ cdef class ForwardPasser:
     
     cdef stop_check(ForwardPasser self)
     
+    cpdef int orthonormal_update(ForwardPasser self, unsigned int k)
+    
+    cpdef orthonormal_downdate(ForwardPasser self, unsigned int k)
+    
     cdef next_pair(ForwardPasser self)
     
     cdef best_knot(ForwardPasser self, unsigned int parent, unsigned int variable, cnp.ndarray[INT_t,ndim=1] candidates, FLOAT_t * mse, FLOAT_t * knot, unsigned int * knot_idx)
 
-    
-    
     

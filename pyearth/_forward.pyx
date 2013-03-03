@@ -35,27 +35,38 @@ cdef class ForwardPasser:
         self.xlabels = kwargs['xlabels'] if 'xlabels' in kwargs else ['x'+str(i) for i in range(self.n)]
         if self.check_every < 0:
             self.check_every = <int> (self.m / self.min_search_points) if self.m > self.min_search_points else 1
-        sst = np.std(self.y)**2
-        self.record = ForwardPassRecord(self.m,self.n,self.penalty,sst)
+        self.sst = np.std(self.y)**2
+        self.record = ForwardPassRecord(self.m,self.n,self.penalty,self.sst)
         self.basis = Basis()
         self.basis.append(ConstantBasisFunction())
-        self.B = np.ones(shape=(self.m,self.max_terms+1), order='C',dtype=np.float)
-        self.sort_tracker = np.empty(shape=self.m, dtype=int)
-        for i in range(self.m):
-            self.sort_tracker[i] = i
+        
         self.sorting = np.empty(shape=self.m, dtype=int)
         self.mwork = np.empty(shape=self.m, dtype=int)
         self.delta = np.empty(shape=self.m, dtype=float)
+        self.u = np.empty(shape=self.max_terms, dtype=float)
+        self.B_orth_cum = np.empty(shape=self.max_terms,dtype=np.float)
+        self.B = np.ones(shape=(self.m,self.max_terms), order='C',dtype=np.float)
+        self.B_orth = np.ones(shape=(self.m,self.max_terms), order='C',dtype=np.float)
+        self.u = np.empty(shape=self.max_terms, dtype=np.float)
+        self.c = np.empty(shape=self.max_terms, dtype=np.float)
+        self.c_squared = 0.0
+        self.sort_tracker = np.empty(shape=self.m, dtype=int)
+        for i in range(self.m):
+            self.sort_tracker[i] = i
+        self.zero_tol = 1e-8
         
+        #Initialize B_orth, c, and c_squared (assuming column 0 of B_orth is already filled with 1)
+        self.orthonormal_update(0)
+    
+    cpdef Basis get_basis(ForwardPasser self):
+        return self.basis
+    
     cpdef run(ForwardPasser self):
         while True:
             self.next_pair()
             if self.stop_check():
                 break
-        
-    cpdef Basis get_basis(ForwardPasser self):
-        return self.basis
-        
+
     cdef stop_check(ForwardPasser self):
         last = self.record.__len__() - 1
         if self.record.iterations[last].get_size() + 2 > self.max_terms:
@@ -73,6 +84,45 @@ cdef class ForwardPasser:
             self.record.stopping_condition = LOWGRSQ
             return True
         return False
+    
+    cpdef int orthonormal_update(ForwardPasser self, unsigned int k):
+        '''Orthogonalize and normalize column k of B_orth against all previous columns of B_orth.'''
+        #Currently implemented using modified Gram-Schmidt process
+        #TODO: Optimize - replace calls to numpy with calls to blas
+        
+        cdef cnp.ndarray[FLOAT_t, ndim=2] B_orth = <cnp.ndarray[FLOAT_t, ndim=2]> self.B_orth
+        cdef cnp.ndarray[FLOAT_t, ndim=1] c = <cnp.ndarray[FLOAT_t, ndim=1]> self.c
+        cdef cnp.ndarray[FLOAT_t, ndim=1] y = <cnp.ndarray[FLOAT_t, ndim=1]> self.y
+        
+        cdef unsigned int i
+        
+        #Orthogonalize
+        if k > 0:
+            for i in range(k):
+                B_orth[:,k] -= B_orth[:,i] * (np.dot(B_orth[:,k],B_orth[:,i]) / np.dot(B_orth[:,i],B_orth[:,i]))
+        
+        #Normalize
+        nrm = sqrt(np.dot(B_orth[:,k],B_orth[:,k]))
+        if nrm <= self.zero_tol:
+            B_orth[:,k] = 0
+            c[k] = 0
+            return 1 #The new column is in the column space of the previous columns
+        B_orth[:,k] /= nrm
+        
+        #Update c
+        c[k] = np.dot(B_orth[:,k],y)
+        self.c_squared += c[k]**2
+        
+        return 0 #No problems
+    
+    cpdef orthonormal_downdate(ForwardPasser self, unsigned int k):
+        '''
+        Undo the effects of the last orthonormal update.  You can only undo the last orthonormal update this way.
+        There will be no warning of any kind if you mess this up.  You'll just get wrong answers.
+        In reality, all this does is downdate c_squared (the elements of c and B_orth are left alone, since they
+        can simply be ignored until they are overwritten).
+        '''
+        self.c_squared -= self.c[k]**2
         
     def trace(self):
         return self.record
@@ -98,13 +148,10 @@ cdef class ForwardPasser:
         cdef BasisFunction bf2
         cdef unsigned int k = len(self.basis)
         cdef unsigned int endspan
-        self.R = np.empty(shape=(k+3,k+3),order='F')
-        self.u = np.empty(shape=k+3, dtype=float)
-        self.v = np.empty(shape=k+3, dtype=float)
-        self.B_cum = np.empty(shape=k+2,dtype=np.float)
         
         cdef cnp.ndarray[FLOAT_t,ndim=2] X = <cnp.ndarray[FLOAT_t,ndim=2]> self.X
         cdef cnp.ndarray[FLOAT_t,ndim=2] B = <cnp.ndarray[FLOAT_t,ndim=2]> self.B
+        cdef cnp.ndarray[FLOAT_t,ndim=2] B_orth = <cnp.ndarray[FLOAT_t,ndim=2]> self.B_orth
         cdef cnp.ndarray[FLOAT_t,ndim=1] y = <cnp.ndarray[FLOAT_t,ndim=1]> self.y
         
         if self.endspan < 0:
@@ -128,6 +175,10 @@ cdef class ForwardPasser:
                 #Add the linear term to B
                 B[:,k] = B[:,parent_idx]*X[:,variable] #TODO: Optimize
                 
+                #Orthonormalize
+                B_orth[:,k] = B[:,k]
+                self.orthonormal_update(k) #TODO: Check return value and handle appropriately
+                
                 #Find the valid knot candidates
                 candidates_idx = parent.valid_knots(B[:,parent_idx], X[:,variable], variable, self.check_every, endspan, self.minspan, self.minspan_alpha, self.n, self.mwork)
 
@@ -135,22 +186,18 @@ cdef class ForwardPasser:
                 if len(candidates_idx) > 0:
                     self.best_knot(parent_idx,variable,candidates_idx,&mse,&knot,&knot_idx)
                 else:
-                    print 'skipping %s, %s' %(parent,variable)
-                    print endspan
                     continue
-                if variable == 6:
-                    print 'using %s, %s' %(parent,variable)
                 
-                #The mse from bestKnot should not be trusted.  Recalculate it here.
-                B[:,k+1] = B[:,parent_idx]*(X[:,variable] - knot) * (X[:,variable] > knot)
-                mse = fastr(B,y,k+2) / self.m
-                
-                if knot_idx >= 0:
-                    B[:,k+1] = X[:,k+1] - knot
-                    B[:,k+1] *= (B[:,k+1] > 0)
-                    B[:,k+1] *= B[:,parent_idx]
-                    mse = fastr(B,y,k+2) / self.m
-                print '%s, %s mse: %f' % (parent, variable, mse)
+#                #The mse from bestKnot should not be trusted.  Recalculate it here.
+#                B[:,k+1] = B[:,parent_idx]*(X[:,variable] - knot) * (X[:,variable] > knot)
+#                mse = fastr(B,y,k+2) / self.m
+#                
+#                if knot_idx >= 0:
+#                    B[:,k+1] = X[:,k+1] - knot
+#                    B[:,k+1] *= (B[:,k+1] > 0)
+#                    B[:,k+1] *= B[:,parent_idx]
+#                    mse = fastr(B,y,k+2) / self.m
+
                 #Update the choices
                 if first:
                     knot_choice = knot
@@ -167,6 +214,9 @@ cdef class ForwardPasser:
                     parent_idx_choice = parent_idx
                     parent_choice = parent
                     variable_choice = variable
+                    
+                #Do and orthonormal downdate
+                self.orthonormal_downdate(k)
         
         #Add the new basis functions
         parent = self.basis.get(parent_idx)
@@ -174,7 +224,6 @@ cdef class ForwardPasser:
         if knot_idx_choice == -1: #Selected linear term
             self.basis.append(LinearBasisFunction(parent,variable_choice,label))
         else:
-            print 'Choose: %s, %s' % (parent_choice, variable_choice)
             bf1 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,False,label)
             bf2 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,True,label)
             bf1.apply(X,B[:,k])
@@ -182,11 +231,15 @@ cdef class ForwardPasser:
             self.basis.append(bf1)
             self.basis.append(bf2)
             #Orthogonalize the new basis
+            B_orth[:,k] = B[:,k]
+            self.orthonormal_update(k)#TODO: Check return value and handle appropriately
+            B_orth[:,k+1] = B[:,k+1]
+            self.orthonormal_update(k+1)#TODO: Check return value and handle appropriately
+            
             
         
         #Update the build record
         self.record.append(ForwardPassIteration(parent_idx_choice,variable_choice,knot_idx_choice,mse_choice,len(self.basis)))
-        
         
     cdef best_knot(ForwardPasser self, unsigned int parent, unsigned int variable, cnp.ndarray[INT_t,ndim=1] candidates, FLOAT_t * mse, FLOAT_t * knot, unsigned int * knot_idx):
         '''
@@ -198,77 +251,80 @@ cdef class ForwardPasser:
         candidates is in increasing order (it is an array of indices into X[:,variable]
         mse is a pointer to the mean squared error of including just the linear term in B[:,k]
         '''
-        cdef unsigned int h
-        cdef unsigned int i
+        
         cdef unsigned int k = len(self.basis)
+        
+        cdef cnp.ndarray[FLOAT_t, ndim=1] b = <cnp.ndarray[FLOAT_t, ndim=1]> self.B[:,k+1]
+        cdef cnp.ndarray[FLOAT_t, ndim=1] b_parent = <cnp.ndarray[FLOAT_t, ndim=1]> self.B[:,parent]
+        cdef cnp.ndarray[FLOAT_t, ndim=1] u = <cnp.ndarray[FLOAT_t, ndim=1]> self.u
+        cdef cnp.ndarray[FLOAT_t, ndim=2] B_orth = <cnp.ndarray[FLOAT_t, ndim=2]> self.B_orth
+        cdef cnp.ndarray[FLOAT_t, ndim=2] X = <cnp.ndarray[FLOAT_t, ndim=2]> self.X
+        cdef cnp.ndarray[FLOAT_t, ndim=1] y = <cnp.ndarray[FLOAT_t, ndim=1]> self.y
+        cdef cnp.ndarray[FLOAT_t, ndim=1] c = <cnp.ndarray[FLOAT_t, ndim=1]> self.c
+        cdef cnp.ndarray[FLOAT_t, ndim=1] delta_b = <cnp.ndarray[FLOAT_t, ndim=1]> self.delta
+        cdef cnp.ndarray[FLOAT_t, ndim=1] B_orth_cum = <cnp.ndarray[FLOAT_t, ndim=1]> self.B_orth_cum
+        
+        cdef unsigned int num_candidates = candidates.shape[0]
+        
+        cdef unsigned int i
         cdef unsigned int j
-        cdef unsigned int num_candidates
+        cdef FLOAT_t u_end
+        cdef FLOAT_t c_end
+        cdef FLOAT_t z_end
         cdef unsigned int candidate_idx
-        cdef FLOAT_t candidate
         cdef unsigned int last_candidate_idx
         cdef unsigned int last_last_candidate_idx
+        cdef unsigned int best_candidate_idx
+        cdef FLOAT_t candidate
         cdef FLOAT_t last_candidate
-        cdef bint bool_tmp
-        cdef FLOAT_t float_tmp
-        cdef FLOAT_t delta_squared
-        cdef FLOAT_t delta_y
-        cdef FLOAT_t current_mse
+        cdef FLOAT_t best_candidate
+        cdef FLOAT_t best_z_end
         cdef FLOAT_t y_cum
         cdef FLOAT_t diff
+        cdef FLOAT_t delta_b_squared
+        cdef FLOAT_t delta_c_end
+        cdef FLOAT_t delta_u_end
         
-        cdef cnp.ndarray[FLOAT_t,ndim=2] X = <cnp.ndarray[FLOAT_t,ndim=2]> self.X
-        cdef cnp.ndarray[FLOAT_t,ndim=2] B = <cnp.ndarray[FLOAT_t,ndim=2]> self.B
-        cdef cnp.ndarray[FLOAT_t,ndim=2] R = <cnp.ndarray[FLOAT_t,ndim=2]> self.R
-        cdef cnp.ndarray[FLOAT_t,ndim=1] y = <cnp.ndarray[FLOAT_t,ndim=1]> self.y
-        cdef cnp.ndarray[FLOAT_t,ndim=1] delta = <cnp.ndarray[FLOAT_t,ndim=1]> self.delta
-        cdef cnp.ndarray[FLOAT_t,ndim=1] u = <cnp.ndarray[FLOAT_t,ndim=1]> self.u
-        cdef cnp.ndarray[FLOAT_t,ndim=1] v = <cnp.ndarray[FLOAT_t,ndim=1]> self.v
-        cdef cnp.ndarray[FLOAT_t,ndim=1] B_cum = <cnp.ndarray[FLOAT_t,ndim=1]> self.B_cum
+        print 'ENTER\n' + '#'*80
         
-        #Put the first candidate into B
+        #Compute the initial basis function
         candidate_idx = candidates[0]
         candidate = X[candidate_idx,variable]
         for i in range(self.m):#TODO: Vectorize?
-            B[i,k+1] = 0
+            b[i] = 0
         for i in range(self.m):
             float_tmp = X[i,variable] - candidate
             if float_tmp > 0:
-                B[i,k+1] = B[i,parent]*float_tmp
+                b[i] = b_parent[i]*float_tmp
             else:
                 break
             
-        #Put y into B to form the augmented data matrix
-        for i in range(self.m):
-            B[i,k+2] = self.y[i]#TODO: BLAS
+        #Compute the initial covariance column, u (not including the final element)
+        u[0:k+1] = np.dot(b,B_orth[:,0:k+1])
         
-        #Form the augmented normal matrix
-        augmented_normal(B,y,R,1)
+        #Compute the new last elements of c and u
+        c_end = np.dot(b,y)
+        u_end = np.dot(b,b)
         
-        #Get the cholesky factor# using QR decomposition
-        scipy.linalg.cholesky(R,overwrite_a=True)
-#        np.linalg.lapack_lite.dpotrf('U',k+3,R,k+3,0)
-#        np.linalg.cholesky(R)
-#        R[:] = np.linalg.qr(B[:,0:k+3],mode='r') #TODO: Lapack
+        #Compute the last element of z (the others are identical to c)
+        z_end = (c_end - np.dot(u[0:k+1],c[0:k+1])) / sqrt(u_end)
         
-        #The lower right corner of the cholesky factor is the norm of the residual
-        current_mse = (R[k+2,k+2] ** 2) / self.m
-        
-        #Initialize the choices
-        mse[0] = current_mse
-        knot_idx[0] = candidate_idx
-        knot[0] = candidate
+        #Minimizing the norm is actually equivalent to maximizing z_end
+        #Store z_end and the current candidate as the best knot choice
+        best_z_end = z_end
+        best_candidate_idx = candidate_idx
+        best_candidate = candidate
         
         #Initialize the delta vector to 0
         for i in range(self.m):
-            delta[i] = 0 #TODO: BLAS
-
+            delta_b[i] = 0 #TODO: BLAS
+        
         #Initialize the accumulators
         last_candidate_idx = 0
         y_cum = y[0]
-        B_cum[:] = B[0,0:k+2]
-
-        #Iterate over remaining candidates
-        num_candidates = candidates.shape[0]
+        B_orth_cum[0:k+2] = B_orth[0,0:k+2]
+        
+        #Now loop over the remaining candidates and update z_end for each, looking for the greatest value
         for i in range(1,num_candidates):
             
             #Update the candidate
@@ -278,25 +334,59 @@ cdef class ForwardPasser:
             candidate_idx = candidates[i]
             candidate = X[candidate_idx,variable]
             
-            #Compute the delta vector
-            update_uv(last_candidate, candidate, candidate_idx, 
-                last_candidate_idx, last_last_candidate_idx, k, variable, parent,
-                X, y, B, &y_cum, B_cum, u, v, delta)
+            #Update the accumulators and compute delta_b
+            diff = last_candidate - candidate
+            delta_b_squared = 0.0
+            delta_c_end = 0.0
+            delta_u_end = 0.0
+            for j in range(last_last_candidate_idx+1,last_candidate_idx+1):
+                y_cum += y[j]
+                for h in range(k+1):#TODO: BLAS
+                    B_orth_cum[h] += B_orth[j,h]
+                B_orth_cum[k+1] += b[j]*b_parent[j]
+            delta_c_end += diff * y_cum
+            delta_u_end += diff * B_orth_cum[k+1]
+            delta_b_squared = (diff**2)*(last_candidate_idx+1)
+            for j in range(last_candidate_idx+1,candidate_idx):
+                float_tmp = (X[j,variable] - candidate) * b_parent[j]
+                delta_b[j] = float_tmp
+                delta_b_squared += float_tmp**2
+                delta_c_end += float_tmp * y[j]
+                delta_u_end += 2*float_tmp*b[j]
             
-            #Update the cholesky factor
-            cholupdate(R,u)
-
-            #Downdate the cholesky factor
-            choldowndate(R,v)
-
-            #The lower right corner of the cholesky factor is the norm of the residual
-            current_mse = (R[k+2,k+2] ** 2) / self.m
-
-            #Update the choices
-            if current_mse < mse[0]:
-                mse[0] = current_mse
-                knot_idx[0] = candidate_idx
-                knot[0] = candidate
+            #Update u_end
+            delta_u_end += delta_b_squared
+            u_end += delta_u_end
             
+            #Update c_end
+            c_end += delta_c_end
+            
+            #Update u
+            u[0:k+1] += np.dot(delta_b[last_candidate_idx+1:candidate_idx],B_orth[last_candidate_idx+1:candidate_idx,0:k+1]) #TODO: BLAS
+            u[0:k+1] += diff*B_orth_cum[0:k+1]
+            
+            #Update the B_orth accumulator and b
+            B_orth_cum[k+1] += B_orth_cum[parent] * diff
+            b[last_candidate_idx+1:candidate_idx] += delta_b[last_candidate_idx+1:candidate_idx]
+            
+            #Compute the new z_end (this is the quantity we're optimizing)
+            z_end = (c_end - np.dot(u[0:k+1],c[0:k+1])) / sqrt(u_end)
+            
+            #Check for negative-definiteness
+            if z_end > self.sst - self.c_squared:
+                print 'OMGOMG!'
+            else:
+                print 'Okay'
+                
+            #Update the best if necessary
+            if z_end > best_z_end:
+                best_z_end = z_end
+                best_candidate_idx = candidate_idx
+                best_candidate = candidate
+            
+        #Compute the mse for the best z_end and set return values
+        mse[0] = self.sst - ((self.c_squared + best_z_end**2)/self.m)
+        knot[0] = best_candidate
+        knot_idx[0] = best_candidate_idx
 
     
