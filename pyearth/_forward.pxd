@@ -43,7 +43,7 @@ cdef class ForwardPasser:
     cdef cnp.ndarray delta
     cdef cnp.ndarray c
     cdef cnp.ndarray u
-    cdef cnp.ndarray B_orth_cum
+    cdef cnp.ndarray B_orth_times_parent_cum
     cdef FLOAT_t c_squared
     
     #Working integer data
@@ -67,6 +67,6 @@ cdef class ForwardPasser:
     
     cdef next_pair(ForwardPasser self)
     
-    cdef best_knot(ForwardPasser self, unsigned int parent, unsigned int variable, cnp.ndarray[INT_t,ndim=1] candidates, FLOAT_t * mse, FLOAT_t * knot, unsigned int * knot_idx)
+    cdef best_knot(ForwardPasser self, unsigned int parent, unsigned int variable, unsigned int k, cnp.ndarray[INT_t,ndim=1] candidates, FLOAT_t * mse, FLOAT_t * knot, unsigned int * knot_idx)
 
     

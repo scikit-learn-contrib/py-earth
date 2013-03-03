@@ -3,7 +3,7 @@ import numpy
 import cProfile
 from pyearth import Earth
 from matplotlib import pyplot
-
+numpy.set_printoptions(precision=4)
 #Create some fake data
 numpy.random.seed(2)
 m = 1000

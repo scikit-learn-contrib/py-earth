@@ -11,12 +11,19 @@ cdef class BasisFunction:
     cdef list children
     cdef bint pruned
     cdef bint prunable
+    cdef bint splittable
     
     cpdef bint has_knot(BasisFunction self)
     
     cpdef bint is_prunable(BasisFunction self)
     
     cpdef bint is_pruned(BasisFunction self)
+    
+    cpdef bint is_splittable(BasisFunction self)
+    
+    cpdef bint make_splittable(BasisFunction self)
+        
+    cpdef bint make_unsplittable(BasisFunction self)
     
     cdef list get_children(BasisFunction self)
     

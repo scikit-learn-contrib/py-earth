@@ -17,6 +17,7 @@ cdef class BasisFunction:
         self.children = []
         self.prunable = True
         self.child_map = {}
+        self.splittable = True
         
     cpdef bint has_knot(BasisFunction self):
         return False
@@ -26,6 +27,15 @@ cdef class BasisFunction:
     
     cpdef bint is_pruned(BasisFunction self):
         return self.pruned
+    
+    cpdef bint is_splittable(BasisFunction self):
+        return self.splittable
+    
+    cpdef bint make_splittable(BasisFunction self):
+        self.splittable = True
+        
+    cpdef bint make_unsplittable(BasisFunction self):
+        self.splittable = False
     
     cdef list get_children(BasisFunction self):
         return self.children

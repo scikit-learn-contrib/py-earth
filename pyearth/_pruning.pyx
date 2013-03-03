@@ -28,7 +28,7 @@ cdef class PruningPasser:
         cdef unsigned int i
         cdef unsigned int j
         cdef unsigned int basis_size = len(self.basis)
-        cdef unsigned int pruned_basis_size = len(self.basis)
+        cdef unsigned int pruned_basis_size = self.basis.plen()
         cdef FLOAT_t gcv_
         cdef unsigned int best_iteration
         cdef unsigned int best_bf_to_prune
@@ -49,13 +49,13 @@ cdef class PruningPasser:
             mse = (1.0/self.m)*np.sum((np.dot(B[:,0:basis_size],beta) - self.y)**2)
 
         #Create the record object
-        self.record = PruningPassRecord(self.m,self.n,self.penalty,self.sst,basis_size,mse)
+        self.record = PruningPassRecord(self.m,self.n,self.penalty,self.sst,pruned_basis_size,mse)
         gcv_ = self.record.gcv(0)
         best_gcv = gcv_
         best_iteration = 0
         
         #Prune basis functions sequentially
-        for i in range(1,basis_size):
+        for i in range(1,pruned_basis_size):
             first = True
             pruned_basis_size -= 1
             

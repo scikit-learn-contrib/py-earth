@@ -26,11 +26,26 @@ class TestForwardPasser(unittest.TestCase):
         self.beta = numpy.random.normal(size=4)
         self.y = numpy.empty(shape=100,dtype=numpy.float64)
         self.y[:] = numpy.dot(self.B,self.beta) + numpy.random.normal(size=100)
-        self.forwardPasser = ForwardPasser(self.X,self.y)
+        self.forwardPasser = ForwardPasser(self.X,self.y,max_terms = 1000)
+        
+    def testOrthonormalUpdate(self):
+        numpy.set_printoptions(precision=4)
+        m,n = self.X.shape
+        B_orth = self.forwardPasser.get_B_orth()
+        v = numpy.random.normal(size=m)
+        for i in range(1,101):
+            v_ = numpy.random.normal(size=m)
+            B_orth[:,i] = 10*v_ + v
+            v = v_
+            self.forwardPasser.orthonormal_update(i)
+            print numpy.dot(B_orth[:,0:i+1].transpose(),B_orth[:,0:i+1])
+            print numpy.eye(i)
+            self.assertTrue(numpy.max(numpy.abs(numpy.dot(B_orth[:,0:i+1].transpose(),B_orth[:,0:i+1]) - numpy.eye(i+1))) < .0000001)
         
     def testRun(self):
         self.forwardPasser.run()
         res = str(self.forwardPasser.get_basis()) + '\n' + str(self.forwardPasser.trace())
+        print res
 #        with open('regress.txt','w') as fl:
 #            fl.write(res)
         with open('regress.txt','r') as fl:
