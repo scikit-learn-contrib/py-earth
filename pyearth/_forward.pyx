@@ -4,8 +4,8 @@
 # cython: wraparound = False
 # cython: profile = True
 
-from _util cimport reorderxby, fastr, update_uv, augmented_normal
-from _basis cimport Basis, BasisFunction, ConstantBasisFunction, LinearBasisFunction, HingeBasisFunction
+from _util cimport reorderxby
+from _basis cimport Basis, BasisFunction, ConstantBasisFunction, HingeBasisFunction
 from _record cimport ForwardPassIteration
 
 from libc.math cimport sqrt, abs, log, log2
