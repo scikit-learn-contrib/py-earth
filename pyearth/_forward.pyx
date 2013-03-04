@@ -70,14 +70,6 @@ cdef class ForwardPasser:
             self.next_pair()
             if self.stop_check():
                 break
-        
-        #Prune basis functions that are linearly dependent
-#        cdef unsigned int n = len(self.basis)
-#        cdef cnp.ndarray[FLOAT_t, ndim=1] c = <cnp.ndarray[FLOAT_t, ndim=1]> self.c
-#        for i in range(n):
-#            if abs(c[i]) < self.zero_tol:
-#                self.basis[i].prune()
-            
 
     cdef stop_check(ForwardPasser self):
         last = self.record.__len__() - 1
@@ -193,57 +185,24 @@ cdef class ForwardPasser:
                 #Add the linear term to B
                 B[:,k] = B[:,parent_idx]*X[:,variable] #TODO: Optimize
                 
-                
-                
-                print [str(bf) for bf in self.basis]
-                print parent, variable
-                
-                
-                
                 #Find the valid knot candidates
                 candidates_idx = parent.valid_knots(B[:,parent_idx], X[:,variable], variable, self.check_every, endspan, self.minspan, self.minspan_alpha, self.n, self.mwork)
 
                 #Choose the best candidate (if no candidate is an improvement on the linear term, knot_idx is left as -1)
                 if len(candidates_idx) > 0:
-                    #If the new term is in the column space of the previous terms, decrement
-                    #k so that best_knot doesn't have to deal with the new term.  I'm not 
-                    #actually sure this is necessary.
-#                    if self.orthonormal_update(k) == 1:
-#                        linear_dependence = True
-#                        print 'dependency!'
-#                        k -= 1
+
                     #Orthonormalize
                     B_orth[:,k] = B[:,k]
                     self.orthonormal_update(k)
                     
-                    try:
-                        self.best_knot(parent_idx,variable,k,candidates_idx,&mse,&knot,&knot_idx)
-                    except:
-                        print [str(bf) for bf in self.basis]
-                        print parent, variable
-                        raise
+                    #Find the best knot location for this parent and variable combination
+                    self.best_knot(parent_idx,variable,k,candidates_idx,&mse,&knot,&knot_idx)
                     
                     #Do and orthonormal downdate
                     self.orthonormal_downdate(k)
-                    
-                    #If there was a linear dependency, reset k to normal
-#                    if linear_dependence:
-#                        k += 1
                 else:
                     continue
                 
-                
-                
-#                #The mse from bestKnot should not be trusted.  Recalculate it here.
-#                B[:,k+1] = B[:,parent_idx]*(X[:,variable] - knot) * (X[:,variable] > knot)
-#                mse = fastr(B,y,k+2) / self.m
-#                
-#                if knot_idx >= 0:
-#                    B[:,k+1] = X[:,k+1] - knot
-#                    B[:,k+1] *= (B[:,k+1] > 0)
-#                    B[:,k+1] *= B[:,parent_idx]
-#                    mse = fastr(B,y,k+2) / self.m
-
                 #Update the choices
                 if first:
                     knot_choice = knot
@@ -263,36 +222,31 @@ cdef class ForwardPasser:
                     variable_choice = variable
                     dependent = linear_dependence
                     
-                
-        
         #Add the new basis functions
         parent = self.basis.get(parent_idx)
         label = self.xlabels[variable_choice]
-        if knot_idx_choice == -1: #Selected linear term
-            self.basis.append(LinearBasisFunction(parent,variable_choice,label))
+        if not dependent:
+            bf1 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,False,label)
+            bf2 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,True,label)
+            bf1.apply(X,B[:,k])
+            bf2.apply(X,B[:,k+1])
+            self.basis.append(bf1)
+            self.basis.append(bf2)
+            #Orthogonalize the new basis
+            B_orth[:,k] = B[:,k]
+            if self.orthonormal_update(k) == 1:
+                bf1.make_unsplittable()
+            B_orth[:,k+1] = B[:,k+1]
+            if self.orthonormal_update(k+1) == 1:
+                bf2.make_unsplittable()
         else:
-            if not dependent:
-                bf1 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,False,label)
-                bf2 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,True,label)
-                bf1.apply(X,B[:,k])
-                bf2.apply(X,B[:,k+1])
-                self.basis.append(bf1)
-                self.basis.append(bf2)
-                #Orthogonalize the new basis
-                B_orth[:,k] = B[:,k]
-                if self.orthonormal_update(k) == 1:
-                    bf1.make_unsplittable()
-                B_orth[:,k+1] = B[:,k+1]
-                if self.orthonormal_update(k+1) == 1:
-                    bf2.make_unsplittable()
-            else:
-                bf1 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,False,label)
-                bf1.apply(X,B[:,k])
-                self.basis.append(bf1)
-                #Orthogonalize the new basis
-                B_orth[:,k] = B[:,k]
-                if self.orthonormal_update(k) == 1:
-                    bf1.make_unsplittable()
+            bf1 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,False,label)
+            bf1.apply(X,B[:,k])
+            self.basis.append(bf1)
+            #Orthogonalize the new basis
+            B_orth[:,k] = B[:,k]
+            if self.orthonormal_update(k) == 1:
+                bf1.make_unsplittable()
             
         #TODO: Undo the sorting
         
@@ -404,8 +358,6 @@ cdef class ForwardPasser:
             diff = last_candidate - candidate
             delta_c_end = 0.0
             
-            
-            
             #What follows is a section of code that has been optimized for speed at the expense of 
             #some readability.  To make it easier to understand this code in the future, I have included a 
             #"simple" block that implements the same math in a more straightforward (but much less efficient) 
@@ -474,60 +426,6 @@ cdef class ForwardPasser:
             z_end_squared = ((c_end - np.dot(u[0:k+1],c[0:k+1]))**2) / (u_end - np.dot(u[0:k+1],u[0:k+1]))
             #END HYPER-OPTIMIZED
             
-            #Check for negative-definiteness
-            if z_end_squared > self.m*self.sst - self.c_squared:
-                print "ZOMG!", self.sst - ((self.c_squared + best_z_end_squared)/self.m), 
-            
-            for i in range(self.m):#TODO: Vectorize?
-                B_orth[i,k+1]  = 0
-            for i in range(self.m):
-                float_tmp = X[i,variable] - candidate
-                if float_tmp > 0:
-                    B_orth[i,k+1] = b_parent[i]*float_tmp
-                else:
-                    break
-        
-#            B_orth[last_candidate_idx+1:candidate_idx,k+1] += delta_b[last_candidate_idx+1:candidate_idx]
-            c_ = c[0:k+2].copy()
-            c_[k+1] = np.dot(B_orth[:,k+1],y)
-            
-#            if np.max(np.abs(b - B_orth[:,k+1])) > .0000001:
-#                print 'dude!'
-#                raise ValueError
-##            
-            try:
-                R = np.linalg.qr(B_orth[:,0:k+2],mode='r').transpose()
-                
-                z = np.linalg.solve(R,c_[0:k+2])
-                
-            except:
-                pass
-            try:
-                if z_end_squared > self.m*self.sst - self.c_squared or abs(z[-1]**2 - z_end_squared)/z_end_squared > 1e-5:
-                    print R
-                    B_orth[:,k+2] = y
-                    print np.dot(B_orth[:,0:k+3].transpose(),B_orth[:,0:k+3])
-                    print np.linalg.cholesky(np.dot(B_orth[:,0:k+3].transpose(),B_orth[:,0:k+3]))
-                    print np.linalg.svd(B_orth[:,0:k+2])[1]
-                    print np.linalg.eig(np.dot(B_orth[:,0:k+2].transpose(),B_orth[:,0:k+2]))[0]
-                    print 'sse:', self.m*self.sst - self.c_squared - z_end_squared
-                    print 'y_squared:', self.sst*self.m
-                    print 'c_squared:', self.c_squared
-                    print 'z:', z
-                    print 'c_:',c_[0:k+2]
-                    print 'c:', c[0:k+1]
-                    print 'c_end:', c_end
-                    print 'u:',u[0:k+1]
-                    print 'u_end:', u_end
-                    print 'z[-1]**2: %f, z_end_squared: %f' % (z[-1]**2, z_end_squared)
-                    print candidate, last_candidate
-                    print candidate_idx, last_candidate_idx, last_last_candidate_idx
-                    raise ValueError
-            except UnboundLocalError:
-                pass
-                
-##        
-                
             #Update the best if necessary
             if z_end_squared > best_z_end_squared:
                 best_z_end_squared = z_end_squared
@@ -536,9 +434,6 @@ cdef class ForwardPasser:
             
         #Compute the mse for the best z_end and set return values
         mse[0] = self.sst - ((self.c_squared + best_z_end_squared)/self.m)
-        if mse[0] < 0:
-            raise ValueError
-            mse[0] = 0.0
         knot[0] = best_candidate
         knot_idx[0] = best_candidate_idx
 
