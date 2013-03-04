@@ -193,37 +193,46 @@ cdef class ForwardPasser:
                 #Add the linear term to B
                 B[:,k] = B[:,parent_idx]*X[:,variable] #TODO: Optimize
                 
-                #Orthonormalize
-                B_orth[:,k] = B[:,k]
+                
                 
                 print [str(bf) for bf in self.basis]
                 print parent, variable
                 
-                #If the new term is in the column space of the previous terms, decrement
-                #k so that best_knot doesn't have to deal with the new term.  I'm not 
-                #actually sure this is necessary.
-                if self.orthonormal_update(k) == 1:
-                    linear_dependence = True
-                    print 'dependency!'
-                    k -= 1
+                
                 
                 #Find the valid knot candidates
                 candidates_idx = parent.valid_knots(B[:,parent_idx], X[:,variable], variable, self.check_every, endspan, self.minspan, self.minspan_alpha, self.n, self.mwork)
 
                 #Choose the best candidate (if no candidate is an improvement on the linear term, knot_idx is left as -1)
                 if len(candidates_idx) > 0:
+                    #If the new term is in the column space of the previous terms, decrement
+                    #k so that best_knot doesn't have to deal with the new term.  I'm not 
+                    #actually sure this is necessary.
+#                    if self.orthonormal_update(k) == 1:
+#                        linear_dependence = True
+#                        print 'dependency!'
+#                        k -= 1
+                    #Orthonormalize
+                    B_orth[:,k] = B[:,k]
+                    self.orthonormal_update(k)
+                    
                     try:
                         self.best_knot(parent_idx,variable,k,candidates_idx,&mse,&knot,&knot_idx)
                     except:
                         print [str(bf) for bf in self.basis]
                         print parent, variable
                         raise
+                    
+                    #Do and orthonormal downdate
+                    self.orthonormal_downdate(k)
+                    
+                    #If there was a linear dependency, reset k to normal
+#                    if linear_dependence:
+#                        k += 1
                 else:
                     continue
                 
-                #If there was a linear dependency, reset k to normal
-                if linear_dependence:
-                    k += 1
+                
                 
 #                #The mse from bestKnot should not be trusted.  Recalculate it here.
 #                B[:,k+1] = B[:,parent_idx]*(X[:,variable] - knot) * (X[:,variable] > knot)
@@ -254,8 +263,7 @@ cdef class ForwardPasser:
                     variable_choice = variable
                     dependent = linear_dependence
                     
-                #Do and orthonormal downdate
-                self.orthonormal_downdate(k)
+                
         
         #Add the new basis functions
         parent = self.basis.get(parent_idx)
@@ -494,21 +502,30 @@ cdef class ForwardPasser:
                 
             except:
                 pass
-            if abs(z[-1]**2 - z_end_squared)/z_end_squared > 1e-5:
-                print R
-                print np.dot(B_orth[:,0:k+2].transpose(),B_orth[:,0:k+2])
-                print np.linalg.cholesky(np.dot(B_orth[:,0:k+2].transpose(),B_orth[:,0:k+2]))
-                print np.linalg.svd(B_orth[:,0:k+2])[1]
-                print np.linalg.eig(np.dot(B_orth[:,0:k+2].transpose(),B_orth[:,0:k+2]))[0]
-                print 'c_:',c_[0:k+2]
-                print 'c:', c[0:k+1]
-                print 'c_end:', c_end
-                print 'u:',u[0:k+1]
-                print 'u_end:', u_end
-                print 'z[-1]: %f, z_end: %f' % (z[-1]**2, z_end_squared)
-                print candidate, last_candidate
-                print candidate_idx, last_candidate_idx, last_last_candidate_idx
-                raise ValueError
+            try:
+                if z_end_squared > self.m*self.sst - self.c_squared or abs(z[-1]**2 - z_end_squared)/z_end_squared > 1e-5:
+                    print R
+                    B_orth[:,k+2] = y
+                    print np.dot(B_orth[:,0:k+3].transpose(),B_orth[:,0:k+3])
+                    print np.linalg.cholesky(np.dot(B_orth[:,0:k+3].transpose(),B_orth[:,0:k+3]))
+                    print np.linalg.svd(B_orth[:,0:k+2])[1]
+                    print np.linalg.eig(np.dot(B_orth[:,0:k+2].transpose(),B_orth[:,0:k+2]))[0]
+                    print 'sse:', self.m*self.sst - self.c_squared - z_end_squared
+                    print 'y_squared:', self.sst*self.m
+                    print 'c_squared:', self.c_squared
+                    print 'z:', z
+                    print 'c_:',c_[0:k+2]
+                    print 'c:', c[0:k+1]
+                    print 'c_end:', c_end
+                    print 'u:',u[0:k+1]
+                    print 'u_end:', u_end
+                    print 'z[-1]**2: %f, z_end_squared: %f' % (z[-1]**2, z_end_squared)
+                    print candidate, last_candidate
+                    print candidate_idx, last_candidate_idx, last_last_candidate_idx
+                    raise ValueError
+            except UnboundLocalError:
+                pass
+                
 ##        
                 
             #Update the best if necessary
