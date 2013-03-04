@@ -36,7 +36,12 @@ class Test(unittest.TestCase):
 
     def testFit(self):
         self.earth.fit(self.X, self.y)
-        print self.earth.trace()
+        res = str(self.earth.trace())
+#        with open('earth_regress.txt','w') as fl:
+#            fl.write(res)
+        with open('earth_regress.txt','r') as fl:
+            prev = fl.read()
+        self.assertEqual(res,prev)
 
 
 if __name__ == "__main__":
