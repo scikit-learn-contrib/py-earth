@@ -158,23 +158,6 @@ cdef update_uv(FLOAT_t last_candidate, FLOAT_t candidate, unsigned int candidate
     #Compute the v vector, which is just u with element k+1 zeroed out
     v[:] = u[:]#TODO: BLAS
     v[k+1] = 0
-    
-#cdef class OrthogonalMatrix:
-#    '''
-#    Implements an orthogonal matrix as, conceptually, a list of columns.  When a new column is added,
-#    only its orthogonal component is retained.
-#    '''
-#    def __init__(OrthogonalMatrix self, unsigned int m, unsigned int n):
-#        self.data = np.empty(shape=(m,n),dtype=np.float)
-#        self.cursor = 0
-#
-#    cpdef append(OrthogonalMatrix self, cnp.ndarray[FLOAT_t,ndim=1] column):
-#        cdef cnp.ndarray[FLOAT_t, ndim=2] data = <cnp.ndarray[FLOAT_t, ndim=2]> self.get_data()
-#    
-#    cpdef get_data(OrthodonalMatrix self):
-#        return self.data
-    
-    
 
 
 

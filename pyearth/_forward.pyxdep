@@ -1,6 +1,5 @@
 _basis
 _util
-_choldate
 _record
 _blas
 _lapack
