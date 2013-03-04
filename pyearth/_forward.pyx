@@ -102,7 +102,7 @@ cdef class ForwardPasser:
         #Orthogonalize
         if k > 0:
             for i in range(k):
-                B_orth[:,k] -= B_orth[:,i] * (np.dot(B_orth[:,k],B_orth[:,i]) / np.dot(B_orth[:,i],B_orth[:,i]))
+                B_orth[:,k] -= B_orth[:,i] * (np.dot(B_orth[:,k],B_orth[:,i]))
         
         #Normalize
         nrm = sqrt(np.dot(B_orth[:,k],B_orth[:,k]))
@@ -277,6 +277,7 @@ cdef class ForwardPasser:
         
         cdef unsigned int num_candidates = candidates.shape[0]
         
+        cdef unsigned int h
         cdef unsigned int i
         cdef unsigned int j
         cdef FLOAT_t u_end
@@ -298,6 +299,9 @@ cdef class ForwardPasser:
         cdef FLOAT_t delta_u_end
         cdef FLOAT_t parent_squared_cum
         cdef FLOAT_t parent_times_y_cum
+        cdef FLOAT_t u_dot_c
+        cdef FLOAT_t u_dot_u
+        cdef FLOAT_t float_tmp
         
         #Compute the initial basis function
         candidate_idx = candidates[0]
@@ -323,7 +327,9 @@ cdef class ForwardPasser:
         u_end = np.dot(b,b)
         
         #Compute the last element of z (the others are identical to c)
-        z_end_squared = ((c_end - np.dot(u[0:k+1],c[0:k+1]))**2) / (u_end - np.dot(u[0:k+1],u[0:k+1]))
+        u_dot_c = np.dot(u[0:k+1],c[0:k+1])
+        u_dot_u = np.dot(u[0:k+1],u[0:k+1])
+        z_end_squared = ((c_end - u_dot_c)**2) / (u_end - u_dot_u)
         
         #Minimizing the norm is actually equivalent to maximizing z_end_squared
         #Store z_end_squared and the current candidate as the best knot choice
@@ -414,15 +420,24 @@ cdef class ForwardPasser:
             c_end += delta_c_end
             
             #Update u
-            u[0:k+1] += np.dot(delta_b[last_candidate_idx+1:candidate_idx],B_orth[last_candidate_idx+1:candidate_idx,0:k+1]) #TODO: BLAS
-            u[0:k+1] += diff*B_orth_times_parent_cum[0:k+1]
+            for j in range(k+1):
+                float_tmp = diff*B_orth_times_parent_cum[j]
+                u_dot_c += float_tmp * c[j]
+                u_dot_u += 2*u[j]*float_tmp + float_tmp*float_tmp
+                u[j] += float_tmp
+                for h in range(last_candidate_idx+1,candidate_idx):
+                    float_tmp = delta_b[h] * B_orth[h,j]
+                    u_dot_c += float_tmp * c[j]
+                    u_dot_u += 2*u[j]*float_tmp + float_tmp*float_tmp
+                    u[j] += float_tmp
             
             #Update b and b_times_parent_cum
-            b[last_candidate_idx+1:candidate_idx] += delta_b[last_candidate_idx+1:candidate_idx]
+            for h in range(last_candidate_idx+1,candidate_idx):
+                b[h] += delta_b[h]
             b_times_parent_cum += parent_squared_cum * diff
             
             #Compute the new z_end_squared (this is the quantity we're optimizing)
-            z_end_squared = ((c_end - np.dot(u[0:k+1],c[0:k+1]))**2) / (u_end - np.dot(u[0:k+1],u[0:k+1]))
+            z_end_squared = ((c_end - u_dot_c)**2) / (u_end - u_dot_u)
             #END HYPER-OPTIMIZED
             
             #Update the best if necessary
