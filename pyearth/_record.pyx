@@ -4,7 +4,7 @@
 # cython: wraparound = False
 # cython: profile = True
 
-from _util cimport gcv
+from _util cimport gcv, ascii_table
 
 cdef class Record:
         
@@ -45,22 +45,26 @@ cdef class PruningPassRecord(Record):
         
     cpdef set_selected(PruningPassRecord self, unsigned int selected):
         self.selected = selected
+    
+    cpdef unsigned int get_selected(PruningPassRecord self):
+        return self.selected
         
     cpdef roll_back(PruningPassRecord self, Basis basis):
         cdef unsigned int n = len(self.iterations)
         cdef unsigned int i
-        for i in range(n - self.selected):
+        for i in range(n - self.selected - 1):
             basis[self.iterations[n - i - 1].get_pruned()].unprune()
     
     def __str__(PruningPassRecord self):
         result = ''
         result += 'Pruning Pass\n'
-        result += '-'*80 + '\n'
-        result += 'iter\tbf\tterms\tmse\tgcv\trsq\tgrsq\n'
-        result += '-'*80 + '\n'
+        header = 'iter\tbf\tterms\tmse\tgcv\trsq\tgrsq'.split('\t')
+        data = []
         for i, iteration in enumerate(self.iterations):
-            result += str(i) + '\t' + str(iteration) + '\t%.3f\t%.3f\t%.3f\n' % (self.gcv(i),self.rsq(i),self.grsq(i))
-        result += 'Selected iteration: ' +  str(self.selected) + '\n'
+            row = str(i) + '\t' + str(iteration) + '\t%.3f\t%.3f\t%.3f' % (self.gcv(i),self.rsq(i),self.grsq(i))
+            data.append(row.split('\t'))
+        result += ascii_table(header,data)
+        result += '\nSelected iteration: ' +  str(self.selected) + '\n'
         return result
 
 cdef class ForwardPassRecord(Record):
@@ -75,14 +79,14 @@ cdef class ForwardPassRecord(Record):
         self.stopping_condition = stopping_condition
     
     def __str__(ForwardPassRecord self):
+        header = ['iter','parent','var','knot','mse','terms','gcv','rsq','grsq']
+        data = []
+        for i, iteration in enumerate(self.iterations):
+            data.append([str(i)] + str(iteration).split('\t') + ('%.3f\t%.3f\t%.3f' % (self.gcv(i),self.rsq(i),self.grsq(i))).split('\t'))
         result = ''
         result += 'Forward Pass\n'
-        result += '-'*80 + '\n'
-        result += 'iter\tparent\tvar\tknot\tmse\tterms\tgcv\trsq\tgrsq\n'
-        result += '-'*80 + '\n'
-        for i, iteration in enumerate(self.iterations):
-            result += str(i) + '\t' + str(iteration) + '\t%.3f\t%.3f\t%.3f\n' % (self.gcv(i),self.rsq(i),self.grsq(i))
-        result += 'Stopping Condition: %s\n' % (self.stopping_condition)
+        result += ascii_table(header, data)
+        result += '\nStopping Condition: %s\n' % (self.stopping_condition)
         return result
 
 cdef class Iteration:

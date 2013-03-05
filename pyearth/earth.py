@@ -1,5 +1,7 @@
 from _forward import ForwardPasser
 from _pruning import PruningPasser
+from _util import ascii_table, gcv
+
 import numpy as np
 
 class Earth(object):
@@ -23,10 +25,10 @@ class Earth(object):
             raise ValueError(msg)
         
         #Process forward pass arguments
-        self.forward_pass_args = self._pull_forward_args(**kwargs)
+        self.__dict__.update(self._pull_forward_args(**kwargs))
         
         #Process pruning pass arguments
-        self.pruning_pass_args = self._pull_pruning_args(**kwargs)
+        self.__dict__.update(self._pull_pruning_args(**kwargs))
     
     def _pull_forward_args(self, **kwargs):
         result = {}
@@ -54,14 +56,19 @@ class Earth(object):
         self.forward_pass(X, y)
         self.pruning_pass(X, y)
         self.linear_fit(X, y)
+        return self
     
     def forward_pass(self, X, y, **kwargs):
-        self.forward_passer = ForwardPasser(X, y, **self.forward_pass_args)
+        args = self._pull_forward_args(**self.__dict__)
+        args.update(kwargs)
+        self.forward_passer = ForwardPasser(X, y, **args)
         self.forward_passer.run()
         self.basis = self.forward_passer.get_basis()
     
     def pruning_pass(self, X, y, **kwargs):
-        self.pruning_passer = PruningPasser(self.basis, X, y)
+        args = self._pull_pruning_args(**self.__dict__)
+        args.update(kwargs)
+        self.pruning_passer = PruningPasser(self.basis, X, y, **args)
         self.pruning_passer.run()
     
     def forward_trace(self):
@@ -72,6 +79,33 @@ class Earth(object):
     
     def trace(self):
         return EarthTrace(self.forward_trace(),self.pruning_trace())
+    
+    def summary(self):
+        result = ''
+        if self.forward_passer is None:
+            result += 'Untrained Earth Model'
+            return result
+        elif self.pruning_passer is None:
+            result += 'Unpruned Earth Model\n'
+        else:
+            result += 'Earth Model\n'
+        header = ['Basis Function', 'Pruned', 'Coefficient']
+        data = []
+        i = 0
+        for bf in self.basis:
+            data.append([str(bf),'Yes' if bf.is_pruned() else 'No','%f'%self.beta[i] if not bf.is_pruned() else 'None'])
+            if not bf.is_pruned():
+                i += 1
+        result += ascii_table(header,data)
+        if self.pruning_passer is not None:
+            record = self.pruning_passer.trace()
+            selection = record.get_selected()
+        else:
+            record = self.forward_passer.trace()
+            selection = len(record) - 1
+        result += '\n'
+        result += 'MSE: %.4f, GCV: %.4f, RSQ: %.4f, GRSQ: %.4f' % (record.mse(selection), record.gcv(selection), record.rsq(selection), record.grsq(selection))
+        return result
     
     def linear_fit(self, X, y):
         B = self.transform(X)
@@ -85,12 +119,22 @@ class Earth(object):
         B = np.empty(shape=(X.shape[0],self.basis.plen()))
         self.basis.transform(X,B)
         return B
+    
+    def get_penalty(self):
+        if 'penalty' in self.__dict__ and self.penalty is not None:
+            return self.penalty
+        else:
+            return 3.0
+    
+    def score(self, X, y):
+        y_hat = self.predict(X)
+        m, n = self.X.shape
+        residual = y-y_hat
+        mse = np.sum(residual**2) / m
+        return gcv(mse,self.basis.plen(),m,self.get_penalty())
 
     def __str__(self):
-        result = 'Earth Model\n'+'-'*80+'\n'
-        for i, bf in enumerate(self.basis.piter()):
-            result += str(bf) + '\t\t\t' + str(self.beta[i]) + '\n'
-        return result
+        return self.summary()
 
 class EarthTrace(object):
     def __init__(self, forward_trace, pruning_trace):
@@ -99,3 +143,4 @@ class EarthTrace(object):
         
     def __str__(self):
         return str(self.forward_trace) + '\n' + str(self.pruning_trace)
+    

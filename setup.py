@@ -18,16 +18,14 @@ numpy_inc = numpy.get_include()
 if cythonize_switch:
     from Cython.Distutils import build_ext
     from Cython.Build import cythonize
-    ext_modules = cythonize([Extension("pyearth._choldate", ["pyearth/_choldate.pyx"],include_dirs = [numpy_inc]),
-                             Extension("pyearth._util", ["pyearth/_util.pyx"],include_dirs = [numpy_inc]),
+    ext_modules = cythonize([Extension("pyearth._util", ["pyearth/_util.pyx"],include_dirs = [numpy_inc]),
                              Extension("pyearth._basis", ["pyearth/_basis.pyx"],include_dirs = [numpy_inc]),
                              Extension("pyearth._record", ["pyearth/_record.pyx"],include_dirs = [numpy_inc]),
                              Extension("pyearth._pruning", ["pyearth/_pruning.pyx"],include_dirs = [local_inc, numpy_inc]),
                              Extension("pyearth._forward", ["pyearth/_forward.pyx"],include_dirs = [local_inc, numpy_inc])
                              ])
 else:
-    ext_modules = [Extension("pyearth._choldate", ["pyearth/_choldate.c"],include_dirs = [numpy_inc]),
-                   Extension("pyearth._util", ["pyearth/_util.c"],include_dirs = [numpy_inc]),
+    ext_modules = [Extension("pyearth._util", ["pyearth/_util.c"],include_dirs = [numpy_inc]),
                    Extension("pyearth._basis", ["pyearth/_basis.c"],include_dirs = [numpy_inc]),
                    Extension("pyearth._record", ["pyearth/_record.c"],include_dirs = [numpy_inc]),
                    Extension("pyearth._pruning", ["pyearth/_pruning.c"],include_dirs = [local_inc, numpy_inc]),

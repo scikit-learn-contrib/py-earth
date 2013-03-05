@@ -60,3 +60,49 @@ cpdef reorderxby(cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=2] B, c
             B_orth[j,l] = borthrow[l]
         y[j] = tmp
         inv[j] = idx
+        
+cpdef str_pad(string, length):
+    if len(string) >= length:
+        return string[0:length]
+    pad = length - len(string)
+    return string + ' '*pad
+
+cpdef ascii_table(header, data):
+    '''
+    header - list of strings representing the header row
+    data - list of lists of strings representing data rows
+    '''
+    m = len(data)
+    n = len(header)
+    column_widths = [len(head) for head in header]
+    for i, row in enumerate(data):
+        for j, col in enumerate(row):
+            if len(col) > column_widths[j]:
+                column_widths[j] = len(col)
+    
+    for j in range(n):
+        column_widths[j] += 1
+    
+    result = ''
+    for j, col_width in enumerate(column_widths):
+        result += '-'*col_width + '-'
+    result += '\n'
+    for j, head in enumerate(header):
+        result += str_pad(head,column_widths[j]) + ' '
+    result += '\n'
+    for j, col_width in enumerate(column_widths):
+        result += '-'*col_width + '-'
+    for i, row in enumerate(data):
+        result += '\n'
+        for j, item in enumerate(row):
+            result += str_pad(item,column_widths[j]) + ' '
+    result += '\n'
+    for j, col_width in enumerate(column_widths):
+        result += '-'*col_width + '-'
+    return result
+    
+    
+    
+    
+    
+    

@@ -26,6 +26,8 @@ cdef class PruningPassRecord(Record):
 
     cpdef set_selected(PruningPassRecord self, unsigned int selected)
 
+    cpdef unsigned int get_selected(PruningPassRecord self)
+
     cpdef roll_back(PruningPassRecord self, Basis basis)
 	
 cdef class ForwardPassRecord(Record):
