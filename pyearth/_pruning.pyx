@@ -79,6 +79,7 @@ cdef class PruningPasser:
                     best_iteration_gcv = gcv_
                     best_iteration_mse = mse
                     best_bf_to_prune = j
+                    first = False
                 bf.unprune()
             
             #The inner loop found the best basis function to remove for this iteration.
