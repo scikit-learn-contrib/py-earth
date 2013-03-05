@@ -128,7 +128,7 @@ class Earth(object):
     
     def score(self, X, y):
         y_hat = self.predict(X)
-        m, n = self.X.shape
+        m, n = X.shape
         residual = y-y_hat
         mse = np.sum(residual**2) / m
         return gcv(mse,self.basis.plen(),m,self.get_penalty())

@@ -42,7 +42,12 @@ class Test(unittest.TestCase):
         with open('earth_regress.txt','r') as fl:
             prev = fl.read()
         self.assertEqual(res,prev)
-
+        
+    def testScore(self):
+        model = self.earth.fit(self.X, self.y)
+        record = model.pruning_passer.trace()
+        gcv_ = record.gcv(record.get_selected())
+        self.assertAlmostEqual(gcv_,model.score(self.X,self.y))
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
