@@ -42,7 +42,6 @@ cdef class ForwardPasser:
         
         self.sorting = np.empty(shape=self.m, dtype=int)
         self.mwork = np.empty(shape=self.m, dtype=int)
-        self.delta = np.empty(shape=self.m, dtype=float)
         self.u = np.empty(shape=self.max_terms, dtype=float)
         self.B_orth_times_parent_cum = np.empty(shape=self.max_terms,dtype=np.float)
         self.B = np.ones(shape=(self.m,self.max_terms), order='C',dtype=np.float)
@@ -271,9 +270,7 @@ cdef class ForwardPasser:
         cdef cnp.ndarray[FLOAT_t, ndim=2] X = <cnp.ndarray[FLOAT_t, ndim=2]> self.X
         cdef cnp.ndarray[FLOAT_t, ndim=1] y = <cnp.ndarray[FLOAT_t, ndim=1]> self.y
         cdef cnp.ndarray[FLOAT_t, ndim=1] c = <cnp.ndarray[FLOAT_t, ndim=1]> self.c
-        cdef cnp.ndarray[FLOAT_t, ndim=1] delta_b = <cnp.ndarray[FLOAT_t, ndim=1]> self.delta
         cdef cnp.ndarray[FLOAT_t, ndim=1] B_orth_times_parent_cum = <cnp.ndarray[FLOAT_t, ndim=1]> self.B_orth_times_parent_cum
-        
         cdef cnp.ndarray[FLOAT_t, ndim=2] B = <cnp.ndarray[FLOAT_t, ndim=2]> self.B
         
         cdef unsigned int num_candidates = candidates.shape[0]
@@ -303,6 +300,7 @@ cdef class ForwardPasser:
         cdef FLOAT_t u_dot_c
         cdef FLOAT_t u_dot_u
         cdef FLOAT_t float_tmp
+        cdef FLOAT_t delta_b_j
         
         #Compute the initial basis function
         candidate_idx = candidates[0]
@@ -337,10 +335,6 @@ cdef class ForwardPasser:
         best_z_end_squared = z_end_squared
         best_candidate_idx = candidate_idx
         best_candidate = candidate
-        
-        #Initialize the delta vector to 0
-        for i in range(self.m):
-            delta_b[i] = 0 #TODO: BLAS
         
         #Initialize the accumulators
         last_candidate_idx = 0
@@ -396,6 +390,7 @@ cdef class ForwardPasser:
             delta_b_squared = 0.0
             delta_c_end = 0.0
             delta_u_end = 0.0
+            #Update the accumulators
             for j in range(last_last_candidate_idx+1,last_candidate_idx+1):
                 y_cum += y[j]
                 for h in range(k+1):#TODO: BLAS
@@ -406,13 +401,25 @@ cdef class ForwardPasser:
             delta_c_end += diff * parent_times_y_cum
             delta_u_end += 2*diff * b_times_parent_cum
             delta_b_squared = (diff**2)*parent_squared_cum
-            for j in range(last_candidate_idx+1,candidate_idx):
-                float_tmp = (X[j,variable] - candidate) * b_parent[j]
-                delta_b[j] = float_tmp
-                delta_b_squared += float_tmp**2
-                delta_c_end += float_tmp * y[j]
-                delta_u_end += 2*float_tmp*b[j]
             
+            #Update u and a bunch of other stuff
+            for j in range(k+1):
+                float_tmp = diff*B_orth_times_parent_cum[j]
+                u_dot_c += float_tmp * c[j]
+                u_dot_u += 2*u[j]*float_tmp + float_tmp*float_tmp
+                u[j] += float_tmp
+            for j in range(last_candidate_idx+1,candidate_idx):
+                delta_b_j = (X[j,variable] - candidate) * b_parent[j]
+                delta_b_squared += delta_b_j**2
+                delta_c_end += delta_b_j * y[j]
+                delta_u_end += 2*delta_b_j*b[j]
+                for h in range(k+1):
+                    float_tmp = delta_b_j * B_orth[j,h]
+                    u_dot_c += float_tmp * c[h]
+                    u_dot_u += 2*u[h]*float_tmp + float_tmp*float_tmp
+                    u[h] += float_tmp
+                b[j] += delta_b_j
+                
             #Update u_end
             delta_u_end += delta_b_squared
             u_end += delta_u_end
@@ -420,21 +427,7 @@ cdef class ForwardPasser:
             #Update c_end
             c_end += delta_c_end
             
-            #Update u
-            for j in range(k+1):
-                float_tmp = diff*B_orth_times_parent_cum[j]
-                u_dot_c += float_tmp * c[j]
-                u_dot_u += 2*u[j]*float_tmp + float_tmp*float_tmp
-                u[j] += float_tmp
-                for h in range(last_candidate_idx+1,candidate_idx):
-                    float_tmp = delta_b[h] * B_orth[h,j]
-                    u_dot_c += float_tmp * c[j]
-                    u_dot_u += 2*u[j]*float_tmp + float_tmp*float_tmp
-                    u[j] += float_tmp
-            
-            #Update b and b_times_parent_cum
-            for h in range(last_candidate_idx+1,candidate_idx):
-                b[h] += delta_b[h]
+            #Update b_times_parent_cum
             b_times_parent_cum += parent_squared_cum * diff
             
             #Compute the new z_end_squared (this is the quantity we're optimizing)

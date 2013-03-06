@@ -41,7 +41,6 @@ cdef class ForwardPasser:
     #Working floating point data 
     cdef cnp.ndarray B #Data matrix in basis space
     cdef cnp.ndarray B_orth #Orthogonalized version of B
-    cdef cnp.ndarray delta
     cdef cnp.ndarray c
     cdef cnp.ndarray u
     cdef cnp.ndarray B_orth_times_parent_cum
