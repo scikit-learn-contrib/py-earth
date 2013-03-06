@@ -98,10 +98,10 @@ class Earth(object):
                 i += 1
         result += ascii_table(header,data)
         if self.pruning_passer is not None:
-            record = self.pruning_passer.trace()
+            record = self.pruning_trace()
             selection = record.get_selected()
         else:
-            record = self.forward_passer.trace()
+            record = self.forward_trace()
             selection = len(record) - 1
         result += '\n'
         result += 'MSE: %.4f, GCV: %.4f, RSQ: %.4f, GRSQ: %.4f' % (record.mse(selection), record.gcv(selection), record.rsq(selection), record.grsq(selection))

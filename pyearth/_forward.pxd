@@ -36,6 +36,7 @@ cdef class ForwardPasser:
     cdef unsigned int m
     cdef unsigned int n
     cdef FLOAT_t sst
+    cdef FLOAT_t y_squared
     
     #Working floating point data 
     cdef cnp.ndarray B #Data matrix in basis space

@@ -34,7 +34,8 @@ cdef class ForwardPasser:
         self.xlabels = kwargs['xlabels'] if 'xlabels' in kwargs else ['x'+str(i) for i in range(self.n)]
         if self.check_every < 0:
             self.check_every = <int> (self.m / self.min_search_points) if self.m > self.min_search_points else 1
-        self.sst = np.dot(self.y,self.y)/self.m
+        self.sst = np.sum((self.y - np.mean(y))**2)/self.m
+        self.y_squared = np.dot(self.y,self.y)
         self.record = ForwardPassRecord(self.m,self.n,self.penalty,self.sst)
         self.basis = Basis()
         self.basis.append(ConstantBasisFunction())
@@ -447,7 +448,7 @@ cdef class ForwardPasser:
                 best_candidate = candidate
             
         #Compute the mse for the best z_end and set return values
-        mse[0] = self.sst - ((self.c_squared + best_z_end_squared)/self.m)
+        mse[0] = (self.y_squared - self.c_squared - best_z_end_squared)/self.m
         knot[0] = best_candidate
         knot_idx[0] = best_candidate_idx
 
