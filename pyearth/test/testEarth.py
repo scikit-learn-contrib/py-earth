@@ -45,7 +45,7 @@ class Test(unittest.TestCase):
         
     def testScore(self):
         model = self.earth.fit(self.X, self.y)
-        record = model.pruning_passer.trace()
+        record = model.pruning_trace()
         gcv_ = record.gcv(record.get_selected())
         self.assertAlmostEqual(gcv_,model.score(self.X,self.y))
 
