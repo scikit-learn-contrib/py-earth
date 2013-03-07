@@ -98,10 +98,10 @@ class Earth(object):
     
     def summary(self):
         result = ''
-        if self.forward_trace() is not None:
+        if self.forward_trace() is None:
             result += 'Untrained Earth Model'
             return result
-        elif self.pruning_trace() is not None:
+        elif self.pruning_trace() is None:
             result += 'Unpruned Earth Model\n'
         else:
             result += 'Earth Model\n'

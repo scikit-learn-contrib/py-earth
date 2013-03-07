@@ -25,3 +25,19 @@ iter  bf  terms  mse   gcv    rsq     grsq
 8     2   1      1.20  1.222  -0.000  -0.000  
 ----------------------------------------------
 Selected iteration: 6
+
+Earth Model
+-------------------------------------
+Basis Function  Pruned  Coefficient  
+-------------------------------------
+(Intercept)     No      1.155145     
+h(x1-0.949246)  Yes     None         
+h(0.949246-x1)  No      -0.619595    
+h(x2-1.03441)   Yes     None         
+h(1.03441-x2)   No      -0.364864    
+h(x8-1.38526)   Yes     None         
+h(1.38526-x8)   Yes     None         
+h(x6+0.52158)   Yes     None         
+h(-0.52158-x6)  Yes     None         
+-------------------------------------
+MSE: 0.8114, GCV: 0.9798, RSQ: 0.3222, GRSQ: 0.1978

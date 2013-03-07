@@ -36,7 +36,7 @@ class Test(unittest.TestCase):
 
     def testFit(self):
         self.earth.fit(self.X, self.y)
-        res = str(self.earth.trace())
+        res = str(self.earth.trace()) + '\n' + str(self.earth)
 #        with open('earth_regress.txt','w') as fl:
 #            fl.write(res)
         with open('earth_regress.txt','r') as fl:
