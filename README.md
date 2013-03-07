@@ -50,6 +50,7 @@ I am aware of the following implementations of Multivariate Adaptive Regression 
 4. The xtal package (uses Fortran code written in 1991 by Jerome Friedman): http://www.ece.umn.edu/users/cherkass/ee4389/xtalpackage.html
 5. MARSplines by StatSoft: http://www.statsoft.com/textbook/multivariate-adaptive-regression-splines/
 6. MARS by Salford Systems (also uses Friedman's code): http://www.salford-systems.com/products/mars
+7. ARESLab (writtwn in Matlab by Gints Jekabsons): http://www.cs.rtu.lv/jekabsons/regression.html
 
 The R package earth was most useful to me in understanding the algorithm, particularly because of Stephen Milborrow's 
 thorough and easy to read vignette (http://cran.r-project.org/web/packages/earth/vignettes/earth-notes.pdf).
