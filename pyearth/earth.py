@@ -98,10 +98,10 @@ class Earth(object):
     
     def summary(self):
         result = ''
-        if self.forward_passer is None:
+        if self.forward_trace() is not None:
             result += 'Untrained Earth Model'
             return result
-        elif self.pruning_passer is None:
+        elif self.pruning_trace() is not None:
             result += 'Unpruned Earth Model\n'
         else:
             result += 'Earth Model\n'
@@ -113,7 +113,7 @@ class Earth(object):
             if not bf.is_pruned():
                 i += 1
         result += ascii_table(header,data)
-        if self.pruning_passer is not None:
+        if self.pruning_trace() is not None:
             record = self.pruning_trace()
             selection = record.get_selected()
         else:
