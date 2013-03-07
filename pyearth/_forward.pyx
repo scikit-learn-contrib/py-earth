@@ -86,6 +86,9 @@ cdef class ForwardPasser:
         if self.record.grsq(last) < -10:
             self.record.stopping_condition = LOWGRSQ
             return True
+        if self.record.iterations[last].no_further_candidates():
+            self.record.stopping_condition = NOCAND
+            return True
         return False
     
     cpdef int orthonormal_update(ForwardPasser self, unsigned int k):
@@ -221,6 +224,11 @@ cdef class ForwardPasser:
                     variable_choice = variable
                     dependent = linear_dependence
                     
+        #Make sure at least one candidate was checked
+        if first:
+            self.record[-1].set_no_candidates(True)
+            return
+        
         #Add the new basis functions
         parent = self.basis.get(parent_idx)
         label = self.xlabels[variable_choice]

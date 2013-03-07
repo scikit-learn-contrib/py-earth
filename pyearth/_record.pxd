@@ -56,6 +56,11 @@ cdef class ForwardPassIteration(Iteration):
     cdef unsigned int variable
     cdef FLOAT_t knot
     cdef int code
+    cdef bint no_candidates
+    
+    cpdef set_no_candidates(ForwardPassIteration self, bint value)
+        
+    cpdef no_further_candidates(ForwardPassIteration self)
     
 cdef class FirstForwardPassIteration(ForwardPassIteration):
     cpdef unsigned int get_size(FirstForwardPassIteration self)

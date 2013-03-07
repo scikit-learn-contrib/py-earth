@@ -12,7 +12,8 @@ ctypedef enum StoppingCondition:
     NOIMPRV=2,
     LOWGRSQ=3,
     NUMDIFF=4,
-    NUMERR=5
+    NUMERR=5,
+    NOCAND=6
 
 cdef class ForwardPasser:
 

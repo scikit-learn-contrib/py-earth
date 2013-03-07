@@ -131,6 +131,12 @@ cdef class ForwardPassIteration(Iteration):
         result = '%d\t%d\t%d\t%4f\t%d' % (self.parent,self.variable,self.knot,self.mse,self.size)
         return result
     
+    cpdef set_no_candidates(ForwardPassIteration self, bint value):
+        self.no_candidates = value
+        
+    cpdef no_further_candidates(ForwardPassIteration self):
+        return self.no_candidates
+    
 cdef class FirstForwardPassIteration(ForwardPassIteration):
     def __init__(FirstForwardPassIteration self, FLOAT_t mse):
         self.mse = mse
