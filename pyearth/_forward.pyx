@@ -52,7 +52,7 @@ cdef class ForwardPasser:
         self.sort_tracker = np.empty(shape=self.m, dtype=int)
         for i in range(self.m):
             self.sort_tracker[i] = i
-        self.zero_tol = 1e-8
+        self.zero_tol = 1e-2
         
         #Initialize B_orth, c, and c_squared (assuming column 0 of B_orth is already filled with 1)
         self.orthonormal_update(0)
