@@ -4,8 +4,8 @@
 # cython: wraparound = False
 # cython: profile = True
 
-from _util cimport reorderxby
-from _basis cimport Basis, BasisFunction, ConstantBasisFunction, HingeBasisFunction
+from _util cimport reorderxby, gcv_adjust
+from _basis cimport Basis, BasisFunction, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
 from _record cimport ForwardPassIteration
 
 from libc.math cimport sqrt, abs, log, log2
@@ -156,6 +156,10 @@ cdef class ForwardPasser:
         cdef unsigned int endspan
         cdef bint linear_dependence
         cdef bint dependent
+        cdef FLOAT_t gcv_factor_k_plus_1 = gcv_adjust(k+1,self.m,self.penalty)
+        cdef FLOAT_t gcv_factor_k_plus_2 = gcv_adjust(k+2,self.m,self.penalty)
+        cdef FLOAT_t gcv_
+        cdef FLOAT_t mse_
         
         cdef cnp.ndarray[FLOAT_t,ndim=2] X = <cnp.ndarray[FLOAT_t,ndim=2]> self.X
         cdef cnp.ndarray[FLOAT_t,ndim=2] B = <cnp.ndarray[FLOAT_t,ndim=2]> self.B
@@ -190,20 +194,33 @@ cdef class ForwardPasser:
                 #Find the valid knot candidates
                 candidates_idx = parent.valid_knots(B[:,parent_idx], X[:,variable], variable, self.check_every, endspan, self.minspan, self.minspan_alpha, self.n, self.mwork)
 
-                #Choose the best candidate (if no candidate is an improvement on the linear term, knot_idx is left as -1)
+                #Orthonormalize
+                B_orth[:,k] = B[:,k]
+                linear_dependence = self.orthonormal_update(k)
+                
+                #If a new hinge function does not improve the gcv over the linear term
+                #then just the linear term will be retained.  Calculate the gcv with 
+                #just the linear term in order to compare later.  Note that the mse with 
+                #another term never increases, but the gcv may because it penalizes additional
+                #terms.
+                mse_ = (self.y_squared - self.c_squared) / self.m
+                gcv_ = gcv_factor_k_plus_1*(self.y_squared - self.c_squared) / self.m
+
+                #Choose the best candidate (if no candidate is an improvement on the linear term, knot_idx is set to -1)
                 if len(candidates_idx) > 0:
 
-                    #Orthonormalize
-                    B_orth[:,k] = B[:,k]
-                    self.orthonormal_update(k)
-                    
                     #Find the best knot location for this parent and variable combination
                     self.best_knot(parent_idx,variable,k,candidates_idx,&mse,&knot,&knot_idx)
+                    if gcv_factor_k_plus_2*mse >= gcv_:
+                        mse = mse_
+                        knot_idx = -1
                     
-                    #Do and orthonormal downdate
-                    self.orthonormal_downdate(k)
                 else:
-                    continue
+                    mse = mse_
+                    knot_idx = -1
+                
+                #Do an orthonormal downdate
+                self.orthonormal_downdate(k)
                 
                 #Update the choices
                 if first:
@@ -232,7 +249,7 @@ cdef class ForwardPasser:
         #Add the new basis functions
         parent = self.basis.get(parent_idx)
         label = self.xlabels[variable_choice]
-        if not dependent:
+        if not dependent and knot_idx_choice != -1:
             bf1 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,False,label)
             bf2 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,True,label)
             bf1.apply(X,B[:,k])
@@ -246,7 +263,7 @@ cdef class ForwardPasser:
             B_orth[:,k+1] = B[:,k+1]
             if self.orthonormal_update(k+1) == 1:
                 bf2.make_unsplittable()
-        else:
+        elif knot_idx_choice != -1:
             bf1 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,False,label)
             bf1.apply(X,B[:,k])
             self.basis.append(bf1)
@@ -254,6 +271,17 @@ cdef class ForwardPasser:
             B_orth[:,k] = B[:,k]
             if self.orthonormal_update(k) == 1:
                 bf1.make_unsplittable()
+        elif knot_idx_choice == -1:
+            bf1 = LinearBasisFunction(parent_choice,variable_choice,label)
+            bf1.apply(X,B[:,k])
+            self.basis.append(bf1)
+            #Orthogonalize the new basis
+            B_orth[:,k] = B[:,k]
+            if self.orthonormal_update(k) == 1:
+                bf1.make_unsplittable()
+        else:#dependent and knot_idx_choice == -1
+            self.record[-1].set_no_candidates(True)
+            return
             
         #TODO: Undo the sorting
         
