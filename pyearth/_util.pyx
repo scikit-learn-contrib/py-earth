@@ -8,8 +8,10 @@ import numpy as np
 from libc.math cimport sqrt
 
 cpdef inline FLOAT_t gcv(FLOAT_t mse, unsigned int basis_size, unsigned int data_size, FLOAT_t penalty):
-    return mse / ((1 - ((basis_size + penalty*(basis_size - 1))/data_size)) ** 2)
+    return mse / gcv_adjust(basis_size, data_size, penalty)
 
+cpdef inline FLOAT_t gcv_adjust(unsigned int basis_size, unsigned int data_size, FLOAT_t penalty):
+    return ((1 - ((basis_size + penalty*(basis_size - 1))/data_size)) ** 2)
 
 cpdef reorderxby(cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=2] B, cnp.ndarray[FLOAT_t,ndim=2] B_orth, cnp.ndarray[FLOAT_t, ndim=1] y, cnp.ndarray[INT_t, ndim=1] order, cnp.ndarray[INT_t, ndim=1] inv):
     #TODO: This is a bottleneck for large m.  Optimize row copies and swaps with BLAS.
