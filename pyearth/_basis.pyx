@@ -114,6 +114,8 @@ cdef class BasisFunction:
         cdef unsigned int start
         cdef int idx
         cdef int last_idx
+        cdef FLOAT_t first_var_value = variable[0]
+        cdef FLOAT_t last_var_value = variable[m-1]
         
         #Calculate the used knots
         cdef list used_knots = self.knots(variable_idx)
@@ -192,6 +194,24 @@ cdef class BasisFunction:
                 int_tmp += 1
             else:
                 int_tmp = 0
+        
+        #Make sure the least value is not a candidate (this can happen if the first endspan+1 values are the same)
+        for i in range(m):
+            if workspace[i]:
+                if variable[i] == first_var_value:
+                    workspace[i] = 0
+                    count -= 1
+                else:
+                    break
+        
+        #Also make sure the greatest value is not a candidate
+        for i in range(m):
+            if workspace[m-i-1]:
+                if variable[m-i-1] == last_var_value:
+                    workspace[m-i-1] = 0
+                    count -= 1
+                else:
+                    break
         
         #Create result array and return
         result = np.empty(shape=count,dtype=int)
