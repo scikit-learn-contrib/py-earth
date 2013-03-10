@@ -7,7 +7,7 @@ import numpy as np
 class Earth(object):
     forward_pass_arg_names = set(['endspan','minspan','endspan_alpha','minspan_alpha',
                                   'max_terms','max_degree','thresh','penalty','check_every',
-                                  'min_searh_points','xlabels'])
+                                  'min_searh_points','xlabels','linvars'])
     pruning_pass_arg_names = set(['penalty'])
     
     def __init__(self, **kwargs):
@@ -40,7 +40,7 @@ class Earth(object):
         unknown_args = self._pull_unknown_args(**kwargs)
         if unknown_args:
             msg = 'Unknown arguments: '
-            for i, k, v in enumerate(unknown_args.iteritems()):
+            for i, (k, v) in enumerate(unknown_args.iteritems()):
                 msg += k+': '+str(v)
                 if i < len(unknown_args) - 1:
                     msg += ', '

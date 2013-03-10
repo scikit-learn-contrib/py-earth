@@ -60,6 +60,16 @@ cdef class ForwardPasser:
 #        self.init_x_order()
         self.init_linear_variables()
         
+        #Add in user selected linear variables
+        if 'linvars' in kwargs:
+            for linvar in kwargs['linvars']:
+                if linvar in self.xlabels:
+                    self.linear_variables[self.xlabels.index(linvar)] = 1
+                elif linvar in range(self.n):
+                    self.linear_variables[linvar] = 1
+                else:
+                    raise IndexError('Unknown variable selected in linvars argument.')
+        
         #Initialize B_orth, c, and c_squared (assuming column 0 of B_orth is already filled with 1)
         self.orthonormal_update(0)
     
