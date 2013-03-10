@@ -52,12 +52,18 @@ cdef class ForwardPasser:
     cdef cnp.ndarray sort_tracker
     cdef cnp.ndarray sorting
     cdef cnp.ndarray mwork
+#    cdef cnp.ndarray x_order
+    cdef cnp.ndarray linear_variables
     
     #Object construction
     cdef ForwardPassRecord record
     cdef Basis basis
     
     cpdef Basis get_basis(ForwardPasser self)
+    
+#    cpdef init_x_order(ForwardPasser self)
+    
+    cpdef init_linear_variables(ForwardPasser self)
     
     cpdef run(ForwardPasser self)
     

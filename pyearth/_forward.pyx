@@ -40,8 +40,8 @@ cdef class ForwardPasser:
         self.basis = Basis()
         self.basis.append(ConstantBasisFunction())
         
-        self.sorting = np.empty(shape=self.m, dtype=int)
-        self.mwork = np.empty(shape=self.m, dtype=int)
+        self.sorting = np.empty(shape=self.m, dtype=np.int)
+        self.mwork = np.empty(shape=self.m, dtype=np.int)
         self.u = np.empty(shape=self.max_terms, dtype=float)
         self.B_orth_times_parent_cum = np.empty(shape=self.max_terms,dtype=np.float)
         self.B = np.ones(shape=(self.m,self.max_terms), order='C',dtype=np.float)
@@ -50,16 +50,49 @@ cdef class ForwardPasser:
         self.c = np.empty(shape=self.max_terms, dtype=np.float)
         self.norms = np.empty(shape=self.max_terms, dtype=np.float)
         self.c_squared = 0.0
-        self.sort_tracker = np.empty(shape=self.m, dtype=int)
+        self.sort_tracker = np.empty(shape=self.m, dtype=np.int)
         for i in range(self.m):
             self.sort_tracker[i] = i
         self.zero_tol = 1e-6
+        
+#        self.x_order = np.empty(shape=(self.m,self.n),dtype=np.int)
+        self.linear_variables = np.zeros(shape=self.n,dtype=np.int)
+#        self.init_x_order()
+        self.init_linear_variables()
         
         #Initialize B_orth, c, and c_squared (assuming column 0 of B_orth is already filled with 1)
         self.orthonormal_update(0)
     
     cpdef Basis get_basis(ForwardPasser self):
         return self.basis
+    
+#    cpdef init_x_order(ForwardPasser self):
+#        cdef unsigned int variable
+#        cdef cnp.ndarray[FLOAT_t, ndim=2] X = <cnp.ndarray[FLOAT_t, ndim=2]> self.X
+#        cdef cnp.ndarray[INT_t, ndim=2] x_order = <cnp.ndarray[INT_t, ndim=2]> self.x_order
+#        for variable in range(self.n):
+#            x_order[:,variable] = np.argsort(X[:,variable])[::-1]
+    
+    cpdef init_linear_variables(ForwardPasser self):
+        cdef unsigned int variable
+        cdef unsigned int endspan
+#        cdef cnp.ndarray[INT_t, ndim=2] x_order = <cnp.ndarray[INT_t, ndim=2]> self.x_order
+        cdef cnp.ndarray[INT_t, ndim=1] order
+        cdef cnp.ndarray[INT_t, ndim=1] linear_variables = <cnp.ndarray[INT_t, ndim=1]> self.linear_variables
+        cdef cnp.ndarray[FLOAT_t, ndim=2] B = <cnp.ndarray[FLOAT_t, ndim=2]> self.B
+        cdef cnp.ndarray[FLOAT_t, ndim=2] X = <cnp.ndarray[FLOAT_t, ndim=2]> self.X
+        if self.endspan < 0:
+            endspan = round(3 - log2(self.endspan_alpha/self.n))
+        cdef ConstantBasisFunction root_basis_function = self.basis[0]
+        for variable in range(self.n):
+            order = np.argsort(X[:,variable])[::-1]
+            if root_basis_function.valid_knots(B[order,0], X[order,variable], 
+                                               variable, self.check_every, endspan, 
+                                               self.minspan, self.minspan_alpha, 
+                                               self.n, self.mwork).shape[0] == 0:
+                linear_variables[variable] = 1
+            else:
+                linear_variables[variable] = 0
     
     def get_B_orth(ForwardPasser self):
         return self.B_orth
@@ -173,6 +206,7 @@ cdef class ForwardPasser:
         cdef cnp.ndarray[FLOAT_t,ndim=2] B = <cnp.ndarray[FLOAT_t,ndim=2]> self.B
         cdef cnp.ndarray[FLOAT_t,ndim=2] B_orth = <cnp.ndarray[FLOAT_t,ndim=2]> self.B_orth
         cdef cnp.ndarray[FLOAT_t,ndim=1] y = <cnp.ndarray[FLOAT_t,ndim=1]> self.y
+        cdef cnp.ndarray[INT_t,ndim=1] linear_variables = <cnp.ndarray[INT_t,ndim=1]> self.linear_variables
         
         if self.endspan < 0:
             endspan = round(3 - log2(self.endspan_alpha/self.n))
@@ -213,19 +247,26 @@ cdef class ForwardPasser:
                 #terms.
                 mse_ = (self.y_squared - self.c_squared) / self.m
                 gcv_ = gcv_factor_k_plus_1*(self.y_squared - self.c_squared) / self.m
-
-                #Choose the best candidate (if no candidate is an improvement on the linear term in terms of gcv, knot_idx is set to -1)
-                if len(candidates_idx) > 0:
+                
+                if linear_variables[variable]:
+                    mse = mse_
+                    knot_idx = -1
+                
+                elif len(candidates_idx) > 0:
+                #Choose the best candidate (if no candidate is an improvement on the linear term in terms of gcv, knot_idx is set to -1
 
                     #Find the best knot location for this parent and variable combination
                     self.best_knot(parent_idx,variable,k,candidates_idx,&mse,&knot,&knot_idx)
+                    
+                    #If the hinge function does not decrease the gcv then just keep the linear term
                     if gcv_factor_k_plus_2*mse >= gcv_:
                         mse = mse_
                         knot_idx = -1
                     
                 else:
-                    mse = mse_
-                    knot_idx = -1
+                    #Do an orthonormal downdate
+                    self.orthonormal_downdate(k)
+                    continue
                 
                 #Do an orthonormal downdate
                 self.orthonormal_downdate(k)
