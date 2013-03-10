@@ -43,6 +43,7 @@ cdef class ForwardPasser:
     cdef cnp.ndarray B #Data matrix in basis space
     cdef cnp.ndarray B_orth #Orthogonalized version of B
     cdef cnp.ndarray c
+    cdef cnp.ndarray norms
     cdef cnp.ndarray u
     cdef cnp.ndarray B_orth_times_parent_cum
     cdef FLOAT_t c_squared

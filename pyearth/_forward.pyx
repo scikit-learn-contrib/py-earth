@@ -48,11 +48,12 @@ cdef class ForwardPasser:
         self.B_orth = np.ones(shape=(self.m,self.max_terms), order='C',dtype=np.float)
         self.u = np.empty(shape=self.max_terms, dtype=np.float)
         self.c = np.empty(shape=self.max_terms, dtype=np.float)
+        self.norms = np.empty(shape=self.max_terms, dtype=np.float)
         self.c_squared = 0.0
         self.sort_tracker = np.empty(shape=self.m, dtype=int)
         for i in range(self.m):
             self.sort_tracker[i] = i
-        self.zero_tol = 1e-2
+        self.zero_tol = 1e-6
         
         #Initialize B_orth, c, and c_squared (assuming column 0 of B_orth is already filled with 1)
         self.orthonormal_update(0)
@@ -99,8 +100,14 @@ cdef class ForwardPasser:
         cdef cnp.ndarray[FLOAT_t, ndim=2] B_orth = <cnp.ndarray[FLOAT_t, ndim=2]> self.B_orth
         cdef cnp.ndarray[FLOAT_t, ndim=1] c = <cnp.ndarray[FLOAT_t, ndim=1]> self.c
         cdef cnp.ndarray[FLOAT_t, ndim=1] y = <cnp.ndarray[FLOAT_t, ndim=1]> self.y
+        cdef cnp.ndarray[FLOAT_t, ndim=1] norms = <cnp.ndarray[FLOAT_t, ndim=1]> self.norms
         
         cdef unsigned int i
+        cdef FLOAT_t nrm
+        cdef FLOAT_t nrm0
+        
+        #Get the original norm
+        nrm0 = sqrt(np.dot(B_orth[:,k],B_orth[:,k]))
         
         #Orthogonalize
         if k > 0:
@@ -109,7 +116,8 @@ cdef class ForwardPasser:
         
         #Normalize
         nrm = sqrt(np.dot(B_orth[:,k],B_orth[:,k]))
-        if nrm <= self.zero_tol:
+        norms[k] = nrm
+        if nrm/nrm0 <= self.zero_tol:
             B_orth[:,k] = 0
             c[k] = 0
             return 1 #The new column is in the column space of the previous columns
@@ -206,7 +214,7 @@ cdef class ForwardPasser:
                 mse_ = (self.y_squared - self.c_squared) / self.m
                 gcv_ = gcv_factor_k_plus_1*(self.y_squared - self.c_squared) / self.m
 
-                #Choose the best candidate (if no candidate is an improvement on the linear term, knot_idx is set to -1)
+                #Choose the best candidate (if no candidate is an improvement on the linear term in terms of gcv, knot_idx is set to -1)
                 if len(candidates_idx) > 0:
 
                     #Find the best knot location for this parent and variable combination
@@ -249,7 +257,7 @@ cdef class ForwardPasser:
         #Add the new basis functions
         parent = self.basis.get(parent_idx)
         label = self.xlabels[variable_choice]
-        if not dependent and knot_idx_choice != -1:
+        if knot_idx_choice != -1:
             bf1 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,False,label)
             bf2 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,True,label)
             bf1.apply(X,B[:,k])
@@ -263,15 +271,16 @@ cdef class ForwardPasser:
             B_orth[:,k+1] = B[:,k+1]
             if self.orthonormal_update(k+1) == 1:
                 bf2.make_unsplittable()
-        elif knot_idx_choice != -1:
-            bf1 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,False,label)
-            bf1.apply(X,B[:,k])
-            self.basis.append(bf1)
-            #Orthogonalize the new basis
-            B_orth[:,k] = B[:,k]
-            if self.orthonormal_update(k) == 1:
-                bf1.make_unsplittable()
-        elif knot_idx_choice == -1:
+#        elif knot_idx_choice != -1:
+#            bf1 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,False,label)
+#            bf1.apply(X,B[:,k])
+#            self.basis.append(bf1)
+#            #Orthogonalize the new basis
+#            B_orth[:,k] = B[:,k]
+#            if self.orthonormal_update(k) == 1:
+#                pass
+##                bf1.make_unsplittable()
+        elif not dependent and knot_idx_choice == -1:
             bf1 = LinearBasisFunction(parent_choice,variable_choice,label)
             bf1.apply(X,B[:,k])
             self.basis.append(bf1)

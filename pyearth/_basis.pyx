@@ -352,7 +352,11 @@ cdef class LinearBasisFunction(BasisFunction):
         return result
     
     def __str__(LinearBasisFunction self):
-        return self.label
+        result = self.label
+        if not self.parent.__class__ is ConstantBasisFunction:
+            parent = str(self.parent)
+            result += '*'+parent
+        return result
     
     cpdef unsigned int get_variable(self):
         return self.variable
