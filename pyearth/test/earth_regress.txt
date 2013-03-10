@@ -30,7 +30,7 @@ Earth Model
 -------------------------------------
 Basis Function  Pruned  Coefficient  
 -------------------------------------
-(Intercept)     No      1.155145     
+(Intercept)     No      1.15515      
 h(x1-0.949246)  Yes     None         
 h(0.949246-x1)  No      -0.619595    
 h(x2-1.03441)   Yes     None         

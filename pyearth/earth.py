@@ -109,7 +109,7 @@ class Earth(object):
         data = []
         i = 0
         for bf in self.basis_:
-            data.append([str(bf),'Yes' if bf.is_pruned() else 'No','%f'%self.coef_[i] if not bf.is_pruned() else 'None'])
+            data.append([str(bf),'Yes' if bf.is_pruned() else 'No','%g'%self.coef_[i] if not bf.is_pruned() else 'None'])
             if not bf.is_pruned():
                 i += 1
         result += ascii_table(header,data)
