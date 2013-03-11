@@ -4,7 +4,7 @@
 # cython: wraparound = False
 # cython: profile = True
 
-from _util cimport reorderxby, gcv_adjust
+from _util cimport gcv_adjust
 from _basis cimport Basis, BasisFunction, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
 from _record cimport ForwardPassIteration
 
@@ -217,6 +217,7 @@ cdef class ForwardPasser:
         cdef cnp.ndarray[FLOAT_t,ndim=2] B_orth = <cnp.ndarray[FLOAT_t,ndim=2]> self.B_orth
         cdef cnp.ndarray[FLOAT_t,ndim=1] y = <cnp.ndarray[FLOAT_t,ndim=1]> self.y
         cdef cnp.ndarray[INT_t,ndim=1] linear_variables = <cnp.ndarray[INT_t,ndim=1]> self.linear_variables
+        cdef cnp.ndarray[INT_t,ndim=1] sorting = <cnp.ndarray[INT_t,ndim=1]> self.sorting
         
         if self.endspan < 0:
             endspan = round(3 - log2(self.endspan_alpha/self.n))
@@ -225,8 +226,7 @@ cdef class ForwardPasser:
         for variable in range(self.n):
             
             #Sort the data
-            self.sorting[:] = np.argsort(X[:,variable])[::-1] #TODO: eliminate Python call / data copy
-            reorderxby(X,B,B_orth,y,self.sorting,self.sort_tracker)
+            sorting[:] = np.argsort(X[:,variable])[::-1] #TODO: eliminate Python call / data copy
             
             #Iterate over parents
             for parent_idx in range(k):
@@ -244,7 +244,7 @@ cdef class ForwardPasser:
                 B[:,k] = B[:,parent_idx]*X[:,variable] #TODO: Optimize
                 
                 #Find the valid knot candidates
-                candidates_idx = parent.valid_knots(B[:,parent_idx], X[:,variable], variable, self.check_every, endspan, self.minspan, self.minspan_alpha, self.n, self.mwork)
+                candidates_idx = parent.valid_knots(B[sorting,parent_idx], X[sorting,variable], variable, self.check_every, endspan, self.minspan, self.minspan_alpha, self.n, self.mwork)
 
                 #Orthonormalize
                 B_orth[:,k] = B[:,k]
@@ -266,7 +266,7 @@ cdef class ForwardPasser:
                 #Choose the best candidate (if no candidate is an improvement on the linear term in terms of gcv, knot_idx is set to -1
 
                     #Find the best knot location for this parent and variable combination
-                    self.best_knot(parent_idx,variable,k,candidates_idx,&mse,&knot,&knot_idx)
+                    self.best_knot(parent_idx,variable,k,candidates_idx,sorting,&mse,&knot,&knot_idx)
                     
                     #If the hinge function does not decrease the gcv then just keep the linear term
                     if gcv_factor_k_plus_2*mse >= gcv_:
@@ -348,7 +348,7 @@ cdef class ForwardPasser:
         #Update the build record
         self.record.append(ForwardPassIteration(parent_idx_choice,variable_choice,knot_idx_choice,mse_choice,len(self.basis)))
         
-    cdef best_knot(ForwardPasser self, unsigned int parent, unsigned int variable, unsigned int k, cnp.ndarray[INT_t,ndim=1] candidates, FLOAT_t * mse, FLOAT_t * knot, unsigned int * knot_idx):
+    cdef best_knot(ForwardPasser self, unsigned int parent, unsigned int variable, unsigned int k, cnp.ndarray[INT_t,ndim=1] candidates, cnp.ndarray[INT_t,ndim=1] order, FLOAT_t * mse, FLOAT_t * knot, unsigned int * knot_idx):
         '''
         Find the best knot location (in terms of squared error).
         
@@ -374,6 +374,9 @@ cdef class ForwardPasser:
         cdef unsigned int h
         cdef unsigned int i
         cdef unsigned int j
+        cdef unsigned int h_
+        cdef unsigned int i_
+        cdef unsigned int j_
         cdef FLOAT_t u_end
         cdef FLOAT_t c_end
         cdef FLOAT_t z_end_squared
@@ -400,10 +403,11 @@ cdef class ForwardPasser:
         
         #Compute the initial basis function
         candidate_idx = candidates[0]
-        candidate = X[candidate_idx,variable]
+        candidate = X[order[candidate_idx],variable]
         for i in range(self.m):#TODO: Vectorize?
             b[i] = 0
-        for i in range(self.m):
+        for i_ in range(self.m):
+            i = order[i_]
             float_tmp = X[i,variable] - candidate
             if float_tmp > 0:
                 b[i] = b_parent[i]*float_tmp
@@ -433,22 +437,24 @@ cdef class ForwardPasser:
         best_candidate = candidate
         
         #Initialize the accumulators
+        i = order[0]
         last_candidate_idx = 0
-        y_cum = y[0]
-        B_orth_times_parent_cum[0:k+1] = B_orth[0,0:k+1] * b_parent[0]
-        b_times_parent_cum = b[0] * b_parent[0]
-        parent_squared_cum = b_parent[0] ** 2
-        parent_times_y_cum = b_parent[0] * y[0]
+        y_cum = y[i]
+        B_orth_times_parent_cum[0:k+1] = B_orth[i,0:k+1] * b_parent[i]
+        b_times_parent_cum = b[i] * b_parent[i]
+        parent_squared_cum = b_parent[i] ** 2
+        parent_times_y_cum = b_parent[i] * y[i]
         
         #Now loop over the remaining candidates and update z_end_squared for each, looking for the greatest value
-        for i in range(1,num_candidates):
-            
+        for i_ in range(1,num_candidates):
+            i = order[i_]
+
             #Update the candidate
             last_last_candidate_idx = last_candidate_idx
             last_candidate_idx = candidate_idx
             last_candidate = candidate
-            candidate_idx = candidates[i]
-            candidate = X[candidate_idx,variable]
+            candidate_idx = candidates[i_]
+            candidate = X[order[candidate_idx],variable]
             
             #Update the accumulators and compute delta_b
             diff = last_candidate - candidate
@@ -487,7 +493,8 @@ cdef class ForwardPasser:
             delta_c_end = 0.0
             delta_u_end = 0.0
             #Update the accumulators
-            for j in range(last_last_candidate_idx+1,last_candidate_idx+1):
+            for j_ in range(last_last_candidate_idx+1,last_candidate_idx+1):
+                j = order[j_]
                 y_cum += y[j]
                 for h in range(k+1):#TODO: BLAS
                     B_orth_times_parent_cum[h] += B_orth[j,h]*b_parent[j]
@@ -504,7 +511,8 @@ cdef class ForwardPasser:
                 u_dot_c += float_tmp * c[j]
                 u_dot_u += 2*u[j]*float_tmp + float_tmp*float_tmp
                 u[j] += float_tmp
-            for j in range(last_candidate_idx+1,candidate_idx):
+            for j_ in range(last_candidate_idx+1,candidate_idx):
+                j = order[j_]
                 delta_b_j = (X[j,variable] - candidate) * b_parent[j]
                 delta_b_squared += delta_b_j**2
                 delta_c_end += delta_b_j * y[j]
