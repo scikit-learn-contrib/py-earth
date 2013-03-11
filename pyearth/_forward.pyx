@@ -160,7 +160,7 @@ cdef class ForwardPasser:
         #Normalize
         nrm = sqrt(np.dot(B_orth[:,k],B_orth[:,k]))
         norms[k] = nrm
-        if nrm/nrm0 <= self.zero_tol:
+        if nrm0 <= self.zero_tol or nrm/nrm0 <= self.zero_tol:
             B_orth[:,k] = 0
             c[k] = 0
             return 1 #The new column is in the column space of the previous columns
