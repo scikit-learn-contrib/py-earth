@@ -201,7 +201,7 @@ cdef class BasisFunction:
             else:
                 int_tmp = 0
         
-        #Make sure the least value is not a candidate (this can happen if the first endspan+1 values are the same)
+        #Make sure the greatest value is not a candidate (this can happen if the first endspan+1 values are the same)
         for i in range(m):
             if workspace[i]:
                 if variable[i] == first_var_value:
@@ -210,7 +210,7 @@ cdef class BasisFunction:
                 else:
                     break
         
-        #Also make sure the greatest value is not a candidate
+        #Also make sure the least value is not a candidate
         for i in range(m):
             if workspace[m-i-1]:
                 if variable[m-i-1] == last_var_value:
