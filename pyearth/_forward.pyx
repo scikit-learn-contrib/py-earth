@@ -243,9 +243,6 @@ cdef class ForwardPasser:
                 #Add the linear term to B
                 B[:,k] = B[:,parent_idx]*X[:,variable] #TODO: Optimize
                 
-                #Find the valid knot candidates
-                candidates_idx = parent.valid_knots(B[sorting,parent_idx], X[sorting,variable], variable, self.check_every, endspan, self.minspan, self.minspan_alpha, self.n, self.mwork)
-
                 #Orthonormalize
                 B_orth[:,k] = B[:,k]
                 linear_dependence = self.orthonormal_update(k)
@@ -261,22 +258,26 @@ cdef class ForwardPasser:
                 if linear_variables[variable]:
                     mse = mse_
                     knot_idx = -1
-                
-                elif len(candidates_idx) > 0:
-                #Choose the best candidate (if no candidate is an improvement on the linear term in terms of gcv, knot_idx is set to -1
-
-                    #Find the best knot location for this parent and variable combination
-                    self.best_knot(parent_idx,variable,k,candidates_idx,sorting,&mse,&knot,&knot_idx)
-                    
-                    #If the hinge function does not decrease the gcv then just keep the linear term
-                    if gcv_factor_k_plus_2*mse >= gcv_:
-                        mse = mse_
-                        knot_idx = -1
-                    
                 else:
-                    #Do an orthonormal downdate
-                    self.orthonormal_downdate(k)
-                    continue
+                    
+                    #Find the valid knot candidates
+                    candidates_idx = parent.valid_knots(B[sorting,parent_idx], X[sorting,variable], variable, self.check_every, endspan, self.minspan, self.minspan_alpha, self.n, self.mwork)
+
+                    if len(candidates_idx) > 0:
+                    #Choose the best candidate (if no candidate is an improvement on the linear term in terms of gcv, knot_idx is set to -1
+    
+                        #Find the best knot location for this parent and variable combination
+                        self.best_knot(parent_idx,variable,k,candidates_idx,sorting,&mse,&knot,&knot_idx)
+                        
+                        #If the hinge function does not decrease the gcv then just keep the linear term
+                        if gcv_factor_k_plus_2*mse >= gcv_:
+                            mse = mse_
+                            knot_idx = -1
+                        
+                    else:
+                        #Do an orthonormal downdate
+                        self.orthonormal_downdate(k)
+                        continue
                 
                 #Do an orthonormal downdate
                 self.orthonormal_downdate(k)
@@ -400,6 +401,7 @@ cdef class ForwardPasser:
         cdef FLOAT_t u_dot_u
         cdef FLOAT_t float_tmp
         cdef FLOAT_t delta_b_j
+        cdef FLOAT_t z_denom
         
         #Compute the initial basis function
         candidate_idx = candidates[0]
@@ -428,7 +430,11 @@ cdef class ForwardPasser:
         #Compute the last element of z (the others are identical to c)
         u_dot_c = np.dot(u[0:k+1],c[0:k+1])
         u_dot_u = np.dot(u[0:k+1],u[0:k+1])
-        z_end_squared = ((c_end - u_dot_c)**2) / (u_end - u_dot_u)
+        z_denom = u_end - u_dot_u
+        if z_denom <= self.zero_tol:
+            z_end_squared = 0/0
+        else:
+            z_end_squared = ((c_end - u_dot_c)**2) / z_denom
         
         #Minimizing the norm is actually equivalent to maximizing z_end_squared
         #Store z_end_squared and the current candidate as the best knot choice
@@ -535,15 +541,17 @@ cdef class ForwardPasser:
             b_times_parent_cum += parent_squared_cum * diff
             
             #Compute the new z_end_squared (this is the quantity we're optimizing)
+            if (u_end - u_dot_u) <= self.zero_tol:
+                continue
             z_end_squared = ((c_end - u_dot_c)**2) / (u_end - u_dot_u)
             #END HYPER-OPTIMIZED
-            
+
             #Update the best if necessary
             if z_end_squared > best_z_end_squared:
                 best_z_end_squared = z_end_squared
                 best_candidate_idx = candidate_idx
                 best_candidate = candidate
-            
+
         #Compute the mse for the best z_end and set return values
         mse[0] = (self.y_squared - self.c_squared - best_z_end_squared)/self.m
         knot[0] = best_candidate

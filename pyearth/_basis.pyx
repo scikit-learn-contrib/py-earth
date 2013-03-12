@@ -114,19 +114,25 @@ cdef class BasisFunction:
         cdef unsigned int start
         cdef int idx
         cdef int last_idx
-        cdef FLOAT_t first_var_value = variable[0]
+        cdef FLOAT_t first_var_value = variable[m-1]
         cdef FLOAT_t last_var_value = variable[m-1]
-        
+
         #Calculate the used knots
         cdef list used_knots = self.knots(variable_idx)
         used_knots.sort()
         
         #Initialize workspace to 1 where value is nonzero
+        #Also, find first_var_value as the maximum variable
+        #where value is nonzero and last_var_value to the
+        #minimum variable where value is nonzero
         count = 0
         for i in range(m):
             if abs(values[i]) > ZERO_TOL:
                 workspace[i] = 1
                 count += 1
+                if variable[i] >= first_var_value:
+                    first_var_value = variable[i]
+                last_var_value = variable[i]
             else:
                 workspace[i] = 0
             
