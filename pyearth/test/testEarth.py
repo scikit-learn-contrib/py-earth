@@ -7,6 +7,7 @@ import unittest
 import numpy
 from pyearth._basis import Basis, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
 from pyearth import Earth
+import pandas
 
 class Test(unittest.TestCase):
 
@@ -39,6 +40,7 @@ class Test(unittest.TestCase):
         res = str(self.earth.trace()) + '\n' + str(self.earth)
 #        with open('earth_regress.txt','w') as fl:
 #            fl.write(res)
+        print res
         with open('earth_regress.txt','r') as fl:
             prev = fl.read()
         self.assertEqual(res,prev)
@@ -48,6 +50,14 @@ class Test(unittest.TestCase):
         record = model.pruning_trace()
         gcv_ = record.gcv(record.get_selected())
         self.assertAlmostEqual(gcv_,model.score(self.X,self.y))
+
+    def testPandasCompat(self):
+        X = pandas.DataFrame(self.X)
+        y = pandas.DataFrame(self.y)
+        colnames = ['xx'+str(i) for i in range(X.shape[1])]
+        X.columns = colnames
+        model = self.earth.fit(X,y)
+        self.assertListEqual(colnames,model.xlabels)
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
