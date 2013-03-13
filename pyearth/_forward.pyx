@@ -10,7 +10,6 @@ from _record cimport ForwardPassIteration
 
 from libc.math cimport sqrt, abs, log, log2
 import numpy as np
-import scipy.linalg
 cnp.import_array()
 cdef class ForwardPasser:
     
@@ -45,7 +44,7 @@ cdef class ForwardPasser:
         self.u = np.empty(shape=self.max_terms, dtype=float)
         self.B_orth_times_parent_cum = np.empty(shape=self.max_terms,dtype=np.float)
         self.B = np.ones(shape=(self.m,self.max_terms), order='C',dtype=np.float)
-        self.B_orth = np.ones(shape=(self.m,self.max_terms), order='C',dtype=np.float)
+        self.B_orth = np.ones(shape=(self.m,self.max_terms), order='C',dtype=np.float) #An orthogonal matrix with the same column space as B
         self.u = np.empty(shape=self.max_terms, dtype=np.float)
         self.c = np.empty(shape=self.max_terms, dtype=np.float)
         self.norms = np.empty(shape=self.max_terms, dtype=np.float)
@@ -55,9 +54,7 @@ cdef class ForwardPasser:
             self.sort_tracker[i] = i
         self.zero_tol = 1e-6
         
-#        self.x_order = np.empty(shape=(self.m,self.n),dtype=np.int)
         self.linear_variables = np.zeros(shape=self.n,dtype=np.int)
-#        self.init_x_order()
         self.init_linear_variables()
         
         #Add in user selected linear variables
@@ -76,17 +73,9 @@ cdef class ForwardPasser:
     cpdef Basis get_basis(ForwardPasser self):
         return self.basis
     
-#    cpdef init_x_order(ForwardPasser self):
-#        cdef unsigned int variable
-#        cdef cnp.ndarray[FLOAT_t, ndim=2] X = <cnp.ndarray[FLOAT_t, ndim=2]> self.X
-#        cdef cnp.ndarray[INT_t, ndim=2] x_order = <cnp.ndarray[INT_t, ndim=2]> self.x_order
-#        for variable in range(self.n):
-#            x_order[:,variable] = np.argsort(X[:,variable])[::-1]
-    
     cpdef init_linear_variables(ForwardPasser self):
         cdef unsigned int variable
         cdef unsigned int endspan
-#        cdef cnp.ndarray[INT_t, ndim=2] x_order = <cnp.ndarray[INT_t, ndim=2]> self.x_order
         cdef cnp.ndarray[INT_t, ndim=1] order
         cdef cnp.ndarray[INT_t, ndim=1] linear_variables = <cnp.ndarray[INT_t, ndim=1]> self.linear_variables
         cdef cnp.ndarray[FLOAT_t, ndim=2] B = <cnp.ndarray[FLOAT_t, ndim=2]> self.B
@@ -275,7 +264,7 @@ cdef class ForwardPasser:
                             knot_idx = -1
                         
                     else:
-                        #Do an orthonormal downdate
+                        #Do an orthonormal downdate and skip to the next iteration
                         self.orthonormal_downdate(k)
                         continue
                 
@@ -310,12 +299,14 @@ cdef class ForwardPasser:
         parent = self.basis.get(parent_idx)
         label = self.xlabels[variable_choice]
         if knot_idx_choice != -1:
+            #Add the new basis functions
             bf1 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,False,label)
             bf2 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,True,label)
             bf1.apply(X,B[:,k])
             bf2.apply(X,B[:,k+1])
             self.basis.append(bf1)
             self.basis.append(bf2)
+            
             #Orthogonalize the new basis
             B_orth[:,k] = B[:,k]
             if self.orthonormal_update(k) == 1:
@@ -323,29 +314,21 @@ cdef class ForwardPasser:
             B_orth[:,k+1] = B[:,k+1]
             if self.orthonormal_update(k+1) == 1:
                 bf2.make_unsplittable()
-#        elif knot_idx_choice != -1:
-#            bf1 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,False,label)
-#            bf1.apply(X,B[:,k])
-#            self.basis.append(bf1)
-#            #Orthogonalize the new basis
-#            B_orth[:,k] = B[:,k]
-#            if self.orthonormal_update(k) == 1:
-#                pass
-##                bf1.make_unsplittable()
         elif not dependent and knot_idx_choice == -1:
+            #In this case, only add the linear basis function
             bf1 = LinearBasisFunction(parent_choice,variable_choice,label)
             bf1.apply(X,B[:,k])
             self.basis.append(bf1)
+            
             #Orthogonalize the new basis
             B_orth[:,k] = B[:,k]
             if self.orthonormal_update(k) == 1:
                 bf1.make_unsplittable()
         else:#dependent and knot_idx_choice == -1
+            #In this case there were no acceptable choices remaining, so end the forward pass
             self.record[-1].set_no_candidates(True)
             return
             
-        #TODO: Undo the sorting
-        
         #Update the build record
         self.record.append(ForwardPassIteration(parent_idx_choice,variable_choice,knot_idx_choice,mse_choice,len(self.basis)))
         
