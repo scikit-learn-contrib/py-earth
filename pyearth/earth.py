@@ -43,9 +43,12 @@ class Earth(object):
                 self.xlabels = list(X.columns)
             except AttributeError:
                 try:
-                    self.xlabels = list(X.dtype.names)
-                except TypeError:
-                    no_labels = True
+                    self.xlabels = list(X.design_info.column_names)
+                except AttributeError:
+                    try:
+                        self.xlabels = list(X.dtype.names)
+                    except TypeError:
+                        no_labels = True
         elif 'xlabels' not in self.__dict__:
             self.xlabels = kwargs['xlabels']
         

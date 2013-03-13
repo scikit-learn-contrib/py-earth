@@ -8,6 +8,7 @@ import numpy
 from pyearth._basis import Basis, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
 from pyearth import Earth
 import pandas
+import patsy
 
 class Test(unittest.TestCase):
 
@@ -56,6 +57,18 @@ class Test(unittest.TestCase):
         y = pandas.DataFrame(self.y)
         colnames = ['xx'+str(i) for i in range(X.shape[1])]
         X.columns = colnames
+        model = self.earth.fit(X,y)
+        self.assertListEqual(colnames,model.xlabels)
+        
+    def testPatsyCompat(self):
+        X = pandas.DataFrame(self.X)
+        y = pandas.DataFrame(self.y)
+        colnames = ['xx'+str(i) for i in range(X.shape[1])]
+        print X.shape
+        print colnames
+        X.columns = colnames
+        X['y'] = y
+        y, X = patsy.dmatrices('y ~ xx0 + xx1 + xx2 + xx3 + xx4 + xx5 + xx6 + xx7 + xx8 + xx9 - 1',data=X)
         model = self.earth.fit(X,y)
         self.assertListEqual(colnames,model.xlabels)
 
