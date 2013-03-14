@@ -17,8 +17,8 @@ class Test(unittest.TestCase):
         self.basis = Basis()
         constant = ConstantBasisFunction()
         self.basis.append(constant)
-        bf1 = HingeBasisFunction(constant,1.0,10,1,False,'x1')
-        bf2 = HingeBasisFunction(constant,1.0,10,1,True,'x1')
+        bf1 = HingeBasisFunction(constant,0.1,10,1,False,'x1')
+        bf2 = HingeBasisFunction(constant,0.1,10,1,True,'x1')
         bf3 = LinearBasisFunction(bf1,2,'x2')
         self.basis.append(bf1)
         self.basis.append(bf2)
@@ -29,7 +29,7 @@ class Test(unittest.TestCase):
         self.beta = numpy.random.normal(size=4)
         self.y = numpy.empty(shape=100,dtype=numpy.float64)
         self.y[:] = numpy.dot(self.B,self.beta) + numpy.random.normal(size=100)
-        self.earth = Earth()
+        self.earth = Earth(penalty=1)
 
 
     def tearDown(self):
@@ -41,7 +41,6 @@ class Test(unittest.TestCase):
         res = str(self.earth.trace()) + '\n' + str(self.earth)
 #        with open('earth_regress.txt','w') as fl:
 #            fl.write(res)
-        print res
         with open('earth_regress.txt','r') as fl:
             prev = fl.read()
         self.assertEqual(res,prev)

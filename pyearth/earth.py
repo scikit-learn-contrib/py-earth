@@ -63,6 +63,10 @@ class Earth(object):
         return X
     
     def _scrub(self, X, y, **kwargs):
+        #Check whether X is the output of patsy.dmatrices
+        if y is None and type(X) is tuple:
+            y, X = X
+        
         #Handle X separately
         X = self._scrub_x(X, **kwargs)
         
@@ -96,7 +100,7 @@ class Earth(object):
         #Process pruning pass arguments
         self.__dict__.update(self._pull_pruning_args(**kwargs))
     
-    def fit(self, X, y, xlabels=None, linvars=None):
+    def fit(self, X, y = None, xlabels=None, linvars=None):
         #Format and label the data
         if xlabels is not None:
             self.set_params(xlabels=xlabels)
@@ -110,7 +114,7 @@ class Earth(object):
         self.linear_fit(X, y)
         return self
     
-    def forward_pass(self, X, y, **kwargs):
+    def forward_pass(self, X, y = None, **kwargs):
         #Pull new labels and linear variables if necessary
         if 'xlabels' in kwargs and 'xlabels' not in self.__dict__:
             self.set_params(xlabels=kwargs['xlabels'])
@@ -142,7 +146,7 @@ class Earth(object):
         self.forward_pass_record_ = forward_passer.trace()
         self.basis_ = forward_passer.get_basis()
         
-    def pruning_pass(self, X, y, **kwargs):
+    def pruning_pass(self, X, y = None, **kwargs):
         #Format data
         X, y = self._scrub(X,y)
         
@@ -164,7 +168,7 @@ class Earth(object):
         pruning_passer.run()
         self.pruning_pass_record_ = pruning_passer.trace()
     
-    def unprune(self, X, y):
+    def unprune(self, X, y = None):
         '''Unprune all pruned basis functions and fit coefficients to X and y using the unpruned basis.'''
         for bf in self.basis_:
             bf.unprune()
@@ -217,7 +221,7 @@ class Earth(object):
         result += 'MSE: %.4f, GCV: %.4f, RSQ: %.4f, GRSQ: %.4f' % (record.mse(selection), record.gcv(selection), record.rsq(selection), record.grsq(selection))
         return result
     
-    def linear_fit(self, X, y):
+    def linear_fit(self, X, y = None):
         '''Solve the linear least squares problem to determine the coefficients of the unpruned basis functions.'''
         #Format data
         X, y = self._scrub(X,y)
@@ -248,7 +252,7 @@ class Earth(object):
         else:
             return 3.0
     
-    def score(self, X, y):
+    def score(self, X, y = None):
         '''Calculate the GCV of the model on data X and y.'''
         X, y = self._scrub(X, y)
         y_hat = self.predict(X)

@@ -14,8 +14,8 @@ class TestForwardPasser(unittest.TestCase):
         self.basis = Basis()
         constant = ConstantBasisFunction()
         self.basis.append(constant)
-        bf1 = HingeBasisFunction(constant,1.0,10,1,False,'x1')
-        bf2 = HingeBasisFunction(constant,1.0,10,1,True,'x1')
+        bf1 = HingeBasisFunction(constant,0.1,10,1,False,'x1')
+        bf2 = HingeBasisFunction(constant,0.1,10,1,True,'x1')
         bf3 = LinearBasisFunction(bf1,2,'x2')
         self.basis.append(bf1)
         self.basis.append(bf2)
@@ -26,7 +26,7 @@ class TestForwardPasser(unittest.TestCase):
         self.beta = numpy.random.normal(size=4)
         self.y = numpy.empty(shape=100,dtype=numpy.float64)
         self.y[:] = numpy.dot(self.B,self.beta) + numpy.random.normal(size=100)
-        self.forwardPasser = ForwardPasser(self.X,self.y,max_terms = 1000)
+        self.forwardPasser = ForwardPasser(self.X,self.y,max_terms = 1000, penalty=1)
         
     def testOrthonormalUpdate(self):
         numpy.set_printoptions(precision=4)
