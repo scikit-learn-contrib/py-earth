@@ -44,6 +44,7 @@ setup_args = {'name':'py-earth',
     'long_description':open('README.md','r').read(),
     'py_modules' : ['pyearth.earth'],
     'ext_modules' : ext_modules,
+    'classifiers' : ['Development Status :: 3 - Alpha'],
     'requires':['numpy']} 
 
 #Add the build_ext command only if cythonizing
