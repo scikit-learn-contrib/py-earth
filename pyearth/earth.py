@@ -1,6 +1,6 @@
-from _forward import ForwardPasser
-from _pruning import PruningPasser
-from _util import ascii_table, gcv
+from pyearth._forward import ForwardPasser
+from pyearth._pruning import PruningPasser
+from pyearth._util import ascii_table, gcv
 
 import numpy as np
 
