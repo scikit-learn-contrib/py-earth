@@ -7,12 +7,12 @@
 import numpy as np
 from libc.math cimport sqrt
 
-cpdef inline FLOAT_t gcv(FLOAT_t mse, unsigned int basis_size, unsigned int data_size, FLOAT_t penalty):
+cpdef FLOAT_t gcv(FLOAT_t mse, unsigned int basis_size, unsigned int data_size, FLOAT_t penalty):
     return mse * gcv_adjust(basis_size, data_size, penalty)
 
-cpdef inline FLOAT_t gcv_adjust(unsigned int basis_size, unsigned int data_size, FLOAT_t penalty):
+cpdef FLOAT_t gcv_adjust(unsigned int basis_size, unsigned int data_size, FLOAT_t penalty):
     return 1.0 / ((1 - ((basis_size + penalty*(basis_size - 1))/data_size)) ** 2)
-        
+
 cpdef str_pad(string, length):
     if len(string) >= length:
         return string[0:length]
