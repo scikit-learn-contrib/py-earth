@@ -77,7 +77,7 @@ cdef class BasisFunction:
             idx = children[i]
             child = self.get_children()[idx]
             if child.has_knot():
-                result.append(child.get_knot())
+                result.append(child.get_knot_idx())
         return result
     
     cpdef unsigned int degree(BasisFunction self):
@@ -315,7 +315,10 @@ cdef class HingeBasisFunction(BasisFunction):
     cpdef unsigned int get_variable(self):
         return self.variable
     
-    cpdef unsigned int get_knot(self):
+    cpdef FLOAT_t get_knot(self):
+        return self.knot
+    
+    cpdef unsigned int get_knot_idx(self):
         return self.knot_idx
     
     cpdef apply(self, cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=1] b, bint recurse = True):
