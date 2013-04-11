@@ -64,3 +64,5 @@ MANIFEST
 dist/py-earth-0.1.0.tar.gz
 
 pyearth/Copy of earth.py
+
+build/scripts-2.7/vFunctionExample.py

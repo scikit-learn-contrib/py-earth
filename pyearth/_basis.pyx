@@ -54,6 +54,9 @@ cdef class BasisFunction:
             self.child_map[var].append(n)
         else:
             self.child_map[var] = [n]
+            
+    cpdef BasisFunction get_parent(self):
+        return self.parent
         
     cpdef prune(self):
         self.pruned = True
@@ -252,7 +255,9 @@ cdef class ConstantBasisFunction(BasisFunction):
         return <FLOAT_t> 1.0
     
     cpdef _set_parent(self,BasisFunction parent):
-        '''Calls _add_child.'''
+        raise NotImplementedError
+
+    cpdef BasisFunction get_parent(self):
         raise NotImplementedError
 
     cpdef apply(self, cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=1] b, bint recurse = False):

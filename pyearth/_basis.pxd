@@ -30,6 +30,8 @@ cdef class BasisFunction:
     cpdef _set_parent(self,BasisFunction parent)
     
     cpdef _add_child(self,BasisFunction child)
+    
+    cpdef BasisFunction get_parent(self)
         
     cpdef prune(self)
         
@@ -53,6 +55,8 @@ cdef class ConstantBasisFunction(BasisFunction):
     cpdef FLOAT_t scale(ConstantBasisFunctionself, cnp.ndarray[FLOAT_t,ndim=1] slopes, cnp.ndarray[FLOAT_t,ndim=1] intercepts)
     
     cpdef _set_parent(self,BasisFunction parent)
+    
+    cpdef BasisFunction get_parent(self)
 
     cpdef apply(self, cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=1] b, bint recurse = ?)
             
