@@ -66,3 +66,23 @@ dist/py-earth-0.1.0.tar.gz
 pyearth/Copy of earth.py
 
 build/scripts-2.7/vFunctionExample.py
+
+build/lib.linux-x86_64-2.7/pyearth/__init__.py
+
+build/lib.linux-x86_64-2.7/pyearth/earth.py
+
+build/lib.linux-x86_64-2.7/pyearth/test/__init__.py
+
+build/lib.linux-x86_64-2.7/pyearth/test/testBasis.py
+
+build/lib.linux-x86_64-2.7/pyearth/test/testAll.py
+
+build/lib.linux-x86_64-2.7/pyearth/test/testEarth.py
+
+build/lib.linux-x86_64-2.7/pyearth/test/testForward.py
+
+build/lib.linux-x86_64-2.7/pyearth/test/testPruning.py
+
+build/lib.linux-x86_64-2.7/pyearth/test/testRecord.py
+
+build/lib.linux-x86_64-2.7/pyearth/test/testUtil.py

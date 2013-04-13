@@ -7,6 +7,17 @@
 from _util cimport gcv, ascii_table
 
 cdef class Record:
+
+    def __richcmp__(self, other, method):
+        if method == 2:
+            return self._eq(other)
+        elif method == 3:
+            return not self._eq(other)
+        else:
+            return NotImplemented
+        
+    def _eq(self, other):
+        return self.__class__ is other.__class__ and self._getstate() == other._getstate()
         
     def __getitem__(Record self, int idx):
         return self.iterations[idx]
@@ -43,6 +54,26 @@ cdef class PruningPassRecord(Record):
         self.sst = sst
         self.iterations = [FirstPruningPassIteration(size, mse)]
         
+    def __reduce__(PruningPassRecord self):
+        return (PruningPassRecord, (1,1,1.0,1.0,1,1.0), self._getstate())
+    
+    def _getstate(PruningPassRecord self):
+        result = {'num_samples': self.num_samples,
+                'num_variables': self.num_variables,
+                'penalty': self.penalty,
+                'sst': self.sst,
+                'iterations': self.iterations,
+                'selected': self.selected}
+        return result
+        
+    def __setstate__(PruningPassRecord self, dict state):
+        self.num_samples = state['num_samples']
+        self.num_variables = state['num_variables']
+        self.penalty = state['penalty']
+        self.sst = state['sst']
+        self.iterations = state['iterations']
+        self.selected = state['selected']
+        
     cpdef set_selected(PruningPassRecord self, unsigned int selected):
         self.selected = selected
     
@@ -66,7 +97,7 @@ cdef class PruningPassRecord(Record):
         result += ascii_table(header,data)
         result += '\nSelected iteration: ' +  str(self.selected) + '\n'
         return result
-
+    
 cdef class ForwardPassRecord(Record):
     def __init__(ForwardPassRecord self, unsigned int num_samples, unsigned int num_variables, FLOAT_t penalty, FLOAT_t sst):
         self.num_samples = num_samples
@@ -74,6 +105,23 @@ cdef class ForwardPassRecord(Record):
         self.penalty = penalty
         self.sst = sst
         self.iterations = [FirstForwardPassIteration(self.sst)]
+        
+    def __reduce__(ForwardPassRecord self):
+        return (ForwardPassRecord, (1,1,1.0,1.0), self._getstate())
+        
+    def _getstate(ForwardPassRecord self):
+        return {'num_samples': self.num_samples,
+                'num_variables': self.num_variables,
+                'penalty': self.penalty,
+                'sst': self.sst,
+                'iterations': self.iterations}
+    
+    def __setstate__(ForwardPassRecord self, dict state):
+        self.num_samples = state['num_samples']
+        self.num_variables = state['num_variables']
+        self.penalty = state['penalty']
+        self.sst = state['sst']
+        self.iterations = state['iterations']
         
     cpdef set_stopping_condition(ForwardPassRecord self, int stopping_condition):
         self.stopping_condition = stopping_condition
@@ -91,6 +139,17 @@ cdef class ForwardPassRecord(Record):
 
 cdef class Iteration:
     
+    def __richcmp__(self, other, method):
+        if method == 2:
+            return self._eq(other)
+        elif method == 3:
+            return not self._eq(other)
+        else:
+            return NotImplemented
+        
+    def _eq(self, other):
+        return self.__class__ is other.__class__ and self._getstate() == other._getstate()
+    
     cpdef FLOAT_t get_mse(Iteration self):
         return self.mse
     
@@ -102,7 +161,20 @@ cdef class PruningPassIteration(Iteration):
         self.pruned = pruned
         self.size = size
         self.mse = mse
+    
+    def __reduce__(PruningPassIteration self):
+        return (PruningPassIteration, (1,1,1.0), self._getstate())
         
+    def _getstate(PruningPassIteration self):
+        return {'pruned': self.pruned,
+                'size': self.size,
+                'mse': self.mse}
+    
+    def __setstate__(PruningPassIteration self, dict state):
+        self.pruned = state['pruned']
+        self.size = state['size']
+        self.mse = state['mse']
+    
     cpdef unsigned int get_pruned(PruningPassIteration self):
         return self.pruned
         
@@ -114,6 +186,17 @@ cdef class FirstPruningPassIteration(PruningPassIteration):
     def __init__(PruningPassIteration self, unsigned int size, FLOAT_t mse):
         self.size = size
         self.mse = mse
+    
+    def __reduce__(FirstPruningPassIteration self):
+        return (FirstPruningPassIteration, (1,1.0), self._getstate())
+    
+    def _getstate(FirstPruningPassIteration self):
+        return {'size': self.size,
+                'mse': self.mse}
+    
+    def __setstate__(FirstPruningPassIteration self, dict state):
+        self.size = state['size']
+        self.mse = state['mse']
         
     def __str__(PruningPassIteration self):
         result = '%s\t%s\t%s' % ('-',self.size,'%.2f' % self.mse if self.mse is not None else None)
@@ -127,6 +210,23 @@ cdef class ForwardPassIteration(Iteration):
         self.mse = mse
         self.size = size
         
+    def __reduce__(ForwardPassIteration self):
+        return (ForwardPassIteration, (1,1,1,1.0,1), self._getstate())
+        
+    def _getstate(ForwardPassIteration self):
+        return {'parent': self.parent,
+                'variable': self.variable,
+                'knot': self.knot,
+                'mse': self.mse,
+                'size': self.size}
+    
+    def __setstate__(ForwardPassIteration self, dict state):
+        self.parent = state['parent']
+        self.variable = state['variable']
+        self.knot = state['knot']
+        self.mse = state['mse']
+        self.size = state['size']
+    
     def __str__(self):
         result = '%d\t%d\t%d\t%4f\t%d' % (self.parent,self.variable,self.knot,self.mse,self.size)
         return result
@@ -140,6 +240,15 @@ cdef class ForwardPassIteration(Iteration):
 cdef class FirstForwardPassIteration(ForwardPassIteration):
     def __init__(FirstForwardPassIteration self, FLOAT_t mse):
         self.mse = mse
+        
+    def __reduce__(FirstForwardPassIteration self):
+        return (FirstForwardPassIteration, (1.0,), self._getstate())
+    
+    def _getstate(FirstForwardPassIteration self):
+        return {'mse': self.mse}
+    
+    def __setstate__(FirstForwardPassIteration self, dict state):
+        self.mse = state['mse']
         
     cpdef unsigned int get_size(FirstForwardPassIteration self):
         return 1

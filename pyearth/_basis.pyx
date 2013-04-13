@@ -19,6 +19,54 @@ cdef class BasisFunction:
         self.child_map = {}
         self.splittable = True
         
+    def __reduce__(self):
+        return (self.__class__, (), self._getstate())
+    
+    def _get_root(self):
+        return self.parent._get_root()
+    
+    def _getstate(self):
+        result = {'pruned': self.pruned,
+                'children': self.children,
+                'prunable': self.prunable,
+                'child_map': self.child_map,
+                'splittable': self.splittable}
+        result.update(self._get_parent_state())
+        return result
+    
+    def _get_parent_state(self):
+        return {'parent': self.parent}
+    
+    def _set_parent_state(self, state):
+        self.parent = state['parent']
+    
+    def __setstate__(self, state):
+        self.pruned = state['pruned']
+        self.children = state['children']
+        self.prunable = state['prunable']
+        self.child_map = state['child_map']
+        self.splittable = state['splittable']
+        self._set_parent_state(state)
+        
+    def _eq(self, other):
+        if self.__class__ is not other.__class__:
+            return False
+        self_state = self._getstate() 
+        other_state = other._getstate()
+        del self_state['children']
+        del self_state['child_map']
+        del other_state['children']
+        del other_state['child_map']
+        return self_state == other_state
+    
+    def __richcmp__(self, other, method):
+        if method == 2:
+            return self._eq(other)
+        elif method == 3:
+            return not self._eq(other)
+        else:
+            return NotImplemented
+        
     cpdef bint has_knot(BasisFunction self):
         return False
         
@@ -93,8 +141,6 @@ cdef class BasisFunction:
         recurse - If False, assume b already contains the result of the parent function.  Otherwise, recurse to compute
                   parent function.
         '''
-    
-    
     
     cpdef cnp.ndarray[INT_t, ndim=1] valid_knots(BasisFunction self, cnp.ndarray[FLOAT_t,ndim=1] values, cnp.ndarray[FLOAT_t,ndim=1] variable, int variable_idx, unsigned int check_every, int endspan, int minspan, FLOAT_t minspan_alpha, unsigned int n, cnp.ndarray[INT_t,ndim=1] workspace):
         '''
@@ -231,19 +277,24 @@ cdef class BasisFunction:
                 j += 1
         
         return result
-        
-        
-            
-        
-        
-        
-        
-    
-    
-    
+
+cdef class PicklePlaceHolderBasisFunction(BasisFunction):
+    '''This is a place holder for unpickling the basis function tree.'''
+
+pickle_place_holder = PicklePlaceHolderBasisFunction()
+
 cdef class ConstantBasisFunction(BasisFunction):
     def __init__(self): #@DuplicatedSignature
         self.prunable = False
+    
+    def _get_root(self):
+        return self
+    
+    def _get_parent_state(self):
+        return {}
+    
+    def _set_parent_state(self, state):
+        pass
     
     cpdef unsigned int degree(ConstantBasisFunction self):
         return 0
@@ -275,11 +326,10 @@ cdef class ConstantBasisFunction(BasisFunction):
             
     def __str__(self):
         return '(Intercept)'
-    
+
 cdef class HingeBasisFunction(BasisFunction):
     
     def __init__(self, BasisFunction parent, FLOAT_t knot, unsigned int knot_idx, unsigned int variable, bint reverse, label=None): #@DuplicatedSignature
-        
         self.knot = knot
         self.knot_idx = knot_idx
         self.variable = variable
@@ -287,6 +337,26 @@ cdef class HingeBasisFunction(BasisFunction):
         self.label = label if label is not None else 'x'+str(variable)
         self._set_parent(parent)
     
+    def __reduce__(self):
+        return (self.__class__, (pickle_place_holder, 1.0, 1, 1, True, ''), self._getstate())
+    
+    def _getstate(self):
+        result = super(HingeBasisFunction, self)._getstate()
+        result.update({'knot': self.knot,
+                       'knot_idx': self.knot_idx,
+                       'variable': self.variable,
+                       'reverse': self.reverse,
+                       'label': self.label})
+        return result
+    
+    def __setstate__(self, state):
+        self.knot = state['knot']
+        self.knot_idx = state['knot_idx']
+        self.variable = state['variable']
+        self.reverse = state['reverse']
+        self.label = state['label']
+        super(HingeBasisFunction, self).__setstate__(state)
+        
     cpdef bint has_knot(HingeBasisFunction self):
         return True
     
@@ -350,13 +420,27 @@ cdef class HingeBasisFunction(BasisFunction):
                 if tmp < 0:
                     tmp = <FLOAT_t> 0.0
                 b[i] *= tmp
-
+                
 cdef class LinearBasisFunction(BasisFunction):
     def __init__(self, BasisFunction parent, unsigned int variable, label=None): #@DuplicatedSignature
         self.variable = variable
         self.label = label if label is not None else 'x'+str(variable)
         self._set_parent(parent)
-        
+    
+    def __reduce__(self):
+        return (self.__class__, (pickle_place_holder, 1, ''), self._getstate())
+    
+    def _getstate(self):
+        result = super(LinearBasisFunction, self)._getstate()
+        result.update({'variable': self.variable,
+                       'label': self.label})
+        return result
+    
+    def __setstate__(self, state):
+        self.variable = state['variable']
+        self.label = state['label']
+        super(LinearBasisFunction, self).__setstate__(state)
+    
     cpdef translate(LinearBasisFunctionself, cnp.ndarray[FLOAT_t,ndim=1] slopes, cnp.ndarray[FLOAT_t,ndim=1] intercepts, bint recurse):
         pass
 
@@ -389,7 +473,6 @@ cdef class LinearBasisFunction(BasisFunction):
         for i in range(m):
             b[i] *= X[i,self.variable]
         
-
 cdef class Basis:
     '''A wrapper that provides functionality related to a set of BasisFunctions with a 
     common ConstantBasisFunction ancestor.  Retains the order in which BasisFunctions are 
@@ -397,6 +480,26 @@ cdef class Basis:
 
     def __init__(Basis self): #@DuplicatedSignature
         self.order = []
+    
+    def __reduce__(self):
+        return (self.__class__, (), self._getstate())
+    
+    def _getstate(self):
+        return {'order': self.order}
+    
+    def __setstate__(self, state):
+        self.order = state['order']
+        
+    def __richcmp__(self, other, method):
+        if method == 2:
+            return self._eq(other)
+        elif method == 3:
+            return not self._eq(other)
+        else:
+            return NotImplemented
+        
+    def _eq(self, other):
+        return self.__class__ is other.__class__ and self._getstate() == other._getstate()
     
     def piter(Basis self):
         for bf in self.order:
@@ -466,4 +569,4 @@ cdef class Basis:
                 continue
             bf.apply(X,B[:,col],recurse=True)
             col += 1
-    
+

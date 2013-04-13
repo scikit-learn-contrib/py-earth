@@ -12,7 +12,25 @@ class Earth(object):
     
     def __init__(self, **kwargs):
         self.set_params(**kwargs)
-    
+        
+    def __eq__(self, other):
+        if self.__class__ is not other.__class__:
+            return False
+        keys = set(self.__dict__.keys() + other.__dict__.keys())
+        for k in keys:
+            try:
+                v_self = self.__dict__[k]
+                v_other = other.__dict__[k]
+            except KeyError:
+                return False
+            try:
+                if v_self != v_other:
+                    return False
+            except ValueError:#Case of numpy arrays
+                if np.any(v_self != v_other):
+                    return False
+        return True
+                
     def _pull_forward_args(self, **kwargs):
         result = {}
         for name in self.forward_pass_arg_names:
@@ -268,6 +286,10 @@ class EarthTrace(object):
     def __init__(self, forward_trace, pruning_trace):
         self.forward_trace = forward_trace
         self.pruning_trace = pruning_trace
+        
+    def __eq__(self, other):
+        return self.__class__ is other.__class__ and self.forward_trace == other.forward_trace and \
+            self.pruning_trace == other.pruning_trace
         
     def __str__(self):
         return str(self.forward_trace) + '\n' + str(self.pruning_trace)
