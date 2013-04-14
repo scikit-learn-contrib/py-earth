@@ -167,6 +167,9 @@ class Earth(object):
         return True
                 
     def _pull_forward_args(self, **kwargs):
+        '''
+        Pull named arguments relevant to the forward pass.
+        '''
         result = {}
         for name in self.forward_pass_arg_names:
             if name in kwargs:
@@ -174,6 +177,9 @@ class Earth(object):
         return result
     
     def _pull_pruning_args(self, **kwargs):
+        '''
+        Pull named arguments relevant to the pruning pass.
+        '''
         result = {}
         for name in self.pruning_pass_arg_names:
             if name in kwargs:
@@ -181,6 +187,10 @@ class Earth(object):
         return result
     
     def _pull_unknown_args(self, **kwargs):
+        '''
+        Pull unknown named arguments.  Usually an exception is raised if any are 
+        actually found, but raising exceptions is the responsibility of the caller.
+        '''
         result = {}
         known_args = self.forward_pass_arg_names | self.pruning_pass_arg_names
         for name in kwargs.iterkeys():
@@ -189,6 +199,9 @@ class Earth(object):
         return result
     
     def _scrub_x(self, X, **kwargs):
+        '''
+        Sanitize input predictors and extract column names if appropriate.
+        '''
         no_labels = False
         if 'xlabels' not in kwargs and 'xlabels' not in self.__dict__:
             #Try to get xlabels from input data (for example, if X is a pandas DataFrame)
@@ -216,6 +229,9 @@ class Earth(object):
         return X
     
     def _scrub(self, X, y, **kwargs):
+        '''
+        Sanitize input data.
+        '''
         #Check whether X is the output of patsy.dmatrices
         if y is None and type(X) is tuple:
             y, X = X
@@ -235,6 +251,10 @@ class Earth(object):
         return X, y
     
     def set_params(self, **kwargs):
+        '''
+        Set or change parameters of an Earth object after its creation.  See Earth class for
+        available parameters.
+        '''
         #Check for unknown arguments
         unknown_args = self._pull_unknown_args(**kwargs)
         if unknown_args:
@@ -254,6 +274,33 @@ class Earth(object):
         self.__dict__.update(self._pull_pruning_args(**kwargs))
     
     def fit(self, X, y = None, xlabels=None, linvars=None):
+        '''
+        Fit an Earth model to the input data X and y.
+        
+        
+        Parameters
+        ----------
+        X : array-like, shape = [m, n] where m is the number of samples and n is the number of features
+            The training predictors.  The X parameter can be a numpy array, a pandas DataFrame, a patsy 
+            DesignMatrix, or a tuple of patsy DesignMatrix objects as output by patsy.dmatrices.
+            
+        
+        y : array-like, optional (default=None), shape = [m] where m is the number of samples
+            The training response.  The y parameter can be a numpy array, a pandas DataFrame with one 
+            column, a Patsy DesignMatrix, or can be left as None (default) if X was the output of a 
+            call to patsy.dmatrices (in which case, X contains the response).
+            
+        
+        xlabels : iterable of strings, optional (default=None)
+            Convenient way to set the xlabels parameter while calling fit.  Ignored if None (default).  
+            See the Earth class for an explanation of the xlabels parameter.
+            
+        
+        linvars : iterable of ints or strings or both, optional (default=None)
+            Convenient way to set the linvars parameter while calling fit.  Ignored if None (default).  
+            See the Earth class for an explanation of the linvars parameter.
+            
+        '''
         #Format and label the data
         if xlabels is not None:
             self.set_params(xlabels=xlabels)
@@ -268,6 +315,44 @@ class Earth(object):
         return self
     
     def forward_pass(self, X, y = None, **kwargs):
+        '''
+        Perform the forward pass of the multivariate adaptive regression splines algorithm.  Users
+        will normally want to call the fit method instead, which performs the forward pass, the pruning 
+        pass, and a linear fit to determine the final model coefficients.
+        
+        
+        Parameters 
+        ----------
+        X : array-like, shape = [m, n] where m is the number of samples and n is the number of features
+            The training predictors.  The X parameter can be a numpy array, a pandas DataFrame, a patsy 
+            DesignMatrix, or a tuple of patsy DesignMatrix objects as output by patsy.dmatrices.
+            
+        
+        y : array-like, optional (default=None), shape = [m] where m is the number of samples
+            The training response.  The y parameter can be a numpy array, a pandas DataFrame with one 
+            column, a Patsy DesignMatrix, or can be left as None (default) if X was the output of a 
+            call to patsy.dmatrices (in which case, X contains the response).
+            
+            
+        xlabels : iterable of strings, optional (default=None)
+            Convenient way to set the xlabels parameter while calling forward_pass.  Ignored if None 
+            (default).  See the Earth class for an explanation of the xlabels parameter.
+            
+        
+        linvars : iterable of ints or strings or both, optional (default=None)
+            Convenient way to set the linvars parameter while calling forward_pass.  Ignored if None 
+            (default).  See the Earth class for an explanation of the linvars parameter.
+            
+        
+        Note
+        ----
+        The forward_pass method accepts all other named parameters listed in Earth.forward_pass_arg_names. 
+        Passing these parameters to the forward_pass method sets them only for this call, and does not
+        change the parameters of the Earth object itself.  To change the parameters of the object 
+        itself, use the set_params method.
+        
+        '''
+        
         #Pull new labels and linear variables if necessary
         if 'xlabels' in kwargs and 'xlabels' not in self.__dict__:
             self.set_params(xlabels=kwargs['xlabels'])
@@ -278,7 +363,7 @@ class Earth(object):
         
         #Label and format data
         X, y = self._scrub(X,y,**self.__dict__)
-        
+         
         #Check for additional forward pass arguments, and fail if someone tried
         #to use other arguments
         args = self._pull_forward_args(**self.__dict__)
@@ -292,14 +377,41 @@ class Earth(object):
             msg = msg[0:-1]+'.'
             raise ValueError(msg)
         args.update(new_args)
-        
+
         #Do the actual work
+        args = self._pull_forward_args(**self.__dict__)
         forward_passer = ForwardPasser(X, y, **args)
         forward_passer.run()
         self.forward_pass_record_ = forward_passer.trace()
         self.basis_ = forward_passer.get_basis()
         
     def pruning_pass(self, X, y = None, **kwargs):
+        '''
+        Perform the pruning pass of the multivariate adaptive regression splines algorithm.  Users
+        will normally want to call the fit method instead, which performs the forward pass, the pruning 
+        pass, and a linear fit to determine the final model coefficients.
+        
+        
+        Parameters 
+        ----------
+        X : array-like, shape = [m, n] where m is the number of samples and n is the number of features
+            The training predictors.  The X parameter can be a numpy array, a pandas DataFrame, a patsy 
+            DesignMatrix, or a tuple of patsy DesignMatrix objects as output by patsy.dmatrices.
+            
+        
+        y : array-like, optional (default=None), shape = [m] where m is the number of samples
+            The training response.  The y parameter can be a numpy array, a pandas DataFrame with one 
+            column, a Patsy DesignMatrix, or can be left as None (default) if X was the output of a 
+            call to patsy.dmatrices (in which case, X contains the response).
+            
+                
+        Note
+        ----
+        The pruning_pass method accepts all other named parameters listed in Earth.pruning_pass_arg_names. 
+        Passing these parameters to the pruning_pass method sets them only for this call, and does not
+        change the parameters of the Earth object itself.  To change the parameters of the object 
+        itself, use the set_params method.
+        '''
         #Format data
         X, y = self._scrub(X,y)
         
@@ -375,7 +487,23 @@ class Earth(object):
         return result
     
     def linear_fit(self, X, y = None):
-        '''Solve the linear least squares problem to determine the coefficients of the unpruned basis functions.'''
+        '''
+        Solve the linear least squares problem to determine the coefficients of the unpruned basis functions.
+        
+        
+        Parameters 
+        ----------
+        X : array-like, shape = [m, n] where m is the number of samples and n is the number of features
+            The training predictors.  The X parameter can be a numpy array, a pandas DataFrame, a patsy 
+            DesignMatrix, or a tuple of patsy DesignMatrix objects as output by patsy.dmatrices.
+            
+        
+        y : array-like, optional (default=None), shape = [m] where m is the number of samples
+            The training response.  The y parameter can be a numpy array, a pandas DataFrame with one 
+            column, a Patsy DesignMatrix, or can be left as None (default) if X was the output of a 
+            call to patsy.dmatrices (in which case, X contains the response).
+        '''
+        
         #Format data
         X, y = self._scrub(X,y)
         
@@ -386,13 +514,36 @@ class Earth(object):
         self.coef_ = np.linalg.lstsq(B,y)[0]
     
     def predict(self, X):
-        '''Predict the response based on the input data X.'''
+        '''
+        Predict the response based on the input data X.
+        
+        
+        Parameters 
+        ----------
+        X : array-like, shape = [m, n] where m is the number of samples and n is the number of features
+            The training predictors.  The X parameter can be a numpy array, a pandas DataFrame, or a 
+            patsy DesignMatrix.
+
+        '''
         X = self._scrub_x(X)
         B = self.transform(X)
         return np.dot(B,self.coef_)
     
     def transform(self, X):
-        '''Transform X into the basis space.'''
+        '''
+        Transform X into the basis space.  Normally, users will call the predict method instead, which
+        both transforms into basis space calculates the weighted sum of basis terms to produce a 
+        prediction of the response.  Users may wish to call transform directly in some cases.  For 
+        example, users may wish to apply other statistical or machine learning algorithms, such as 
+        generalized linear regression, in basis space.
+        
+        
+        Parameters 
+        ----------
+        X : array-like, shape = [m, n] where m is the number of samples and n is the number of features
+            The training predictors.  The X parameter can be a numpy array, a pandas DataFrame, or a 
+            patsy DesignMatrix.
+        '''
         X = self._scrub_x(X)
         B = np.empty(shape=(X.shape[0],self.basis_.plen()))
         self.basis_.transform(X,B)
@@ -406,7 +557,22 @@ class Earth(object):
             return 3.0
     
     def score(self, X, y = None):
-        '''Calculate the GCV of the model on data X and y.'''
+        '''
+        Calculate the GCV of the model on data X and y.
+        
+        
+        Parameters 
+        ----------
+        X : array-like, shape = [m, n] where m is the number of samples and n is the number of features
+            The training predictors.  The X parameter can be a numpy array, a pandas DataFrame, a patsy 
+            DesignMatrix, or a tuple of patsy DesignMatrix objects as output by patsy.dmatrices.
+            
+        
+        y : array-like, optional (default=None), shape = [m] where m is the number of samples
+            The training response.  The y parameter can be a numpy array, a pandas DataFrame with one 
+            column, a Patsy DesignMatrix, or can be left as None (default) if X was the output of a 
+            call to patsy.dmatrices (in which case, X contains the response).
+        '''
         X, y = self._scrub(X, y)
         y_hat = self.predict(X)
         m, n = X.shape
