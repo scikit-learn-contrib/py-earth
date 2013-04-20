@@ -11,6 +11,15 @@ from _record cimport ForwardPassIteration
 from libc.math cimport sqrt, abs, log, log2
 import numpy as np
 cnp.import_array()
+
+stopping_conditions = {
+    MAXTERMS:"Reached maximum number of terms",
+    MAXRSQ:"Achieved RSQ value within threshold of 1",
+    NOIMPRV:"Improvement below threshold",
+    LOWGRSQ:"GRSQ too low",
+    NOCAND:"No remaining candidate knot locations"
+    }
+
 cdef class ForwardPasser:
     
     def __init__(ForwardPasser self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] y, **kwargs):

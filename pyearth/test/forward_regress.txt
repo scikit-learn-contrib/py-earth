@@ -24,4 +24,4 @@ iter  parent  var  knot  mse       terms  gcv    rsq    grsq
 7     0       7    -1    0.666258  10     1.015  0.515  0.275  
 8     0       0    -1    0.666124  11     1.067  0.515  0.238  
 ---------------------------------------------------------------
-Stopping Condition: 2
+Stopping Condition 2: Improvement below threshold

@@ -5,6 +5,7 @@
 # cython: profile = True
 
 from _util cimport gcv, ascii_table
+import _forward
 
 cdef class Record:
 
@@ -134,7 +135,7 @@ cdef class ForwardPassRecord(Record):
         result = ''
         result += 'Forward Pass\n'
         result += ascii_table(header, data)
-        result += '\nStopping Condition: %s\n' % (self.stopping_condition)
+        result += '\nStopping Condition %d: %s\n' % (self.stopping_condition, _forward.stopping_conditions[self.stopping_condition])
         return result
 
 cdef class Iteration:
