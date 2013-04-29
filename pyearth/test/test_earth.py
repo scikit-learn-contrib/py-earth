@@ -3,18 +3,19 @@ Created on Feb 24, 2013
 
 @author: jasonrudy
 '''
-import unittest
 import numpy
 from pyearth._basis import Basis, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
 from pyearth import Earth
-import pandas
-import patsy
 import pickle
 import copy
+import os
+from testing_utils import if_pandas, if_patsy
+from nose.tools import assert_equal, assert_not_equal, assert_true, assert_false, \
+    assert_almost_equal, assert_list_equal
+    
+class TestEarth(object):
 
-class Test(unittest.TestCase):
-
-    def setUp(self):
+    def __init__(self):
         numpy.random.seed(0)
         self.basis = Basis()
         constant = ConstantBasisFunction()
@@ -33,33 +34,36 @@ class Test(unittest.TestCase):
         self.y[:] = numpy.dot(self.B,self.beta) + numpy.random.normal(size=100)
         self.earth = Earth(penalty=1)
 
-    def tearDown(self):
-        pass
-
-    def testFit(self):
+    def test_fit(self):
         self.earth.fit(self.X, self.y)
         res = str(self.earth.trace()) + '\n' + str(self.earth)
 #        with open('earth_regress.txt','w') as fl:
 #            fl.write(res)
-        with open('earth_regress.txt','r') as fl:
+        with open(os.path.join(os.path.dirname(__file__),'earth_regress.txt'),'r') as fl:
             prev = fl.read()
-        self.assertEqual(res,prev)
+        assert_equal(res,prev)
         
-    def testScore(self):
+    def test_score(self):
         model = self.earth.fit(self.X, self.y)
         record = model.pruning_trace()
         gcv_ = record.gcv(record.get_selected())
-        self.assertAlmostEqual(gcv_,model.score(self.X,self.y))
+        assert_almost_equal(gcv_,model.score(self.X,self.y))
 
-    def testPandasCompat(self):
+    @if_pandas
+    def test_pandas_compatibility(self):
+        import pandas
         X = pandas.DataFrame(self.X)
         y = pandas.DataFrame(self.y)
         colnames = ['xx'+str(i) for i in range(X.shape[1])]
         X.columns = colnames
         model = self.earth.fit(X,y)
-        self.assertListEqual(colnames,model.xlabels)
+        assert_list_equal(colnames,model.xlabels)
         
-    def testPatsyCompat(self):
+    @if_patsy
+    @if_pandas
+    def test_patsy_compatibility(self):
+        import pandas
+        import patsy
         X = pandas.DataFrame(self.X)
         y = pandas.DataFrame(self.y)
         colnames = ['xx'+str(i) for i in range(X.shape[1])]
@@ -67,24 +71,24 @@ class Test(unittest.TestCase):
         X['y'] = y
         y, X = patsy.dmatrices('y ~ xx0 + xx1 + xx2 + xx3 + xx4 + xx5 + xx6 + xx7 + xx8 + xx9 - 1',data=X)
         model = self.earth.fit(X,y)
-        self.assertListEqual(colnames,model.xlabels)
+        assert_list_equal(colnames,model.xlabels)
         
-    def testPickleCompat(self):
+    def test_pickle_compatibility(self):
         model = self.earth.fit(self.X, self.y)
         model_copy = pickle.loads(pickle.dumps(model))
-        self.assertTrue(model_copy == model)
-        self.assertTrue(numpy.all(model.predict(self.X) == model_copy.predict(self.X)))
-        self.assertTrue(model.basis_[0] is model.basis_[1]._get_root())
-        self.assertTrue(model_copy.basis_[0] is model_copy.basis_[1]._get_root())
+        assert_true(model_copy == model)
+        assert_true(numpy.all(model.predict(self.X) == model_copy.predict(self.X)))
+        assert_true(model.basis_[0] is model.basis_[1]._get_root())
+        assert_true(model_copy.basis_[0] is model_copy.basis_[1]._get_root())
         
-    def testCopyCompat(self):
+    def test_copy_compatibility(self):
         model = self.earth.fit(self.X, self.y)
         model_copy = copy.copy(model)
-        self.assertTrue(model_copy == model)
-        self.assertTrue(numpy.all(model.predict(self.X) == model_copy.predict(self.X)))
-        self.assertTrue(model.basis_[0] is model.basis_[1]._get_root())
-        self.assertTrue(model_copy.basis_[0] is model_copy.basis_[1]._get_root())
+        assert_true(model_copy == model)
+        assert_true(numpy.all(model.predict(self.X) == model_copy.predict(self.X)))
+        assert_true(model.basis_[0] is model.basis_[1]._get_root())
+        assert_true(model_copy.basis_[0] is model_copy.basis_[1]._get_root())
         
-if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
-    unittest.main()
+if __name__ == '__main__':
+    import nose
+    nose.run(argv=[__file__, '-s', '-v'])

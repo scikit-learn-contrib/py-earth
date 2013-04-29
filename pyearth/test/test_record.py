@@ -1,10 +1,10 @@
-import unittest
 from pyearth._record import ForwardPassRecord, ForwardPassIteration, PruningPassRecord, PruningPassIteration
 from pyearth._util import gcv
+from nose.tools import assert_true, assert_equal, assert_list_equal
 
-class TestForwardPassRecord(unittest.TestCase):
+class TestForwardPassRecord(object):
 
-    def setUp(self):
+    def __init__(self):
         #Create a record
         self.num_samples = 1000
         self.num_variables = 10
@@ -17,10 +17,7 @@ class TestForwardPassRecord(unittest.TestCase):
         self.mses = [self.sst,63.0,34.0,18.0]
         self.sizes = [1,3,5,7]
 
-    def tearDown(self):
-        pass
-
-    def testStatistics(self):
+    def test_statistics(self):
         mses = [self.record.mse(i) for i in range(len(self.record))]
         mses_ = [self.mses[i] for i in range(len(self.record))]
         gcvs = [self.record.gcv(i) for i in range(len(self.record))]
@@ -29,15 +26,15 @@ class TestForwardPassRecord(unittest.TestCase):
         rsqs_ = [1 - (self.mses[i] / self.sst) for i in range(len(self.record))]
         grsqs = [self.record.grsq(i) for i in range(len(self.record))]
         grsqs_ = [1 - (self.record.gcv(i) / gcv(self.sst, 1, self.num_samples, self.penalty)) for i in range(len(self.record))]
-        self.assertListEqual(mses,mses_)
-        self.assertListEqual(gcvs,gcvs_)
-        self.assertListEqual(rsqs,rsqs_)
-        self.assertListEqual(grsqs,grsqs_)
+        assert_list_equal(mses,mses_)
+        assert_list_equal(gcvs,gcvs_)
+        assert_list_equal(rsqs,rsqs_)
+        assert_list_equal(grsqs,grsqs_)
         
         
-class TestPruningPassRecord(unittest.TestCase):
+class TestPruningPassRecord(object):
 
-    def setUp(self):
+    def __init__(self):
         #Create a record
         self.num_samples = 1000
         self.num_variables = 10
@@ -50,10 +47,7 @@ class TestPruningPassRecord(unittest.TestCase):
         self.mses = [18.0,25.0,34.0,87.0]
         self.sizes = [7,6,5,4]
 
-    def tearDown(self):
-        pass
-
-    def testStatistics(self):
+    def test_statistics(self):
         mses = [self.record.mse(i) for i in range(len(self.record))]
         mses_ = [self.mses[i] for i in range(len(self.record))]
         gcvs = [self.record.gcv(i) for i in range(len(self.record))]
@@ -62,12 +56,13 @@ class TestPruningPassRecord(unittest.TestCase):
         rsqs_ = [1 - (self.mses[i] / self.sst) for i in range(len(self.record))]
         grsqs = [self.record.grsq(i) for i in range(len(self.record))]
         grsqs_ = [1 - (self.record.gcv(i) / gcv(self.sst, 1, self.num_samples, self.penalty)) for i in range(len(self.record))]
-        self.assertListEqual(mses,mses_)
-        self.assertListEqual(gcvs,gcvs_)
-        self.assertListEqual(rsqs,rsqs_)
-        self.assertListEqual(grsqs,grsqs_)
+        assert_list_equal(mses,mses_)
+        assert_list_equal(gcvs,gcvs_)
+        assert_list_equal(rsqs,rsqs_)
+        assert_list_equal(grsqs,grsqs_)
 
-
-if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
-    unittest.main()
+if __name__ == '__main__':
+    import nose
+    nose.run(argv=[__file__, '-s', '-v'])
+    
+    
