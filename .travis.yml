@@ -1,6 +1,9 @@
 language: python
 python:
   - "2.7"
-install: python setup.py build_ext --inplace
+install: 
+  - pip install patsy
+  - pip install pandas
+  - python setup.py build_ext --inplace
 
 script: nosetests -s -v pyearth
