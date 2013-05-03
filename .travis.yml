@@ -1,8 +1,6 @@
 language: python
 python:
-  - "3.3"
   - "2.7"
-  - "2.6"
 install: python setup.py build_ext --inplace
 
 script: nosetests -s -v pyearth
