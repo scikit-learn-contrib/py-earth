@@ -190,7 +190,7 @@ cdef class BasisFunction:
             minspan_ = <int> (-log2(-(1.0/(n*count))*log(1.0-minspan_alpha)) / 2.5)
         else:
             minspan_ = minspan
-            
+        
         #Take out the used points and apply minspan
         num_used = len(used_knots)
         prev = 0
@@ -202,14 +202,14 @@ cdef class BasisFunction:
             workspace[idx] = 0
             j = idx
             k = 0
-            while j > prev + 1 and k < minspan:
+            while j > prev + 1 and k < minspan_:
                 if workspace[j-1]:
                     workspace[j-1] = False
                     k += 1
                 j -= 1
             j = idx + 1
             k = 0
-            while j < m and k < minspan:
+            while j < m and k < minspan_:
                 if workspace[j]:
                     workspace[j] = False
                     k += 1
