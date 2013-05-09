@@ -100,3 +100,5 @@ build/lib.macosx-10.5-intel-2.7/pyearth/test/test_record.py
 build/lib.macosx-10.5-intel-2.7/pyearth/test/test_util.py
 
 build/lib.macosx-10.5-intel-2.7/pyearth/test/testing_utils.py
+
+.DS_Store
