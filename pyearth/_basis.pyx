@@ -95,7 +95,7 @@ cdef class BasisFunction:
     
     cpdef _add_child(self,BasisFunction child):
         '''Called by _set_parent.'''
-        cdef unsigned int n = len(self.children)
+        cdef INDEX_t n = len(self.children)
         self.children.append(child)
         cdef int var = child.get_variable()
         if var in self.child_map:
@@ -112,7 +112,7 @@ cdef class BasisFunction:
     cpdef unprune(self):
         self.pruned = False
     
-    cpdef knots(BasisFunction self, unsigned int variable):
+    cpdef knots(BasisFunction self, INDEX_t variable):
         
         cdef list children
         cdef BasisFunction child
@@ -120,8 +120,8 @@ cdef class BasisFunction:
             children = self.child_map[variable]
         else:
             return []
-        cdef unsigned int n = len(children)
-        cdef unsigned int i
+        cdef INDEX_t n = len(children)
+        cdef INDEX_t i
         cdef list result = []
         cdef int idx
         for i in range(n):
@@ -131,7 +131,7 @@ cdef class BasisFunction:
                 result.append(child.get_knot_idx())
         return result
     
-    cpdef unsigned int degree(BasisFunction self):
+    cpdef INDEX_t degree(BasisFunction self):
         return self.parent.degree() + 1
     
     cpdef apply(self, cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=1] b, bint recurse = True):
@@ -142,25 +142,25 @@ cdef class BasisFunction:
                   parent function.
         '''
     
-    cpdef cnp.ndarray[INT_t, ndim=1] valid_knots(BasisFunction self, cnp.ndarray[FLOAT_t,ndim=1] values, cnp.ndarray[FLOAT_t,ndim=1] variable, int variable_idx, unsigned int check_every, int endspan, int minspan, FLOAT_t minspan_alpha, unsigned int n, cnp.ndarray[INT_t,ndim=1] workspace):
+    cpdef cnp.ndarray[INT_t, ndim=1] valid_knots(BasisFunction self, cnp.ndarray[FLOAT_t,ndim=1] values, cnp.ndarray[FLOAT_t,ndim=1] variable, int variable_idx, INDEX_t check_every, int endspan, int minspan, FLOAT_t minspan_alpha, INDEX_t n, cnp.ndarray[INT_t,ndim=1] workspace):
         '''
         values - The unsorted values of self in the data set
         variable - The sorted values of variable in the data set
         variable_idx - The index of the variable in the data set
         workspace - An m-vector (where m is the number of samples) used internally
         '''
-        cdef unsigned int i
-        cdef unsigned int j
-        cdef unsigned int k
-        cdef unsigned int m = values.shape[0]
+        cdef INDEX_t i
+        cdef INDEX_t j
+        cdef INDEX_t k
+        cdef INDEX_t m = values.shape[0]
         cdef FLOAT_t float_tmp
         cdef INT_t int_tmp
-        cdef unsigned int count
+        cdef INDEX_t count
         cdef int minspan_
         cdef cnp.ndarray[INT_t, ndim=1] result
-        cdef unsigned int num_used
-        cdef unsigned int prev
-        cdef unsigned int start
+        cdef INDEX_t num_used
+        cdef INDEX_t prev
+        cdef INDEX_t start
         cdef int idx
         cdef int last_idx
         cdef FLOAT_t first_var_value = variable[m-1]
@@ -296,7 +296,7 @@ cdef class ConstantBasisFunction(BasisFunction):
     def _set_parent_state(self, state):
         pass
     
-    cpdef unsigned int degree(ConstantBasisFunction self):
+    cpdef INDEX_t degree(ConstantBasisFunction self):
         return 0
     
     cpdef translate(ConstantBasisFunctionself, cnp.ndarray[FLOAT_t,ndim=1] slopes, cnp.ndarray[FLOAT_t,ndim=1] intercepts, bint recurse):
@@ -319,8 +319,8 @@ cdef class ConstantBasisFunction(BasisFunction):
                   Therefore the recurse argument is ignored.  This spares child BasisFunctions from 
                   having to know whether their parents have parents.
         ''' 
-        cdef unsigned int i #@DuplicatedSignature
-        cdef unsigned int m = len(b)
+        cdef INDEX_t i #@DuplicatedSignature
+        cdef INDEX_t m = len(b)
         for i in range(m):
             b[i] = <FLOAT_t> 1.0
             
@@ -329,7 +329,7 @@ cdef class ConstantBasisFunction(BasisFunction):
 
 cdef class HingeBasisFunction(BasisFunction):
     
-    def __init__(self, BasisFunction parent, FLOAT_t knot, unsigned int knot_idx, unsigned int variable, bint reverse, label=None): #@DuplicatedSignature
+    def __init__(self, BasisFunction parent, FLOAT_t knot, INDEX_t knot_idx, INDEX_t variable, bint reverse, label=None): #@DuplicatedSignature
         self.knot = knot
         self.knot_idx = knot_idx
         self.variable = variable
@@ -387,13 +387,13 @@ cdef class HingeBasisFunction(BasisFunction):
             result += '*%s' % (str(self.parent),)
         return result
     
-    cpdef unsigned int get_variable(self):
+    cpdef INDEX_t get_variable(self):
         return self.variable
     
     cpdef FLOAT_t get_knot(self):
         return self.knot
     
-    cpdef unsigned int get_knot_idx(self):
+    cpdef INDEX_t get_knot_idx(self):
         return self.knot_idx
     
     cpdef apply(self, cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=1] b, bint recurse = True):
@@ -405,8 +405,8 @@ cdef class HingeBasisFunction(BasisFunction):
         ''' 
         if recurse:
             self.parent.apply(X,b,recurse=True)
-        cdef unsigned int i #@DuplicatedSignature
-        cdef unsigned int m = len(b) #@DuplicatedSignature
+        cdef INDEX_t i #@DuplicatedSignature
+        cdef INDEX_t m = len(b) #@DuplicatedSignature
         cdef FLOAT_t tmp
         if self.reverse:
             for i in range(m):
@@ -422,7 +422,7 @@ cdef class HingeBasisFunction(BasisFunction):
                 b[i] *= tmp
                 
 cdef class LinearBasisFunction(BasisFunction):
-    def __init__(self, BasisFunction parent, unsigned int variable, label=None): #@DuplicatedSignature
+    def __init__(self, BasisFunction parent, INDEX_t variable, label=None): #@DuplicatedSignature
         self.variable = variable
         self.label = label if label is not None else 'x'+str(variable)
         self._set_parent(parent)
@@ -456,7 +456,7 @@ cdef class LinearBasisFunction(BasisFunction):
             result += '*'+parent
         return result
     
-    cpdef unsigned int get_variable(self):
+    cpdef INDEX_t get_variable(self):
         return self.variable
     
     cpdef apply(self, cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=1] b, bint recurse = True):
@@ -468,8 +468,8 @@ cdef class LinearBasisFunction(BasisFunction):
         ''' 
         if recurse:
             self.parent.apply(X,b,recurse=True)
-        cdef unsigned int i #@DuplicatedSignature
-        cdef unsigned int m = len(b) #@DuplicatedSignature
+        cdef INDEX_t i #@DuplicatedSignature
+        cdef INDEX_t m = len(b) #@DuplicatedSignature
         for i in range(m):
             b[i] *= X[i,self.variable]
         
@@ -507,8 +507,8 @@ cdef class Basis:
                 yield bf
     
     def __str__(Basis self):
-        cdef unsigned int i
-        cdef unsigned int n = len(self)
+        cdef INDEX_t i
+        cdef INDEX_t n = len(self)
         result = ''
         for i in range(n):
             result += str(self[i])
@@ -516,15 +516,15 @@ cdef class Basis:
         return result
     
     cpdef translate(Basis self, cnp.ndarray[FLOAT_t,ndim=1] slopes, cnp.ndarray[FLOAT_t,ndim=1] intercepts):
-        cdef unsigned int n = len(self)
-        cdef unsigned int i #@DuplicatedSignature
+        cdef INDEX_t n = len(self)
+        cdef INDEX_t i #@DuplicatedSignature
         for i in range(n):
             self.order[i].translate(slopes,intercepts,False)
         
     cpdef scale(Basis self, cnp.ndarray[FLOAT_t,ndim=1] slopes, cnp.ndarray[FLOAT_t,ndim=1] intercepts, cnp.ndarray[FLOAT_t,ndim=1] beta):
-        cdef unsigned int n = len(self) #@DuplicatedSignature
-        cdef unsigned int i #@DuplicatedSignature
-        cdef unsigned int j = 0
+        cdef INDEX_t n = len(self) #@DuplicatedSignature
+        cdef INDEX_t i #@DuplicatedSignature
+        cdef INDEX_t j = 0
         for i in range(n):
             if self.order[i].is_pruned():
                 continue
@@ -543,26 +543,26 @@ cdef class Basis:
     def __len__(Basis self):
         return self.order.__len__()
     
-    cpdef BasisFunction get(Basis self, unsigned int i):
+    cpdef BasisFunction get(Basis self, INDEX_t i):
         return self.order[i]
     
-    def __getitem__(Basis self, unsigned int i):
+    def __getitem__(Basis self, INDEX_t i):
         return self.get(i)
     
-    cpdef unsigned int plen(Basis self):
-        cdef unsigned int length = 0
-        cdef unsigned int i
-        cdef unsigned int n = len(self.order)
+    cpdef INDEX_t plen(Basis self):
+        cdef INDEX_t length = 0
+        cdef INDEX_t i
+        cdef INDEX_t n = len(self.order)
         for i in range(n):
             if not self.order[i].is_pruned():
                 length += 1
         return length
     
     cpdef transform(Basis self, cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=2] B):
-        cdef unsigned int i #@DuplicatedSignature
-        cdef unsigned int n = self.__len__()
+        cdef INDEX_t i #@DuplicatedSignature
+        cdef INDEX_t n = self.__len__()
         cdef BasisFunction bf
-        cdef unsigned int col = 0
+        cdef INDEX_t col = 0
         for i in range(n):
             bf = self.order[i]
             if bf.is_pruned():

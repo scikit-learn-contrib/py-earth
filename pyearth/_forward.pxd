@@ -2,6 +2,7 @@ cimport numpy as cnp
 import numpy as np
 ctypedef cnp.float64_t FLOAT_t
 ctypedef cnp.int_t INT_t
+ctypedef cnp.ulong_t INDEX_t
 ctypedef cnp.uint8_t BOOL_t
 from _basis cimport Basis
 from _record cimport ForwardPassRecord
@@ -32,8 +33,8 @@ cdef class ForwardPasser:
     #Input data
     cdef cnp.ndarray X
     cdef cnp.ndarray y
-    cdef unsigned int m
-    cdef unsigned int n
+    cdef INDEX_t m
+    cdef INDEX_t n
     cdef FLOAT_t sst
     cdef FLOAT_t y_squared
     
@@ -67,12 +68,12 @@ cdef class ForwardPasser:
     
     cdef stop_check(ForwardPasser self)
     
-    cpdef int orthonormal_update(ForwardPasser self, unsigned int k)
+    cpdef int orthonormal_update(ForwardPasser self, INDEX_t k)
     
-    cpdef orthonormal_downdate(ForwardPasser self, unsigned int k)
+    cpdef orthonormal_downdate(ForwardPasser self, INDEX_t k)
     
     cdef next_pair(ForwardPasser self)
     
-    cdef best_knot(ForwardPasser self, unsigned int parent, unsigned int variable, unsigned int k, cnp.ndarray[INT_t,ndim=1] candidates, cnp.ndarray[INT_t,ndim=1] order, FLOAT_t * mse, FLOAT_t * knot, unsigned int * knot_idx)
+    cdef best_knot(ForwardPasser self, INDEX_t parent, INDEX_t variable, INDEX_t k, cnp.ndarray[INT_t,ndim=1] candidates, cnp.ndarray[INT_t,ndim=1] order, FLOAT_t * mse, FLOAT_t * knot, INDEX_t * knot_idx)
 
     

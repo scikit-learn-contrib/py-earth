@@ -7,10 +7,10 @@
 import numpy as np
 from libc.math cimport sqrt
 
-cpdef FLOAT_t gcv(FLOAT_t mse, unsigned int basis_size, unsigned int data_size, FLOAT_t penalty):
+cpdef FLOAT_t gcv(FLOAT_t mse, INDEX_t basis_size, INDEX_t data_size, FLOAT_t penalty):
     return mse * gcv_adjust(basis_size, data_size, penalty)
 
-cpdef FLOAT_t gcv_adjust(unsigned int basis_size, unsigned int data_size, FLOAT_t penalty):
+cpdef FLOAT_t gcv_adjust(INDEX_t basis_size, INDEX_t data_size, FLOAT_t penalty):
     return 1.0 / ((1 - ((basis_size + penalty*(basis_size - 1))/data_size)) ** 2)
 
 cpdef str_pad(string, length):

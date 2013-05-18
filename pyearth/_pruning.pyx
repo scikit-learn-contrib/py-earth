@@ -25,13 +25,13 @@ cdef class PruningPasser:
         #through the use of updating algorithms.  It is not clear that such 
         #optimization would be worthwhile, as the pruning pass is not the slowest
         #part of the algorithm.
-        cdef unsigned int i
-        cdef unsigned int j
-        cdef unsigned int basis_size = len(self.basis)
-        cdef unsigned int pruned_basis_size = self.basis.plen()
+        cdef INDEX_t i
+        cdef INDEX_t j
+        cdef INDEX_t basis_size = len(self.basis)
+        cdef INDEX_t pruned_basis_size = self.basis.plen()
         cdef FLOAT_t gcv_
-        cdef unsigned int best_iteration
-        cdef unsigned int best_bf_to_prune
+        cdef INDEX_t best_iteration
+        cdef INDEX_t best_bf_to_prune
         cdef FLOAT_t best_gcv
         cdef FLOAT_t best_iteration_gcv
         cdef FLOAT_t best_iteration_mse

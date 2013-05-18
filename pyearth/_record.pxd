@@ -1,6 +1,7 @@
 cimport numpy as cnp
 ctypedef cnp.float64_t FLOAT_t
 ctypedef cnp.int_t INT_t
+ctypedef cnp.ulong_t INDEX_t
 ctypedef cnp.uint8_t BOOL_t
 from _basis cimport Basis
 
@@ -13,20 +14,20 @@ cdef class Record:
     
     cpdef append(Record self, Iteration iteration)
     
-    cpdef FLOAT_t mse(Record self, unsigned int iteration)
+    cpdef FLOAT_t mse(Record self, INDEX_t iteration)
     
-    cpdef FLOAT_t rsq(Record self, unsigned int iteration)
+    cpdef FLOAT_t rsq(Record self, INDEX_t iteration)
     
-    cpdef FLOAT_t gcv(Record self, unsigned int iteration)
+    cpdef FLOAT_t gcv(Record self, INDEX_t iteration)
     
-    cpdef FLOAT_t grsq(Record self, unsigned int iteration)
+    cpdef FLOAT_t grsq(Record self, INDEX_t iteration)
 
 cdef class PruningPassRecord(Record):
-    cdef unsigned int selected
+    cdef INDEX_t selected
 
-    cpdef set_selected(PruningPassRecord self, unsigned int selected)
+    cpdef set_selected(PruningPassRecord self, INDEX_t selected)
 
-    cpdef unsigned int get_selected(PruningPassRecord self)
+    cpdef INDEX_t get_selected(PruningPassRecord self)
 
     cpdef roll_back(PruningPassRecord self, Basis basis)
 	
@@ -37,23 +38,23 @@ cdef class ForwardPassRecord(Record):
     
 cdef class Iteration:
     cdef FLOAT_t mse
-    cdef unsigned int size
+    cdef INDEX_t size
     
     cpdef FLOAT_t get_mse(Iteration self)
     
-    cpdef unsigned int get_size(Iteration self)
+    cpdef INDEX_t get_size(Iteration self)
     
 cdef class PruningPassIteration(Iteration):
-    cdef unsigned int pruned
+    cdef INDEX_t pruned
     
-    cpdef unsigned int get_pruned(PruningPassIteration self)
+    cpdef INDEX_t get_pruned(PruningPassIteration self)
     
 cdef class FirstPruningPassIteration(PruningPassIteration):
     pass
     
 cdef class ForwardPassIteration(Iteration):
-    cdef unsigned int parent
-    cdef unsigned int variable
+    cdef INDEX_t parent
+    cdef INDEX_t variable
     cdef FLOAT_t knot
     cdef int code
     cdef bint no_candidates
@@ -63,4 +64,4 @@ cdef class ForwardPassIteration(Iteration):
     cpdef no_further_candidates(ForwardPassIteration self)
     
 cdef class FirstForwardPassIteration(ForwardPassIteration):
-    cpdef unsigned int get_size(FirstForwardPassIteration self)
+    cpdef INDEX_t get_size(FirstForwardPassIteration self)

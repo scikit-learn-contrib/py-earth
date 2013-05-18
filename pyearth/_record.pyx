@@ -29,26 +29,26 @@ cdef class Record:
     cpdef append(Record self, Iteration iteration):
         self.iterations.append(iteration)
     
-    cpdef FLOAT_t mse(Record self, unsigned int iteration):
+    cpdef FLOAT_t mse(Record self, INDEX_t iteration):
         return self.iterations[iteration].get_mse()
     
-    cpdef FLOAT_t gcv(Record self, unsigned int iteration):
+    cpdef FLOAT_t gcv(Record self, INDEX_t iteration):
         cdef Iteration it = self.iterations[iteration]
         cdef FLOAT_t mse = it.mse
         return gcv(mse,it.get_size(),self.num_samples,self.penalty)
     
-    cpdef FLOAT_t rsq(Record self, unsigned int iteration):
+    cpdef FLOAT_t rsq(Record self, INDEX_t iteration):
         cdef FLOAT_t mse0 = self.sst#gcv(self.sst,1,self.num_samples,self.penalty)
         cdef FLOAT_t mse = self.mse(iteration)#gcv(self.mse(iteration):,self.iterations[iteration].get_size(),self.num_samples,self.penalty)#self.gcv(iteration)
         return 1 - (mse / mse0)
     
-    cpdef FLOAT_t grsq(Record self, unsigned int iteration):
+    cpdef FLOAT_t grsq(Record self, INDEX_t iteration):
         cdef FLOAT_t gcv0 = gcv(self.sst,1,self.num_samples,self.penalty)
         cdef FLOAT_t gcv_ = self.gcv(iteration)
         return 1 - (gcv_/gcv0)
 
 cdef class PruningPassRecord(Record):
-    def __init__(PruningPassRecord self, unsigned int num_samples, unsigned int num_variables, FLOAT_t penalty, FLOAT_t sst, unsigned int size, FLOAT_t mse):
+    def __init__(PruningPassRecord self, INDEX_t num_samples, INDEX_t num_variables, FLOAT_t penalty, FLOAT_t sst, INDEX_t size, FLOAT_t mse):
         self.num_samples = num_samples
         self.num_variables = num_variables
         self.penalty = penalty
@@ -75,15 +75,15 @@ cdef class PruningPassRecord(Record):
         self.iterations = state['iterations']
         self.selected = state['selected']
         
-    cpdef set_selected(PruningPassRecord self, unsigned int selected):
+    cpdef set_selected(PruningPassRecord self, INDEX_t selected):
         self.selected = selected
     
-    cpdef unsigned int get_selected(PruningPassRecord self):
+    cpdef INDEX_t get_selected(PruningPassRecord self):
         return self.selected
         
     cpdef roll_back(PruningPassRecord self, Basis basis):
-        cdef unsigned int n = len(self.iterations)
-        cdef unsigned int i
+        cdef INDEX_t n = len(self.iterations)
+        cdef INDEX_t i
         for i in range(n - self.selected - 1):
             basis[self.iterations[n - i - 1].get_pruned()].unprune()
     
@@ -100,7 +100,7 @@ cdef class PruningPassRecord(Record):
         return result
     
 cdef class ForwardPassRecord(Record):
-    def __init__(ForwardPassRecord self, unsigned int num_samples, unsigned int num_variables, FLOAT_t penalty, FLOAT_t sst):
+    def __init__(ForwardPassRecord self, INDEX_t num_samples, INDEX_t num_variables, FLOAT_t penalty, FLOAT_t sst):
         self.num_samples = num_samples
         self.num_variables = num_variables
         self.penalty = penalty
@@ -154,11 +154,11 @@ cdef class Iteration:
     cpdef FLOAT_t get_mse(Iteration self):
         return self.mse
     
-    cpdef unsigned int get_size(Iteration self):
+    cpdef INDEX_t get_size(Iteration self):
         return self.size
 
 cdef class PruningPassIteration(Iteration):
-    def __init__(PruningPassIteration self, unsigned int pruned, unsigned int size, FLOAT_t mse):
+    def __init__(PruningPassIteration self, INDEX_t pruned, INDEX_t size, FLOAT_t mse):
         self.pruned = pruned
         self.size = size
         self.mse = mse
@@ -176,7 +176,7 @@ cdef class PruningPassIteration(Iteration):
         self.size = state['size']
         self.mse = state['mse']
     
-    cpdef unsigned int get_pruned(PruningPassIteration self):
+    cpdef INDEX_t get_pruned(PruningPassIteration self):
         return self.pruned
         
     def __str__(PruningPassIteration self):
@@ -184,7 +184,7 @@ cdef class PruningPassIteration(Iteration):
         return result
     
 cdef class FirstPruningPassIteration(PruningPassIteration):
-    def __init__(PruningPassIteration self, unsigned int size, FLOAT_t mse):
+    def __init__(PruningPassIteration self, INDEX_t size, FLOAT_t mse):
         self.size = size
         self.mse = mse
     
@@ -204,7 +204,7 @@ cdef class FirstPruningPassIteration(PruningPassIteration):
         return result
     
 cdef class ForwardPassIteration(Iteration):
-    def __init__(ForwardPassIteration self, unsigned int parent, unsigned int variable, int knot, FLOAT_t mse, unsigned int size):
+    def __init__(ForwardPassIteration self, INDEX_t parent, INDEX_t variable, int knot, FLOAT_t mse, INDEX_t size):
         self.parent = parent
         self.variable = variable
         self.knot = knot
@@ -251,7 +251,7 @@ cdef class FirstForwardPassIteration(ForwardPassIteration):
     def __setstate__(FirstForwardPassIteration self, dict state):
         self.mse = state['mse']
         
-    cpdef unsigned int get_size(FirstForwardPassIteration self):
+    cpdef INDEX_t get_size(FirstForwardPassIteration self):
         return 1
         
     def __str__(self):

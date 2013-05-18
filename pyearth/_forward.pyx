@@ -23,7 +23,7 @@ stopping_conditions = {
 cdef class ForwardPasser:
     
     def __init__(ForwardPasser self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] y, **kwargs):
-        cdef unsigned int i
+        cdef INDEX_t i
         cdef FLOAT_t sst
         self.X = X
         self.y = y
@@ -83,8 +83,8 @@ cdef class ForwardPasser:
         return self.basis
     
     cpdef init_linear_variables(ForwardPasser self):
-        cdef unsigned int variable
-        cdef unsigned int endspan
+        cdef INDEX_t variable
+        cdef INDEX_t endspan
         cdef cnp.ndarray[INT_t, ndim=1] order
         cdef cnp.ndarray[INT_t, ndim=1] linear_variables = <cnp.ndarray[INT_t, ndim=1]> self.linear_variables
         cdef cnp.ndarray[FLOAT_t, ndim=2] B = <cnp.ndarray[FLOAT_t, ndim=2]> self.B
@@ -106,7 +106,7 @@ cdef class ForwardPasser:
         return self.B_orth
     
     cpdef run(ForwardPasser self):
-        cdef unsigned int i
+        cdef INDEX_t i
         while True:
             self.next_pair()
             if self.stop_check():
@@ -133,7 +133,7 @@ cdef class ForwardPasser:
             return True
         return False
     
-    cpdef int orthonormal_update(ForwardPasser self, unsigned int k):
+    cpdef int orthonormal_update(ForwardPasser self, INDEX_t k):
         '''Orthogonalize and normalize column k of B_orth against all previous columns of B_orth.'''
         #Currently implemented using modified Gram-Schmidt process
         #TODO: Optimize - replace calls to numpy with calls to blas
@@ -143,7 +143,7 @@ cdef class ForwardPasser:
         cdef cnp.ndarray[FLOAT_t, ndim=1] y = <cnp.ndarray[FLOAT_t, ndim=1]> self.y
         cdef cnp.ndarray[FLOAT_t, ndim=1] norms = <cnp.ndarray[FLOAT_t, ndim=1]> self.norms
         
-        cdef unsigned int i
+        cdef INDEX_t i
         cdef FLOAT_t nrm
         cdef FLOAT_t nrm0
         
@@ -170,7 +170,7 @@ cdef class ForwardPasser:
         
         return 0 #No problems
     
-    cpdef orthonormal_downdate(ForwardPasser self, unsigned int k):
+    cpdef orthonormal_downdate(ForwardPasser self, INDEX_t k):
         '''
         Undo the effects of the last orthonormal update.  You can only undo the last orthonormal update this way.
         There will be no warning of any kind if you mess this up.  You'll just get wrong answers.
@@ -183,26 +183,26 @@ cdef class ForwardPasser:
         return self.record
         
     cdef next_pair(ForwardPasser self):
-        cdef unsigned int variable
-        cdef unsigned int parent_idx
-        cdef unsigned int parent_degree
-        cdef unsigned int nonzero_count
+        cdef INDEX_t variable
+        cdef INDEX_t parent_idx
+        cdef INDEX_t parent_degree
+        cdef INDEX_t nonzero_count
         cdef BasisFunction parent
         cdef cnp.ndarray[INT_t,ndim=1] candidates_idx
         cdef FLOAT_t knot
         cdef FLOAT_t mse
-        cdef unsigned int knot_idx
+        cdef INDEX_t knot_idx
         cdef FLOAT_t knot_choice
         cdef FLOAT_t mse_choice
         cdef int knot_idx_choice
-        cdef unsigned int parent_idx_choice
+        cdef INDEX_t parent_idx_choice
         cdef BasisFunction parent_choice
-        cdef unsigned int variable_choice
+        cdef INDEX_t variable_choice
         cdef bint first = True
         cdef BasisFunction bf1
         cdef BasisFunction bf2
-        cdef unsigned int k = len(self.basis)
-        cdef unsigned int endspan
+        cdef INDEX_t k = len(self.basis)
+        cdef INDEX_t endspan
         cdef bint linear_dependence
         cdef bint dependent
         cdef FLOAT_t gcv_factor_k_plus_1 = gcv_adjust(k+1,self.m,self.penalty)
@@ -341,7 +341,7 @@ cdef class ForwardPasser:
         #Update the build record
         self.record.append(ForwardPassIteration(parent_idx_choice,variable_choice,knot_idx_choice,mse_choice,len(self.basis)))
         
-    cdef best_knot(ForwardPasser self, unsigned int parent, unsigned int variable, unsigned int k, cnp.ndarray[INT_t,ndim=1] candidates, cnp.ndarray[INT_t,ndim=1] order, FLOAT_t * mse, FLOAT_t * knot, unsigned int * knot_idx):
+    cdef best_knot(ForwardPasser self, INDEX_t parent, INDEX_t variable, INDEX_t k, cnp.ndarray[INT_t,ndim=1] candidates, cnp.ndarray[INT_t,ndim=1] order, FLOAT_t * mse, FLOAT_t * knot, INDEX_t * knot_idx):
         '''
         Find the best knot location (in terms of squared error).
         
@@ -362,21 +362,21 @@ cdef class ForwardPasser:
         cdef cnp.ndarray[FLOAT_t, ndim=1] B_orth_times_parent_cum = <cnp.ndarray[FLOAT_t, ndim=1]> self.B_orth_times_parent_cum
         cdef cnp.ndarray[FLOAT_t, ndim=2] B = <cnp.ndarray[FLOAT_t, ndim=2]> self.B
         
-        cdef unsigned int num_candidates = candidates.shape[0]
+        cdef INDEX_t num_candidates = candidates.shape[0]
         
-        cdef unsigned int h
-        cdef unsigned int i
-        cdef unsigned int j
-        cdef unsigned int h_
-        cdef unsigned int i_
-        cdef unsigned int j_
+        cdef INDEX_t h
+        cdef INDEX_t i
+        cdef INDEX_t j
+        cdef INDEX_t h_
+        cdef INDEX_t i_
+        cdef INDEX_t j_
         cdef FLOAT_t u_end
         cdef FLOAT_t c_end
         cdef FLOAT_t z_end_squared
-        cdef unsigned int candidate_idx
-        cdef unsigned int last_candidate_idx
-        cdef unsigned int last_last_candidate_idx
-        cdef unsigned int best_candidate_idx
+        cdef INDEX_t candidate_idx
+        cdef INDEX_t last_candidate_idx
+        cdef INDEX_t last_last_candidate_idx
+        cdef INDEX_t best_candidate_idx
         cdef FLOAT_t candidate
         cdef FLOAT_t last_candidate
         cdef FLOAT_t best_candidate

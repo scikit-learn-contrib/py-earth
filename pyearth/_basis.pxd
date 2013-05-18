@@ -1,6 +1,7 @@
 cimport numpy as cnp
 ctypedef cnp.float64_t FLOAT_t
 ctypedef cnp.int_t INT_t
+ctypedef cnp.ulong_t INDEX_t
 ctypedef cnp.uint8_t BOOL_t
 
 cdef class BasisFunction:
@@ -37,18 +38,18 @@ cdef class BasisFunction:
         
     cpdef unprune(self)
         
-    cpdef knots(BasisFunction self, unsigned int variable)
+    cpdef knots(BasisFunction self, INDEX_t variable)
     
-    cpdef unsigned int degree(BasisFunction self)
+    cpdef INDEX_t degree(BasisFunction self)
     
     cpdef apply(self, cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=1] b, bint recurse = ?)
         
-    cpdef cnp.ndarray[INT_t, ndim=1] valid_knots(BasisFunction self, cnp.ndarray[FLOAT_t,ndim=1] values, cnp.ndarray[FLOAT_t,ndim=1] variable, int variable_idx, unsigned int check_every, int endspan, int minspan, FLOAT_t minspan_alpha, unsigned int n, cnp.ndarray[INT_t,ndim=1] workspace)
+    cpdef cnp.ndarray[INT_t, ndim=1] valid_knots(BasisFunction self, cnp.ndarray[FLOAT_t,ndim=1] values, cnp.ndarray[FLOAT_t,ndim=1] variable, int variable_idx, INDEX_t check_every, int endspan, int minspan, FLOAT_t minspan_alpha, INDEX_t n, cnp.ndarray[INT_t,ndim=1] workspace)
     
 
 cdef class ConstantBasisFunction(BasisFunction):
     
-    cpdef unsigned int degree(ConstantBasisFunction self)
+    cpdef INDEX_t degree(ConstantBasisFunction self)
     
     cpdef translate(ConstantBasisFunctionself, cnp.ndarray[FLOAT_t,ndim=1] slopes, cnp.ndarray[FLOAT_t,ndim=1] intercepts, bint recurse)
     
@@ -63,8 +64,8 @@ cdef class ConstantBasisFunction(BasisFunction):
     
 cdef class HingeBasisFunction(BasisFunction):
     cdef FLOAT_t knot
-    cdef unsigned int knot_idx
-    cdef unsigned int variable
+    cdef INDEX_t knot_idx
+    cdef INDEX_t variable
     cdef bint reverse
     cdef str label
     
@@ -74,23 +75,23 @@ cdef class HingeBasisFunction(BasisFunction):
             
     cpdef FLOAT_t scale(HingeBasisFunction self, cnp.ndarray[FLOAT_t,ndim=1] slopes, cnp.ndarray[FLOAT_t,ndim=1] intercepts)
     
-    cpdef unsigned int get_variable(self)
+    cpdef INDEX_t get_variable(self)
     
     cpdef FLOAT_t get_knot(self)
     
-    cpdef unsigned int get_knot_idx(self)
+    cpdef INDEX_t get_knot_idx(self)
     
     cpdef apply(self, cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=1] b, bint recurse = ?)
 
 cdef class LinearBasisFunction(BasisFunction):
-    cdef unsigned int variable
+    cdef INDEX_t variable
     cdef str label
     
     cpdef translate(LinearBasisFunction self, cnp.ndarray[FLOAT_t,ndim=1] slopes, cnp.ndarray[FLOAT_t,ndim=1] intercepts, bint recurse)
             
     cpdef FLOAT_t scale(LinearBasisFunction self, cnp.ndarray[FLOAT_t,ndim=1] slopes, cnp.ndarray[FLOAT_t,ndim=1] intercepts)
     
-    cpdef unsigned int get_variable(self)
+    cpdef INDEX_t get_variable(self)
     
     cpdef apply(self, cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=1] b, bint recurse = ?)
 
@@ -111,9 +112,9 @@ cdef class Basis:
     
     cpdef append(Basis self, BasisFunction basis_function)
     
-    cpdef unsigned int plen(Basis self)
+    cpdef INDEX_t plen(Basis self)
         
-    cpdef BasisFunction get(Basis self, unsigned int i)
+    cpdef BasisFunction get(Basis self, INDEX_t i)
     
     cpdef transform(Basis self, cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=2] B)
         
