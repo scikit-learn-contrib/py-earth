@@ -558,7 +558,7 @@ class Earth(object):
     
     def score(self, X, y = None):
         '''
-        Calculate the GCV of the model on data X and y.
+        Calculate the generalized r^2 of the model on data X and y.
         
         
         Parameters 
@@ -578,7 +578,10 @@ class Earth(object):
         m, n = X.shape
         residual = y-y_hat
         mse = np.sum(residual**2) / m
-        return gcv(mse,self.basis_.plen(),m,self.get_penalty())
+        mse0 = np.sum((y - np.mean(y))**2) / m
+        gcv0 = gcv(mse0,1,m,self.get_penalty())
+        gcv_ = gcv(mse,self.basis_.plen(),m,self.get_penalty())
+        return 1 - (gcv_/gcv0)
 
     def __str__(self):
         return self.summary()

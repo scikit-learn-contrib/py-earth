@@ -46,8 +46,8 @@ class TestEarth(object):
     def test_score(self):
         model = self.earth.fit(self.X, self.y)
         record = model.pruning_trace()
-        gcv_ = record.gcv(record.get_selected())
-        assert_almost_equal(gcv_,model.score(self.X,self.y))
+        grsq = record.grsq(record.get_selected())
+        assert_almost_equal(grsq,model.score(self.X,self.y))
 
     @if_pandas
     def test_pandas_compatibility(self):
