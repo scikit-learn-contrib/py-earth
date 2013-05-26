@@ -33,7 +33,7 @@ cdef class ForwardPasser:
         self.minspan = kwargs['minspan'] if 'minspan' in kwargs else -1
         self.endspan_alpha = kwargs['endspan_alpha'] if 'endspan_alpha' in kwargs else .05
         self.minspan_alpha = kwargs['minspan_alpha'] if 'minspan_alpha' in kwargs else .05
-        self.max_terms = kwargs['max_terms'] if 'max_terms' in kwargs else 2*self.n
+        self.max_terms = kwargs['max_terms'] if 'max_terms' in kwargs else 2*self.n + 10
         self.max_degree = kwargs['max_degree'] if 'max_degree' in kwargs else 1
         self.thresh = kwargs['thresh'] if 'thresh' in kwargs else 0.001
         self.penalty = kwargs['penalty'] if 'penalty' in kwargs else 3.0
