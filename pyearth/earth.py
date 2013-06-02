@@ -273,6 +273,15 @@ class Earth(object):
         #Process pruning pass arguments
         self.__dict__.update(self._pull_pruning_args(**kwargs))
     
+    def get_params(self, deep=False):
+        '''
+        Get any non-default user selected parameter values from the Earth object.
+        '''
+        result = {}
+        result.update(self._pull_forward_args(**self.__dict__))
+        result.update(self._pull_pruning_args(**self.__dict__))
+        return result
+    
     def fit(self, X, y = None, xlabels=None, linvars=None):
         '''
         Fit an Earth model to the input data X and y.
@@ -583,8 +592,20 @@ class Earth(object):
         gcv_ = gcv(mse,self.basis_.plen(),m,self.get_penalty())
         return 1 - (gcv_/gcv0)
 
+    def __repr__(self):
+        result = 'Earth('
+        first = True
+        for k, v in self.get_params().iteritems():
+            if not first:
+                result += ', '
+            else:
+                first = False
+            result += '%s=%s' % (str(k), str(v))
+        result += ')'
+        return result
+    
     def __str__(self):
-        return self.summary()
+        return self.__repr__()
 
 class EarthTrace(object):
     def __init__(self, forward_trace, pruning_trace):

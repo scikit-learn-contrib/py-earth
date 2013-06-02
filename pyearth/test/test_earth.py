@@ -33,10 +33,14 @@ class TestEarth(object):
         self.y = numpy.empty(shape=100,dtype=numpy.float64)
         self.y[:] = numpy.dot(self.B,self.beta) + numpy.random.normal(size=100)
         self.earth = Earth(penalty=1)
-
+        
+    def test_get_params(self):
+        assert_equal(Earth().get_params(), {})
+        assert_equal(Earth(max_degree=3).get_params(), {'max_degree':3})
+        
     def test_fit(self):
         self.earth.fit(self.X, self.y)
-        res = str(self.earth.trace()) + '\n' + str(self.earth)
+        res = str(self.earth.trace()) + '\n' + self.earth.summary()
 #        with open('earth_regress.txt','w') as fl:
 #            fl.write(res)
         with open(os.path.join(os.path.dirname(__file__),'earth_regress.txt'),'r') as fl:
