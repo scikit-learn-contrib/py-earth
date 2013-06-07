@@ -4,7 +4,7 @@
 # cython: wraparound = False
 # cython: profile = True
 
-from libc.math cimport log2
+from _util cimport log2
 from libc.math cimport log
 from libc.math cimport abs
 cdef FLOAT_t ZERO_TOL = 1e-16
