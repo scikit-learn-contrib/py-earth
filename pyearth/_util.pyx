@@ -5,7 +5,10 @@
 # cython: profile = True
 
 import numpy as np
-from libc.math cimport sqrt
+from libc.math cimport sqrt, log
+
+cdef FLOAT_t log2(FLOAT_t x):
+    return log(x) / log(2.0)
 
 cpdef FLOAT_t gcv(FLOAT_t mse, INDEX_t basis_size, INDEX_t data_size, FLOAT_t penalty):
     return mse * gcv_adjust(basis_size, data_size, penalty)
