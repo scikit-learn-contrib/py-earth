@@ -4,11 +4,11 @@
 # cython: wraparound = False
 # cython: profile = True
 
-from _util cimport gcv_adjust
+from _util cimport gcv_adjust, log2
 from _basis cimport Basis, BasisFunction, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
 from _record cimport ForwardPassIteration
 
-from libc.math cimport sqrt, abs, log, log2
+from libc.math cimport sqrt, abs, log
 import numpy as np
 cnp.import_array()
 
@@ -441,7 +441,7 @@ cdef class ForwardPasser:
         u_dot_u = np.dot(u[0:k+1],u[0:k+1])
         z_denom = u_end - u_dot_u
         if z_denom <= self.zero_tol:
-            z_end_squared = 0/0
+            z_end_squared = np.nan
         else:
             z_end_squared = ((c_end - u_dot_c)**2) / z_denom
         
