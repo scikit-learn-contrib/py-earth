@@ -144,28 +144,45 @@ cdef class ForwardPasser:
         cdef cnp.ndarray[FLOAT_t, ndim=1] norms = <cnp.ndarray[FLOAT_t, ndim=1]> self.norms
         
         cdef INDEX_t i
+        cdef INDEX_t j
         cdef FLOAT_t nrm
         cdef FLOAT_t nrm0
+        cdef FLOAT_t dot_prod
         
         #Get the original norm
-        nrm0 = sqrt(np.dot(B_orth[:,k],B_orth[:,k]))
+        nrm0 = 0.0
+        for i in range(self.m):
+            nrm0 += B_orth[i,k]*B_orth[i,k]
+        nrm0 = sqrt(nrm0)
         
         #Orthogonalize
         if k > 0:
             for i in range(k):
-                B_orth[:,k] -= B_orth[:,i] * (np.dot(B_orth[:,k],B_orth[:,i]))
+                dot_prod = 0.0
+                for j in range(self.m):
+                    dot_prod += B_orth[j,k]*B_orth[j,i]
+                for j in range(self.m):
+                    B_orth[j,k] -= B_orth[j,i] * dot_prod
         
         #Normalize
-        nrm = sqrt(np.dot(B_orth[:,k],B_orth[:,k]))
+        nrm = 0.0
+        for i in range(self.m):
+            nrm += B_orth[i,k]*B_orth[i,k]
+        nrm = sqrt(nrm)
         norms[k] = nrm
+        
         if nrm0 <= self.zero_tol or nrm/nrm0 <= self.zero_tol:
-            B_orth[:,k] = 0
-            c[k] = 0
+            for i in range(self.m):
+                B_orth[i,k] = 0.0
+            c[k] = 0.0
             return 1 #The new column is in the column space of the previous columns
-        B_orth[:,k] /= nrm
+        for i in range(self.m):
+            B_orth[i,k] /= nrm
         
         #Update c
-        c[k] = np.dot(B_orth[:,k],y)
+        c[k] = 0.0
+        for i in range(self.m):
+            c[k] += B_orth[i,k]*y[i]
         self.c_squared += c[k]**2
         
         return 0 #No problems
