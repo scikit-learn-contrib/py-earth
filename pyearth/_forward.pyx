@@ -2,7 +2,7 @@
 # cython: cdivision = True
 # cython: boundscheck = False
 # cython: wraparound = False
-# cython: profile = True
+# cython: profile = False
 
 from _util cimport gcv_adjust, log2
 from _basis cimport Basis, BasisFunction, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
@@ -136,7 +136,7 @@ cdef class ForwardPasser:
     cpdef int orthonormal_update(ForwardPasser self, INDEX_t k):
         '''Orthogonalize and normalize column k of B_orth against all previous columns of B_orth.'''
         #Currently implemented using modified Gram-Schmidt process
-        #TODO: Optimize - replace calls to numpy with calls to blas
+        #TODO: Optimize - replace some for loops with calls to blas
         
         cdef cnp.ndarray[FLOAT_t, ndim=2] B_orth = <cnp.ndarray[FLOAT_t, ndim=2]> self.B_orth
         cdef cnp.ndarray[FLOAT_t, ndim=1] c = <cnp.ndarray[FLOAT_t, ndim=1]> self.c
@@ -226,6 +226,7 @@ cdef class ForwardPasser:
         cdef FLOAT_t gcv_factor_k_plus_2 = gcv_adjust(k+2,self.m,self.penalty)
         cdef FLOAT_t gcv_
         cdef FLOAT_t mse_
+        cdef INDEX_t i
         
         cdef cnp.ndarray[FLOAT_t,ndim=2] X = <cnp.ndarray[FLOAT_t,ndim=2]> self.X
         cdef cnp.ndarray[FLOAT_t,ndim=2] B = <cnp.ndarray[FLOAT_t,ndim=2]> self.B
@@ -256,10 +257,12 @@ cdef class ForwardPasser:
                     continue
                 
                 #Add the linear term to B
-                B[:,k] = B[:,parent_idx]*X[:,variable] #TODO: Optimize
+                for i in range(self.m):
+                    B[i,k] = B[i,parent_idx]*X[i,variable]
                 
                 #Orthonormalize
-                B_orth[:,k] = B[:,k]
+                for i in range(self.m):
+                    B_orth[i,k] = B[i,k]
                 linear_dependence = self.orthonormal_update(k)
                 
                 #If a new hinge function does not improve the gcv over the linear term
@@ -433,12 +436,18 @@ cdef class ForwardPasser:
         u[0:k+1] = np.dot(b,B_orth[:,0:k+1])
         
         #Compute the new last elements of c and u
-        c_end = np.dot(b,y)
-        u_end = np.dot(b,b)
+        c_end = 0.0
+        u_end = 0.0
+        for i in range(self.m):
+            u_end += b[i]*b[i]
+            c_end += b[i]*y[i]
         
         #Compute the last element of z (the others are identical to c)
-        u_dot_c = np.dot(u[0:k+1],c[0:k+1])
-        u_dot_u = np.dot(u[0:k+1],u[0:k+1])
+        u_dot_c = 0.0
+        u_dot_u = 0.0
+        for i in range(k+1):
+            u_dot_u += u[i]*u[i]
+            u_dot_c += u[i]*c[i]
         z_denom = u_end - u_dot_u
         if z_denom <= self.zero_tol:
             z_end_squared = np.nan
@@ -507,6 +516,7 @@ cdef class ForwardPasser:
             delta_b_squared = 0.0
             delta_c_end = 0.0
             delta_u_end = 0.0
+            
             #Update the accumulators
             for j_ in range(last_last_candidate_idx+1,last_candidate_idx+1):
                 j = order[j_]
