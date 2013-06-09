@@ -4,7 +4,7 @@
 # cython: wraparound = False
 # cython: profile = False
 
-from _util cimport gcv_adjust, log2
+from _util cimport gcv_adjust, log2, apply_weights_1d
 from _basis cimport Basis, BasisFunction, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
 from _record cimport ForwardPassIteration
 
@@ -22,11 +22,13 @@ stopping_conditions = {
 
 cdef class ForwardPasser:
     
-    def __init__(ForwardPasser self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] y, **kwargs):
+    def __init__(ForwardPasser self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] y, cnp.ndarray[FLOAT_t, ndim=1] weights, **kwargs):
         cdef INDEX_t i
         cdef FLOAT_t sst
         self.X = X
-        self.y = y
+        self.y = y.copy()
+        apply_weights_1d(y, weights)
+        self.weights = weights
         self.m = self.X.shape[0]
         self.n = self.X.shape[1]
         self.endspan = kwargs['endspan'] if 'endspan' in kwargs else -1
@@ -53,7 +55,8 @@ cdef class ForwardPasser:
         self.u = np.empty(shape=self.max_terms, dtype=float)
         self.B_orth_times_parent_cum = np.empty(shape=self.max_terms,dtype=np.float)
         self.B = np.ones(shape=(self.m,self.max_terms), order='C',dtype=np.float)
-        self.B_orth = np.ones(shape=(self.m,self.max_terms), order='C',dtype=np.float) #An orthogonal matrix with the same column space as B
+        self.basis.weighted_transform(self.X,self.B,self.weights)
+        self.B_orth = self.B.copy() #An orthogonal matrix with the same column space as B
         self.u = np.empty(shape=self.max_terms, dtype=np.float)
         self.c = np.empty(shape=self.max_terms, dtype=np.float)
         self.norms = np.empty(shape=self.max_terms, dtype=np.float)

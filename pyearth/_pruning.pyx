@@ -2,19 +2,20 @@
 # cython: cdivision = True
 # cython: boundscheck = False
 # cython: wraparound = False
-# cython: profile = True
+# cython: profile = False
 
 from _record cimport PruningPassIteration
-from _util import gcv
+from _util cimport gcv, apply_weights_1d
 import numpy as np
 
 cdef class PruningPasser:
     '''Implements the generic pruning pass as described by Friedman, 1991.'''
-    def __init__(PruningPasser self, Basis basis, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] y, **kwargs):
+    def __init__(PruningPasser self, Basis basis, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] y, cnp.ndarray[FLOAT_t, ndim=1] weights, **kwargs):
         self.X = X
         self.m = self.X.shape[0]
         self.n = self.X.shape[1]
         self.y = y
+        self.weights = weights
         self.basis = basis
         self.B = np.empty(shape=(self.m,len(self.basis)+1),dtype=np.float)
         self.penalty = kwargs['penalty'] if 'penalty' in kwargs else 3.0
@@ -39,14 +40,17 @@ cdef class PruningPasser:
         cdef cnp.ndarray[FLOAT_t, ndim=2] B = <cnp.ndarray[FLOAT_t, ndim=2]> self.B
         cdef cnp.ndarray[FLOAT_t, ndim=2] X = <cnp.ndarray[FLOAT_t, ndim=2]> self.X
         cdef cnp.ndarray[FLOAT_t, ndim=1] y = <cnp.ndarray[FLOAT_t, ndim=1]> self.y
+        cdef cnp.ndarray[FLOAT_t, ndim=1] weights = <cnp.ndarray[FLOAT_t, ndim=1]> self.weights
+        cdef cnp.ndarray[FLOAT_t, ndim=1] weighted_y = y.copy()
         
         #Initial solution
-        self.basis.transform(self.X,self.B)
-        beta, mse = np.linalg.lstsq(B[:,0:(basis_size)],self.y)[0:2]
+        apply_weights_1d(weighted_y,weights)
+        self.basis.weighted_transform(X,B,weights)
+        beta, mse = np.linalg.lstsq(B[:,0:(basis_size)],weighted_y)[0:2]
         if mse:
             mse /= self.m
         else:
-            mse = (1.0/self.m)*np.sum((np.dot(B[:,0:basis_size],beta) - self.y)**2)
+            mse = (1.0/self.m)*np.sum((np.dot(B[:,0:basis_size],beta) - weighted_y)**2)
 
         #Create the record object
         self.record = PruningPassRecord(self.m,self.n,self.penalty,self.sst,pruned_basis_size,mse)
@@ -67,12 +71,12 @@ cdef class PruningPasser:
                 if not bf.is_prunable():
                     continue
                 bf.prune()
-                self.basis.transform(self.X, B)
-                beta, mse = np.linalg.lstsq(B[:,0:pruned_basis_size],y)[0:2]
+                self.basis.weighted_transform(X, B, weights)
+                beta, mse = np.linalg.lstsq(B[:,0:pruned_basis_size],weighted_y)[0:2]
                 if mse:
                     mse /= self.m
                 else:
-                    mse = (1/float(self.m))*np.sum((np.dot(B[:,0:pruned_basis_size],beta) - y)**2)
+                    mse = (1/float(self.m))*np.sum((np.dot(B[:,0:pruned_basis_size],beta) - weighted_y)**2)
                 gcv_ = gcv(mse,pruned_basis_size,self.m,self.penalty)
                 
                 if gcv_ <= best_iteration_gcv or first:

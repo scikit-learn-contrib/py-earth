@@ -1,6 +1,6 @@
 from pyearth._forward import ForwardPasser
 from pyearth._pruning import PruningPasser
-from pyearth._util import ascii_table, gcv
+from pyearth._util import ascii_table, gcv, apply_weights_2d, apply_weights_1d
 
 import numpy as np
 
@@ -228,7 +228,7 @@ class Earth(object):
             
         return X
     
-    def _scrub(self, X, y, **kwargs):
+    def _scrub(self, X, y, weights, **kwargs):
         '''
         Sanitize input data.
         '''
@@ -243,12 +243,20 @@ class Earth(object):
         y = np.asarray(y,dtype=np.float64)
         y = y.reshape(y.shape[0])
         
+        #Deal with weights
+        if weights is None:
+            weights = np.ones(y.shape[0], dtype=y.dtype)
+        else:
+            weights = np.asarray(weights)
+            weights = weights.reshape(weights.shape[0])
+        
         #Make sure dimensions match
         if y.shape[0] != X.shape[0]:
             raise ValueError('X and y do not have compatible dimensions.')
+        if y.shape != weights.shape:
+            raise ValueError('y and weights do not have compatible dimensions.')
         
-        
-        return X, y
+        return X, y, weights
     
     def set_params(self, **kwargs):
         '''
@@ -282,7 +290,7 @@ class Earth(object):
         result.update(self._pull_pruning_args(**self.__dict__))
         return result
     
-    def fit(self, X, y = None, xlabels=None, linvars=None):
+    def fit(self, X, y = None, weights=None, xlabels=None, linvars=None):
         '''
         Fit an Earth model to the input data X and y.
         
@@ -299,7 +307,14 @@ class Earth(object):
             column, a Patsy DesignMatrix, or can be left as None (default) if X was the output of a 
             call to patsy.dmatrices (in which case, X contains the response).
             
-        
+            
+        weights : array-like, optional (default=None), shape = [m] where m is the number of samples
+            Sample weights for training.  Weights must be greater than or equal to zero.  Rows with 
+            greater weights contribute more strongly to the fitted model.  Rows with zero weight do
+            not contribute at all.  Weights are useful when dealing with heteroscedasticity.  In such
+            cases, the weight should be proportional to the inverse of the (known) variance.
+            
+            
         xlabels : iterable of strings, optional (default=None)
             Convenient way to set the xlabels parameter while calling fit.  Ignored if None (default).  
             See the Earth class for an explanation of the xlabels parameter.
@@ -315,15 +330,15 @@ class Earth(object):
             self.set_params(xlabels=xlabels)
         if linvars is not None:
             self.set_params(linvars=linvars)
-        X, y = self._scrub(X,y,**self.__dict__)
+        X, y, weights = self._scrub(X,y,weights,**self.__dict__)
         
         #Do the actual work
-        self.forward_pass(X, y)
-        self.pruning_pass(X, y)
-        self.linear_fit(X, y)
+        self.forward_pass(X, y, weights)
+        self.pruning_pass(X, y, weights)
+        self.linear_fit(X, y, weights)
         return self
     
-    def forward_pass(self, X, y = None, **kwargs):
+    def forward_pass(self, X, y = None, weights = None, **kwargs):
         '''
         Perform the forward pass of the multivariate adaptive regression splines algorithm.  Users
         will normally want to call the fit method instead, which performs the forward pass, the pruning 
@@ -341,6 +356,13 @@ class Earth(object):
             The training response.  The y parameter can be a numpy array, a pandas DataFrame with one 
             column, a Patsy DesignMatrix, or can be left as None (default) if X was the output of a 
             call to patsy.dmatrices (in which case, X contains the response).
+        
+        
+        weights : array-like, optional (default=None), shape = [m] where m is the number of samples
+            Sample weights for training.  Weights must be greater than or equal to zero.  Rows with 
+            greater weights contribute more strongly to the fitted model.  Rows with zero weight do
+            not contribute at all.  Weights are useful when dealing with heteroscedasticity.  In such
+            cases, the weight should be proportional to the inverse of the (known) variance.
             
             
         xlabels : iterable of strings, optional (default=None)
@@ -371,7 +393,7 @@ class Earth(object):
             del kwargs['linvars']
         
         #Label and format data
-        X, y = self._scrub(X,y,**self.__dict__)
+        X, y, weights = self._scrub(X,y,weights,**self.__dict__)
          
         #Check for additional forward pass arguments, and fail if someone tried
         #to use other arguments
@@ -389,12 +411,12 @@ class Earth(object):
 
         #Do the actual work
         args = self._pull_forward_args(**self.__dict__)
-        forward_passer = ForwardPasser(X, y, **args)
+        forward_passer = ForwardPasser(X, y, weights, **args)
         forward_passer.run()
         self.forward_pass_record_ = forward_passer.trace()
         self.basis_ = forward_passer.get_basis()
         
-    def pruning_pass(self, X, y = None, **kwargs):
+    def pruning_pass(self, X, y = None, weights = None, **kwargs):
         '''
         Perform the pruning pass of the multivariate adaptive regression splines algorithm.  Users
         will normally want to call the fit method instead, which performs the forward pass, the pruning 
@@ -413,6 +435,13 @@ class Earth(object):
             column, a Patsy DesignMatrix, or can be left as None (default) if X was the output of a 
             call to patsy.dmatrices (in which case, X contains the response).
             
+            
+        weights : array-like, optional (default=None), shape = [m] where m is the number of samples
+            Sample weights for training.  Weights must be greater than or equal to zero.  Rows with 
+            greater weights contribute more strongly to the fitted model.  Rows with zero weight do
+            not contribute at all.  Weights are useful when dealing with heteroscedasticity.  In such
+            cases, the weight should be proportional to the inverse of the (known) variance.
+            
                 
         Note
         ----
@@ -422,7 +451,7 @@ class Earth(object):
         itself, use the set_params method.
         '''
         #Format data
-        X, y = self._scrub(X,y)
+        X, y, weights = self._scrub(X,y,weights)
         
         #Check for additional pruning arguments and raise ValueError if other arguments are present
         args = self._pull_pruning_args(**self.__dict__)
@@ -438,7 +467,7 @@ class Earth(object):
         args.update(new_args)
         
         #Do the actual work
-        pruning_passer = PruningPasser(self.basis_, X, y, **args)
+        pruning_passer = PruningPasser(self.basis_, X, y, weights, **args)
         pruning_passer.run()
         self.pruning_pass_record_ = pruning_passer.trace()
     
@@ -495,7 +524,7 @@ class Earth(object):
         result += 'MSE: %.4f, GCV: %.4f, RSQ: %.4f, GRSQ: %.4f' % (record.mse(selection), record.gcv(selection), record.rsq(selection), record.grsq(selection))
         return result
     
-    def linear_fit(self, X, y = None):
+    def linear_fit(self, X, y = None, weights = None):
         '''
         Solve the linear least squares problem to determine the coefficients of the unpruned basis functions.
         
@@ -511,16 +540,30 @@ class Earth(object):
             The training response.  The y parameter can be a numpy array, a pandas DataFrame with one 
             column, a Patsy DesignMatrix, or can be left as None (default) if X was the output of a 
             call to patsy.dmatrices (in which case, X contains the response).
+            
+            
+        weights : array-like, optional (default=None), shape = [m] where m is the number of samples
+            Sample weights for training.  Weights must be greater than or equal to zero.  Rows with 
+            greater weights contribute more strongly to the fitted model.  Rows with zero weight do
+            not contribute at all.  Weights are useful when dealing with heteroscedasticity.  In such
+            cases, the weight should be proportional to the inverse of the (known) variance.
         '''
         
         #Format data
-        X, y = self._scrub(X,y)
+        X, y, weights = self._scrub(X,y,weights)
         
         #Transform into basis space
         B = self.transform(X)
         
+        #Apply weights to B
+        apply_weights_2d(B,weights)
+        
+        #Apply weights to y
+        weighted_y = y.copy()
+        apply_weights_1d(weighted_y,weights)
+        
         #Solve the linear least squares problem
-        self.coef_ = np.linalg.lstsq(B,y)[0]
+        self.coef_ = np.linalg.lstsq(B,weighted_y)[0]
     
     def predict(self, X):
         '''
@@ -582,7 +625,7 @@ class Earth(object):
             column, a Patsy DesignMatrix, or can be left as None (default) if X was the output of a 
             call to patsy.dmatrices (in which case, X contains the response).
         '''
-        X, y = self._scrub(X, y)
+        X, y, _ = self._scrub(X, y, None)
         y_hat = self.predict(X)
         m, n = X.shape
         residual = y-y_hat
