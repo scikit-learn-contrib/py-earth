@@ -19,7 +19,7 @@ cdef class PruningPasser:
         self.basis = basis
         self.B = np.empty(shape=(self.m,len(self.basis)+1),dtype=np.float)
         self.penalty = kwargs['penalty'] if 'penalty' in kwargs else 3.0
-        self.sst = np.std(self.y)**2
+        self.sst = np.sum(self.weights*(self.y - np.average(self.y,weights=self.weights))**2) / self.m
         
     cpdef run(PruningPasser self):
         #This is a totally naive implementation and could potentially be made faster 

@@ -220,6 +220,8 @@ class Earth(object):
         
         #Convert to internally used data type
         X = np.asarray(X,dtype=np.float64)
+        if len(X.shape) == 1:
+            X = X.reshape((X.shape[0], 1))
         m,n = X.shape
         
         #Make up labels if none were found
@@ -608,7 +610,7 @@ class Earth(object):
         else:
             return 3.0
     
-    def score(self, X, y = None):
+    def score(self, X, y = None, weights = None):
         '''
         Calculate the generalized r^2 of the model on data X and y.
         
@@ -625,12 +627,12 @@ class Earth(object):
             column, a Patsy DesignMatrix, or can be left as None (default) if X was the output of a 
             call to patsy.dmatrices (in which case, X contains the response).
         '''
-        X, y, _ = self._scrub(X, y, None)
+        X, y, weights = self._scrub(X, y, weights)
         y_hat = self.predict(X)
         m, n = X.shape
         residual = y-y_hat
-        mse = np.sum(residual**2) / m
-        mse0 = np.sum((y - np.mean(y))**2) / m
+        mse = np.sum(weights * (residual**2)) / m
+        mse0 = np.sum(weights*((y -np.average(y,weights=weights))**2)) / m
         gcv0 = gcv(mse0,1,m,self.get_penalty())
         gcv_ = gcv(mse,self.basis_.plen(),m,self.get_penalty())
         return 1 - (gcv_/gcv0)

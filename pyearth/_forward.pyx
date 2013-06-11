@@ -24,11 +24,10 @@ cdef class ForwardPasser:
     
     def __init__(ForwardPasser self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] y, cnp.ndarray[FLOAT_t, ndim=1] weights, **kwargs):
         cdef INDEX_t i
-        cdef FLOAT_t sst
         self.X = X
         self.y = y.copy()
-        apply_weights_1d(y, weights)
         self.weights = weights
+        apply_weights_1d(self.y, self.weights)
         self.m = self.X.shape[0]
         self.n = self.X.shape[1]
         self.endspan = kwargs['endspan'] if 'endspan' in kwargs else -1
@@ -44,7 +43,7 @@ cdef class ForwardPasser:
         self.xlabels = kwargs['xlabels'] if 'xlabels' in kwargs else ['x'+str(i) for i in range(self.n)]
         if self.check_every < 0:
             self.check_every = <int> (self.m / self.min_search_points) if self.m > self.min_search_points else 1
-        self.sst = np.sum((self.y - np.mean(y))**2)/self.m
+        self.sst = (np.dot(self.y,self.y) - (np.dot(np.sqrt(self.weights),self.y) / np.sqrt(np.sum(self.weights)))**2) / self.m
         self.y_squared = np.dot(self.y,self.y)
         self.record = ForwardPassRecord(self.m,self.n,self.penalty,self.sst)
         self.basis = Basis()

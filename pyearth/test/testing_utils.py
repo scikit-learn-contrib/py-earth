@@ -1,6 +1,19 @@
 from functools import wraps
 from nose import SkipTest
 
+def if_statsmodels(func):
+    """Test decorator that skips test if statsmodels not installed. """
+
+    @wraps(func)
+    def run_test(*args, **kwargs):
+        try:
+            import statsmodels
+        except ImportError:
+            raise SkipTest('statsmodels not available.')
+        else:
+            return func(*args, **kwargs)
+    return run_test
+
 def if_pandas(func):
     """Test decorator that skips test if pandas not installed. """
 
