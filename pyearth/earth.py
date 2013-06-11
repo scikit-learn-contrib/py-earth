@@ -626,6 +626,12 @@ class Earth(object):
             The training response.  The y parameter can be a numpy array, a pandas DataFrame with one 
             column, a Patsy DesignMatrix, or can be left as None (default) if X was the output of a 
             call to patsy.dmatrices (in which case, X contains the response).
+            
+        weights : array-like, optional (default=None), shape = [m] where m is the number of samples
+            Sample weights for training.  Weights must be greater than or equal to zero.  Rows with 
+            greater weights contribute more strongly to the fitted model.  Rows with zero weight do
+            not contribute at all.  Weights are useful when dealing with heteroscedasticity.  In such
+            cases, the weight should be proportional to the inverse of the (known) variance.
         '''
         X, y, weights = self._scrub(X, y, weights)
         y_hat = self.predict(X)
