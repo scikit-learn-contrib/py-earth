@@ -4,7 +4,7 @@
 # cython: wraparound = False
 # cython: profile = True
 
-from _util cimport log2
+from _util cimport log2, apply_weights_2d
 from libc.math cimport log
 from libc.math cimport abs
 cdef FLOAT_t ZERO_TOL = 1e-16
@@ -465,7 +465,7 @@ cdef class LinearBasisFunction(BasisFunction):
         b - parent vector
         recurse - If False, assume b already contains the result of the parent function.  Otherwise, recurse to compute
                   parent function.
-        ''' 
+        '''
         if recurse:
             self.parent.apply(X,b,recurse=True)
         cdef INDEX_t i #@DuplicatedSignature
@@ -474,7 +474,7 @@ cdef class LinearBasisFunction(BasisFunction):
             b[i] *= X[i,self.variable]
         
 cdef class Basis:
-    '''A wrapper that provides functionality related to a set of BasisFunctions with a 
+    '''A container that provides functionality related to a set of BasisFunctions with a 
     common ConstantBasisFunction ancestor.  Retains the order in which BasisFunctions are 
     added.'''
 
@@ -569,4 +569,11 @@ cdef class Basis:
                 continue
             bf.apply(X,B[:,col],recurse=True)
             col += 1
-
+        
+    cpdef weighted_transform(Basis self, cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=2] B, cnp.ndarray[FLOAT_t,ndim=1] weights):
+        cdef INDEX_t i #@DuplicatedSignature
+        cdef INDEX_t n = self.__len__()
+                                      
+        self.transform(X,B)
+        apply_weights_2d(B,weights)
+            
