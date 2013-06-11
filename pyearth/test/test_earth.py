@@ -9,7 +9,7 @@ from pyearth import Earth
 import pickle
 import copy
 import os
-from testing_utils import if_pandas, if_patsy
+from testing_utils import if_statsmodels, if_pandas, if_patsy
 from nose.tools import assert_equal, assert_not_equal, assert_true, assert_false, \
     assert_almost_equal, assert_list_equal
     
@@ -37,6 +37,44 @@ class TestEarth(object):
     def test_get_params(self):
         assert_equal(Earth().get_params(), {})
         assert_equal(Earth(max_degree=3).get_params(), {'max_degree':3})
+    
+    @if_statsmodels
+    def test_linear_fit(self):
+        from statsmodels.regression.linear_model import GLS, OLS
+        self.earth.fit(self.X, self.y)
+        self.earth.linear_fit(self.X, self.y)
+        soln = OLS(self.y, self.earth.transform(self.X)).fit().params
+        assert_almost_equal(numpy.mean((self.earth.coef_-soln)**2), 0.0)
+        
+        weights = 1.0 / (numpy.random.normal(size=self.y.shape) ** 2)
+        self.earth.fit(self.X, self.y)
+        self.earth.linear_fit(self.X, self.y, weights)
+        soln = GLS(self.y, self.earth.transform(self.X), 1.0 / weights).fit().params
+        assert_almost_equal(numpy.mean((self.earth.coef_-soln)**2), 0.0)
+        
+    def test_weights(self):
+        group = numpy.random.binomial(1,.5,size=1000)  == 1
+        weights =  1 / (group * 100 + 1.0)
+        x = numpy.random.uniform(-10,10,size=1000)
+        y = numpy.abs(x)
+        y[group] = numpy.abs(x[group] - 5)
+        y += numpy.random.normal(0,1,size=1000)
+        model = Earth().fit(x,y,weights = weights)
+        
+        #Check that the model fits better for the more heavily weighted group
+        assert_true(model.score(x[group],y[group]) < model.score(x[numpy.logical_not(group)],y[numpy.logical_not(group)]))
+        
+        #Make sure that the score function gives the same answer as the trace
+        assert_almost_equal(model.score(x,y,weights=weights), model.pruning_trace().grsq(model.pruning_trace().get_selected()))
+        
+        #Uncomment below to see what this test situation looks like
+#        from matplotlib import pyplot
+#        print model.summary()
+#        print model.score(x,y,weights = weights)
+#        pyplot.figure()
+#        pyplot.plot(x,y,'b.')
+#        pyplot.plot(x,model.predict(x),'r.')
+#        pyplot.show()
         
     def test_fit(self):
         self.earth.fit(self.X, self.y)

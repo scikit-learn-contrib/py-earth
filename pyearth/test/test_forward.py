@@ -27,7 +27,7 @@ class TestForwardPasser(object):
         self.beta = numpy.random.normal(size=4)
         self.y = numpy.empty(shape=100,dtype=numpy.float64)
         self.y[:] = numpy.dot(self.B,self.beta) + numpy.random.normal(size=100)
-        self.forwardPasser = ForwardPasser(self.X,self.y,max_terms = 1000, penalty=1)
+        self.forwardPasser = ForwardPasser(self.X,self.y,numpy.ones(self.y.shape),max_terms = 1000, penalty=1)
         
     def test_orthonormal_update(self):
         numpy.set_printoptions(precision=4)
