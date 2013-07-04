@@ -1,10 +1,10 @@
 from pyearth._forward import ForwardPasser
 from pyearth._pruning import PruningPasser
 from pyearth._util import ascii_table, gcv, apply_weights_2d, apply_weights_1d
-
+from sklearn.base import RegressorMixin, BaseEstimator, TransformerMixin
 import numpy as np
 
-class Earth(object):
+class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
     '''
     Multivariate Adaptive Regression Splines
     
@@ -145,7 +145,14 @@ class Earth(object):
                                   'min_searh_points','xlabels','linvars'])
     pruning_pass_arg_names = set(['penalty'])
     
-    def __init__(self, **kwargs):
+    def __init__(self, endspan=None, minspan=None, endspan_alpha=None, minspan_alpha=None, max_terms=None, max_degree=None, 
+                 thresh=None, penalty=None, check_every=None, min_search_points=None, xlabels=None, linvars=None):
+        kwargs = {}
+        call = locals()
+        for name in self._get_param_names():
+            if call[name] is not None:
+                kwargs[name] = call[name]
+                
         self.set_params(**kwargs)
         
     def __eq__(self, other):
@@ -259,38 +266,6 @@ class Earth(object):
             raise ValueError('y and weights do not have compatible dimensions.')
         
         return X, y, weights
-    
-    def set_params(self, **kwargs):
-        '''
-        Set or change parameters of an Earth object after its creation.  See Earth class for
-        available parameters.
-        '''
-        #Check for unknown arguments
-        unknown_args = self._pull_unknown_args(**kwargs)
-        if unknown_args:
-            msg = 'Unknown arguments: '
-            for i, (k, v) in enumerate(unknown_args.iteritems()):
-                msg += k+': '+str(v)
-                if i < len(unknown_args) - 1:
-                    msg += ', '
-                else:
-                    msg += '.'
-            raise ValueError(msg)
-        
-        #Process forward pass arguments
-        self.__dict__.update(self._pull_forward_args(**kwargs))
-        
-        #Process pruning pass arguments
-        self.__dict__.update(self._pull_pruning_args(**kwargs))
-    
-    def get_params(self, deep=False):
-        '''
-        Get any non-default user selected parameter values from the Earth object.
-        '''
-        result = {}
-        result.update(self._pull_forward_args(**self.__dict__))
-        result.update(self._pull_pruning_args(**self.__dict__))
-        return result
     
     def fit(self, X, y = None, weights=None, xlabels=None, linvars=None):
         '''
@@ -583,33 +558,6 @@ class Earth(object):
         B = self.transform(X)
         return np.dot(B,self.coef_)
     
-    def transform(self, X):
-        '''
-        Transform X into the basis space.  Normally, users will call the predict method instead, which
-        both transforms into basis space calculates the weighted sum of basis terms to produce a 
-        prediction of the response.  Users may wish to call transform directly in some cases.  For 
-        example, users may wish to apply other statistical or machine learning algorithms, such as 
-        generalized linear regression, in basis space.
-        
-        
-        Parameters 
-        ----------
-        X : array-like, shape = [m, n] where m is the number of samples and n is the number of features
-            The training predictors.  The X parameter can be a numpy array, a pandas DataFrame, or a 
-            patsy DesignMatrix.
-        '''
-        X = self._scrub_x(X)
-        B = np.empty(shape=(X.shape[0],self.basis_.plen()))
-        self.basis_.transform(X,B)
-        return B
-    
-    def get_penalty(self):
-        '''Get the penalty parameter being used.  Default is 3.'''
-        if 'penalty' in self.__dict__ and self.penalty is not None:
-            return self.penalty
-        else:
-            return 3.0
-    
     def score(self, X, y = None, weights = None):
         '''
         Calculate the generalized r^2 of the model on data X and y.
@@ -639,10 +587,35 @@ class Earth(object):
         residual = y-y_hat
         mse = np.sum(weights * (residual**2)) / m
         mse0 = np.sum(weights*((y -np.average(y,weights=weights))**2)) / m
-        gcv0 = gcv(mse0,1,m,self.get_penalty())
-        gcv_ = gcv(mse,self.basis_.plen(),m,self.get_penalty())
-        return 1 - (gcv_/gcv0)
-
+        return 1 - (mse/mse0)
+    
+    def transform(self, X):
+        '''
+        Transform X into the basis space.  Normally, users will call the predict method instead, which
+        both transforms into basis space calculates the weighted sum of basis terms to produce a 
+        prediction of the response.  Users may wish to call transform directly in some cases.  For 
+        example, users may wish to apply other statistical or machine learning algorithms, such as 
+        generalized linear regression, in basis space.
+        
+        
+        Parameters 
+        ----------
+        X : array-like, shape = [m, n] where m is the number of samples and n is the number of features
+            The training predictors.  The X parameter can be a numpy array, a pandas DataFrame, or a 
+            patsy DesignMatrix.
+        '''
+        X = self._scrub_x(X)
+        B = np.empty(shape=(X.shape[0],self.basis_.plen()))
+        self.basis_.transform(X,B)
+        return B
+    
+    def get_penalty(self):
+        '''Get the penalty parameter being used.  Default is 3.'''
+        if 'penalty' in self.__dict__ and self.penalty is not None:
+            return self.penalty
+        else:
+            return 3.0
+    
     def __repr__(self):
         result = 'Earth('
         first = True
