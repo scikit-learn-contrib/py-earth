@@ -1,10 +1,12 @@
 language: python
 python:
   - "2.7"
+virtualenv:
+  system_site_packages: true
 install: 
+  - sudo apt-get install -qq python-numpy python-scipy
   - pip install patsy
   - pip install pandas
-  - pip install scipy
   - pip install scikit-learn
   - python setup.py build_ext --inplace
 
