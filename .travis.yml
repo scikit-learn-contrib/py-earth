@@ -4,6 +4,7 @@ python:
 install: 
   - pip install patsy
   - pip install pandas
+  - pip install scikit-learn
   - python setup.py build_ext --inplace
 
 script: nosetests -s -v pyearth
