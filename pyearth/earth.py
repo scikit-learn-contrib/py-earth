@@ -2,6 +2,7 @@ from pyearth._forward import ForwardPasser
 from pyearth._pruning import PruningPasser
 from pyearth._util import ascii_table, gcv, apply_weights_2d, apply_weights_1d
 from sklearn.base import RegressorMixin, BaseEstimator, TransformerMixin
+from sklearn.utils.validation import assert_all_finite, safe_asarray
 import numpy as np
 
 class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
@@ -226,7 +227,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             self.xlabels = kwargs['xlabels']
         
         #Convert to internally used data type
-        X = np.asarray(X,dtype=np.float64)
+        X = safe_asarray(X,dtype=np.float64)
         if len(X.shape) == 1:
             X = X.reshape((X.shape[0], 1))
         m,n = X.shape
@@ -249,14 +250,14 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         X = self._scrub_x(X, **kwargs)
         
         #Convert y to internally used data type
-        y = np.asarray(y,dtype=np.float64)
+        y = safe_asarray(y,dtype=np.float64)
         y = y.reshape(y.shape[0])
         
         #Deal with weights
         if weights is None:
             weights = np.ones(y.shape[0], dtype=y.dtype)
         else:
-            weights = np.asarray(weights)
+            weights = safe_asarray(weights)
             weights = weights.reshape(weights.shape[0])
         
         #Make sure dimensions match
@@ -264,6 +265,11 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             raise ValueError('X and y do not have compatible dimensions.')
         if y.shape != weights.shape:
             raise ValueError('y and weights do not have compatible dimensions.')
+        
+        #Make sure everything is finite
+        assert_all_finite(X)
+        assert_all_finite(y)
+        assert_all_finite(weights)
         
         return X, y, weights
     
