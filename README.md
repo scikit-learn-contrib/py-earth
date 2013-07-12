@@ -44,6 +44,9 @@ y_hat = model.predict(X)
 pyplot.figure()
 pyplot.plot(X[:,6],y,'r.')
 pyplot.plot(X[:,6],y_hat,'b.')
+pyplot.xlabel('x_6')
+pyplot.ylabel('y')
+pyplot.title('Simple Earth Example')
 pyplot.show()
  ```
  

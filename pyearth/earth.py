@@ -130,7 +130,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         values after each iteration and the final stopping condition.
     
     
-    `pruning_pass_record` : _record.PruningPassRecord
+    `pruning_pass_record_` : _record.PruningPassRecord
         An object containing information about the pruning pass, such as training loss function
         values after each iteration and the selected optimal iteration.
 
