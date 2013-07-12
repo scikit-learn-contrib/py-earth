@@ -1,4 +1,3 @@
-========================================
 Multivariate Adaptive Regression Splines
 ========================================
 
@@ -24,6 +23,7 @@ made if the inputs are numpy float64 arrays.  Earth objects can be serialized us
 pickle module and copied using the copy module.
 
 ::
+
 import numpy
 from pyearth import Earth
 from matplotlib import pyplot

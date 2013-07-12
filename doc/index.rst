@@ -10,9 +10,9 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
-	earth
-	
-	...
+   
+   earth
+   ...
 
 Indices and tables
 ==================
