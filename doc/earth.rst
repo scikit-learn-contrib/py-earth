@@ -19,7 +19,7 @@ than zero and is zero everywhere else.
 An Earth model is a linear combination of basis functions, each of which is a product of one 
 or more of the following:
 
-	1. Constants
+	1. A constant
 	2. Linear functions of input variables
 	3. Hinge functions of input variables  
 
@@ -30,7 +30,7 @@ The algorithm has two stages.  First, the
 forward pass searches for terms that locally minimize squared error loss on the training set.  Next, a pruning pass selects a subset of those 
 terms that produces a locally minimal generalized cross-validation (GCV) score.  The GCV 
 score is not actually based on cross-validation, but rather is meant to approximate a true
-cross-validation score by penalizing model complexity.  The final result is a set of terms
+cross-validation score by penalizing model complexity.  The final result is a set of basis functions
 that is nonlinear in the original feature space, may include interactions, and is likely to 
 generalize well.
 
