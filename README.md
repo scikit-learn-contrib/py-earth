@@ -37,7 +37,7 @@ model.fit(X,y)
     
 #Print the model
 print model.trace()
-print model
+print model.summary()
     
 #Plot the model
 y_hat = model.predict(X)
