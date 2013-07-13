@@ -1,5 +1,5 @@
 Multivariate Adaptive Regression Splines
-========================================
+----------------------------------------
 
 Multivariate adaptive regression splines, implemented by the Earth class, is a flexible 
 regression method that automatically searches for interactions and non-linear 
@@ -54,6 +54,7 @@ pickle module and copied using the copy module.
 A Simple Earth Example
 ----------------------
 
+
 ::
 
 	import numpy
@@ -86,3 +87,9 @@ A Simple Earth Example
 	pyplot.show()
 
 .. image:: simple_earth_example.png
+
+API
+---
+
+.. autoclass:: pyearth.Earth
+
