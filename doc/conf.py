@@ -177,7 +177,11 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
+<<<<<<< HEAD
 htmlhelp_basename = 'py-earthdoc'
+=======
+htmlhelp_basename = 'py-earth_doc'
+>>>>>>> gh-pages
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -253,3 +257,10 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 #texinfo_show_urls = 'footnote'
+<<<<<<< HEAD
+=======
+
+#Create the .nojekyll file for github pages
+open(os.path.join('_build','html','.nojekyll'),'w').close()
+
+>>>>>>> gh-pages
