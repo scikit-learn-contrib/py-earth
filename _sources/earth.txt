@@ -1,3 +1,19 @@
+
+Welcome to py-earth's documentation!
+====================================
+
+Introduction
+------------
+
+The py-earth package is a Python implementation of Jerome Friedman's Multivariate Adaptive 
+Regression Splines algorithm, in the style of scikit-learn.  For more information about Multivariate 
+Adaptive Regression Splines, see below.  Py-earth is written in Python and Cython.  It 
+provides an interface that is compatible with scikit-learn's Estimator, Predictor, Transformer, and Model 
+interfaces.  Py-earth accommodates input in the form of numpy arrays, pandas DataFrames, patsy DesignMatrix 
+objects, or most anything that can be converted into an arrray of floats.  Fitted models can be pickled for 
+later use.  
+
+
 Multivariate Adaptive Regression Splines
 ----------------------------------------
 
@@ -45,10 +61,6 @@ generalize well.
 
 
 
-The Earth class supports dense input only.  Data structures from the pandas and patsy 
-modules are supported, but are copied into numpy arrays for computation.  No copy is 
-made if the inputs are numpy float64 arrays.  Earth objects can be serialized using the 
-pickle module and copied using the copy module.
 
 
 A Simple Earth Example
@@ -87,6 +99,18 @@ A Simple Earth Example
 	pyplot.show()
 
 .. image:: simple_earth_example.png
+
+
+Bibliography
+------------
+.. bibliography:: earth_bibliography.bib
+
+References :cite:`Hastie2009`, :cite:`Millborrow2012`, :cite:`Friedman1991`, :cite:`Friedman1993`, 
+and :cite:`Friedman1991a` contain discussions likely to be useful to users of py-earth.  
+References :cite:`Friedman1991`, :cite:`Millborrow2012`, :cite:`Bjorck1996`, :cite:`Stewart1998`,
+:cite:`Golub1996`, :cite:`Friedman1993`, and :cite:`Friedman1991a` were useful during the 
+implementation process.
+
 
 API
 ---

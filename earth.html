@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Multivariate Adaptive Regression Splines &mdash; py-earth 1 documentation</title>
+    <title>Welcome to py-earth’s documentation! &mdash; py-earth 0.1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '1',
+        VERSION:     '0.1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,8 +26,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="py-earth 1 documentation" href="index.html" />
-    <link rel="prev" title="Welcome to py-earth’s documentation!" href="index.html" /> 
+    <link rel="top" title="py-earth 0.1.0 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,10 +35,7 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="index.html" title="Welcome to py-earth’s documentation!"
-             accesskey="P">previous</a> |</li>
-        <li><a href="index.html">py-earth 1 documentation</a> &raquo;</li> 
+        <li><a href="#">py-earth 0.1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -48,8 +44,20 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="multivariate-adaptive-regression-splines">
-<h1>Multivariate Adaptive Regression Splines<a class="headerlink" href="#multivariate-adaptive-regression-splines" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="welcome-to-py-earth-s-documentation">
+<h1>Welcome to py-earth&#8217;s documentation!<a class="headerlink" href="#welcome-to-py-earth-s-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>The py-earth package is a Python implementation of Jerome Friedman&#8217;s Multivariate Adaptive
+Regression Splines algorithm, in the style of scikit-learn.  For more information about Multivariate
+Adaptive Regression Splines, see below.  Py-earth is written in Python and Cython.  It
+provides an interface that is compatible with scikit-learn&#8217;s Estimator, Predictor, Transformer, and Model
+interfaces.  Py-earth accommodates input in the form of numpy arrays, pandas DataFrames, patsy DesignMatrix
+objects, or most anything that can be converted into an arrray of floats.  Fitted models can be pickled for
+later use.</p>
+</div>
+<div class="section" id="multivariate-adaptive-regression-splines">
+<h2>Multivariate Adaptive Regression Splines<a class="headerlink" href="#multivariate-adaptive-regression-splines" title="Permalink to this headline">¶</a></h2>
 <p>Multivariate adaptive regression splines, implemented by the Earth class, is a flexible
 regression method that automatically searches for interactions and non-linear
 relationships.  Earth models can be thought of as linear models in a higher dimensional
@@ -84,13 +92,9 @@ generalize well.</p>
 <div class="math">
 \[y=1-2\text{h}\left(1-x\right)+\frac{1}{2}\text{h}\left(x-1\right)\]</div>
 <img alt="_images/piecewise_linear.png" src="_images/piecewise_linear.png" />
-<p>The Earth class supports dense input only.  Data structures from the pandas and patsy
-modules are supported, but are copied into numpy arrays for computation.  No copy is
-made if the inputs are numpy float64 arrays.  Earth objects can be serialized using the
-pickle module and copied using the copy module.</p>
 </div>
 <div class="section" id="a-simple-earth-example">
-<h1>A Simple Earth Example<a class="headerlink" href="#a-simple-earth-example" title="Permalink to this headline">¶</a></h1>
+<h2>A Simple Earth Example<a class="headerlink" href="#a-simple-earth-example" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">from</span> <span class="nn">pyearth</span> <span class="kn">import</span> <span class="n">Earth</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span>
@@ -123,8 +127,65 @@ pickle module and copied using the copy module.</p>
 </div>
 <img alt="_images/simple_earth_example.png" src="_images/simple_earth_example.png" />
 </div>
+<div class="section" id="bibliography">
+<h2>Bibliography<a class="headerlink" href="#bibliography" title="Permalink to this headline">¶</a></h2>
+<p id="bibtex-bibliography-earth-0"><table class="docutils citation" frame="void" id="bjorck1996" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id8">[1]</a></td><td><span class="first last"><span><span><span><span><span>Ake</span><span> </span></span><span>Bjorck</span></span><span>.</span></span><span> </span><span><em><span>Numerical Methods for Least Squares Problems</span></em><span>.</span></span></span><span> </span><span><span><span>Society for Industrial and Applied Mathematics</span><span>, </span><span>Philadelphia</span></span><span>, </span><span>1996</span><span>.</span></span></span></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="friedman1993" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[2]</td><td><em>(<a class="fn-backref" href="#id4">1</a>, <a class="fn-backref" href="#id11">2</a>)</em> <span class="last"><span><span><span><span><span><span>Jerome</span><span>&nbsp;</span><span>H.</span></span><span> </span></span><span>Friedman</span></span><span>.</span></span><span> </span><span><span>Technical Report No. 110: Fast MARS.</span><span>.</span></span></span><span> </span><span><span><span>Technical Report</span><span>, </span><span>Stanford University Department of Statistics</span></span><span>, </span><span>1993</span><span>.</span></span></span></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="friedman1991" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[3]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id6">2</a>)</em> <span class="last"><span><span><span><span><span>JH</span><span>&nbsp;</span></span><span>Friedman</span></span><span>.</span></span><span> </span><span><span>Multivariate adaptive regression splines</span><span>.</span></span></span><span> </span><span><span><em><span>The annals of statistics</span></em><span>, </span><span><span><span>19</span><span><span>(</span><span>1</span><span>)</span></span><span>:</span></span><span>1–67</span></span></span><span>, </span><span>1991</span><span>.</span></span></span></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="friedman1991a" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[4]</td><td><em>(<a class="fn-backref" href="#id5">1</a>, <a class="fn-backref" href="#id12">2</a>)</em> <span class="last"><span><span><span><span><span>JH</span><span>&nbsp;</span></span><span>Friedman</span></span><span>.</span></span><span> </span><span><span>Technical Report No. 108: Estimating functions of mixed ordinal and categorical variables using adaptive splines</span><span>.</span></span></span><span> </span><span><span><span>Technical Report</span><span>, </span><span>Stanford University Department of Statistics</span></span><span>, </span><span>1991</span><span>.</span></span></span></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="golub1996" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id10">[5]</a></td><td><span class="first last"><span><span><span><span><span><span>Gene</span><span> </span></span><span>Golub</span></span><span> and </span><span><span><span>Charles</span><span> </span></span><span>Van Loan</span></span></span><span>.</span></span><span> </span><span><em><span>Matrix Computations</span></em><span>.</span></span></span><span> </span><span><span><span>Johns Hopkins University Press</span><span>, </span><span><span>3</span><span> </span><span>edition</span></span></span><span>, </span><span>1996</span><span>.</span></span></span></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="hastie2009" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[6]</a></td><td><span class="first last"><span><span><span><span><span><span><span>Trevor</span><span> </span></span><span>Hastie</span></span><span>, </span><span><span><span>Robert</span><span> </span></span><span>Tibshirani</span></span></span><span>, and </span><span><span><span>Jerome</span><span> </span></span><span>Friedman</span></span></span><span>.</span></span><span> </span><span><em><span>Elements of Statistical Learning: Data Mining, Inference, and Prediction</span></em><span>.</span></span></span><span> </span><span><span><span>Springer Science+Business Media</span><span>, </span><span>New York</span><span>, </span><span><span>2</span><span> </span><span>edition</span></span></span><span>, </span><span>2009</span><span>.</span></span></span></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="millborrow2012" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[7]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id7">2</a>)</em> <span class="last"><span><span><span><span><span>Stephen</span><span> </span></span><span>Millborrow</span></span><span>.</span></span><span> </span><span><span>earth: Multivariate Adaptive Regression Spline Models</span><span>.</span></span></span><span> </span><span><span>2012</span><span>.</span></span></span></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="stewart1998" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id9">[8]</a></td><td><span class="first last"><span><span><span><span><span><span>G.</span><span>&nbsp;</span><span>W.</span></span><span> </span></span><span>Stewart</span></span><span>.</span></span><span> </span><span><em><span>Matrix Algorithms Volume 1: Basic Decompositions</span></em><span>.</span></span></span><span> </span><span><span><span>Society for Industrial and Applied Mathematics</span><span>, </span><span>Philadelphia</span></span><span>, </span><span>1998</span><span>.</span></span></span></td></tr>
+</tbody>
+</table>
+</p>
+<p>References <a class="reference internal" href="#hastie2009">[6]</a>, <a class="reference internal" href="#millborrow2012">[7]</a>, <a class="reference internal" href="#friedman1991">[3]</a>, <a class="reference internal" href="#friedman1993">[2]</a>,
+and <a class="reference internal" href="#friedman1991a">[4]</a> contain discussions likely to be useful to users of py-earth.
+References <a class="reference internal" href="#friedman1991">[3]</a>, <a class="reference internal" href="#millborrow2012">[7]</a>, <a class="reference internal" href="#bjorck1996">[1]</a>, <a class="reference internal" href="#stewart1998">[8]</a>,
+<a class="reference internal" href="#golub1996">[5]</a>, <a class="reference internal" href="#friedman1993">[2]</a>, and <a class="reference internal" href="#friedman1991a">[4]</a> were useful during the
+implementation process.</p>
+</div>
 <div class="section" id="api">
-<h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pyearth.Earth">
 <em class="property">class </em><tt class="descclassname">pyearth.</tt><tt class="descname">Earth</tt><big>(</big><em>endspan=None</em>, <em>minspan=None</em>, <em>endspan_alpha=None</em>, <em>minspan_alpha=None</em>, <em>max_terms=None</em>, <em>max_degree=None</em>, <em>thresh=None</em>, <em>penalty=None</em>, <em>check_every=None</em>, <em>min_search_points=None</em>, <em>xlabels=None</em>, <em>linvars=None</em><big>)</big><a class="headerlink" href="#pyearth.Earth" title="Permalink to this definition">¶</a></dt>
@@ -605,6 +666,7 @@ patsy DesignMatrix.</p>
 </dd></dl>
 
 </div>
+</div>
 
 
           </div>
@@ -612,16 +674,18 @@ patsy DesignMatrix.</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
+  <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Multivariate Adaptive Regression Splines</a></li>
+<li><a class="reference internal" href="#">Welcome to py-earth&#8217;s documentation!</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#multivariate-adaptive-regression-splines">Multivariate Adaptive Regression Splines</a></li>
 <li><a class="reference internal" href="#a-simple-earth-example">A Simple Earth Example</a></li>
+<li><a class="reference internal" href="#bibliography">Bibliography</a></li>
 <li><a class="reference internal" href="#api">API</a></li>
 </ul>
+</li>
+</ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Welcome to py-earth&#8217;s documentation!</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/earth.txt"
@@ -650,10 +714,7 @@ patsy DesignMatrix.</p>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="index.html" title="Welcome to py-earth’s documentation!"
-             >previous</a> |</li>
-        <li><a href="index.html">py-earth 1 documentation</a> &raquo;</li> 
+        <li><a href="#">py-earth 0.1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
