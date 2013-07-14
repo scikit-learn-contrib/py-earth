@@ -12,10 +12,13 @@ is compatible with scikit-learn's Estimator, Predictor, Transformer, and Model i
 Multivariate Adaptive Regression Splines, see the references below.
 
 ##Installation
+
+Make sure you have numpy and scikit-learn installed.  Then do the following:
+
 ```
-$git clone git://github.com/jcrudy/py-earth.git
-$cd py-earth
-$sudo python setup.py install
+git clone git://github.com/jcrudy/py-earth.git
+cd py-earth
+sudo python setup.py install
 ```
 
 ##Usage

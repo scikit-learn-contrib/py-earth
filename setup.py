@@ -2,6 +2,9 @@ from distutils.core import setup
 from distutils.extension import Extension
 import numpy
 import sys
+import os
+sys.path.insert(0,os.path.join('.','pyearth'))
+from _version import __version__
 
 #Determine whether to use Cython
 if '--cythonize' in sys.argv:
@@ -34,14 +37,14 @@ else:
     
 #Create a dictionary of arguments for setup
 setup_args = {'name':'py-earth',
-    'version':'0.1.0',
+    'version':__version__,
     'author':'Jason Rudy',
     'author_email':'jcrudy@gmail.com',
     'packages':['pyearth','pyearth.test'],
     'license':'LICENSE.txt',
     'description':'A Python implementation of Jerome Friedman\'s MARS algorithm.',
     'long_description':open('README.md','r').read(),
-    'py_modules' : ['pyearth.earth'],
+    'py_modules' : ['pyearth.earth','pyearth._version'],
     'ext_modules' : ext_modules,
     'classifiers' : ['Development Status :: 3 - Alpha'],
     'requires':['numpy','sklearn']} 
