@@ -257,10 +257,7 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 #texinfo_show_urls = 'footnote'
-<<<<<<< HEAD
-=======
 
 #Create the .nojekyll file for github pages
 open(os.path.join('_build','html','.nojekyll'),'w').close()
 
->>>>>>> gh-pages
