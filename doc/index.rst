@@ -7,14 +7,15 @@ Welcome to py-earth's documentation!
 ====================================
 The py-earth package is a Python implementation of Jerome Friedman's Multivariate Adaptive 
 Regression Splines algorithm, in the style of scikit-learn.  For more information about Multivariate 
-Adaptive Regression Splines, see the bibliography below.  Py-earth implements Multivariate 
-Adaptive Regression Splines using Cython and provides an interface that is compatible with 
-scikit-learn's Estimator, Predictor, Transformer, and Model interfaces.  Py-earth accommodates
-input in the form of numpy arrays, pandas DataFrames, patsy DesignMatrix objects, or most anything 
-that can be converted into an arrray of floats.  Fitted models can be pickled for later use.  
+Adaptive Regression Splines, see the bibliography below.  Py-earth is written in Python and Cython and 
+provides an interface that is compatible with scikit-learn's Estimator, Predictor, Transformer, and Model 
+interfaces.  Py-earth accommodates input in the form of numpy arrays, pandas DataFrames, patsy DesignMatrix 
+objects, or most anything that can be converted into an arrray of floats.  Fitted models can be pickled for 
+later use.  
 
 
-Contents:
+Contents
+--------
 
 .. toctree::
    :maxdepth: 2
