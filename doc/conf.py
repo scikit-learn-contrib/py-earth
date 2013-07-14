@@ -177,11 +177,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-<<<<<<< HEAD
-htmlhelp_basename = 'py-earthdoc'
-=======
 htmlhelp_basename = 'py-earth_doc'
->>>>>>> gh-pages
 
 
 # -- Options for LaTeX output --------------------------------------------------
