@@ -35,8 +35,16 @@ class TestEarth(object):
         self.earth = Earth(penalty=1)
         
     def test_get_params(self):
-        assert_equal(Earth().get_params(), {})
-        assert_equal(Earth(max_degree=3).get_params(), {'max_degree':3})
+        assert_equal(Earth().get_params(), {'penalty': None, 'min_search_points': None, 
+                                            'endspan_alpha': None, 'check_every': None, 
+                                            'max_terms': None, 'xlabels': None, 'max_degree': None, 
+                                            'minspan_alpha': None, 'linvars': None, 'thresh': None, 
+                                            'minspan': None, 'endspan': None})
+        assert_equal(Earth(max_degree=3).get_params(), {'penalty': None, 'min_search_points': None, 
+                                            'endspan_alpha': None, 'check_every': None, 
+                                            'max_terms': None, 'xlabels': None, 'max_degree': 3, 
+                                            'minspan_alpha': None, 'linvars': None, 'thresh': None, 
+                                            'minspan': None, 'endspan': None})
     
     @if_statsmodels
     def test_linear_fit(self):
@@ -65,7 +73,7 @@ class TestEarth(object):
         assert_true(model.score(x[group],y[group]) < model.score(x[numpy.logical_not(group)],y[numpy.logical_not(group)]))
         
         #Make sure that the score function gives the same answer as the trace
-        assert_almost_equal(model.score(x,y,weights=weights), model.pruning_trace().grsq(model.pruning_trace().get_selected()))
+        assert_almost_equal(model.score(x,y,weights=weights), model.pruning_trace().rsq(model.pruning_trace().get_selected()))
         
         #Uncomment below to see what this test situation looks like
 #        from matplotlib import pyplot
@@ -88,8 +96,8 @@ class TestEarth(object):
     def test_score(self):
         model = self.earth.fit(self.X, self.y)
         record = model.pruning_trace()
-        grsq = record.grsq(record.get_selected())
-        assert_almost_equal(grsq,model.score(self.X,self.y))
+        rsq = record.rsq(record.get_selected())
+        assert_almost_equal(rsq,model.score(self.X,self.y))
 
     @if_pandas
     def test_pandas_compatibility(self):

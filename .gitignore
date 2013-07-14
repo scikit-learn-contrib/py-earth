@@ -122,3 +122,15 @@ build/lib.macosx-10.5-x86_64-2.7/pyearth/test/test_util.py
 build/lib.macosx-10.5-x86_64-2.7/pyearth/test/test_earth.py
 
 build/lib.macosx-10.5-x86_64-2.7/pyearth/test/testing_utils.py
+
+doc/_build/*
+
+doc/Humor-Sans.ttf
+
+doc/hinge.png
+
+doc/piecewise_linear.png
+
+doc/simple_earth_example.png
+
+.settings/org.eclipse.core.resources.prefs
