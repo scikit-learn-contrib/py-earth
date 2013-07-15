@@ -8,6 +8,7 @@ from _util cimport gcv_adjust, log2, apply_weights_1d
 from _basis cimport Basis, BasisFunction, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
 from _record cimport ForwardPassIteration
 
+from cython.parallel cimport parallel, prange, threadid
 from libc.math cimport sqrt, abs, log
 import numpy as np
 cnp.import_array()
@@ -22,8 +23,9 @@ stopping_conditions = {
 
 cdef class ForwardPasser:
     
-    def __init__(ForwardPasser self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] y, cnp.ndarray[FLOAT_t, ndim=1] weights, **kwargs):
+    def __init__(ForwardPasser self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] y, cnp.ndarray[FLOAT_t, ndim=1] weights, INDEX_t n_threads, **kwargs):
         cdef INDEX_t i
+        self.n_threads = n_threads
         self.X = X
         self.y = y.copy()
         self.weights = weights
@@ -52,11 +54,13 @@ cdef class ForwardPasser:
         self.sorting = np.empty(shape=self.m, dtype=np.int)
         self.mwork = np.empty(shape=self.m, dtype=np.int)
         self.u = np.empty(shape=self.max_terms, dtype=float)
+        self.b_col = np.empty(shape=(self.m,self.n_threads),dtype=np.float,order='F')
+        self.b_orth_col = np.empty(shape=(self.m,self.n_threads),dtype=np.float,order='F')
         self.B_orth_times_parent_cum = np.empty(shape=self.max_terms,dtype=np.float)
         self.B = np.ones(shape=(self.m,self.max_terms), order='C',dtype=np.float)
         self.basis.weighted_transform(self.X,self.B,self.weights)
         self.B_orth = self.B.copy() #An orthogonal matrix with the same column space as B
-        self.u = np.empty(shape=self.max_terms, dtype=np.float)
+        self.u = np.empty(shape=(self.max_terms,self.n_threads), dtype=np.float, order='F')
         self.c = np.empty(shape=self.max_terms, dtype=np.float)
         self.norms = np.empty(shape=self.max_terms, dtype=np.float)
         self.c_squared = 0.0
@@ -374,10 +378,13 @@ cdef class ForwardPasser:
         mse is a pointer to the mean squared error of including just the linear term in B[:,k]
         '''
         
-        cdef cnp.ndarray[FLOAT_t, ndim=1] b = <cnp.ndarray[FLOAT_t, ndim=1]> self.B[:,k+1]
-        cdef cnp.ndarray[FLOAT_t, ndim=1] b_parent = <cnp.ndarray[FLOAT_t, ndim=1]> self.B[:,parent]
-        cdef cnp.ndarray[FLOAT_t, ndim=1] u = <cnp.ndarray[FLOAT_t, ndim=1]> self.u
-        cdef cnp.ndarray[FLOAT_t, ndim=2] B_orth = <cnp.ndarray[FLOAT_t, ndim=2]> self.B_orth
+        #Thread-local variables: b, u, B_orth, mse, knot, knot_idx, order, candidates
+        cdef INDEX_t thread = threadid()
+        cdef cnp.ndarray[FLOAT_t, ndim=1] b = <cnp.ndarray[FLOAT_t, ndim=1]> self.b_col[:,thread] #thread-local #TODO: remove slicing
+        cdef cnp.ndarray[FLOAT_t, ndim=1] b_orth = <cnp.ndarray[FLOAT_t, ndim=1]> self.b_orth_col[:,thread] #thread-local #TODO: remove slicing
+        cdef cnp.ndarray[FLOAT_t, ndim=1] b_parent = <cnp.ndarray[FLOAT_t, ndim=1]> self.B[:,parent] #TODO: remove slicing
+        cdef cnp.ndarray[FLOAT_t, ndim=1] u = <cnp.ndarray[FLOAT_t, ndim=1]> self.u[:,thread] #thread-local #TODO: remove slicing
+        cdef cnp.ndarray[FLOAT_t, ndim=2] B_orth = <cnp.ndarray[FLOAT_t, ndim=2]> self.B_orth #thread-local
         cdef cnp.ndarray[FLOAT_t, ndim=2] X = <cnp.ndarray[FLOAT_t, ndim=2]> self.X
         cdef cnp.ndarray[FLOAT_t, ndim=1] y = <cnp.ndarray[FLOAT_t, ndim=1]> self.y
         cdef cnp.ndarray[FLOAT_t, ndim=1] c = <cnp.ndarray[FLOAT_t, ndim=1]> self.c
@@ -430,9 +437,9 @@ cdef class ForwardPasser:
             else:
                 break
             
-        #Put b into the last column of B_orth
+        #Put b into b_orth
         for i in range(self.m):
-            B_orth[i,k+1] = b[i]
+            b_orth[i] = b[i]
         
         #Compute the initial covariance column, u (not including the final element)
         u[0:k+1] = np.dot(b,B_orth[:,0:k+1])

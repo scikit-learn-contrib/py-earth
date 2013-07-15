@@ -29,6 +29,7 @@ cdef class ForwardPasser:
     cdef int min_search_points
     cdef list xlabels
     cdef FLOAT_t zero_tol
+    cdef index_t n_threads
     
     #Input data
     cdef cnp.ndarray X
