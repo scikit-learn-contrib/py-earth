@@ -9,6 +9,8 @@ from _basis cimport Basis, BasisFunction, ConstantBasisFunction, HingeBasisFunct
 from _record cimport ForwardPassIteration
 
 from cython.parallel cimport parallel, prange, threadid
+from libc.stdlib cimport malloc, free
+from cython cimport sizeof
 from libc.math cimport sqrt, abs, log
 import numpy as np
 cnp.import_array()
@@ -23,9 +25,9 @@ stopping_conditions = {
 
 cdef class ForwardPasser:
     
-    def __init__(ForwardPasser self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] y, cnp.ndarray[FLOAT_t, ndim=1] weights, INDEX_t n_threads, **kwargs):
+    def __init__(ForwardPasser self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] y, cnp.ndarray[FLOAT_t, ndim=1] weights, **kwargs):
         cdef INDEX_t i
-        self.n_threads = n_threads
+        self.n_threads = kwargs['n_threads'] if 'n_threads' in kwargs else 1
         self.X = X
         self.y = y.copy()
         self.weights = weights
@@ -51,12 +53,11 @@ cdef class ForwardPasser:
         self.basis = Basis()
         self.basis.append(ConstantBasisFunction())
         
-        self.sorting = np.empty(shape=self.m, dtype=np.int)
+        self.sorting = np.empty(shape=(self.m,self.n_threads), dtype=np.int)
         self.mwork = np.empty(shape=self.m, dtype=np.int)
         self.u = np.empty(shape=self.max_terms, dtype=float)
-        self.b_col = np.empty(shape=(self.m,self.n_threads),dtype=np.float,order='F')
-        self.b_orth_col = np.empty(shape=(self.m,self.n_threads),dtype=np.float,order='F')
-        self.B_orth_times_parent_cum = np.empty(shape=self.max_terms,dtype=np.float)
+        self.b = np.empty(shape=(self.m,self.n_threads),dtype=np.float,order='F')
+        self.B_orth_times_parent_cum = np.empty(shape=(self.max_terms,self.n_threads),dtype=np.float)
         self.B = np.ones(shape=(self.m,self.max_terms), order='C',dtype=np.float)
         self.basis.weighted_transform(self.X,self.B,self.weights)
         self.B_orth = self.B.copy() #An orthogonal matrix with the same column space as B
@@ -233,22 +234,38 @@ cdef class ForwardPasser:
         cdef FLOAT_t gcv_
         cdef FLOAT_t mse_
         cdef INDEX_t i
-        
+        cdef INDEX_t thread = threadid()
+        cdef INDEX_t thread_choice
+        print 1
+        #Allocate and initialize memory for threads
+        cdef FLOAT_t *thread_knot = <FLOAT_t *> malloc(self.n_threads*sizeof(FLOAT_t))
+        cdef FLOAT_t *thread_mse = <FLOAT_t *> malloc(self.n_threads*sizeof(FLOAT_t))
+        cdef INDEX_t *thread_knot_idx = <INDEX_t *> malloc(self.n_threads*sizeof(INDEX_t))
+        cdef FLOAT_t *thread_knot_choice = <FLOAT_t *> malloc(self.n_threads*sizeof(FLOAT_t))
+        cdef FLOAT_t *thread_mse_choice = <FLOAT_t *> malloc(self.n_threads*sizeof(FLOAT_t))
+        cdef int *thread_knot_idx_choice = <int *> malloc(self.n_threads*sizeof(int))
+        cdef INDEX_t *thread_parent_idx_choice = <INDEX_t *> malloc(self.n_threads*sizeof(INDEX_t))
+        cdef INDEX_t *thread_variable_choice = <INDEX_t *> malloc(self.n_threads*sizeof(INDEX_t))
+        cdef bint *thread_first = <bint *> malloc(self.n_threads*sizeof(bint))
+        for  i in range(self.n_threads):
+            thread_first[i] = <bint> True
+        cdef bint *thread_dependent = <bint *> malloc(self.n_threads*sizeof(bint))
+        print 2
         cdef cnp.ndarray[FLOAT_t,ndim=2] X = <cnp.ndarray[FLOAT_t,ndim=2]> self.X
         cdef cnp.ndarray[FLOAT_t,ndim=2] B = <cnp.ndarray[FLOAT_t,ndim=2]> self.B
         cdef cnp.ndarray[FLOAT_t,ndim=2] B_orth = <cnp.ndarray[FLOAT_t,ndim=2]> self.B_orth
         cdef cnp.ndarray[FLOAT_t,ndim=1] y = <cnp.ndarray[FLOAT_t,ndim=1]> self.y
         cdef cnp.ndarray[INT_t,ndim=1] linear_variables = <cnp.ndarray[INT_t,ndim=1]> self.linear_variables
-        cdef cnp.ndarray[INT_t,ndim=1] sorting = <cnp.ndarray[INT_t,ndim=1]> self.sorting
-        
+        cdef cnp.ndarray[INT_t,ndim=2] sorting = <cnp.ndarray[INT_t,ndim=2]> self.sorting
+        print 3
         if self.endspan < 0:
             endspan = round(3 - log2(self.endspan_alpha/self.n))
         
         #Iterate over variables
         for variable in range(self.n):
-            
+            print 4
             #Sort the data
-            sorting[:] = np.argsort(X[:,variable])[::-1] #TODO: eliminate Python call / data copy
+            sorting[:,thread] = np.argsort(X[:,variable])[::-1] #TODO: eliminate Python call / data copy
             
             #Iterate over parents
             for parent_idx in range(k):
@@ -261,7 +278,7 @@ cdef class ForwardPasser:
                         continue
                 if not parent.is_splittable():
                     continue
-                
+                print 5
                 #Add the linear term to B
                 for i in range(self.m):
                     B[i,k] = B[i,parent_idx]*X[i,variable]
@@ -285,13 +302,13 @@ cdef class ForwardPasser:
                 else:
                     
                     #Find the valid knot candidates
-                    candidates_idx = parent.valid_knots(B[sorting,parent_idx], X[sorting,variable], variable, self.check_every, endspan, self.minspan, self.minspan_alpha, self.n, self.mwork)
+                    candidates_idx = parent.valid_knots(B[sorting[:,thread],parent_idx], X[sorting[:,thread],variable], variable, self.check_every, endspan, self.minspan, self.minspan_alpha, self.n, self.mwork)
 
                     if len(candidates_idx) > 0:
                     #Choose the best candidate (if no candidate is an improvement on the linear term in terms of gcv, knot_idx is set to -1
     
                         #Find the best knot location for this parent and variable combination
-                        self.best_knot(parent_idx,variable,k,candidates_idx,sorting,&mse,&knot,&knot_idx)
+                        self.best_knot(parent_idx,variable,k,candidates_idx,sorting[:,thread],&mse,&knot,&knot_idx)
                         
                         #If the hinge function does not decrease the gcv then just keep the linear term
                         if gcv_factor_k_plus_2*mse >= gcv_:
@@ -302,38 +319,73 @@ cdef class ForwardPasser:
                         #Do an orthonormal downdate and skip to the next iteration
                         self.orthonormal_downdate(k)
                         continue
-                
+                print 6
                 #Do an orthonormal downdate
                 self.orthonormal_downdate(k)
                 
                 #Update the choices
                 if first:
-                    knot_choice = knot
-                    mse_choice = mse
-                    knot_idx_choice = knot_idx
-                    parent_idx_choice = parent_idx
-                    parent_choice = parent
-                    variable_choice = variable
-                    first = False
-                    dependent = linear_dependence
-                if mse < mse_choice:
-                    knot_choice = knot
-                    mse_choice = mse
-                    knot_idx_choice = knot_idx
-                    parent_idx_choice = parent_idx
-                    parent_choice = parent
-                    variable_choice = variable
-                    dependent = linear_dependence
-                    
+                    thread_knot_choice[thread] = knot
+                    thread_mse_choice[thread] = mse
+                    thread_knot_idx_choice[thread] = knot_idx
+                    thread_parent_idx_choice[thread] = parent_idx
+                    thread_variable_choice[thread] = variable
+                    thread_first[thread] = False
+                    thread_dependent[thread] = linear_dependence
+                if mse < thread_mse_choice[thread]:
+                    thread_knot_choice[thread] = knot
+                    thread_mse_choice[thread] = mse
+                    thread_knot_idx_choice[thread] = knot_idx
+                    thread_parent_idx_choice[thread] = parent_idx
+                    thread_variable_choice[thread] = variable
+                    thread_dependent[thread] = linear_dependence
+        print 7
+        
+        #Reconcile the threads
+        thread_choice = 0
+        mse_choice = thread_mse_choice[0]
+        for i in range(1,self.n_threads):
+            if thread_mse_choice[i] < mse_choice:
+                mse_choice = thread_mse_choice[i]
+                thread_choice = i
+        knot_choice = thread_knot_choice[thread_choice]
+        knot_idx_choice = thread_knot_idx_choice[thread_choice]
+        parent_idx_choice = thread_parent_idx_choice[thread_choice]
+        variable_choice = thread_variable_choice[thread_choice]
+        dependent = thread_dependent[thread_choice]
+        for i in range(self.n_threads):
+            if not thread_first[i]:
+                first = False
+                break
+        print 8
+        
+        parent_choice = self.basis.get(parent_idx_choice)
+        
+        print 8.5
+        print first
         #Make sure at least one candidate was checked
         if first:
+            print 8.6
             self.record[-1].set_no_candidates(True)
+            print 8.7
+            free(thread_knot)
+            free(thread_mse)
+            free(thread_knot_idx)
+            free(thread_knot_choice)
+            free(thread_mse_choice)
+            free(thread_knot_idx_choice)
+            free(thread_parent_idx_choice)
+            free(thread_variable_choice)
+            free(thread_first)
+            free(thread_dependent)
             return
-        
+        print 8.75
+        print parent_idx
         #Add the new basis functions
         parent = self.basis.get(parent_idx)
         label = self.xlabels[variable_choice]
         if knot_idx_choice != -1:
+            print 'a'
             #Add the new basis functions
             bf1 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,False,label)
             bf2 = HingeBasisFunction(parent_choice,knot_choice,knot_idx_choice,variable_choice,True,label)
@@ -350,6 +402,7 @@ cdef class ForwardPasser:
             if self.orthonormal_update(k+1) == 1:
                 bf2.make_unsplittable()
         elif not dependent and knot_idx_choice == -1:
+            print 'b'
             #In this case, only add the linear basis function
             bf1 = LinearBasisFunction(parent_choice,variable_choice,label)
             bf1.apply(X,B[:,k])
@@ -360,10 +413,37 @@ cdef class ForwardPasser:
             if self.orthonormal_update(k) == 1:
                 bf1.make_unsplittable()
         else:#dependent and knot_idx_choice == -1
+            print 'c'
+            print thread
+            print dependent, knot_idx_choice
+            print self.record
             #In this case there were no acceptable choices remaining, so end the forward pass
             self.record[-1].set_no_candidates(True)
+            print 'd'
+            free(thread_knot)
+            free(thread_mse)
+            free(thread_knot_idx)
+            free(thread_knot_choice)
+            free(thread_mse_choice)
+            free(thread_knot_idx_choice)
+            free(thread_parent_idx_choice)
+            free(thread_variable_choice)
+            free(thread_first)
+            free(thread_dependent)
             return
-            
+        print 9
+        #Free dynamically allocated memory
+        free(thread_knot)
+        free(thread_mse)
+        free(thread_knot_idx)
+        free(thread_knot_choice)
+        free(thread_mse_choice)
+        free(thread_knot_idx_choice)
+        free(thread_parent_idx_choice)
+        free(thread_variable_choice)
+        free(thread_first)
+        free(thread_dependent)
+        print 10
         #Update the build record
         self.record.append(ForwardPassIteration(parent_idx_choice,variable_choice,knot_idx_choice,mse_choice,len(self.basis)))
         
@@ -378,17 +458,16 @@ cdef class ForwardPasser:
         mse is a pointer to the mean squared error of including just the linear term in B[:,k]
         '''
         
-        #Thread-local variables: b, u, B_orth, mse, knot, knot_idx, order, candidates
+        #Thread-local variables: b, u, mse, knot, knot_idx, order, candidates, B_orth_times_parent_cum
         cdef INDEX_t thread = threadid()
-        cdef cnp.ndarray[FLOAT_t, ndim=1] b = <cnp.ndarray[FLOAT_t, ndim=1]> self.b_col[:,thread] #thread-local #TODO: remove slicing
-        cdef cnp.ndarray[FLOAT_t, ndim=1] b_orth = <cnp.ndarray[FLOAT_t, ndim=1]> self.b_orth_col[:,thread] #thread-local #TODO: remove slicing
+        cdef cnp.ndarray[FLOAT_t, ndim=1] b = <cnp.ndarray[FLOAT_t, ndim=1]> self.b[:,thread] #thread-local #TODO: remove slicing
         cdef cnp.ndarray[FLOAT_t, ndim=1] b_parent = <cnp.ndarray[FLOAT_t, ndim=1]> self.B[:,parent] #TODO: remove slicing
         cdef cnp.ndarray[FLOAT_t, ndim=1] u = <cnp.ndarray[FLOAT_t, ndim=1]> self.u[:,thread] #thread-local #TODO: remove slicing
-        cdef cnp.ndarray[FLOAT_t, ndim=2] B_orth = <cnp.ndarray[FLOAT_t, ndim=2]> self.B_orth #thread-local
+        cdef cnp.ndarray[FLOAT_t, ndim=2] B_orth = <cnp.ndarray[FLOAT_t, ndim=2]> self.B_orth
         cdef cnp.ndarray[FLOAT_t, ndim=2] X = <cnp.ndarray[FLOAT_t, ndim=2]> self.X
         cdef cnp.ndarray[FLOAT_t, ndim=1] y = <cnp.ndarray[FLOAT_t, ndim=1]> self.y
         cdef cnp.ndarray[FLOAT_t, ndim=1] c = <cnp.ndarray[FLOAT_t, ndim=1]> self.c
-        cdef cnp.ndarray[FLOAT_t, ndim=1] B_orth_times_parent_cum = <cnp.ndarray[FLOAT_t, ndim=1]> self.B_orth_times_parent_cum
+        cdef cnp.ndarray[FLOAT_t, ndim=1] B_orth_times_parent_cum = <cnp.ndarray[FLOAT_t, ndim=1]> self.B_orth_times_parent_cum[:,thread] #thread-local #TODO: remove slicing
         cdef cnp.ndarray[FLOAT_t, ndim=2] B = <cnp.ndarray[FLOAT_t, ndim=2]> self.B
         
         cdef INDEX_t num_candidates = candidates.shape[0]
@@ -436,10 +515,6 @@ cdef class ForwardPasser:
                 b[i] = b_parent[i]*float_tmp
             else:
                 break
-            
-        #Put b into b_orth
-        for i in range(self.m):
-            b_orth[i] = b[i]
         
         #Compute the initial covariance column, u (not including the final element)
         u[0:k+1] = np.dot(b,B_orth[:,0:k+1])

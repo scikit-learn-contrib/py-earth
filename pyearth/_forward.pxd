@@ -29,7 +29,7 @@ cdef class ForwardPasser:
     cdef int min_search_points
     cdef list xlabels
     cdef FLOAT_t zero_tol
-    cdef index_t n_threads
+    cdef INDEX_t n_threads
     
     #Input data
     cdef cnp.ndarray X
@@ -41,6 +41,7 @@ cdef class ForwardPasser:
     cdef FLOAT_t y_squared
     
     #Working floating point data 
+    cdef cnp.ndarray b
     cdef cnp.ndarray B #Data matrix in basis space
     cdef cnp.ndarray B_orth #Orthogonalized version of B
     cdef cnp.ndarray c
