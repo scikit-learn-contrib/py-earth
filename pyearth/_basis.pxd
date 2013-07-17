@@ -79,6 +79,8 @@ cdef class HingeBasisFunction(BasisFunction):
     
     cpdef FLOAT_t get_knot(self)
     
+    cpdef bint get_reverse(self)
+    
     cpdef INDEX_t get_knot_idx(self)
     
     cpdef apply(self, cnp.ndarray[FLOAT_t,ndim=2] X, cnp.ndarray[FLOAT_t,ndim=1] b, bint recurse = ?)
