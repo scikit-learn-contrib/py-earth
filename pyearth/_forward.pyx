@@ -430,10 +430,6 @@ cdef class ForwardPasser:
             else:
                 break
             
-        #Put b into the last column of B_orth
-        for i in range(self.m):
-            B_orth[i,k+1] = b[i]
-        
         #Compute the initial covariance column, u (not including the final element)
         u[0:k+1] = np.dot(b,B_orth[:,0:k+1])
         
