@@ -38,8 +38,15 @@ class TestConstantBasisFunction(BaseTestClass):
 class TestHingeBasisFunction(BaseTestClass):
     def __init__(self):
         super(self.__class__,self).__init__()
-        parent = ConstantBasisFunction()
-        self.bf = HingeBasisFunction(parent,1.0,10,1,False)
+        self.parent = ConstantBasisFunction()
+        self.bf = HingeBasisFunction(self.parent,1.0,10,1,False)
+        
+    def test_getters(self):
+        assert self.bf.get_reverse() == False
+        assert self.bf.get_knot() == 1.0
+        assert self.bf.get_variable() == 1
+        assert self.bf.get_knot_idx() == 10
+        assert self.bf.get_parent() == self.parent
         
     def test_apply(self):
         m,n = self.X.shape
