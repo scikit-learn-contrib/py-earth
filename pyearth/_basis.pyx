@@ -393,6 +393,9 @@ cdef class HingeBasisFunction(BasisFunction):
     cpdef FLOAT_t get_knot(self):
         return self.knot
     
+    cpdef bint get_reverse(self):
+        return self.reverse
+    
     cpdef INDEX_t get_knot_idx(self):
         return self.knot_idx
     
