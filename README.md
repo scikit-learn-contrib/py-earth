@@ -1,4 +1,4 @@
-py-earth
+py-earth [![Build Status](https://travis-ci.org/jcrudy/py-earth.png?branch=master)](https://travis-ci.org/jcrudy/py-earth?branch=master)
 ========
 
 A Python implementation of Jerome Friedman's Multivariate Adaptive Regression Splines algorithm, 
