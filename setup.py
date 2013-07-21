@@ -46,8 +46,10 @@ setup_args = {'name':'py-earth',
     'long_description':open('README.md','r').read(),
     'py_modules' : ['pyearth.earth','pyearth._version'],
     'ext_modules' : ext_modules,
+    'scripts':[os.path.join('scripts','pyearth_vs_earth.py')],
     'classifiers' : ['Development Status :: 3 - Alpha'],
-    'requires':['numpy','sklearn']} 
+    'requires':['numpy','sklearn'],
+    'tests_require':['nose']} 
 
 #Add the build_ext command only if cythonizing
 if cythonize_switch:

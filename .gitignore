@@ -136,3 +136,7 @@ doc/simple_earth_example.png
 .settings/org.eclipse.core.resources.prefs
 
 build/lib.macosx-10.5-x86_64-2.7/pyearth/_version.py
+
+scripts/comparison.csv
+
+examples/classifier_comp.pdf
