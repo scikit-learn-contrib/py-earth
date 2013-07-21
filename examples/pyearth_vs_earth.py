@@ -11,7 +11,6 @@ import rpy2.robjects as robjects
 import time
 import pandas
 from pyearth import Earth
-from matplotlib import pyplot
 
 class DataGenerator(object):
     def __init__(self):

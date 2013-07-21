@@ -1,6 +1,5 @@
 
 import numpy
-import cProfile
 from pyearth import Earth
 from matplotlib import pyplot
 
