@@ -323,7 +323,7 @@ cdef class ForwardPasser:
                     
         #Make sure at least one candidate was checked
         if first:
-            self.record[-1].set_no_candidates(True)
+            self.record[len(self.record) - 1].set_no_candidates(True)
             return
         
         #Add the new basis functions
@@ -357,7 +357,7 @@ cdef class ForwardPasser:
                 bf1.make_unsplittable()
         else:#dependent and knot_idx_choice == -1
             #In this case there were no acceptable choices remaining, so end the forward pass
-            self.record[-1].set_no_candidates(True)
+            self.record[len(self.record) - 1].set_no_candidates(True)
             return
             
         #Update the build record
