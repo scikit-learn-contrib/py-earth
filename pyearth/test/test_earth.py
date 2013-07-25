@@ -98,7 +98,24 @@ class TestEarth(object):
         record = model.pruning_trace()
         rsq = record.rsq(record.get_selected())
         assert_almost_equal(rsq,model.score(self.X,self.y))
-
+    
+    @if_pandas
+    def test_pathological_cases(self):
+        import pandas
+        directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pathological_data')
+        cases = {'issue_44':{}}
+        for case, settings in cases.iteritems():
+            data = pandas.read_csv(os.path.join(directory, case + '.csv'))
+            y = data['y']
+            del data['y']
+            X = data
+            model = Earth(**settings).fit(X,y)
+#            with open(os.path.join('pathological_data', case + '.txt'), 'w') as outfile:
+#                outfile.write(model.summary())
+            with open(os.path.join(directory, case + '.txt'), 'r') as infile:
+                correct = infile.read()
+            assert_equal(model.summary(),correct)
+    
     @if_pandas
     def test_pandas_compatibility(self):
         import pandas
