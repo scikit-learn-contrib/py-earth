@@ -52,31 +52,31 @@ class TestEarth(object):
         soln = OLS(self.y, self.earth.transform(self.X)).fit().params
         assert_almost_equal(numpy.mean((self.earth.coef_-soln)**2), 0.0)
         
-        weights = 1.0 / (numpy.random.normal(size=self.y.shape) ** 2)
+        sample_weight = 1.0 / (numpy.random.normal(size=self.y.shape) ** 2)
         self.earth.fit(self.X, self.y)
-        self.earth.linear_fit(self.X, self.y, weights)
-        soln = GLS(self.y, self.earth.transform(self.X), 1.0 / weights).fit().params
+        self.earth.linear_fit(self.X, self.y, sample_weight)
+        soln = GLS(self.y, self.earth.transform(self.X), 1.0 / sample_weight).fit().params
         assert_almost_equal(numpy.mean((self.earth.coef_-soln)**2), 0.0)
         
-    def test_weights(self):
+    def test_sample_weight(self):
         group = numpy.random.binomial(1,.5,size=1000)  == 1
-        weights =  1 / (group * 100 + 1.0)
+        sample_weight =  1 / (group * 100 + 1.0)
         x = numpy.random.uniform(-10,10,size=1000)
         y = numpy.abs(x)
         y[group] = numpy.abs(x[group] - 5)
         y += numpy.random.normal(0,1,size=1000)
-        model = Earth().fit(x,y,weights = weights)
+        model = Earth().fit(x,y,sample_weight = sample_weight)
         
         #Check that the model fits better for the more heavily weighted group
         assert_true(model.score(x[group],y[group]) < model.score(x[numpy.logical_not(group)],y[numpy.logical_not(group)]))
         
         #Make sure that the score function gives the same answer as the trace
-        assert_almost_equal(model.score(x,y,weights=weights), model.pruning_trace().rsq(model.pruning_trace().get_selected()))
+        assert_almost_equal(model.score(x,y,sample_weight=sample_weight), model.pruning_trace().rsq(model.pruning_trace().get_selected()))
         
         #Uncomment below to see what this test situation looks like
 #        from matplotlib import pyplot
 #        print model.summary()
-#        print model.score(x,y,weights = weights)
+#        print model.score(x,y,sample_weight = sample_weight)
 #        pyplot.figure()
 #        pyplot.plot(x,y,'b.')
 #        pyplot.plot(x,model.predict(x),'r.')
