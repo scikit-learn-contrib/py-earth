@@ -10,7 +10,7 @@ class TestForwardPassRecord(object):
         self.num_variables = 10
         self.penalty = 3.0
         self.sst = 100.0
-        self.record = ForwardPassRecord(self.num_samples, self.num_variables, self.penalty, self.sst)
+        self.record = ForwardPassRecord(self.num_samples, self.num_variables, self.penalty, self.sst, ['x'+str(i) for i in range(self.num_variables)])
         self.record.append(ForwardPassIteration(0, 3, 3, 63.0, 3))
         self.record.append(ForwardPassIteration(0, 3, 14, 34.0, 5))
         self.record.append(ForwardPassIteration(3, 6, 12, 18.0, 7))
