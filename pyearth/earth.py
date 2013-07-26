@@ -286,7 +286,10 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             
         linvars : iterable of strings or ints, optional (empty by default)
             Used to specify features that may only enter terms as linear basis functions (without 
-            knots).  Can include both column numbers an column names (see xlabels, below).
+            knots).  Can include both column numbers and column names (see xlabels, below).  If left 
+            empty, some variables may still enter linearly during the forward pass if no knot would
+            provide a reduction in GCV compared to the linear function.  Note that this feature differs
+            from the R package earth.
     
     
         xlabels : iterable of strings, optional (empty by default)
@@ -349,20 +352,13 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             that column order is used to compute term values and make predictions, not column names.
             
         
-        Note
-        ----
-        The forward_pass method accepts all other named parameters listed in Earth.forward_pass_arg_names. 
-        Passing these parameters to the forward_pass method sets them only for this call, and does not
-        change the parameters of the Earth object itself.  To change the parameters of the object 
-        itself, use the set_params method.
-        
         '''
         
         #Label and format data
         if xlabels is None:
             xlabels = self._scrape_labels(X)
         X, y, weights = self._scrub(X,y,weights)
-         
+        
         #Do the actual work
         args = self._pull_forward_args(**self.__dict__)
         forward_passer = ForwardPasser(X, y, weights, xlabels=xlabels, linvars=linvars, **args)
@@ -396,13 +392,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             not contribute at all.  Weights are useful when dealing with heteroscedasticity.  In such
             cases, the weight should be proportional to the inverse of the (known) variance.
             
-                
-        Note
-        ----
-        The pruning_pass method accepts all other named parameters listed in Earth.pruning_pass_arg_names. 
-        Passing these parameters to the pruning_pass method sets them only for this call, and does not
-        change the parameters of the Earth object itself.  To change the parameters of the object 
-        itself, use the set_params method.
+            
         '''
         #Format data
         X, y, weights = self._scrub(X,y,weights)

@@ -91,6 +91,15 @@ class TestEarth(object):
             prev = fl.read()
         assert_equal(res,prev)
         
+    def test_linvars(self):
+        self.earth.fit(self.X, self.y, linvars=[0,1,2,3,4,5,6,7,8,9])
+        res = str(self.earth.trace()) + '\n' + self.earth.summary()
+#        with open('earth_linvars_regress.txt','w') as fl:
+#            fl.write(res)
+        with open(os.path.join(os.path.dirname(__file__),'earth_linvars_regress.txt'),'r') as fl:
+            prev = fl.read()
+        assert_equal(res,prev)
+        
     def test_score(self):
         model = self.earth.fit(self.X, self.y)
         record = model.pruning_trace()
