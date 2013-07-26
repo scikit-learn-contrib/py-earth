@@ -37,14 +37,12 @@ class TestEarth(object):
     def test_get_params(self):
         assert_equal(Earth().get_params(), {'penalty': None, 'min_search_points': None, 
                                             'endspan_alpha': None, 'check_every': None, 
-                                            'max_terms': None, 'xlabels': None, 'max_degree': None, 
-                                            'minspan_alpha': None, 'linvars': None, 'thresh': None, 
-                                            'minspan': None, 'endspan': None})
+                                            'max_terms': None, 'max_degree': None, 'minspan_alpha': None, 
+                                            'thresh': None, 'minspan': None, 'endspan': None})
         assert_equal(Earth(max_degree=3).get_params(), {'penalty': None, 'min_search_points': None, 
                                             'endspan_alpha': None, 'check_every': None, 
-                                            'max_terms': None, 'xlabels': None, 'max_degree': 3, 
-                                            'minspan_alpha': None, 'linvars': None, 'thresh': None, 
-                                            'minspan': None, 'endspan': None})
+                                            'max_terms': None, 'max_degree': 3, 'minspan_alpha': None, 
+                                            'thresh': None, 'minspan': None, 'endspan': None})
     
     @if_statsmodels
     def test_linear_fit(self):
@@ -124,7 +122,7 @@ class TestEarth(object):
         colnames = ['xx'+str(i) for i in range(X.shape[1])]
         X.columns = colnames
         model = self.earth.fit(X,y)
-        assert_list_equal(colnames,model.xlabels)
+        assert_list_equal(colnames,model.forward_trace()._getstate()['xlabels'])
         
     @if_patsy
     @if_pandas
@@ -138,7 +136,7 @@ class TestEarth(object):
         X['y'] = y
         y, X = patsy.dmatrices('y ~ xx0 + xx1 + xx2 + xx3 + xx4 + xx5 + xx6 + xx7 + xx8 + xx9 - 1',data=X)
         model = self.earth.fit(X,y)
-        assert_list_equal(colnames,model.xlabels)
+        assert_list_equal(colnames,model.forward_trace()._getstate()['xlabels'])
         
     def test_pickle_compatibility(self):
         model = self.earth.fit(self.X, self.y)

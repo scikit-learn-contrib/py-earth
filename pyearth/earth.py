@@ -102,18 +102,6 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         calculated based on min_search_points (above).
     
     
-    linvars : iterable of strings or ints, optional (empty by default)
-        Used to specify features that may only enter terms as linear basis functions (without 
-        knots).  Can include both column numbers an column names (see xlabels, below).
-    
-    
-    xlabels : iterable of strings, optional (empty by default)
-        The xlabels argument can be used to assign names to data columns.  This argument is not
-        generally needed, as names can be captured automatically from most standard data 
-        structures.  If included, must have length n, where n is the number of features.  Note 
-        that column order is used to compute term values and make predictions, not column names.  
-    
-    
     Attributes
     ----------
     `coef_` : array, shape = [pruned basis length]
@@ -143,11 +131,11 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
     
     forward_pass_arg_names = set(['endspan','minspan','endspan_alpha','minspan_alpha',
                                   'max_terms','max_degree','thresh','penalty','check_every',
-                                  'min_searh_points','xlabels','linvars'])
+                                  'min_searh_points'])
     pruning_pass_arg_names = set(['penalty'])
     
     def __init__(self, endspan=None, minspan=None, endspan_alpha=None, minspan_alpha=None, max_terms=None, max_degree=None, 
-                 thresh=None, penalty=None, check_every=None, min_search_points=None, xlabels=None, linvars=None):
+                 thresh=None, penalty=None, check_every=None, min_search_points=None):
         kwargs = {}
         call = locals()
         for name in self._get_param_names():
@@ -206,36 +194,34 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                 result[name] = kwargs[name]
         return result
     
+    def _scrape_labels(self, X):
+        '''
+        Try to get labels from input data (for example, if X is a pandas DataFrame).  Return None
+        if no labels can be extracted.
+        '''
+        try:
+            labels = list(X.columns)
+        except AttributeError:
+            try:
+                labels = list(X.design_info.column_names)
+            except AttributeError:
+                try:
+                    labels = list(X.dtype.names)
+                except TypeError:
+                    labels = None
+        
+        return labels
+    
     def _scrub_x(self, X, **kwargs):
         '''
         Sanitize input predictors and extract column names if appropriate.
         '''
-        no_labels = False
-        if 'xlabels' not in kwargs and 'xlabels' not in self.__dict__:
-            #Try to get xlabels from input data (for example, if X is a pandas DataFrame)
-            try:
-                self.xlabels = list(X.columns)
-            except AttributeError:
-                try:
-                    self.xlabels = list(X.design_info.column_names)
-                except AttributeError:
-                    try:
-                        self.xlabels = list(X.dtype.names)
-                    except TypeError:
-                        no_labels = True
-        elif 'xlabels' not in self.__dict__:
-            self.xlabels = kwargs['xlabels']
         
         #Convert to internally used data type
         X = safe_asarray(X,dtype=np.float64)
         if len(X.shape) == 1:
             X = X.reshape((X.shape[0], 1))
-        m,n = X.shape
         
-        #Make up labels if none were found
-        if no_labels:
-            self.xlabels = ['x'+str(i) for i in range(n)]
-            
         return X
     
     def _scrub(self, X, y, weights, **kwargs):
@@ -273,7 +259,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         
         return X, y, weights
     
-    def fit(self, X, y = None, weights=None, xlabels=None, linvars=None):
+    def fit(self, X, y=None, weights=None, xlabels=None, linvars=[]):
         '''
         Fit an Earth model to the input data X and y.
         
@@ -298,30 +284,33 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             cases, the weight should be proportional to the inverse of the (known) variance.
             
             
-        xlabels : iterable of strings, optional (default=None)
-            Convenient way to set the xlabels parameter while calling fit.  Ignored if None (default).  
-            See the Earth class for an explanation of the xlabels parameter.
-            
+        linvars : iterable of strings or ints, optional (empty by default)
+            Used to specify features that may only enter terms as linear basis functions (without 
+            knots).  Can include both column numbers an column names (see xlabels, below).
+    
+    
+        xlabels : iterable of strings, optional (empty by default)
+            The xlabels argument can be used to assign names to data columns.  This argument is not
+            generally needed, as names can be captured automatically from most standard data 
+            structures.  If included, must have length n, where n is the number of features.  Note 
+            that column order is used to compute term values and make predictions, not column names.  
         
-        linvars : iterable of ints or strings or both, optional (default=None)
-            Convenient way to set the linvars parameter while calling fit.  Ignored if None (default).  
-            See the Earth class for an explanation of the linvars parameter.
             
         '''
+        
         #Format and label the data
-        if xlabels is not None:
-            self.set_params(xlabels=xlabels)
-        if linvars is not None:
-            self.set_params(linvars=linvars)
-        X, y, weights = self._scrub(X,y,weights,**self.__dict__)
+        if xlabels is None:
+            xlabels = self._scrape_labels(X)
+        self.linvars_ = linvars
+        X, y, weights = self._scrub(X,y,weights)
         
         #Do the actual work
-        self.forward_pass(X, y, weights)
+        self.forward_pass(X, y, weights, xlabels, linvars)
         self.pruning_pass(X, y, weights)
         self.linear_fit(X, y, weights)
         return self
     
-    def forward_pass(self, X, y = None, weights = None, **kwargs):
+    def forward_pass(self, X, y=None, weights=None, xlabels=None, linvars=[]):
         '''
         Perform the forward pass of the multivariate adaptive regression splines algorithm.  Users
         will normally want to call the fit method instead, which performs the forward pass, the pruning 
@@ -348,14 +337,16 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             cases, the weight should be proportional to the inverse of the (known) variance.
             
             
-        xlabels : iterable of strings, optional (default=None)
-            Convenient way to set the xlabels parameter while calling forward_pass.  Ignored if None 
-            (default).  See the Earth class for an explanation of the xlabels parameter.
-            
-        
-        linvars : iterable of ints or strings or both, optional (default=None)
-            Convenient way to set the linvars parameter while calling forward_pass.  Ignored if None 
-            (default).  See the Earth class for an explanation of the linvars parameter.
+        linvars : iterable of strings or ints, optional (empty by default)
+            Used to specify features that may only enter terms as linear basis functions (without 
+            knots).  Can include both column numbers an column names (see xlabels, below).
+    
+    
+        xlabels : iterable of strings, optional (empty by default)
+            The xlabels argument can be used to assign names to data columns.  This argument is not
+            generally needed, as names can be captured automatically from most standard data 
+            structures.  If included, must have length n, where n is the number of features.  Note 
+            that column order is used to compute term values and make predictions, not column names.
             
         
         Note
@@ -367,39 +358,19 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         
         '''
         
-        #Pull new labels and linear variables if necessary
-        if 'xlabels' in kwargs and 'xlabels' not in self.__dict__:
-            self.set_params(xlabels=kwargs['xlabels'])
-            del kwargs['xlabels']
-        if 'linvars' in kwargs and 'linvars' not in self.__dict__:
-            self.set_params(linvars=kwargs['linvars'])
-            del kwargs['linvars']
-        
         #Label and format data
-        X, y, weights = self._scrub(X,y,weights,**self.__dict__)
+        if xlabels is None:
+            xlabels = self._scrape_labels(X)
+        X, y, weights = self._scrub(X,y,weights)
          
-        #Check for additional forward pass arguments, and fail if someone tried
-        #to use other arguments
-        args = self._pull_forward_args(**self.__dict__)
-        new_args = self._pull_forward_args(**kwargs)
-        if len(new_args) < len(kwargs):
-            msg = 'Invalid forward pass arguments: '
-            for k, v in kwargs.iteritems():
-                if k in new_args:
-                    continue
-                msg += k+': '+str(v) + ','
-            msg = msg[0:-1]+'.'
-            raise ValueError(msg)
-        args.update(new_args)
-
         #Do the actual work
         args = self._pull_forward_args(**self.__dict__)
-        forward_passer = ForwardPasser(X, y, weights, **args)
+        forward_passer = ForwardPasser(X, y, weights, xlabels=xlabels, linvars=linvars, **args)
         forward_passer.run()
         self.forward_pass_record_ = forward_passer.trace()
         self.basis_ = forward_passer.get_basis()
         
-    def pruning_pass(self, X, y = None, weights = None, **kwargs):
+    def pruning_pass(self, X, y = None, weights = None):
         '''
         Perform the pruning pass of the multivariate adaptive regression splines algorithm.  Users
         will normally want to call the fit method instead, which performs the forward pass, the pruning 
@@ -436,18 +407,8 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         #Format data
         X, y, weights = self._scrub(X,y,weights)
         
-        #Check for additional pruning arguments and raise ValueError if other arguments are present
+        #Pull arguments from self
         args = self._pull_pruning_args(**self.__dict__)
-        new_args = self._pull_pruning_args(**kwargs)
-        if len(new_args) < len(kwargs):
-            msg = 'Invalid pruning pass arguments: '
-            for k, v in kwargs.iteritems():
-                if k in new_args:
-                    continue
-                msg += k+': '+str(v) + ','
-            msg = msg[0:-1]+'.'
-            raise ValueError(msg)
-        args.update(new_args)
         
         #Do the actual work
         pruning_passer = PruningPasser(self.basis_, X, y, weights, **args)
@@ -589,7 +550,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         '''
         X, y, weights = self._scrub(X, y, weights)
         y_hat = self.predict(X)
-        m, n = X.shape
+        m, _ = X.shape
         residual = y-y_hat
         mse = np.sum(weights * (residual**2)) / m
         mse0 = np.sum(weights*((y -np.average(y,weights=weights))**2)) / m

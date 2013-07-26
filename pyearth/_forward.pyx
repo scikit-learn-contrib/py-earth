@@ -40,12 +40,14 @@ cdef class ForwardPasser:
         self.penalty = kwargs['penalty'] if 'penalty' in kwargs else 3.0
         self.check_every = kwargs['check_every'] if 'check_every' in kwargs else -1
         self.min_search_points = kwargs['min_search_points'] if 'min_search_points' in kwargs else 100
-        self.xlabels = kwargs['xlabels'] if 'xlabels' in kwargs else ['x'+str(i) for i in range(self.n)]
+        self.xlabels = kwargs['xlabels'] if 'xlabels' in kwargs else None
+        if self.xlabels is None:
+            self.xlabels = ['x'+str(i) for i in range(self.n)]
         if self.check_every < 0:
             self.check_every = <int> (self.m / self.min_search_points) if self.m > self.min_search_points else 1
         self.sst = (np.dot(self.y,self.y) - (np.dot(np.sqrt(self.weights),self.y) / np.sqrt(np.sum(self.weights)))**2) / self.m
         self.y_squared = np.dot(self.y,self.y)
-        self.record = ForwardPassRecord(self.m,self.n,self.penalty,self.sst)
+        self.record = ForwardPassRecord(self.m,self.n,self.penalty,self.sst,self.xlabels)
         self.basis = Basis()
         self.basis.append(ConstantBasisFunction())
         
