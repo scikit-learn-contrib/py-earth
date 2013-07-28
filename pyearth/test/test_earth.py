@@ -4,8 +4,8 @@ Created on Feb 24, 2013
 @author: jasonrudy
 '''
 import numpy
-from pyearth._basis import Basis, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
-from pyearth import Earth
+from .._basis import Basis, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
+from .. import Earth
 import pickle
 import copy
 import os
