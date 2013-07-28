@@ -222,6 +222,11 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         if len(X.shape) == 1:
             X = X.reshape((X.shape[0], 1))
         
+        #Ensure correct number of columns
+        if hasattr(self,'basis_') and self.basis_ is not None:
+            if X.shape[1] != self.basis_.num_variables:
+                raise ValueError('Wrong number of columns in X')
+        
         return X
     
     def _scrub(self, X, y, sample_weight, **kwargs):
