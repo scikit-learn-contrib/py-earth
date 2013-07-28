@@ -66,7 +66,7 @@ cdef class ForwardPasser:
         self.B = np.ones(
             shape=(self.m, self.max_terms), order='C', dtype=np.float)
         self.basis.weighted_transform(self.X, self.B, self.sample_weight)
-        #An orthogonal matrix with the same column space as B
+        # An orthogonal matrix with the same column space as B
         self.B_orth = self.B.copy()
         self.u = np.empty(shape=self.max_terms, dtype=np.float)
         self.c = np.empty(shape=self.max_terms, dtype=np.float)
@@ -191,7 +191,7 @@ cdef class ForwardPasser:
             for i in range(self.m):
                 B_orth[i, k] = 0.0
             c[k] = 0.0
-            #The new column is in the column space of the previous columns
+            # The new column is in the column space of the previous columns
             return 1
         for i in range(self.m):
             B_orth[i, k] /= nrm
@@ -259,7 +259,7 @@ cdef class ForwardPasser:
         for variable in range(self.n):
 
             # Sort the data
-            #TODO: eliminate Python call / data copy
+            # TODO: eliminate Python call / data copy
             sorting[:] = np.argsort(X[:, variable])[::-1]
 
             # Iterate over parents
@@ -393,7 +393,7 @@ cdef class ForwardPasser:
     cdef best_knot(ForwardPasser self, INDEX_t parent, INDEX_t variable, INDEX_t k, cnp.ndarray[INT_t, ndim=1] candidates, cnp.ndarray[INT_t, ndim=1] order, FLOAT_t * mse, FLOAT_t * knot, INDEX_t * knot_idx):
         '''
         Find the best knot location (in terms of squared error).
-        
+
         Assumes:
         B[:,k] is the linear term for variable
         X[:,variable] is in decreasing order

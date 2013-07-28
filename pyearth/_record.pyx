@@ -38,7 +38,7 @@ cdef class Record:
         return gcv(mse, it.get_size(), self.num_samples, self.penalty)
 
     cpdef FLOAT_t rsq(Record self, INDEX_t iteration):
-        #gcv(self.sst,1,self.num_samples,self.penalty)
+        # gcv(self.sst,1,self.num_samples,self.penalty)
         cdef FLOAT_t mse0 = self.sst
         # gcv(self.mse(iteration):,self.iterations[iteration].get_size(),self.num_samples,self.penalty)#self.gcv(iteration)
         cdef FLOAT_t mse = self.mse(iteration)

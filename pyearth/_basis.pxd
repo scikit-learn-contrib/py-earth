@@ -99,8 +99,8 @@ cdef class LinearBasisFunction(BasisFunction):
 
 
 cdef class Basis:
-    '''A wrapper that provides functionality related to a set of BasisFunctions with a 
-    common ConstantBasisFunction ancestor.  Retains the order in which BasisFunctions are 
+    '''A wrapper that provides functionality related to a set of BasisFunctions with a
+    common ConstantBasisFunction ancestor.  Retains the order in which BasisFunctions are
     added.'''
 
     cdef list order

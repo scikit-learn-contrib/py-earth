@@ -7,7 +7,7 @@ It has been modified to include an Earth based classifier.
 #              Andreas Mueller
 # Modified for Documentation merge by Jaques Grobler
 # License: BSD 3 clause
-# Modified to include pyearth by Jason Rudy 
+# Modified to include pyearth by Jason Rudy
 
 import numpy as np
 import pylab as pl
@@ -32,9 +32,9 @@ from sklearn.pipeline import Pipeline
 
 np.random.seed(1)
 
-#Combine Earth with LogisticRegression in a pipeline to do classification
-earth_classifier = Pipeline([('earth',Earth(max_degree=3,penalty=1.5)),
-                             ('logistic',LogisticRegression())])
+# Combine Earth with LogisticRegression in a pipeline to do classification
+earth_classifier = Pipeline([('earth', Earth(max_degree=3, penalty=1.5)),
+                             ('logistic', LogisticRegression())])
 
 names = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Decision Tree",
          "Random Forest", "Naive Bayes", "LDA", "QDA", "Earth"]
@@ -121,5 +121,5 @@ for ds in datasets:
         i += 1
 
 figure.subplots_adjust(left=.02, right=.98)
-pl.savefig('classifier_comp.pdf',transparent=True)
+pl.savefig('classifier_comp.pdf', transparent=True)
 pl.show()

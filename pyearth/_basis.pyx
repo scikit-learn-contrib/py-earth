@@ -316,8 +316,8 @@ cdef class ConstantBasisFunction(BasisFunction):
         '''
         X - Data matrix
         b - parent vector
-        recurse - The ConstantBasisFunction is the parent of all BasisFunctions and never has a parent.  
-                  Therefore the recurse argument is ignored.  This spares child BasisFunctions from 
+        recurse - The ConstantBasisFunction is the parent of all BasisFunctions and never has a parent.
+                  Therefore the recurse argument is ignored.  This spares child BasisFunctions from
                   having to know whether their parents have parents.
         '''
         cdef INDEX_t i  # @DuplicatedSignature
@@ -482,8 +482,8 @@ cdef class LinearBasisFunction(BasisFunction):
             b[i] *= X[i, self.variable]
 
 cdef class Basis:
-    '''A container that provides functionality related to a set of BasisFunctions with a 
-    common ConstantBasisFunction ancestor.  Retains the order in which BasisFunctions are 
+    '''A container that provides functionality related to a set of BasisFunctions with a
+    common ConstantBasisFunction ancestor.  Retains the order in which BasisFunctions are
     added.'''
 
     def __init__(Basis self, num_variables):  # @DuplicatedSignature
