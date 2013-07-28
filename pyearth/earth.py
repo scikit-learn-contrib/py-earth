@@ -4,6 +4,7 @@ from ._util import ascii_table, gcv, apply_weights_2d, apply_weights_1d
 from sklearn.base import RegressorMixin, BaseEstimator, TransformerMixin
 from sklearn.utils.validation import assert_all_finite, safe_asarray
 import numpy as np
+from scipy import sparse
 
 class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
     '''
@@ -217,8 +218,9 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         Sanitize input predictors and extract column names if appropriate.
         '''
         #Check for sparseness
-        if hasattr(X, "tocsr"):
-            raise NotImplementedError("X is sparse.  Earth cannot handle sparse matrices.")
+        if sparse.issparse(X):
+            raise TypeError('A sparse matrix was passed, but dense data '
+                            'is required. Use X.toarray() to convert to dense.')
         
         #Convert to internally used data type
         X = safe_asarray(X,dtype=np.float64)
@@ -237,10 +239,12 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         Sanitize input data.
         '''
         #Check for sparseness
-        if hasattr(y, "tocsr"):
-            raise NotImplementedError("y is sparse.  Earth cannot handle sparse matrices.")
-        if hasattr(sample_weight, "tocsr"):
-            raise NotImplementedError("sample_weight is sparse.  Earth cannot handle sparse matrices.")
+        if sparse.issparse(y):
+            raise TypeError('A sparse matrix was passed, but dense data '
+                            'is required. Use y.toarray() to convert to dense.')
+        if sparse.issparse(sample_weight):
+            raise TypeError('A sparse matrix was passed, but dense data '
+                            'is required. Use sample_weight.toarray() to convert to dense.')
         
         #Check whether X is the output of patsy.dmatrices
         if y is None and type(X) is tuple:
