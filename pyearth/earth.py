@@ -216,6 +216,9 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         '''
         Sanitize input predictors and extract column names if appropriate.
         '''
+        #Check for sparseness
+        if hasattr(X, "tocsr"):
+            raise NotImplementedError("X is sparse.  Earth cannot handle sparse matrices.")
         
         #Convert to internally used data type
         X = safe_asarray(X,dtype=np.float64)
@@ -233,6 +236,12 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         '''
         Sanitize input data.
         '''
+        #Check for sparseness
+        if hasattr(y, "tocsr"):
+            raise NotImplementedError("y is sparse.  Earth cannot handle sparse matrices.")
+        if hasattr(sample_weight, "tocsr"):
+            raise NotImplementedError("sample_weight is sparse.  Earth cannot handle sparse matrices.")
+        
         #Check whether X is the output of patsy.dmatrices
         if y is None and type(X) is tuple:
             y, X = X
