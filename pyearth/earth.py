@@ -6,7 +6,9 @@ from sklearn.utils.validation import assert_all_finite, safe_asarray
 import numpy as np
 from scipy import sparse
 
+
 class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
+
     '''
     Multivariate Adaptive Regression Splines
     
@@ -129,22 +131,24 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         Number 1 (1991), 1-67.
     
     '''
-    
-    forward_pass_arg_names = set(['endspan','minspan','endspan_alpha','minspan_alpha',
-                                  'max_terms','max_degree','thresh','penalty','check_every',
-                                  'min_searh_points'])
+
+    forward_pass_arg_names = set(
+        ['endspan', 'minspan', 'endspan_alpha', 'minspan_alpha',
+         'max_terms', 'max_degree', 'thresh', 'penalty', 'check_every',
+         'min_searh_points'])
     pruning_pass_arg_names = set(['penalty'])
-    
-    def __init__(self, endspan=None, minspan=None, endspan_alpha=None, minspan_alpha=None, max_terms=None, max_degree=None, 
-                 thresh=None, penalty=None, check_every=None, min_search_points=None):
+
+    def __init__(
+        self, endspan=None, minspan=None, endspan_alpha=None, minspan_alpha=None, max_terms=None, max_degree=None,
+            thresh=None, penalty=None, check_every=None, min_search_points=None):
         kwargs = {}
         call = locals()
         for name in self._get_param_names():
             if call[name] is not None:
                 kwargs[name] = call[name]
-                
+
         self.set_params(**kwargs)
-        
+
     def __eq__(self, other):
         if self.__class__ is not other.__class__:
             return False
@@ -158,11 +162,11 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             try:
                 if v_self != v_other:
                     return False
-            except ValueError:#Case of numpy arrays
+            except ValueError:  # Case of numpy arrays
                 if np.any(v_self != v_other):
                     return False
         return True
-                
+
     def _pull_forward_args(self, **kwargs):
         '''
         Pull named arguments relevant to the forward pass.
@@ -172,7 +176,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             if name in kwargs:
                 result[name] = kwargs[name]
         return result
-    
+
     def _pull_pruning_args(self, **kwargs):
         '''
         Pull named arguments relevant to the pruning pass.
@@ -182,7 +186,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             if name in kwargs:
                 result[name] = kwargs[name]
         return result
-    
+
     def _pull_unknown_args(self, **kwargs):
         '''
         Pull unknown named arguments.  Usually an exception is raised if any are 
@@ -194,7 +198,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             if name not in known_args:
                 result[name] = kwargs[name]
         return result
-    
+
     def _scrape_labels(self, X):
         '''
         Try to get labels from input data (for example, if X is a pandas DataFrame).  Return None
@@ -210,73 +214,74 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                     labels = list(X.dtype.names)
                 except TypeError:
                     labels = None
-        
+
         return labels
-    
+
     def _scrub_x(self, X, **kwargs):
         '''
         Sanitize input predictors and extract column names if appropriate.
         '''
-        #Check for sparseness
+        # Check for sparseness
         if sparse.issparse(X):
             raise TypeError('A sparse matrix was passed, but dense data '
                             'is required. Use X.toarray() to convert to dense.')
-        
-        #Convert to internally used data type
-        X = safe_asarray(X,dtype=np.float64)
+
+        # Convert to internally used data type
+        X = safe_asarray(X, dtype=np.float64)
         if len(X.shape) == 1:
             X = X.reshape((X.shape[0], 1))
-        
-        #Ensure correct number of columns
-        if hasattr(self,'basis_') and self.basis_ is not None:
+
+        # Ensure correct number of columns
+        if hasattr(self, 'basis_') and self.basis_ is not None:
             if X.shape[1] != self.basis_.num_variables:
                 raise ValueError('Wrong number of columns in X')
-        
+
         return X
-    
+
     def _scrub(self, X, y, sample_weight, **kwargs):
         '''
         Sanitize input data.
         '''
-        #Check for sparseness
+        # Check for sparseness
         if sparse.issparse(y):
             raise TypeError('A sparse matrix was passed, but dense data '
                             'is required. Use y.toarray() to convert to dense.')
         if sparse.issparse(sample_weight):
             raise TypeError('A sparse matrix was passed, but dense data '
                             'is required. Use sample_weight.toarray() to convert to dense.')
-        
-        #Check whether X is the output of patsy.dmatrices
+
+        # Check whether X is the output of patsy.dmatrices
         if y is None and type(X) is tuple:
             y, X = X
-        
-        #Handle X separately
+
+        # Handle X separately
         X = self._scrub_x(X, **kwargs)
-        
-        #Convert y to internally used data type
-        y = safe_asarray(y,dtype=np.float64)
+
+        # Convert y to internally used data type
+        y = safe_asarray(y, dtype=np.float64)
         y = y.reshape(y.shape[0])
-        
-        #Deal with sample_weight
+
+        # Deal with sample_weight
         if sample_weight is None:
             sample_weight = np.ones(y.shape[0], dtype=y.dtype)
         else:
             sample_weight = safe_asarray(sample_weight)
             sample_weight = sample_weight.reshape(sample_weight.shape[0])
-        
-        #Make sure dimensions match
+
+        # Make sure dimensions match
         if y.shape[0] != X.shape[0]:
             raise ValueError('X and y do not have compatible dimensions.')
         if y.shape != sample_weight.shape:
-            raise ValueError('y and sample_weight do not have compatible dimensions.')
-        
-        #Make sure everything is finite
+            raise ValueError(
+                'y and sample_weight do not have compatible dimensions.')
+
+        # Make sure everything is finite
         assert_all_finite(X)
         assert_all_finite(y)
         assert_all_finite(sample_weight)
-        
+
         return X, y, sample_weight
-    
+
     def fit(self, X, y=None, sample_weight=None, xlabels=None, linvars=[]):
         '''
         Fit an Earth model to the input data X and y.
@@ -318,19 +323,19 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         
             
         '''
-        
-        #Format and label the data
+
+        # Format and label the data
         if xlabels is None:
             xlabels = self._scrape_labels(X)
         self.linvars_ = linvars
-        X, y, sample_weight = self._scrub(X,y,sample_weight)
-        
-        #Do the actual work
+        X, y, sample_weight = self._scrub(X, y, sample_weight)
+
+        # Do the actual work
         self.forward_pass(X, y, sample_weight, xlabels, linvars)
         self.pruning_pass(X, y, sample_weight)
         self.linear_fit(X, y, sample_weight)
         return self
-    
+
     def forward_pass(self, X, y=None, sample_weight=None, xlabels=None, linvars=[]):
         '''
         Perform the forward pass of the multivariate adaptive regression splines algorithm.  Users
@@ -371,20 +376,21 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             
         
         '''
-        
-        #Label and format data
+
+        # Label and format data
         if xlabels is None:
             xlabels = self._scrape_labels(X)
-        X, y, sample_weight = self._scrub(X,y,sample_weight)
-        
-        #Do the actual work
+        X, y, sample_weight = self._scrub(X, y, sample_weight)
+
+        # Do the actual work
         args = self._pull_forward_args(**self.__dict__)
-        forward_passer = ForwardPasser(X, y, sample_weight, xlabels=xlabels, linvars=linvars, **args)
+        forward_passer = ForwardPasser(
+            X, y, sample_weight, xlabels=xlabels, linvars=linvars, **args)
         forward_passer.run()
         self.forward_pass_record_ = forward_passer.trace()
         self.basis_ = forward_passer.get_basis()
-        
-    def pruning_pass(self, X, y = None, sample_weight = None):
+
+    def pruning_pass(self, X, y=None, sample_weight=None):
         '''
         Perform the pruning pass of the multivariate adaptive regression splines algorithm.  Users
         will normally want to call the fit method instead, which performs the forward pass, the pruning 
@@ -412,42 +418,43 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             
             
         '''
-        #Format data
-        X, y, sample_weight = self._scrub(X,y,sample_weight)
-        
-        #Pull arguments from self
+        # Format data
+        X, y, sample_weight = self._scrub(X, y, sample_weight)
+
+        # Pull arguments from self
         args = self._pull_pruning_args(**self.__dict__)
-        
-        #Do the actual work
-        pruning_passer = PruningPasser(self.basis_, X, y, sample_weight, **args)
+
+        # Do the actual work
+        pruning_passer = PruningPasser(
+            self.basis_, X, y, sample_weight, **args)
         pruning_passer.run()
         self.pruning_pass_record_ = pruning_passer.trace()
-    
-    def unprune(self, X, y = None):
+
+    def unprune(self, X, y=None):
         '''Unprune all pruned basis functions and fit coefficients to X and y using the unpruned basis.'''
         for bf in self.basis_:
             bf.unprune()
         del self.pruning_pass_record_
         self.linear_fit(X, y)
-    
+
     def forward_trace(self):
         '''Return information about the forward pass.'''
         try:
             return self.forward_pass_record_
         except AttributeError:
             return None
-        
+
     def pruning_trace(self):
         '''Return information about the pruning pass.'''
         try:
             return self.pruning_pass_record_
         except AttributeError:
             return None
-    
+
     def trace(self):
         '''Return information about the forward and pruning passes.'''
-        return EarthTrace(self.forward_trace(),self.pruning_trace())
-    
+        return EarthTrace(self.forward_trace(), self.pruning_trace())
+
     def summary(self):
         '''Return a string describing the model.'''
         result = ''
@@ -462,10 +469,11 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         data = []
         i = 0
         for bf in self.basis_:
-            data.append([str(bf),'Yes' if bf.is_pruned() else 'No','%g'%self.coef_[i] if not bf.is_pruned() else 'None'])
+            data.append([str(bf), 'Yes' if bf.is_pruned() else 'No', '%g' %
+                        self.coef_[i] if not bf.is_pruned() else 'None'])
             if not bf.is_pruned():
                 i += 1
-        result += ascii_table(header,data)
+        result += ascii_table(header, data)
         if self.pruning_trace() is not None:
             record = self.pruning_trace()
             selection = record.get_selected()
@@ -473,10 +481,11 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             record = self.forward_trace()
             selection = len(record) - 1
         result += '\n'
-        result += 'MSE: %.4f, GCV: %.4f, RSQ: %.4f, GRSQ: %.4f' % (record.mse(selection), record.gcv(selection), record.rsq(selection), record.grsq(selection))
+        result += 'MSE: %.4f, GCV: %.4f, RSQ: %.4f, GRSQ: %.4f' % (
+            record.mse(selection), record.gcv(selection), record.rsq(selection), record.grsq(selection))
         return result
-    
-    def linear_fit(self, X, y = None, sample_weight = None):
+
+    def linear_fit(self, X, y=None, sample_weight=None):
         '''
         Solve the linear least squares problem to determine the coefficients of the unpruned basis functions.
         
@@ -500,23 +509,23 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             not contribute at all.  Weights are useful when dealing with heteroscedasticity.  In such
             cases, the weight should be proportional to the inverse of the (known) variance.
         '''
-        
-        #Format data
-        X, y, sample_weight = self._scrub(X,y,sample_weight)
-        
-        #Transform into basis space
+
+        # Format data
+        X, y, sample_weight = self._scrub(X, y, sample_weight)
+
+        # Transform into basis space
         B = self.transform(X)
-        
-        #Apply weights to B
-        apply_weights_2d(B,sample_weight)
-        
-        #Apply weights to y
+
+        # Apply weights to B
+        apply_weights_2d(B, sample_weight)
+
+        # Apply weights to y
         weighted_y = y.copy()
-        apply_weights_1d(weighted_y,sample_weight)
-        
-        #Solve the linear least squares problem
-        self.coef_ = np.linalg.lstsq(B,weighted_y)[0]
-    
+        apply_weights_1d(weighted_y, sample_weight)
+
+        # Solve the linear least squares problem
+        self.coef_ = np.linalg.lstsq(B, weighted_y)[0]
+
     def predict(self, X):
         '''
         Predict the response based on the input data X.
@@ -531,9 +540,9 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         '''
         X = self._scrub_x(X)
         B = self.transform(X)
-        return np.dot(B,self.coef_)
-    
-    def score(self, X, y = None, sample_weight = None):
+        return np.dot(B, self.coef_)
+
+    def score(self, X, y=None, sample_weight=None):
         '''
         Calculate the generalized r^2 of the model on data X and y.
         
@@ -559,11 +568,12 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         X, y, sample_weight = self._scrub(X, y, sample_weight)
         y_hat = self.predict(X)
         m, _ = X.shape
-        residual = y-y_hat
-        mse = np.sum(sample_weight * (residual**2)) / m
-        mse0 = np.sum(sample_weight*((y -np.average(y,weights=sample_weight))**2)) / m
-        return 1 - (mse/mse0)
-    
+        residual = y - y_hat
+        mse = np.sum(sample_weight * (residual ** 2)) / m
+        mse0 = np.sum(
+            sample_weight * ((y - np.average(y, weights=sample_weight)) ** 2)) / m
+        return 1 - (mse / mse0)
+
     def transform(self, X):
         '''
         Transform X into the basis space.  Normally, users will call the predict method instead, which
@@ -580,17 +590,17 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             patsy DesignMatrix.
         '''
         X = self._scrub_x(X)
-        B = np.empty(shape=(X.shape[0],self.basis_.plen()))
-        self.basis_.transform(X,B)
+        B = np.empty(shape=(X.shape[0], self.basis_.plen()))
+        self.basis_.transform(X, B)
         return B
-    
+
     def get_penalty(self):
         '''Get the penalty parameter being used.  Default is 3.'''
         if 'penalty' in self.__dict__ and self.penalty is not None:
             return self.penalty
         else:
             return 3.0
-    
+
     def __repr__(self):
         result = 'Earth('
         first = True
@@ -602,19 +612,21 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             result += '%s=%s' % (str(k), str(v))
         result += ')'
         return result
-    
+
     def __str__(self):
         return self.__repr__()
 
+
 class EarthTrace(object):
+
     def __init__(self, forward_trace, pruning_trace):
         self.forward_trace = forward_trace
         self.pruning_trace = pruning_trace
-        
+
     def __eq__(self, other):
         return self.__class__ is other.__class__ and self.forward_trace == other.forward_trace and \
             self.pruning_trace == other.pruning_trace
-        
+
     def __str__(self):
         return str(self.forward_trace) + '\n' + str(self.pruning_trace)
     
