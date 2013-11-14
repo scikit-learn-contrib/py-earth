@@ -4,7 +4,7 @@
 # cython: wraparound = False
 # cython: profile = False
 
-from ._util cimport gcv_adjust, log2, apply_weights_1d
+from ._util cimport gcv_adjust, log2, apply_weights_1d, apply_weights_slice
 from ._basis cimport Basis, BasisFunction, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
 from ._record cimport ForwardPassIteration
 
@@ -65,7 +65,7 @@ cdef class ForwardPasser:
             shape=self.max_terms, dtype=np.float)
         self.B = np.ones(
             shape=(self.m, self.max_terms), order='C', dtype=np.float)
-        self.basis.weighted_transform(self.X, self.B, self.sample_weight)
+        self.basis.weighted_transform(self.X, self.B[:,0:1], self.sample_weight)
         # An orthogonal matrix with the same column space as B
         self.B_orth = self.B.copy()
         self.u = np.empty(shape=self.max_terms, dtype=np.float)
@@ -186,7 +186,7 @@ cdef class ForwardPasser:
             nrm += B_orth[i, k] * B_orth[i, k]
         nrm = sqrt(nrm)
         norms[k] = nrm
-
+        
         if nrm0 <= self.zero_tol or nrm / nrm0 <= self.zero_tol:
             for i in range(self.m):
                 B_orth[i, k] = 0.0
@@ -251,7 +251,8 @@ cdef class ForwardPasser:
         cdef cnp.ndarray[FLOAT_t, ndim = 1] y = <cnp.ndarray[FLOAT_t, ndim = 1] > self.y
         cdef cnp.ndarray[INT_t, ndim = 1] linear_variables = <cnp.ndarray[INT_t, ndim = 1] > self.linear_variables
         cdef cnp.ndarray[INT_t, ndim = 1] sorting = <cnp.ndarray[INT_t, ndim = 1] > self.sorting
-
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] sample_weight = <cnp.ndarray[FLOAT_t, ndim = 1] > self.sample_weight
+        
         if self.endspan < 0:
             endspan = round(3 - log2(self.endspan_alpha / self.n))
 
@@ -359,7 +360,9 @@ cdef class ForwardPasser:
             bf2 = HingeBasisFunction(
                 parent_choice, knot_choice, knot_idx_choice, variable_choice, True, label)
             bf1.apply(X, B[:, k])
+            apply_weights_slice(B, sample_weight, k)
             bf2.apply(X, B[:, k + 1])
+            apply_weights_slice(B, sample_weight, k + 1)
             self.basis.append(bf1)
             self.basis.append(bf2)
 
@@ -374,6 +377,7 @@ cdef class ForwardPasser:
             # In this case, only add the linear basis function
             bf1 = LinearBasisFunction(parent_choice, variable_choice, label)
             bf1.apply(X, B[:, k])
+            apply_weights_slice(B, sample_weight, k)
             self.basis.append(bf1)
 
             # Orthogonalize the new basis
