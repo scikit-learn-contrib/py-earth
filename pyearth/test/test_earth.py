@@ -33,7 +33,8 @@ class TestEarth(object):
         self.beta = numpy.random.normal(size=4)
         self.y = numpy.empty(shape=100, dtype=numpy.float64)
         self.y[:] = numpy.dot(
-            self.B, self.beta) + numpy.random.normal(size=100)
+            self.B,
+            self.beta) + numpy.random.normal(size=100)
         self.earth = Earth(penalty=1)
 
     def test_get_params(self):
@@ -65,8 +66,10 @@ class TestEarth(object):
         sample_weight = 1.0 / (numpy.random.normal(size=self.y.shape) ** 2)
         self.earth.fit(self.X, self.y)
         self.earth.linear_fit(self.X, self.y, sample_weight)
-        soln = GLS(self.y, self.earth.transform(
-            self.X), 1.0 / sample_weight).fit().params
+        soln = GLS(
+            self.y,
+            self.earth.transform(self.X),
+            1.0 / sample_weight).fit().params
         assert_almost_equal(numpy.mean((self.earth.coef_ - soln) ** 2), 0.0)
 
     def test_sample_weight(self):
@@ -79,12 +82,17 @@ class TestEarth(object):
         model = Earth().fit(x, y, sample_weight=sample_weight)
 
         # Check that the model fits better for the more heavily weighted group
-        assert_true(model.score(x[group], y[group]) < model.score(
-            x[numpy.logical_not(group)], y[numpy.logical_not(group)]))
+        assert_true(
+            model.score(x[group],
+                        y[group]) < model.score(x[numpy.logical_not(group)],
+                                                y[numpy.logical_not(group)]))
 
         # Make sure that the score function gives the same answer as the trace
-        assert_almost_equal(model.score(x, y, sample_weight=sample_weight),
-                            model.pruning_trace().rsq(model.pruning_trace().get_selected()))
+        assert_almost_equal(
+            model.score(x,
+                        y,
+                        sample_weight=sample_weight),
+            model.pruning_trace().rsq(model.pruning_trace().get_selected()))
 
         # Uncomment below to see what this test situation looks like
 #        from matplotlib import pyplot
@@ -138,8 +146,8 @@ class TestEarth(object):
             else:
                 sample_weight = None
             model = Earth(**settings).fit(X, y, sample_weight = sample_weight)
-            with open(os.path.join(directory, case + '.txt'), 'w') as outfile:
-                outfile.write(model.summary())
+#             with open(os.path.join(directory, case + '.txt'), 'w') as outfile:
+#                 outfile.write(model.summary())
             with open(os.path.join(directory, case + '.txt'), 'r') as infile:
                 correct = infile.read()
             assert_equal(model.summary(), correct)
@@ -153,7 +161,8 @@ class TestEarth(object):
         X.columns = colnames
         model = self.earth.fit(X, y)
         assert_list_equal(
-            colnames, model.forward_trace()._getstate()['xlabels'])
+            colnames,
+            model.forward_trace()._getstate()['xlabels'])
 
     @if_patsy
     @if_pandas
@@ -169,7 +178,8 @@ class TestEarth(object):
             'y ~ xx0 + xx1 + xx2 + xx3 + xx4 + xx5 + xx6 + xx7 + xx8 + xx9 - 1', data=X)
         model = self.earth.fit(X, y)
         assert_list_equal(
-            colnames, model.forward_trace()._getstate()['xlabels'])
+            colnames,
+            model.forward_trace()._getstate()['xlabels'])
 
     def test_pickle_compatibility(self):
         model = self.earth.fit(self.X, self.y)
