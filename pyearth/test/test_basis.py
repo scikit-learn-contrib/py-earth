@@ -104,23 +104,6 @@ class TestBasis(BaseTestClass):
     def test_add(self):
         assert_equal(len(self.basis), 2)
 
-    def test_translate_and_scale(self):
-        m, n = self.X.shape
-        numpy.random.seed(1)
-        B = numpy.empty(shape=(m, self.basis.plen()))
-        self.basis.transform(self.X, B)
-        B_ = numpy.empty(shape=(m, self.basis.plen()))
-        mu = numpy.mean(self.X, axis=0)
-        sigma = numpy.std(self.X, axis=0)
-        coeff = numpy.random.normal(size=B.shape[1])
-        X_ = self.X * sigma + mu
-        coeff_ = coeff.copy()
-        self.basis.translate(sigma, mu)
-        self.basis.scale(sigma, mu, coeff_)
-        self.basis.transform(X_, B_)
-        assert_true(
-            numpy.all((numpy.dot(B, coeff) - numpy.dot(B_, coeff_)) ** 2 < 1e-12))
-
     def test_pickle_compat(self):
         basis_copy = pickle.loads(pickle.dumps(self.basis))
         assert_true(self.basis == basis_copy)

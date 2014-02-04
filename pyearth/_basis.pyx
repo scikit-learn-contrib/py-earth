@@ -19,13 +19,13 @@ cdef class BasisFunction:
         self.child_map = {}
         self.splittable = True
 
-    def __reduce__(self):
+    def __reduce__(BasisFunction self):
         return (self.__class__, (), self._getstate())
 
-    def _get_root(self):
+    def _get_root(BasisFunction self):
         return self.parent._get_root()
 
-    def _getstate(self):
+    def _getstate(BasisFunction self):
         result = {'pruned': self.pruned,
                   'children': self.children,
                   'prunable': self.prunable,
@@ -34,13 +34,13 @@ cdef class BasisFunction:
         result.update(self._get_parent_state())
         return result
 
-    def _get_parent_state(self):
+    def _get_parent_state(BasisFunction self):
         return {'parent': self.parent}
 
-    def _set_parent_state(self, state):
+    def _set_parent_state(BasisFunction self, state):
         self.parent = state['parent']
 
-    def __setstate__(self, state):
+    def __setstate__(BasisFunction self, state):
         self.pruned = state['pruned']
         self.children = state['children']
         self.prunable = state['prunable']
@@ -48,7 +48,7 @@ cdef class BasisFunction:
         self.splittable = state['splittable']
         self._set_parent_state(state)
 
-    def _eq(self, other):
+    def _eq(BasisFunction self, other):
         if self.__class__ is not other.__class__:
             return False
         self_state = self._getstate()
@@ -59,7 +59,7 @@ cdef class BasisFunction:
         del other_state['child_map']
         return self_state == other_state
 
-    def __richcmp__(self, other, method):
+    def __richcmp__(BasisFunction self, other, method):
         if method == 2:
             return self._eq(other)
         elif method == 3:
@@ -88,12 +88,12 @@ cdef class BasisFunction:
     cdef list get_children(BasisFunction self):
         return self.children
 
-    cpdef _set_parent(self, BasisFunction parent):
+    cpdef _set_parent(BasisFunction self, BasisFunction parent):
         '''Calls _add_child.'''
         self.parent = parent
         self.parent._add_child(self)
 
-    cpdef _add_child(self, BasisFunction child):
+    cpdef _add_child(BasisFunction self, BasisFunction child):
         '''Called by _set_parent.'''
         cdef INDEX_t n = len(self.children)
         self.children.append(child)
@@ -103,13 +103,13 @@ cdef class BasisFunction:
         else:
             self.child_map[var] = [n]
 
-    cpdef BasisFunction get_parent(self):
+    cpdef BasisFunction get_parent(BasisFunction self):
         return self.parent
 
-    cpdef prune(self):
+    cpdef prune(BasisFunction self):
         self.pruned = True
 
-    cpdef unprune(self):
+    cpdef unprune(BasisFunction self):
         self.pruned = False
 
     cpdef knots(BasisFunction self, INDEX_t variable):
@@ -134,7 +134,7 @@ cdef class BasisFunction:
     cpdef INDEX_t degree(BasisFunction self):
         return self.parent.degree() + 1
 
-    cpdef apply(self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=True):
+    cpdef apply(BasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=True):
         '''
         X - Data matrix
         b - parent vector
@@ -284,35 +284,31 @@ cdef class PicklePlaceHolderBasisFunction(BasisFunction):
 
 pickle_place_holder = PicklePlaceHolderBasisFunction()
 
-cdef class ConstantBasisFunction(BasisFunction):
-    def __init__(self):  # @DuplicatedSignature
+cdef class RootBasisFunction(BasisFunction):
+    def __init__(RootBasisFunction self):  # @DuplicatedSignature
         self.prunable = False
 
-    def _get_root(self):
+    def _get_root(RootBasisFunction self):  # @DuplicatedSignature
         return self
 
-    def _get_parent_state(self):
+    def _get_parent_state(RootBasisFunction self):  # @DuplicatedSignature
         return {}
 
-    def _set_parent_state(self, state):
+    def _set_parent_state(RootBasisFunction self, state):  # @DuplicatedSignature
         pass
-
-    cpdef INDEX_t degree(ConstantBasisFunction self):
+    
+    cpdef INDEX_t degree(RootBasisFunction self):
         return 0
 
-    cpdef translate(ConstantBasisFunctionself, cnp.ndarray[FLOAT_t, ndim=1] slopes, cnp.ndarray[FLOAT_t, ndim=1] intercepts, bint recurse):
-        pass
-
-    cpdef FLOAT_t scale(ConstantBasisFunctionself, cnp.ndarray[FLOAT_t, ndim=1] slopes, cnp.ndarray[FLOAT_t, ndim=1] intercepts):
-        return < FLOAT_t > 1.0
-
-    cpdef _set_parent(self, BasisFunction parent):
+    cpdef _set_parent(RootBasisFunction self, BasisFunction parent):
         raise NotImplementedError
 
-    cpdef BasisFunction get_parent(self):
+    cpdef BasisFunction get_parent(RootBasisFunction self):
         raise NotImplementedError
+    
+cdef class ConstantBasisFunction(RootBasisFunction):
 
-    cpdef apply(self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=False):
+    cpdef apply(ConstantBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=False):
         '''
         X - Data matrix
         b - parent vector
@@ -325,13 +321,127 @@ cdef class ConstantBasisFunction(BasisFunction):
         for i in range(m):
             b[i] = <FLOAT_t > 1.0
 
-    def __str__(self):
+    def __str__(ConstantBasisFunction self):
         return '(Intercept)'
 
-cdef class HingeBasisFunction(BasisFunction):
+cdef class ZeroBasisFunction(RootBasisFunction):
+    cpdef apply(self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=False):
+        '''
+        X - Data matrix
+        b - parent vector
+        recurse - The ZeroBasisFunction is an alternative RootBasisFunction used for computing derivatives.
+        It is the derivative of the ConstantBasisFunction.
+        '''
+        cdef INDEX_t i  # @DuplicatedSignature
+        cdef INDEX_t m = len(b)  # @DuplicatedSignature
+        for i in range(m):
+            b[i] = <FLOAT_t > 0.0
+     
+    def __str__(self):  # @DuplicatedSignature
+        return '0'
 
-    #@DuplicatedSignature
-    def __init__(self, BasisFunction parent, FLOAT_t knot, INDEX_t knot_idx, INDEX_t variable, bint reverse, label=None):
+
+cdef class HingeBasisFunctionBase(BasisFunction):
+    cpdef bint has_knot(HingeBasisFunctionBase self):
+        return True
+    
+    cpdef INDEX_t get_variable(HingeBasisFunctionBase self):
+        return self.variable
+
+    cpdef FLOAT_t get_knot(HingeBasisFunctionBase self):
+        return self.knot
+
+    cpdef bint get_reverse(HingeBasisFunctionBase self):
+        return self.reverse
+
+    cpdef INDEX_t get_knot_idx(HingeBasisFunctionBase self):
+        return self.knot_idx
+    
+cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
+     
+    def __init__(SmoothedHingeBasisFunction self, BasisFunction parent, FLOAT_t knot, FLOAT_t knot_minus,  # @DuplicatedSignature
+                 FLOAT_t knot_plus, INDEX_t knot_idx, INDEX_t variable, bint reverse, 
+                 label=None):
+        self.knot = knot
+        self.knot_minus= knot_minus
+        self.knot_plus = knot_plus
+        self.knot_idx = knot_idx
+        self.variable = variable
+        self.reverse = reverse
+        self.label = label if label is not None else 'x' + str(variable)
+        self._set_parent(parent)
+        self._init_p_r()
+    
+    cpdef _init_p_r(SmoothedHingeBasisFunction self):
+        cdef FLOAT_t p_denom = self.knot_plus - self.knot_minus
+        cdef FLOAT_t r_denom = p_denom
+        p_denom *= p_denom
+        r_denom *= p_denom
+        if not self.reverse:
+            self.p = (2*self.knot_plus + self.knot_minus - 3*self.knot) / p_denom
+            self.r = (2*self.knot - self.knot_plus - self.knot_minus) / r_denom
+        else:
+            self.p = (3*self.knot - 2*self.knot_minus - self.knot_plus) / p_denom
+            self.r = -1*(self.knot_minus + self.knot_plus - 2*self.knot_minus) / r_denom
+     
+    def __str__(SmoothedHingeBasisFunction self):  # @DuplicatedSignature
+        result = ''
+        if self.variable is not None:
+            if not self.reverse:
+                if self.knot >= 0:
+                    result = 's(%s-%G)' % (self.label, self.knot)
+                else:
+                    result = 's(%s+%G)' % (self.label, -self.knot)
+            else:
+                result = 's(%G-%s)' % (self.knot, self.label)
+        parent = str(
+            self.parent) if not self.parent.__class__ is ConstantBasisFunction else ''
+        if parent != '':
+            result += '*%s' % (str(self.parent),)
+        return result
+     
+    def __reduce__(SmoothedHingeBasisFunction self):  # @DuplicatedSignature
+        return (self.__class__, (pickle_place_holder, self.knot, self.knot_minus, self.knot_plus, 
+                                 self.knot_idx, self.variable, self.reverse, self.label), self._getstate())
+ 
+    cpdef apply(self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=True):
+        '''
+        X - Data matrix
+        b - parent vector
+        recurse - If False, assume b already contains the result of the parent function.  Otherwise, recurse to compute
+                  parent function.
+        '''
+        if recurse:
+            self.parent.apply(X, b, recurse=True)
+        cdef INDEX_t i  # @DuplicatedSignature
+        cdef INDEX_t m = len(b)  # @DuplicatedSignature
+        cdef FLOAT_t tmp
+        cdef FLOAT_t tmp2
+        if self.reverse:
+            for i in range(m):
+                tmp = X[i, self.variable]
+                if tmp <= self.knot_minus:
+                    b[i] = 0.0
+                elif self.knot_minus < tmp and tmp < self.knot_plus:
+                    tmp2 = tmp - self.t_minus
+                    b[i] *= self.p*tmp2*tmp2 + self.r*tmp2*tmp2*tmp2
+                else:
+                    b[i] *= tmp - self.knot
+        else:
+            for i in range(m):
+                tmp = X[i, self.variable]
+                if tmp <= self.knot_minus:
+                    b[i] = self.knot - tmp
+                elif self.knot_minus < tmp and tmp < self.knot_plus:
+                    tmp2 = tmp - self.t_minus
+                    b[i] *= self.p*tmp2*tmp2 + self.r*tmp2*tmp2*tmp2
+                else:
+                    b[i] *= 0.0
+                    
+cdef class HingeBasisFunction(HingeBasisFunctionBase):
+
+    def __init__(HingeBasisFunction self, BasisFunction parent, FLOAT_t knot, 
+                 INDEX_t knot_idx, INDEX_t variable, bint reverse, label=None):
         self.knot = knot
         self.knot_idx = knot_idx
         self.variable = variable
@@ -339,43 +449,11 @@ cdef class HingeBasisFunction(BasisFunction):
         self.label = label if label is not None else 'x' + str(variable)
         self._set_parent(parent)
 
-    def __reduce__(self):
-        return (self.__class__, (pickle_place_holder, 1.0, 1, 1, True, ''), self._getstate())
+    def __reduce__(HingeBasisFunction self):
+        return (self.__class__, (pickle_place_holder, self.knot, self.knot_idx, 
+                                 self.variable, self.reverse, self.label), self._getstate())
 
-    def _getstate(self):
-        result = super(HingeBasisFunction, self)._getstate()
-        result.update({'knot': self.knot,
-                       'knot_idx': self.knot_idx,
-                       'variable': self.variable,
-                       'reverse': self.reverse,
-                       'label': self.label})
-        return result
-
-    def __setstate__(self, state):
-        self.knot = state['knot']
-        self.knot_idx = state['knot_idx']
-        self.variable = state['variable']
-        self.reverse = state['reverse']
-        self.label = state['label']
-        super(HingeBasisFunction, self).__setstate__(state)
-
-    cpdef bint has_knot(HingeBasisFunction self):
-        return True
-
-    cpdef translate(HingeBasisFunction self, cnp.ndarray[FLOAT_t, ndim=1] slopes, cnp.ndarray[FLOAT_t, ndim=1] intercepts, bint recurse):
-        self.knot = slopes[self.variable] * \
-            self.knot + intercepts[self.variable]
-        if slopes[self.variable] < 0:
-            self.reverse = not self.reverse
-        if recurse:
-            self.parent.translate(slopes, intercepts)
-
-    cpdef FLOAT_t scale(HingeBasisFunction self, cnp.ndarray[FLOAT_t, ndim=1] slopes, cnp.ndarray[FLOAT_t, ndim=1] intercepts):
-        result = self.parent.scale(slopes, intercepts)
-        result /= slopes[self.variable]
-        return result
-
-    def __str__(self):
+    def __str__(HingeBasisFunction self):
         result = ''
         if self.variable is not None:
             if not self.reverse:
@@ -391,19 +469,7 @@ cdef class HingeBasisFunction(BasisFunction):
             result += '*%s' % (str(self.parent),)
         return result
 
-    cpdef INDEX_t get_variable(self):
-        return self.variable
-
-    cpdef FLOAT_t get_knot(self):
-        return self.knot
-
-    cpdef bint get_reverse(self):
-        return self.reverse
-
-    cpdef INDEX_t get_knot_idx(self):
-        return self.knot_idx
-
-    cpdef apply(self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=True):
+    cpdef apply(HingeBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=True):
         '''
         X - Data matrix
         b - parent vector
@@ -430,32 +496,13 @@ cdef class HingeBasisFunction(BasisFunction):
 
 cdef class LinearBasisFunction(BasisFunction):
     #@DuplicatedSignature
-    def __init__(self, BasisFunction parent, INDEX_t variable, label=None):
+    def __init__(LinearBasisFunction self, BasisFunction parent, INDEX_t variable, label=None):
         self.variable = variable
         self.label = label if label is not None else 'x' + str(variable)
         self._set_parent(parent)
 
-    def __reduce__(self):
-        return (self.__class__, (pickle_place_holder, 1, ''), self._getstate())
-
-    def _getstate(self):
-        result = super(LinearBasisFunction, self)._getstate()
-        result.update({'variable': self.variable,
-                       'label': self.label})
-        return result
-
-    def __setstate__(self, state):
-        self.variable = state['variable']
-        self.label = state['label']
-        super(LinearBasisFunction, self).__setstate__(state)
-
-    cpdef translate(LinearBasisFunctionself, cnp.ndarray[FLOAT_t, ndim=1] slopes, cnp.ndarray[FLOAT_t, ndim=1] intercepts, bint recurse):
-        pass
-
-    cpdef FLOAT_t scale(LinearBasisFunction self, cnp.ndarray[FLOAT_t, ndim=1] slopes, cnp.ndarray[FLOAT_t, ndim=1] intercepts):
-        result = self.parent.scale(slopes, intercepts)
-        result /= slopes[self.variable]
-        return result
+    def __reduce__(LinearBasisFunction self):
+        return (self.__class__, (pickle_place_holder, self.variable, self.label), self._getstate())
 
     def __str__(LinearBasisFunction self):
         result = self.label
@@ -464,10 +511,10 @@ cdef class LinearBasisFunction(BasisFunction):
             result += '*' + parent
         return result
 
-    cpdef INDEX_t get_variable(self):
+    cpdef INDEX_t get_variable(LinearBasisFunction self):
         return self.variable
 
-    cpdef apply(self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=True):
+    cpdef apply(LinearBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=True):
         '''
         X - Data matrix
         b - parent vector
@@ -490,16 +537,16 @@ cdef class Basis:
         self.order = []
         self.num_variables = num_variables
 
-    def __reduce__(self):
+    def __reduce__(Basis self):
         return (self.__class__, (self.num_variables,), self._getstate())
 
-    def _getstate(self):
+    def _getstate(Basis self):
         return {'order': self.order}
 
-    def __setstate__(self, state):
+    def __setstate__(Basis self, state):
         self.order = state['order']
 
-    def __richcmp__(self, other, method):
+    def __richcmp__(Basis self, other, method):
         if method == 2:
             return self._eq(other)
         elif method == 3:
@@ -507,7 +554,7 @@ cdef class Basis:
         else:
             return NotImplemented
 
-    def _eq(self, other):
+    def _eq(Basis self, other):
         return self.__class__ is other.__class__ and self._getstate() == other._getstate()
 
     def piter(Basis self):
@@ -523,22 +570,6 @@ cdef class Basis:
             result += str(self[i])
             result += '\n'
         return result
-
-    cpdef translate(Basis self, cnp.ndarray[FLOAT_t, ndim=1] slopes, cnp.ndarray[FLOAT_t, ndim=1] intercepts):
-        cdef INDEX_t n = len(self)
-        cdef INDEX_t i  # @DuplicatedSignature
-        for i in range(n):
-            self.order[i].translate(slopes, intercepts, False)
-
-    cpdef scale(Basis self, cnp.ndarray[FLOAT_t, ndim=1] slopes, cnp.ndarray[FLOAT_t, ndim=1] intercepts, cnp.ndarray[FLOAT_t, ndim=1] beta):
-        cdef INDEX_t n = len(self)  # @DuplicatedSignature
-        cdef INDEX_t i  # @DuplicatedSignature
-        cdef INDEX_t j = 0
-        for i in range(n):
-            if self.order[i].is_pruned():
-                continue
-            beta[j] *= self.order[i].scale(slopes, intercepts)
-            j += 1
 
     cpdef BasisFunction get_root(Basis self):
         return self.root
