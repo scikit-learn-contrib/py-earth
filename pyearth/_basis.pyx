@@ -18,7 +18,16 @@ cdef class BasisFunction:
         self.prunable = True
         self.child_map = {}
         self.splittable = True
-
+        
+    cpdef smooth(BasisFunction self, dict knot_dict, dict translation):
+        '''
+        Modifies translation in place.
+        '''
+        cdef INDEX_t i, n = len(self.children)
+        translation[self] = self._smoothed_version(self.get_parent(), knot_dict, translation)
+        for i in range(n):
+            self.children[i].smooth(knot_dict, translation)
+    
     def __reduce__(BasisFunction self):
         return (self.__class__, (), self._getstate())
 
@@ -66,7 +75,7 @@ cdef class BasisFunction:
             return not self._eq(other)
         else:
             return NotImplemented
-
+    
     cpdef bint has_knot(BasisFunction self):
         return False
 
@@ -111,6 +120,17 @@ cdef class BasisFunction:
 
     cpdef unprune(BasisFunction self):
         self.pruned = False
+    
+#     cpdef dict varknots(BasisFunction self):
+#         cdef dict result = self.parent.varknots()
+#         cdef INDEX_t var
+#         if self.has_knot():
+#             var = self.get_variable()
+#             if var in result:
+#                 result[var].append(self.get_knot())
+#             else:
+#                 result[var] = [self.get_knot()]
+#         return result
 
     cpdef knots(BasisFunction self, INDEX_t variable):
 
@@ -287,6 +307,9 @@ pickle_place_holder = PicklePlaceHolderBasisFunction()
 cdef class RootBasisFunction(BasisFunction):
     def __init__(RootBasisFunction self):  # @DuplicatedSignature
         self.prunable = False
+        
+    def copy(RootBasisFunction self):
+        return self.__class__()
 
     def _get_root(RootBasisFunction self):  # @DuplicatedSignature
         return self
@@ -296,6 +319,12 @@ cdef class RootBasisFunction(BasisFunction):
 
     def _set_parent_state(RootBasisFunction self, state):  # @DuplicatedSignature
         pass
+    
+    cpdef set variables(RootBasisFunction self):
+        return set()
+    
+    cpdef _smoothed_version(RootBasisFunction self, BasisFunction parent, dict knot_dict, dict translation):
+        return self.__class__()
     
     cpdef INDEX_t degree(RootBasisFunction self):
         return 0
@@ -357,6 +386,11 @@ cdef class HingeBasisFunctionBase(BasisFunction):
     cpdef INDEX_t get_knot_idx(HingeBasisFunctionBase self):
         return self.knot_idx
     
+    cpdef set variables(HingeBasisFunctionBase self):
+        cdef set result = self.parent.variables()
+        result.update(self.variable)
+        return result
+    
 cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
      
     def __init__(SmoothedHingeBasisFunction self, BasisFunction parent, FLOAT_t knot, FLOAT_t knot_minus,  # @DuplicatedSignature
@@ -371,6 +405,10 @@ cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
         self.label = label if label is not None else 'x' + str(variable)
         self._set_parent(parent)
         self._init_p_r()
+    
+    cpdef _smoothed_version(SmoothedHingeBasisFunction self, BasisFunction parent, dict knot_dict, dict translation):
+        return SmoothedHingeBasisFunction(translation[parent], self.knot, self.knot_minus, self.knot_plus, 
+                                     self.knot_idx, self.variable, self.reverse)
     
     cpdef _init_p_r(SmoothedHingeBasisFunction self):
         cdef FLOAT_t p_denom = self.knot_plus - self.knot_minus
@@ -448,6 +486,11 @@ cdef class HingeBasisFunction(HingeBasisFunctionBase):
         self.reverse = reverse
         self.label = label if label is not None else 'x' + str(variable)
         self._set_parent(parent)
+    
+    cpdef _smoothed_version(HingeBasisFunction self, BasisFunction parent, dict knot_dict, dict translation):
+        knot_minus, knot_plus = knot_dict[self]
+        return SmoothedHingeBasisFunction(translation[parent], self.knot, knot_minus, knot_plus, 
+                                     self.knot_idx, self.variable, self.reverse) 
 
     def __reduce__(HingeBasisFunction self):
         return (self.__class__, (pickle_place_holder, self.knot, self.knot_idx, 
@@ -500,7 +543,10 @@ cdef class LinearBasisFunction(BasisFunction):
         self.variable = variable
         self.label = label if label is not None else 'x' + str(variable)
         self._set_parent(parent)
-
+    
+    cpdef _smoothed_version(LinearBasisFunction self, BasisFunction parent, dict knot_dict, dict translation):
+        return LinearBasisFunction(translation[parent], self.variable, self.label)
+    
     def __reduce__(LinearBasisFunction self):
         return (self.__class__, (pickle_place_holder, self.variable, self.label), self._getstate())
 
@@ -570,10 +616,66 @@ cdef class Basis:
             result += str(self[i])
             result += '\n'
         return result
-
-    cpdef BasisFunction get_root(Basis self):
-        return self.root
-
+    
+    cpdef dict anova_decomp(Basis self):
+        '''
+        See section 3.5, Friedman, 1991
+        '''
+        cdef INDEX_t bf_idx, n_bf = len(self)
+        cdef dict result = {}
+        cdef set vars
+        cdef BasisFunction bf
+        for bf_idx in range(n_bf):
+            bf = self.orderpbf_idx
+            vars = bf.variables()
+            if vars in result:
+                result[vars].append(bf)
+            else:
+                result[vars] = [bf]
+        return result
+    
+    def smooth_knots(Basis self, mins, maxes):
+        '''
+        Used to find the side knots in the smoothed representation.
+        '''
+        cdef dict anova = self.anova_decomp()
+        cdef dict intermediate = {}
+        cdef dict result = {}
+        for vars, bfs in anova.iteritems():
+            intermediate[vars] = {}
+            for var in vars:
+                intermediate[vars][var] = []
+            for bf in bfs:
+                intermediate[vars][bf.get_variable()].append((bf, bf.get_knot()))
+            intermediate[vars][bf.get_variable()].sort(key=lambda x: x[1])
+        for d in intermediate.iterkeys():
+            for var, lst in d.iteritems():
+                for i in range(len(lst)):
+                    bf, knot = lst[i]
+                    if i == 0:
+                        prev = mins[var]
+                    else:
+                        prev = lst[i-1]
+                    if i == (len(lst) - 1):
+                        next = maxes[var]
+                    else:
+                        next = lst[i+1]
+                    result[bf] = ((knot + prev) / 2.0, (knot + next) / 2)
+        return result
+    
+    cpdef smooth(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X):
+        mins = list(X.min(0))
+        maxes = list(X.max(0))
+        knot_dict = self.smooth_knots(mins, maxes)
+        root = self[0]._get_root()
+        translation_dict = {}
+        root.smooth(knot_dict, translation_dict)
+        new_order = [translation_dict[bf] for bf in self]
+        result = Basis(self.num_variables)
+        for bf in new_order:
+            result.append(new_order)
+        return result
+        
     cpdef append(Basis self, BasisFunction basis_function):
         self.order.append(basis_function)
 
