@@ -108,8 +108,8 @@ class TestEarth(object):
         model = Earth(penalty=1, smooth=True)
         model.fit(self.X, self.y)
         res = str(model.trace()) + '\n' + model.summary()
-        with open(os.path.join(os.path.dirname(__file__), 'earth_regress_smooth.txt'),'w') as fl:
-            fl.write(res)
+#         with open(os.path.join(os.path.dirname(__file__), 'earth_regress_smooth.txt'),'w') as fl:
+#             fl.write(res)
         with open(os.path.join(os.path.dirname(__file__), 'earth_regress_smooth.txt'), 'r') as fl:
             prev = fl.read()
         assert_equal(res, prev)

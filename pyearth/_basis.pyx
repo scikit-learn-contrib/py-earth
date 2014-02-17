@@ -316,7 +316,10 @@ cdef class RootBasisFunction(BasisFunction):
         return set()
     
     cpdef _smoothed_version(RootBasisFunction self, BasisFunction parent, dict knot_dict, dict translation):
-        return self.__class__()
+        result = self.__class__()
+        if self.is_pruned():
+            result.prune()
+        return result
     
     cpdef INDEX_t degree(RootBasisFunction self):
         return 0
@@ -406,8 +409,11 @@ cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
         return self.knot_plus
     
     cpdef _smoothed_version(SmoothedHingeBasisFunction self, BasisFunction parent, dict knot_dict, dict translation):
-        return SmoothedHingeBasisFunction(translation[parent], self.knot, self.knot_minus, self.knot_plus, 
+        result = SmoothedHingeBasisFunction(translation[parent], self.knot, self.knot_minus, self.knot_plus, 
                                      self.knot_idx, self.variable, self.reverse)
+        if self.is_pruned():
+            result.prune()
+        return result
     
     cpdef _init_p_r(SmoothedHingeBasisFunction self):
         # See Friedman, 1991, eq (35)
@@ -496,8 +502,11 @@ cdef class HingeBasisFunction(HingeBasisFunctionBase):
     
     cpdef _smoothed_version(HingeBasisFunction self, BasisFunction parent, dict knot_dict, dict translation):
         knot_minus, knot_plus = knot_dict[self]
-        return SmoothedHingeBasisFunction(translation[parent], self.knot, knot_minus, knot_plus, 
+        result = SmoothedHingeBasisFunction(translation[parent], self.knot, knot_minus, knot_plus, 
                                      self.knot_idx, self.variable, self.reverse) 
+        if self.is_pruned():
+            result.prune()
+        return result
 
     def __reduce__(HingeBasisFunction self):
         return (self.__class__, (pickle_place_holder, self.knot, self.knot_idx, 
@@ -552,7 +561,10 @@ cdef class LinearBasisFunction(VariableBasisFunction):
         self._set_parent(parent)
     
     cpdef _smoothed_version(LinearBasisFunction self, BasisFunction parent, dict knot_dict, dict translation):
-        return LinearBasisFunction(translation[parent], self.variable, self.label)
+        result = LinearBasisFunction(translation[parent], self.variable, self.label)
+        if self.is_pruned():
+            result.prune()
+        return result
     
     def __reduce__(LinearBasisFunction self):
         return (self.__class__, (pickle_place_holder, self.variable, self.label), self._getstate())
