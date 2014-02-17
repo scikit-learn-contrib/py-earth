@@ -67,11 +67,16 @@ cdef class ConstantBasisFunction(RootBasisFunction):
 cdef class ZeroBasisFunction(RootBasisFunction):
     cpdef apply(self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=?)
 
-
-cdef class HingeBasisFunctionBase(BasisFunction):
+cdef class VariableBasisFunction(BasisFunction):
+    cdef INDEX_t variable
+    
+    cpdef set variables(VariableBasisFunction self)
+    
+    cpdef INDEX_t get_variable(VariableBasisFunction self)
+    
+cdef class HingeBasisFunctionBase(VariableBasisFunction):
     cdef FLOAT_t knot
     cdef INDEX_t knot_idx
-    cdef INDEX_t variable
     cdef bint reverse
     cdef str label
     
@@ -85,15 +90,23 @@ cdef class HingeBasisFunctionBase(BasisFunction):
     
     cpdef INDEX_t get_knot_idx(HingeBasisFunctionBase self)
     
-    cpdef set variables(HingeBasisFunctionBase self)
-
 cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
     cdef FLOAT_t p
     cdef FLOAT_t r
+    cdef FLOAT_t knot_minus
+    cdef FLOAT_t knot_plus
     
     cpdef _smoothed_version(SmoothedHingeBasisFunction self, BasisFunction parent, dict knot_dict, dict translation)
     
+    cpdef get_knot_minus(SmoothedHingeBasisFunction self)
+    
+    cpdef get_knot_plus(SmoothedHingeBasisFunction self)
+    
     cpdef _init_p_r(SmoothedHingeBasisFunction self)
+    
+    cpdef get_p(SmoothedHingeBasisFunction self)
+    
+    cpdef get_r(SmoothedHingeBasisFunction self)
     
     cpdef apply(self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=?)
     
@@ -103,8 +116,7 @@ cdef class HingeBasisFunction(HingeBasisFunctionBase):
     
     cpdef apply(self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse= ?)
 
-cdef class LinearBasisFunction(BasisFunction):
-    cdef INDEX_t variable
+cdef class LinearBasisFunction(VariableBasisFunction):
     cdef str label
     
     cpdef _smoothed_version(LinearBasisFunction self, BasisFunction parent, dict knot_dict, dict translation)

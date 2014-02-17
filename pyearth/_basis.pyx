@@ -18,7 +18,10 @@ cdef class BasisFunction:
         self.prunable = True
         self.child_map = {}
         self.splittable = True
-        
+    
+    def __hash__(BasisFunction self):
+        return id(self)
+    
     cpdef smooth(BasisFunction self, dict knot_dict, dict translation):
         '''
         Modifies translation in place.
@@ -60,12 +63,12 @@ cdef class BasisFunction:
     def _eq(BasisFunction self, other):
         if self.__class__ is not other.__class__:
             return False
-        self_state = self._getstate()
-        other_state = other._getstate()
-        del self_state['children']
-        del self_state['child_map']
-        del other_state['children']
-        del other_state['child_map']
+        self_state = (self._getstate(), self.__reduce__()[1])
+        other_state = (other._getstate(), other.__reduce__()[1])
+        del self_state[0]['children']
+        del self_state[0]['child_map']
+        del other_state[0]['children']
+        del other_state[0]['child_map']
         return self_state == other_state
 
     def __richcmp__(BasisFunction self, other, method):
@@ -121,17 +124,6 @@ cdef class BasisFunction:
     cpdef unprune(BasisFunction self):
         self.pruned = False
     
-#     cpdef dict varknots(BasisFunction self):
-#         cdef dict result = self.parent.varknots()
-#         cdef INDEX_t var
-#         if self.has_knot():
-#             var = self.get_variable()
-#             if var in result:
-#                 result[var].append(self.get_knot())
-#             else:
-#                 result[var] = [self.get_knot()]
-#         return result
-
     cpdef knots(BasisFunction self, INDEX_t variable):
 
         cdef list children
@@ -333,7 +325,7 @@ cdef class RootBasisFunction(BasisFunction):
         raise NotImplementedError
 
     cpdef BasisFunction get_parent(RootBasisFunction self):
-        raise NotImplementedError
+        return None
     
 cdef class ConstantBasisFunction(RootBasisFunction):
 
@@ -370,13 +362,19 @@ cdef class ZeroBasisFunction(RootBasisFunction):
         return '0'
 
 
-cdef class HingeBasisFunctionBase(BasisFunction):
+cdef class VariableBasisFunction(BasisFunction):
+    cpdef set variables(VariableBasisFunction self):
+        cdef set result = self.parent.variables()
+        result.add(self.get_variable())
+        return result
+    
+    cpdef INDEX_t get_variable(VariableBasisFunction self):
+        return self.variable
+
+cdef class HingeBasisFunctionBase(VariableBasisFunction):
     cpdef bint has_knot(HingeBasisFunctionBase self):
         return True
     
-    cpdef INDEX_t get_variable(HingeBasisFunctionBase self):
-        return self.variable
-
     cpdef FLOAT_t get_knot(HingeBasisFunctionBase self):
         return self.knot
 
@@ -385,11 +383,6 @@ cdef class HingeBasisFunctionBase(BasisFunction):
 
     cpdef INDEX_t get_knot_idx(HingeBasisFunctionBase self):
         return self.knot_idx
-    
-    cpdef set variables(HingeBasisFunctionBase self):
-        cdef set result = self.parent.variables()
-        result.update(self.variable)
-        return result
     
 cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
      
@@ -405,12 +398,19 @@ cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
         self.label = label if label is not None else 'x' + str(variable)
         self._set_parent(parent)
         self._init_p_r()
+        
+    cpdef get_knot_minus(SmoothedHingeBasisFunction self):
+        return self.knot_minus
+    
+    cpdef get_knot_plus(SmoothedHingeBasisFunction self):
+        return self.knot_plus
     
     cpdef _smoothed_version(SmoothedHingeBasisFunction self, BasisFunction parent, dict knot_dict, dict translation):
         return SmoothedHingeBasisFunction(translation[parent], self.knot, self.knot_minus, self.knot_plus, 
                                      self.knot_idx, self.variable, self.reverse)
     
     cpdef _init_p_r(SmoothedHingeBasisFunction self):
+        # See Friedman, 1991, eq (35)
         cdef FLOAT_t p_denom = self.knot_plus - self.knot_minus
         cdef FLOAT_t r_denom = p_denom
         p_denom *= p_denom
@@ -420,7 +420,13 @@ cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
             self.r = (2*self.knot - self.knot_plus - self.knot_minus) / r_denom
         else:
             self.p = (3*self.knot - 2*self.knot_minus - self.knot_plus) / p_denom
-            self.r = -1*(self.knot_minus + self.knot_plus - 2*self.knot_minus) / r_denom
+            self.r = -1*(self.knot_minus + self.knot_plus - 2*self.knot) / r_denom
+            
+    cpdef get_p(SmoothedHingeBasisFunction self):
+        return self.p
+    
+    cpdef get_r(SmoothedHingeBasisFunction self):
+        return self.r
      
     def __str__(SmoothedHingeBasisFunction self):  # @DuplicatedSignature
         result = ''
@@ -455,13 +461,14 @@ cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
         cdef INDEX_t m = len(b)  # @DuplicatedSignature
         cdef FLOAT_t tmp
         cdef FLOAT_t tmp2
-        if self.reverse:
+        # See Friedman, 1991, eq (34)
+        if not self.reverse:
             for i in range(m):
                 tmp = X[i, self.variable]
                 if tmp <= self.knot_minus:
                     b[i] = 0.0
                 elif self.knot_minus < tmp and tmp < self.knot_plus:
-                    tmp2 = tmp - self.t_minus
+                    tmp2 = tmp - self.knot_minus
                     b[i] *= self.p*tmp2*tmp2 + self.r*tmp2*tmp2*tmp2
                 else:
                     b[i] *= tmp - self.knot
@@ -471,10 +478,10 @@ cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
                 if tmp <= self.knot_minus:
                     b[i] = self.knot - tmp
                 elif self.knot_minus < tmp and tmp < self.knot_plus:
-                    tmp2 = tmp - self.t_minus
+                    tmp2 = tmp - self.knot_plus
                     b[i] *= self.p*tmp2*tmp2 + self.r*tmp2*tmp2*tmp2
                 else:
-                    b[i] *= 0.0
+                    b[i] = 0.0
                     
 cdef class HingeBasisFunction(HingeBasisFunctionBase):
 
@@ -537,7 +544,7 @@ cdef class HingeBasisFunction(HingeBasisFunctionBase):
                     tmp = <FLOAT_t > 0.0
                 b[i] *= tmp
 
-cdef class LinearBasisFunction(BasisFunction):
+cdef class LinearBasisFunction(VariableBasisFunction):
     #@DuplicatedSignature
     def __init__(LinearBasisFunction self, BasisFunction parent, INDEX_t variable, label=None):
         self.variable = variable
@@ -623,11 +630,11 @@ cdef class Basis:
         '''
         cdef INDEX_t bf_idx, n_bf = len(self)
         cdef dict result = {}
-        cdef set vars
+        cdef frozenset vars
         cdef BasisFunction bf
         for bf_idx in range(n_bf):
-            bf = self.orderpbf_idx
-            vars = bf.variables()
+            bf = self.order[bf_idx]
+            vars = frozenset(bf.variables())
             if vars in result:
                 result[vars].append(bf)
             else:
@@ -646,20 +653,21 @@ cdef class Basis:
             for var in vars:
                 intermediate[vars][var] = []
             for bf in bfs:
-                intermediate[vars][bf.get_variable()].append((bf, bf.get_knot()))
-            intermediate[vars][bf.get_variable()].sort(key=lambda x: x[1])
-        for d in intermediate.iterkeys():
+                if bf.has_knot():
+                    intermediate[vars][bf.get_variable()].append((bf, bf.get_knot()))
+        for d in intermediate.itervalues():
             for var, lst in d.iteritems():
+                lst.sort(key=lambda x: x[1])
                 for i in range(len(lst)):
                     bf, knot = lst[i]
                     if i == 0:
                         prev = mins[var]
                     else:
-                        prev = lst[i-1]
+                        prev = lst[i-1][1]
                     if i == (len(lst) - 1):
                         next = maxes[var]
                     else:
-                        next = lst[i+1]
+                        next = lst[i+1][1]
                     result[bf] = ((knot + prev) / 2.0, (knot + next) / 2)
         return result
     
@@ -673,7 +681,7 @@ cdef class Basis:
         new_order = [translation_dict[bf] for bf in self]
         result = Basis(self.num_variables)
         for bf in new_order:
-            result.append(new_order)
+            result.append(bf)
         return result
         
     cpdef append(Basis self, BasisFunction basis_function):

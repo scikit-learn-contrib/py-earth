@@ -43,7 +43,7 @@ class TestEarth(object):
                                    'max_terms': None, 'max_degree':
                                    None, 'minspan_alpha': None,
                                    'thresh': None, 'minspan': None, 'endspan': None, 
-                                   'allow_linear': None})
+                                   'allow_linear': None, 'smooth': None})
         assert_equal(
             Earth(
                 max_degree=3).get_params(), {'penalty': None, 'min_search_points': None,
@@ -52,7 +52,7 @@ class TestEarth(object):
                                              'max_terms': None, 'max_degree':
                                              3, 'minspan_alpha': None,
                                              'thresh': None, 'minspan': None, 'endspan': None,
-                                             'allow_linear': None})
+                                             'allow_linear': None, 'smooth': None})
 
     @if_statsmodels
     def test_linear_fit(self):
@@ -68,7 +68,7 @@ class TestEarth(object):
         soln = GLS(self.y, self.earth.transform(
             self.X), 1.0 / sample_weight).fit().params
         assert_almost_equal(numpy.mean((self.earth.coef_ - soln) ** 2), 0.0)
-
+    
     def test_sample_weight(self):
         group = numpy.random.binomial(1, .5, size=1000) == 1
         sample_weight = 1 / (group * 100 + 1.0)
@@ -98,16 +98,26 @@ class TestEarth(object):
     def test_fit(self):
         self.earth.fit(self.X, self.y)
         res = str(self.earth.trace()) + '\n' + self.earth.summary()
-#        with open('earth_regress.txt','w') as fl:
+#        with open(os.path.join(os.path.dirname(__file__), 'earth_regress.txt'),'w') as fl:
 #            fl.write(res)
         with open(os.path.join(os.path.dirname(__file__), 'earth_regress.txt'), 'r') as fl:
+            prev = fl.read()
+        assert_equal(res, prev)
+
+    def test_smooth(self):
+        model = Earth(penalty=1, smooth=True)
+        model.fit(self.X, self.y)
+        res = str(model.trace()) + '\n' + model.summary()
+        with open(os.path.join(os.path.dirname(__file__), 'earth_regress_smooth.txt'),'w') as fl:
+            fl.write(res)
+        with open(os.path.join(os.path.dirname(__file__), 'earth_regress_smooth.txt'), 'r') as fl:
             prev = fl.read()
         assert_equal(res, prev)
 
     def test_linvars(self):
         self.earth.fit(self.X, self.y, linvars=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         res = str(self.earth.trace()) + '\n' + self.earth.summary()
-#        with open('earth_linvars_regress.txt','w') as fl:
+#        with open(os.path.dirname(__file__), 'earth_linvars_regress.txt'),'w') as fl:
 #            fl.write(res)
         with open(os.path.join(os.path.dirname(__file__), 'earth_linvars_regress.txt'), 'r') as fl:
             prev = fl.read()

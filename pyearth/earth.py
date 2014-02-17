@@ -112,6 +112,11 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         single, knotless term will be used.  If False, that behavior is disabled and all terms
         will have knots except those with variables specified by the linvars argument (see the 
         fit method).
+        
+        
+    smooth : bool, optional (default=False)
+        If True, the model will be smoothed such that it has continuous first derivatives.  
+        For details, see section 3.7, Friedman, 1991.
 
 
     Attributes
@@ -149,7 +154,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
     def __init__(
         self, endspan=None, minspan=None, endspan_alpha=None, minspan_alpha=None, max_terms=None, max_degree=None,
-            thresh=None, penalty=None, check_every=None, min_search_points=None, allow_linear=None):
+            thresh=None, penalty=None, check_every=None, min_search_points=None, allow_linear=None, smooth=None):
         kwargs = {}
         call = locals()
         for name in self._get_param_names():
@@ -342,6 +347,8 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         # Do the actual work
         self.forward_pass(X, y, sample_weight, xlabels, linvars)
         self.pruning_pass(X, y, sample_weight)
+        if hasattr(self, 'smooth') and self.smooth:
+            self.basis_ = self.basis_.smooth(X)
         self.linear_fit(X, y, sample_weight)
         return self
 
