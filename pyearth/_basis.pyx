@@ -30,7 +30,7 @@ cdef class BasisFunction:
         translation[self] = self._smoothed_version(self.get_parent(), knot_dict, translation)
         for i in range(n):
             self.children[i].smooth(knot_dict, translation)
-    
+            
     def __reduce__(BasisFunction self):
         return (self.__class__, (), self._getstate())
 
@@ -438,12 +438,9 @@ cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
         result = ''
         if self.variable is not None:
             if not self.reverse:
-                if self.knot >= 0:
-                    result = 's(%s-%G)' % (self.label, self.knot)
-                else:
-                    result = 's(%s+%G)' % (self.label, -self.knot)
+                result = 'C(%s|s=+1,%G,%G,%G)' % (self.label, self.knot_minus, self.knot, self.knot_plus)
             else:
-                result = 's(%G-%s)' % (self.knot, self.label)
+                result = 'C(%s|s=-1,%G,%G,%G)' % (self.label, self.knot_minus, self.knot, self.knot_plus)
         parent = str(
             self.parent) if not self.parent.__class__ is ConstantBasisFunction else ''
         if parent != '':
@@ -488,7 +485,7 @@ cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
                     b[i] *= self.p*tmp2*tmp2 + self.r*tmp2*tmp2*tmp2
                 else:
                     b[i] = 0.0
-                    
+    
 cdef class HingeBasisFunction(HingeBasisFunctionBase):
 
     def __init__(HingeBasisFunction self, BasisFunction parent, FLOAT_t knot, 
@@ -670,17 +667,30 @@ cdef class Basis:
         for d in intermediate.itervalues():
             for var, lst in d.iteritems():
                 lst.sort(key=lambda x: x[1])
-                for i in range(len(lst)):
+                prev_minus = mins[var]
+                prev = prev_minus
+                prev_mid = prev_minus
+                plus_idx = 0
+                i = 0
+                n_bfs = len(lst)
+                while True:
+                    if i >= n_bfs:
+                        break
                     bf, knot = lst[i]
-                    if i == 0:
-                        prev = mins[var]
+                    if knot > prev_mid:
+                        prev = prev_mid
                     else:
-                        prev = lst[i-1][1]
-                    if i == (len(lst) - 1):
+                        prev = prev_minus
+                    while plus_idx < n_bfs and lst[plus_idx][1] <= knot:
+                        plus_idx += 1
+                    if plus_idx < n_bfs and lst[plus_idx][1] > knot:
+                        next = lst[plus_idx][1]
+                    else:
                         next = maxes[var]
-                    else:
-                        next = lst[i+1][1]
-                    result[bf] = ((knot + prev) / 2.0, (knot + next) / 2)
+                    result[bf] = ((knot + prev) / 2.0, (knot + next) / 2.0)
+                    prev_minus = prev
+                    prev_mid = knot
+                    i += 1
         return result
     
     cpdef smooth(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X):

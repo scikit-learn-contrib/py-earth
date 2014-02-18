@@ -213,8 +213,18 @@ class TestBasis(BaseTestClass):
     def test_smooth(self):
         X = numpy.random.uniform(-2.0, 4.0, size=(20,4))
         smooth_basis = self.basis.smooth(X)
-        assert_equal(str(self.basis).replace('h','s'), str(smooth_basis))
-        # TODO: This could use better assertions
+        for bf, smooth_bf in zip(self.basis, smooth_basis):
+            if type(bf) is HingeBasisFunction:
+                assert_true(type(smooth_bf) is SmoothedHingeBasisFunction)
+            elif type(bf) is ConstantBasisFunction:
+                assert_true(type(smooth_bf) is ConstantBasisFunction)
+            elif type(bf) is LinearBasisFunction:
+                assert_true(type(smooth_bf) is LinearBasisFunction)
+            else:
+                raise AssertionError('Basis function is of an unexpected type.')
+            assert_true(type(smooth_bf) in {SmoothedHingeBasisFunction, ConstantBasisFunction, LinearBasisFunction})
+            if bf.has_knot():
+                assert_equal(bf.get_knot(), smooth_bf.get_knot())
         
     def test_add(self):
         assert_equal(len(self.basis), 6)
