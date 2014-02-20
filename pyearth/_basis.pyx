@@ -7,6 +7,7 @@
 from ._util cimport log2, apply_weights_2d
 from libc.math cimport log
 from libc.math cimport abs
+cimport cython
 cdef FLOAT_t ZERO_TOL = 1e-16
 import numpy as np
 
@@ -153,7 +154,7 @@ cdef class BasisFunction:
         recurse - If False, assume b already contains the result of the parent function.  Otherwise, recurse to compute
                   parent function.
         '''
-
+    
     cpdef cnp.ndarray[INT_t, ndim = 1] valid_knots(BasisFunction self, cnp.ndarray[FLOAT_t, ndim=1] values, cnp.ndarray[FLOAT_t, ndim=1] variable, int variable_idx, INDEX_t check_every, int endspan, int minspan, FLOAT_t minspan_alpha, INDEX_t n, cnp.ndarray[INT_t, ndim=1] workspace):
         '''
         values - The unsorted values of self in the data set
@@ -330,26 +331,7 @@ cdef class RootBasisFunction(BasisFunction):
     cpdef BasisFunction get_parent(RootBasisFunction self):
         return None
     
-cdef class ConstantBasisFunction(RootBasisFunction):
-
-    cpdef apply(ConstantBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=False):
-        '''
-        X - Data matrix
-        b - parent vector
-        recurse - The ConstantBasisFunction is the parent of all BasisFunctions and never has a parent.
-                  Therefore the recurse argument is ignored.  This spares child BasisFunctions from
-                  having to know whether their parents have parents.
-        '''
-        cdef INDEX_t i  # @DuplicatedSignature
-        cdef INDEX_t m = len(b)
-        for i in range(m):
-            b[i] = <FLOAT_t > 1.0
-
-    def __str__(ConstantBasisFunction self):
-        return '(Intercept)'
-
-cdef class ZeroBasisFunction(RootBasisFunction):
-    cpdef apply(self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=False):
+    cpdef apply(RootBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=False):
         '''
         X - Data matrix
         b - parent vector
@@ -359,7 +341,41 @@ cdef class ZeroBasisFunction(RootBasisFunction):
         cdef INDEX_t i  # @DuplicatedSignature
         cdef INDEX_t m = len(b)  # @DuplicatedSignature
         for i in range(m):
-            b[i] = <FLOAT_t > 0.0
+            b[i] = self.eval()
+            
+    cpdef apply_deriv(RootBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, 
+                      cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var):
+        '''
+        X - Data matrix
+        b - holds the value of the basis function
+        j - holds the value of the derivative
+        '''
+        cdef INDEX_t i  # @DuplicatedSignature
+        cdef INDEX_t m = len(b)  # @DuplicatedSignature
+        for i in range(m):
+            b[i] = self.eval()
+            j[i] = self.eval_deriv()
+    
+@cython.final
+cdef class ConstantBasisFunction(RootBasisFunction):
+
+    cpdef inline FLOAT_t eval(ConstantBasisFunction self):
+        return <FLOAT_t> 1.0
+    
+    cpdef inline FLOAT_t eval_deriv(ConstantBasisFunction self):
+        return <FLOAT_t> 0.0
+
+    def __str__(ConstantBasisFunction self):
+        return '(Intercept)'
+
+@cython.final
+cdef class ZeroBasisFunction(RootBasisFunction):
+
+    cpdef inline FLOAT_t eval(ZeroBasisFunction self):
+        return <FLOAT_t> 0.0
+    
+    cpdef inline FLOAT_t eval_deriv(ZeroBasisFunction self):
+        return <FLOAT_t> 0.0
      
     def __str__(self):  # @DuplicatedSignature
         return '0'
@@ -374,6 +390,40 @@ cdef class VariableBasisFunction(BasisFunction):
     cpdef INDEX_t get_variable(VariableBasisFunction self):
         return self.variable
 
+    cpdef apply(VariableBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=True):
+        '''
+        X - Data matrix
+        b - parent vector
+        recurse - If False, assume b already contains the result of the parent function.  Otherwise, recurse to compute
+                  parent function.
+        '''
+        if recurse:
+            self.parent.apply(X, b, recurse=True)
+        cdef INDEX_t i  # @DuplicatedSignature
+        cdef INDEX_t m = len(b)  # @DuplicatedSignature
+        for i in range(m):
+            b[i] *= self.eval(X[i, self.variable])
+            
+    cpdef apply_deriv(VariableBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, 
+                      cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var):
+        '''
+        X - Data matrix
+        j - result vector
+        '''
+        cdef INDEX_t i, this_var = self.get_variable()  # @DuplicatedSignature
+        cdef INDEX_t m = len(b)  # @DuplicatedSignature
+        cdef FLOAT_t this_val, this_deriv, x
+        self.parent.apply_deriv(X, b, j, var)
+        for i in range(m):
+            x = X[i,this_var]
+            this_val = self.eval(x)
+            if this_var == var:
+                this_deriv = self.eval_deriv(x)
+            else:
+                this_deriv = 0.0
+            j[i] = b[i]*this_deriv + j[i]*this_val
+            b[i] *= this_val
+
 cdef class HingeBasisFunctionBase(VariableBasisFunction):
     cpdef bint has_knot(HingeBasisFunctionBase self):
         return True
@@ -386,7 +436,8 @@ cdef class HingeBasisFunctionBase(VariableBasisFunction):
 
     cpdef INDEX_t get_knot_idx(HingeBasisFunctionBase self):
         return self.knot_idx
-    
+
+@cython.final
 cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
      
     def __init__(SmoothedHingeBasisFunction self, BasisFunction parent, FLOAT_t knot, FLOAT_t knot_minus,  # @DuplicatedSignature
@@ -450,42 +501,58 @@ cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
     def __reduce__(SmoothedHingeBasisFunction self):  # @DuplicatedSignature
         return (self.__class__, (pickle_place_holder, self.knot, self.knot_minus, self.knot_plus, 
                                  self.knot_idx, self.variable, self.reverse, self.label), self._getstate())
- 
-    cpdef apply(self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=True):
-        '''
-        X - Data matrix
-        b - parent vector
-        recurse - If False, assume b already contains the result of the parent function.  Otherwise, recurse to compute
-                  parent function.
-        '''
-        if recurse:
-            self.parent.apply(X, b, recurse=True)
-        cdef INDEX_t i  # @DuplicatedSignature
-        cdef INDEX_t m = len(b)  # @DuplicatedSignature
+        
+    cpdef inline FLOAT_t eval(SmoothedHingeBasisFunction self, FLOAT_t x):    
         cdef FLOAT_t tmp
         cdef FLOAT_t tmp2
+        cdef FLOAT_t result
         # See Friedman, 1991, eq (34)
         if not self.reverse:
-            for i in range(m):
-                tmp = X[i, self.variable]
-                if tmp <= self.knot_minus:
-                    b[i] = 0.0
-                elif self.knot_minus < tmp and tmp < self.knot_plus:
-                    tmp2 = tmp - self.knot_minus
-                    b[i] *= self.p*tmp2*tmp2 + self.r*tmp2*tmp2*tmp2
-                else:
-                    b[i] *= tmp - self.knot
+            tmp = x
+            if tmp <= self.knot_minus:
+                result = 0.0
+            elif self.knot_minus < tmp and tmp < self.knot_plus:
+                tmp2 = tmp - self.knot_minus
+                result = self.p*tmp2*tmp2 + self.r*tmp2*tmp2*tmp2
+            else:
+                result = tmp - self.knot
         else:
-            for i in range(m):
-                tmp = X[i, self.variable]
-                if tmp <= self.knot_minus:
-                    b[i] = self.knot - tmp
-                elif self.knot_minus < tmp and tmp < self.knot_plus:
-                    tmp2 = tmp - self.knot_plus
-                    b[i] *= self.p*tmp2*tmp2 + self.r*tmp2*tmp2*tmp2
-                else:
-                    b[i] = 0.0
+            tmp = x
+            if tmp <= self.knot_minus:
+                result = self.knot - tmp
+            elif self.knot_minus < tmp and tmp < self.knot_plus:
+                tmp2 = tmp - self.knot_plus
+                result = self.p*tmp2*tmp2 + self.r*tmp2*tmp2*tmp2
+            else:
+                result = 0.0
+        return result
     
+    cpdef inline FLOAT_t eval_deriv(SmoothedHingeBasisFunction self, FLOAT_t x):
+        cdef FLOAT_t tmp
+        cdef FLOAT_t tmp2
+        cdef FLOAT_t result
+        # See Friedman, 1991, eq (34)
+        if not self.reverse:
+            tmp = x
+            if tmp <= self.knot_minus:
+                result = 0.0
+            elif self.knot_minus < tmp and tmp < self.knot_plus:
+                tmp2 = tmp - self.knot_minus
+                result = 2.0*self.p*tmp2 + 3.0*self.r*tmp2*tmp2
+            else:
+                result = 1.0
+        else:
+            tmp = x
+            if tmp <= self.knot_minus:
+                result = -1.0
+            elif self.knot_minus < tmp and tmp < self.knot_plus:
+                tmp2 = tmp - self.knot_plus
+                result = 2.0*self.p*tmp2 + 3.0*self.r*tmp2*tmp2
+            else:
+                result = 0.0
+        return result
+    
+@cython.final 
 cdef class HingeBasisFunction(HingeBasisFunctionBase):
 
     def __init__(HingeBasisFunction self, BasisFunction parent, FLOAT_t knot, 
@@ -524,32 +591,28 @@ cdef class HingeBasisFunction(HingeBasisFunctionBase):
         if parent != '':
             result += '*%s' % (str(self.parent),)
         return result
-
-    cpdef apply(HingeBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=True):
-        '''
-        X - Data matrix
-        b - parent vector
-        recurse - If False, assume b already contains the result of the parent function.  Otherwise, recurse to compute
-                  parent function.
-        '''
-        if recurse:
-            self.parent.apply(X, b, recurse=True)
-        cdef INDEX_t i  # @DuplicatedSignature
-        cdef INDEX_t m = len(b)  # @DuplicatedSignature
-        cdef FLOAT_t tmp
+    
+    cpdef inline FLOAT_t eval(HingeBasisFunction self, FLOAT_t x):
+        cdef FLOAT_t result
         if self.reverse:
-            for i in range(m):
-                tmp = self.knot - X[i, self.variable]
-                if tmp < 0:
-                    tmp = <FLOAT_t > 0.0
-                b[i] *= tmp
+            result = self.knot - x
         else:
-            for i in range(m):
-                tmp = X[i, self.variable] - self.knot
-                if tmp < 0:
-                    tmp = <FLOAT_t > 0.0
-                b[i] *= tmp
+            result = x - self.knot
+        if result < 0:
+            result = 0.0
+        return result
+    
+    cpdef inline FLOAT_t eval_deriv(HingeBasisFunction self, FLOAT_t x):
+        cdef FLOAT_t result
+        if self.reverse:
+            result = -1.0
+        else:
+            result = 1.0
+        if result < 0:
+            result = 0.0
+        return result
 
+@cython.final
 cdef class LinearBasisFunction(VariableBasisFunction):
     #@DuplicatedSignature
     def __init__(LinearBasisFunction self, BasisFunction parent, INDEX_t variable, label=None):
@@ -575,21 +638,13 @@ cdef class LinearBasisFunction(VariableBasisFunction):
 
     cpdef INDEX_t get_variable(LinearBasisFunction self):
         return self.variable
-
-    cpdef apply(LinearBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=True):
-        '''
-        X - Data matrix
-        b - parent vector
-        recurse - If False, assume b already contains the result of the parent function.  Otherwise, recurse to compute
-                  parent function.
-        '''
-        if recurse:
-            self.parent.apply(X, b, recurse=True)
-        cdef INDEX_t i  # @DuplicatedSignature
-        cdef INDEX_t m = len(b)  # @DuplicatedSignature
-        for i in range(m):
-            b[i] *= X[i, self.variable]
-
+    
+    cpdef inline FLOAT_t eval(LinearBasisFunction self, FLOAT_t x):
+        return x
+    
+    cpdef inline FLOAT_t eval_deriv(LinearBasisFunction self, FLOAT_t x):
+        return <FLOAT_t> 1.0
+    
 cdef class Basis:
     '''A container that provides functionality related to a set of BasisFunctions with a
     common ConstantBasisFunction ancestor.  Retains the order in which BasisFunctions are
@@ -632,6 +687,9 @@ cdef class Basis:
             result += str(self[i])
             result += '\n'
         return result
+    
+    cpdef int get_num_variables(Basis self):
+        return self.num_variables
     
     cpdef dict anova_decomp(Basis self):
         '''
@@ -748,3 +806,61 @@ cdef class Basis:
 
         self.transform(X, B)
         apply_weights_2d(B, weights)
+        
+    cpdef transform_deriv(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, 
+                          cnp.ndarray[FLOAT_t, ndim=1] j, cnp.ndarray[FLOAT_t, ndim=1] coef,
+                          cnp.ndarray[FLOAT_t, ndim=2] J, bool prezeroed_j=False):
+        
+        # Get the variables for each basis function
+        cdef BasisFunction bf
+        cdef list variables_list = []
+        for bf in self.order:
+            variables_list.append(bf.variables)
+        
+        # Zero out J if necessary
+        cdef INDEX_t i, j_, m, n
+        m = J.shape[0]
+        n = J.shape[1]
+        if not prezeroed_j:
+            for j_ in range(n):
+                for i in range(m):
+                    J[i, j_] = 0.0
+        
+        # Compute the derivative for each variable
+        cdef INDEX_t var, bf_idx, n_bfs = len(self)
+        cdef set variables
+        for var in range(self.num_variables):
+            for bf_idx in range(n_bfs):
+                bf = self.order[bf_idx]
+                variables = variables_list[bf_idx]
+                if var not in variables or bf.is_pruned():
+                    continue
+                bf.apply_deriv(X, b, j, var)
+                for i in range(m):
+                    J[i, var] += coef[bf_idx] * j[i]
+        
+        
+        
+#         '''
+#         The array J (for Jacobian) is modified in place.
+#         '''
+#         cdef INDEX_t n_vars, n_basis, n_rows, i, j, k
+#         cdef BasisFunction bf
+#         n_vars = X.shape[1]
+#         n_basis = len(self)
+#         n_rows = X.shape[0]
+#         
+#         # Allocate workspace
+#         b = np.ones(shape=(1,n_vars))
+#         
+#         for i in range(n_rows):
+#             self.transform(X[i,:], b)
+#             for j in range(n_vars):
+#                 for bf in self:
+#                     J[i,j] = bf.apply_deriv(b, j)
+#                     
+#         
+#         
+#         
+        
+        

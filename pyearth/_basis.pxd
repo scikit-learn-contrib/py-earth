@@ -1,3 +1,4 @@
+from cpython cimport bool
 cimport numpy as cnp
 ctypedef cnp.float64_t FLOAT_t
 ctypedef cnp.intp_t INT_t
@@ -59,13 +60,21 @@ cdef class RootBasisFunction(BasisFunction):
     cpdef _set_parent(RootBasisFunction self, BasisFunction parent)
 
     cpdef BasisFunction get_parent(RootBasisFunction self)
+    
+    cpdef apply(RootBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=?)
+    
+    cpdef apply_deriv(RootBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var)
         
 cdef class ConstantBasisFunction(RootBasisFunction):
 
-    cpdef apply(self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse= ?)
-
+    cpdef inline FLOAT_t eval(ConstantBasisFunction self)
+    
+    cpdef inline FLOAT_t eval_deriv(ConstantBasisFunction self)
+	
 cdef class ZeroBasisFunction(RootBasisFunction):
-    cpdef apply(self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=?)
+    cpdef inline FLOAT_t eval(ZeroBasisFunction self)
+    
+    cpdef inline FLOAT_t eval_deriv(ZeroBasisFunction self)
 
 cdef class VariableBasisFunction(BasisFunction):
     cdef INDEX_t variable
@@ -73,6 +82,10 @@ cdef class VariableBasisFunction(BasisFunction):
     cpdef set variables(VariableBasisFunction self)
     
     cpdef INDEX_t get_variable(VariableBasisFunction self)
+    
+    cpdef apply(VariableBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=?)
+    
+    cpdef apply_deriv(VariableBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var)
     
 cdef class HingeBasisFunctionBase(VariableBasisFunction):
     cdef FLOAT_t knot
@@ -108,13 +121,17 @@ cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
     
     cpdef get_r(SmoothedHingeBasisFunction self)
     
-    cpdef apply(self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=?)
+    cpdef inline FLOAT_t eval(SmoothedHingeBasisFunction self, FLOAT_t x)
+    
+    cpdef inline FLOAT_t eval_deriv(SmoothedHingeBasisFunction self, FLOAT_t x)
     
 cdef class HingeBasisFunction(HingeBasisFunctionBase):
     
     cpdef _smoothed_version(HingeBasisFunction self, BasisFunction parent, dict knot_dict, dict translation)
     
-    cpdef apply(self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse= ?)
+    cpdef inline FLOAT_t eval(HingeBasisFunction self, FLOAT_t x)
+    
+    cpdef inline FLOAT_t eval_deriv(HingeBasisFunction self, FLOAT_t x)
 
 cdef class LinearBasisFunction(VariableBasisFunction):
     cdef str label
@@ -123,7 +140,9 @@ cdef class LinearBasisFunction(VariableBasisFunction):
 
     cpdef INDEX_t get_variable(self)
 
-    cpdef apply(self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse= ?)
+    cpdef inline FLOAT_t eval(LinearBasisFunction self, FLOAT_t x)
+    
+    cpdef inline FLOAT_t eval_deriv(LinearBasisFunction self, FLOAT_t x)
 
 cdef class Basis:
     '''A wrapper that provides functionality related to a set of BasisFunctions with a
@@ -132,6 +151,8 @@ cdef class Basis:
 
     cdef list order
     cdef readonly INDEX_t num_variables
+    
+    cpdef int get_num_variables(Basis self)
     
     cpdef dict anova_decomp(Basis self)
     
@@ -146,3 +167,7 @@ cdef class Basis:
     cpdef transform(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=2] B)
 
     cpdef weighted_transform(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=2] B, cnp.ndarray[FLOAT_t, ndim=1] weights)
+
+    cpdef transform_deriv(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, 
+                          cnp.ndarray[FLOAT_t, ndim=1] j, cnp.ndarray[FLOAT_t, ndim=1] coef,
+                          cnp.ndarray[FLOAT_t, ndim=2] J, bool prezeroed_j=?)

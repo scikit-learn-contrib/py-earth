@@ -559,6 +559,25 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         B = self.transform(X)
         return np.dot(B, self.coef_)
 
+    def predict_deriv(self, X):
+        '''
+        Predict the first derivatives of the response based on the input data X.
+        
+        
+        Parameters
+        ----------
+        X : array-like, shape = [m, n] where m is the number of samples and n is the number of features
+            The training predictors.  The X parameter can be a numpy array, a pandas DataFrame, or a
+            patsy DesignMatrix.
+
+        '''
+        X = self._scrub_x(X)
+        J = np.zeros(shape=(X.shape[0], self.basis_.get_num_variables()))
+        b = np.empty(shape=X.shape[0])
+        j = np.empty(shape=X.shape[0])
+        self.basis_.transform_deriv(X, b, j, self.coef_, J, True)
+        return J
+
     def score(self, X, y=None, sample_weight=None):
         '''
         Calculate the generalized r^2 of the model on data X and y.
