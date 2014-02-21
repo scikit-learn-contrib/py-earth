@@ -1,6 +1,6 @@
 from ._forward import ForwardPasser
 from ._pruning import PruningPasser
-from ._util import ascii_table, apply_weights_2d, apply_weights_1d
+from ._util import ascii_table, apply_weights_2d, apply_weights_1d, gcv
 from sklearn.base import RegressorMixin, BaseEstimator, TransformerMixin
 from sklearn.utils.validation import assert_all_finite, safe_asarray
 import numpy as np
@@ -128,6 +128,26 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
     `basis_` : _basis.Basis
         An object representing model terms.  Each term is a product of constant, linear, and hinge
         functions of the input features.
+    
+    
+    `mse_` : float
+        The mean squared error of the model after the final linear fit.  If sample_weight is given,
+        this score is weighted appropriately.
+        
+    
+    `rsq_` : float
+        The generalized r^2 of the model after the final linear fit.  If sample_weight is given,
+        this score is weighted appropriately.
+        
+    
+    `gcv_` : float
+        The generalized cross validation (GCV) score of the model after the final linear fit.  If 
+        sample_weight is given, this score is weighted appropriately.
+        
+    
+    `grsq_` : float
+        An r^2 like score based on the GCV.  If sample_weight is given, this score is weighted 
+        appropriately.
 
 
     `forward_pass_record_` : _record.ForwardPassRecord
@@ -499,7 +519,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             selection = len(record) - 1
         result += '\n'
         result += 'MSE: %.4f, GCV: %.4f, RSQ: %.4f, GRSQ: %.4f' % (
-            record.mse(selection), record.gcv(selection), record.rsq(selection), record.grsq(selection))
+            self.mse_, self.gcv_, self.rsq_, self.grsq_)
         return result
 
     def linear_fit(self, X, y=None, sample_weight=None):
@@ -541,7 +561,15 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         apply_weights_1d(weighted_y, sample_weight)
 
         # Solve the linear least squares problem
-        self.coef_ = np.linalg.lstsq(B, weighted_y)[0]
+        self.coef_, resid = np.linalg.lstsq(B, weighted_y)[0:2]
+        
+        # Compute the final mse, gcv, rsq, and grsq (may be different from the pruning scores if the model has been smoothed)
+        self.mse_ = np.sum(resid) / float(X.shape[0])
+        self.gcv_ = gcv(self.mse_, self.coef_.shape[0], X.shape[0], self.get_penalty())
+        mse0 = np.sum(sample_weight * (y - np.average(y, weights=sample_weight)) ** 2) / float(X.shape[0])
+        gcv0 = gcv(mse0, 1, X.shape[0], self.get_penalty())
+        self.rsq_ = 1.0 - (self.mse_ / mse0)
+        self.grsq_ = 1.0 - (self.gcv_ / gcv0)
 
     def predict(self, X):
         '''

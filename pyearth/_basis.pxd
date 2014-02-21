@@ -71,11 +71,6 @@ cdef class ConstantBasisFunction(RootBasisFunction):
     
     cpdef inline FLOAT_t eval_deriv(ConstantBasisFunction self)
 	
-cdef class ZeroBasisFunction(RootBasisFunction):
-    cpdef inline FLOAT_t eval(ZeroBasisFunction self)
-    
-    cpdef inline FLOAT_t eval_deriv(ZeroBasisFunction self)
-
 cdef class VariableBasisFunction(BasisFunction):
     cdef INDEX_t variable
     

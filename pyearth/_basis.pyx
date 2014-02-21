@@ -368,19 +368,6 @@ cdef class ConstantBasisFunction(RootBasisFunction):
     def __str__(ConstantBasisFunction self):
         return '(Intercept)'
 
-@cython.final
-cdef class ZeroBasisFunction(RootBasisFunction):
-
-    cpdef inline FLOAT_t eval(ZeroBasisFunction self):
-        return <FLOAT_t> 0.0
-    
-    cpdef inline FLOAT_t eval_deriv(ZeroBasisFunction self):
-        return <FLOAT_t> 0.0
-     
-    def __str__(self):  # @DuplicatedSignature
-        return '0'
-
-
 cdef class VariableBasisFunction(BasisFunction):
     cpdef set variables(VariableBasisFunction self):
         cdef set result = self.parent.variables()
@@ -595,9 +582,15 @@ cdef class HingeBasisFunction(HingeBasisFunctionBase):
     cpdef inline FLOAT_t eval(HingeBasisFunction self, FLOAT_t x):
         cdef FLOAT_t result
         if self.reverse:
-            result = self.knot - x
+            if x > self.knot:
+                result = 0.0
+            else:
+                result = self.knot - x
         else:
-            result = x - self.knot
+            if x <= self.knot:
+                result = 0.0
+            else:
+                result = x - self.knot
         if result < 0:
             result = 0.0
         return result
@@ -605,11 +598,15 @@ cdef class HingeBasisFunction(HingeBasisFunctionBase):
     cpdef inline FLOAT_t eval_deriv(HingeBasisFunction self, FLOAT_t x):
         cdef FLOAT_t result
         if self.reverse:
-            result = -1.0
+            if x > self.knot:
+                result = 0.0
+            else:
+                result = -1.0
         else:
-            result = 1.0
-        if result < 0:
-            result = 0.0
+            if x <= self.knot:
+                result = 0.0
+            else:
+                result = 1.0
         return result
 
 @cython.final
@@ -811,14 +808,10 @@ cdef class Basis:
                           cnp.ndarray[FLOAT_t, ndim=1] j, cnp.ndarray[FLOAT_t, ndim=1] coef,
                           cnp.ndarray[FLOAT_t, ndim=2] J, bool prezeroed_j=False):
         
-        # Get the variables for each basis function
         cdef BasisFunction bf
-        cdef list variables_list = []
-        for bf in self.order:
-            variables_list.append(bf.variables)
+        cdef INDEX_t i, j_, m, n
         
         # Zero out J if necessary
-        cdef INDEX_t i, j_, m, n
         m = J.shape[0]
         n = J.shape[1]
         if not prezeroed_j:
@@ -827,40 +820,18 @@ cdef class Basis:
                     J[i, j_] = 0.0
         
         # Compute the derivative for each variable
-        cdef INDEX_t var, bf_idx, n_bfs = len(self)
+        cdef INDEX_t var, bf_idx, coef_idx, n_bfs = len(self)
         cdef set variables
         for var in range(self.num_variables):
+            coef_idx=0
             for bf_idx in range(n_bfs):
                 bf = self.order[bf_idx]
-                variables = variables_list[bf_idx]
-                if var not in variables or bf.is_pruned():
+                variables = bf.variables()
+                if (variables and var not in variables) or bf.is_pruned():
                     continue
                 bf.apply_deriv(X, b, j, var)
                 for i in range(m):
-                    J[i, var] += coef[bf_idx] * j[i]
-        
-        
-        
-#         '''
-#         The array J (for Jacobian) is modified in place.
-#         '''
-#         cdef INDEX_t n_vars, n_basis, n_rows, i, j, k
-#         cdef BasisFunction bf
-#         n_vars = X.shape[1]
-#         n_basis = len(self)
-#         n_rows = X.shape[0]
-#         
-#         # Allocate workspace
-#         b = np.ones(shape=(1,n_vars))
-#         
-#         for i in range(n_rows):
-#             self.transform(X[i,:], b)
-#             for j in range(n_vars):
-#                 for bf in self:
-#                     J[i,j] = bf.apply_deriv(b, j)
-#                     
-#         
-#         
-#         
-        
+                    J[i, var] += coef[coef_idx] * j[i]
+                coef_idx += 1
+
         
