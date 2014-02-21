@@ -29,12 +29,19 @@ class TestConstantBasisFunction(BaseTestClass):
         self.bf = ConstantBasisFunction()
 
     def test_apply(self):
-        m, n = self.X.shape
+        m, _ = self.X.shape
         B = numpy.empty(shape=(m, 10))
-
         assert_false(numpy.all(B[:, 0] == 1))
         self.bf.apply(self.X, B[:, 0])
         assert_true(numpy.all(B[:, 0] == 1))
+        
+    def test_apply_deriv(self):
+        m, _ = self.X.shape
+        b = numpy.empty(shape=m)
+        j = numpy.empty(shape=m)
+        self.bf.apply_deriv(self.X, b, j, 1)
+        assert_true(numpy.all(b == 1))
+        assert_true(numpy.all(j == 0))
 
     def test_pickle_compatibility(self):
         bf_copy = pickle.loads(pickle.dumps(self.bf))
@@ -86,7 +93,7 @@ class TestSmoothedHingeBasisFunction(BaseTestClass):
         assert_equal(self.bf2.get_r(), rminus)
         
     def test_apply(self):
-        m, n = self.X.shape
+        m, _ = self.X.shape
         B = numpy.ones(shape=(m, 10))
         self.bf1.apply(self.X, B[:, 0])
         self.bf2.apply(self.X, B[:, 1])
@@ -104,10 +111,45 @@ class TestSmoothedHingeBasisFunction(BaseTestClass):
         c2[self.X[:, 1] <= 0.0] = -1 * (self.X[self.X[:, 1] <= 0.0] - 1.0)
         c2[(self.X[:, 1] > 0.0) & (self.X[:, 1] < 3.0)] = pminus*((self.X[(self.X[:, 1] > 0.0) & (self.X[:, 1] < 3.0), 1] - 3.0)**2) + \
                                                           rminus*((self.X[(self.X[:, 1] > 0.0) & (self.X[:, 1] < 3.0), 1] - 3.0)**3)
-        assert_true(
-            numpy.all(numpy.abs(B[:, 0] - c1) < .0000001))
-        assert_true(
-            numpy.all(numpy.abs(B[:, 1] - c2) < .0000001))
+        numpy.testing.assert_almost_equal(B[:, 0], c1)
+        numpy.testing.assert_almost_equal(B[:, 1], c2)
+        
+    def test_apply_deriv(self):
+        m, _ = self.X.shape
+        pplus = (2*3.0 + 0.0 -3*1.0) / ((3.0 - 0.0)**2)
+        rplus = (2*1.0 - 3.0 - 0.0) / ((3.0 - 0.0)**3)
+        pminus = (3*1.0 - 2*0.0 - 3.0) / ((0.0 - 3.0)**2)
+        rminus = (0.0 + 3.0 - 2*1.0) / ((0.0 - 3.0)**3)
+        c1 = numpy.ones(m)
+        c1[self.X[:, 1] <= 0.0] = 0.0
+        c1[(self.X[:, 1] > 0.0) & (self.X[:, 1] < 3.0)] = pplus*((self.X[(self.X[:, 1] > 0.0) & (self.X[:, 1] < 3.0), 1] - 0.0)**2) + \
+                                                      rplus*((self.X[(self.X[:, 1] > 0.0) & (self.X[:, 1] < 3.0), 1] - 0.0)**3)
+        c1[self.X[:,1] >= 3.0] = self.X[self.X[:,1] >= 3.0, 1] - 1.0
+        c2 = numpy.ones(m)
+        c2[self.X[:, 1] >= 3.0] = 0.0
+        c2[self.X[:, 1] <= 0.0] = -1 * (self.X[self.X[:, 1] <= 0.0] - 1.0)
+        c2[(self.X[:, 1] > 0.0) & (self.X[:, 1] < 3.0)] = pminus*((self.X[(self.X[:, 1] > 0.0) & (self.X[:, 1] < 3.0), 1] - 3.0)**2) + \
+                                                          rminus*((self.X[(self.X[:, 1] > 0.0) & (self.X[:, 1] < 3.0), 1] - 3.0)**3)
+        b1 = numpy.empty(shape=m)
+        j1 = numpy.empty(shape=m)
+        b2 = numpy.empty(shape=m)
+        j2 = numpy.empty(shape=m)
+        cp1 = numpy.ones(m)
+        cp1[self.X[:, 1] <= 0.0] = 0.0
+        cp1[(self.X[:, 1] > 0.0) & (self.X[:, 1] < 3.0)] = 2.0*pplus*((self.X[(self.X[:, 1] > 0.0) & (self.X[:, 1] < 3.0), 1] - 0.0)) + \
+                                                      3.0*rplus*((self.X[(self.X[:, 1] > 0.0) & (self.X[:, 1] < 3.0), 1] - 0.0)**2)
+        cp1[self.X[:,1] >= 3.0] = 1.0
+        cp2 = numpy.ones(m)
+        cp2[self.X[:, 1] >= 3.0] = 0.0
+        cp2[self.X[:, 1] <= 0.0] = -1.0
+        cp2[(self.X[:, 1] > 0.0) & (self.X[:, 1] < 3.0)] = 2.0*pminus*((self.X[(self.X[:, 1] > 0.0) & (self.X[:, 1] < 3.0), 1] - 3.0)) + \
+                                                          3.0*rminus*((self.X[(self.X[:, 1] > 0.0) & (self.X[:, 1] < 3.0), 1] - 3.0)**2)
+        self.bf1.apply_deriv(self.X, b1, j1, 1)
+        self.bf2.apply_deriv(self.X, b2, j2, 1)
+        numpy.testing.assert_almost_equal(b1, c1)
+        numpy.testing.assert_almost_equal(b2, c2)
+        numpy.testing.assert_almost_equal(j1, cp1)
+        numpy.testing.assert_almost_equal(j2, cp2)
         
 class TestHingeBasisFunction(BaseTestClass):
 
@@ -124,11 +166,21 @@ class TestHingeBasisFunction(BaseTestClass):
         assert self.bf.get_parent() == self.parent
 
     def test_apply(self):
-        m, n = self.X.shape
+        m, _ = self.X.shape
         B = numpy.ones(shape=(m, 10))
         self.bf.apply(self.X, B[:, 0])
-        assert_true(
-            numpy.all(B[:, 0] == (self.X[:, 1] - 1.0) * (self.X[:, 1] > 1.0)))
+        numpy.testing.assert_almost_equal(B[:, 0],
+                                           (self.X[:, 1] - 1.0) * (self.X[:, 1] > 1.0))
+        
+    def test_apply_deriv(self):
+        m, _ = self.X.shape
+        b = numpy.empty(shape=m)
+        j = numpy.empty(shape=m)
+        self.bf.apply_deriv(self.X, b, j, 1)
+        numpy.testing.assert_almost_equal((self.X[:, 1] - 1.0) * (self.X[:, 1] > 1.0),
+                                          b)
+        numpy.testing.assert_almost_equal(1.0 * (self.X[:, 1] > 1.0),
+                                          j)
 
     def test_degree(self):
         assert_equal(self.bf.degree(), 1)
@@ -160,6 +212,14 @@ class TestLinearBasisFunction(BaseTestClass):
         B = numpy.ones(shape=(m, 10))
         self.bf.apply(self.X, B[:, 0])
         assert_true(numpy.all(B[:, 0] == self.X[:, 1]))
+        
+    def test_apply_deriv(self):
+        m, _ = self.X.shape
+        b = numpy.empty(shape=m)
+        j = numpy.empty(shape=m)
+        self.bf.apply_deriv(self.X, b, j, 1)
+        numpy.testing.assert_almost_equal(b, self.X[:, 1])
+        numpy.testing.assert_almost_equal(j, 1.0)
 
     def test_degree(self):
         assert_equal(self.bf.degree(), 1)
