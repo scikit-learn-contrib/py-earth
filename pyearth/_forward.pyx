@@ -78,7 +78,7 @@ cdef class ForwardPasser:
             self.sort_tracker[i] = i
         self.zero_tol = 1e-6
 
-        self.linear_variables = np.zeros(shape=self.n, dtype=np.int)
+        self.linear_variables = np.zeros(shape=self.n, dtype=np.int_)
         self.init_linear_variables()
 
         # Add in user selected linear variables
