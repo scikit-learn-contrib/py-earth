@@ -41,6 +41,11 @@ if cythonize_switch:
              "pyearth._forward",
              ["pyearth/_forward.pyx"],
              include_dirs=[local_inc,
+                           numpy_inc]),
+         Extension(
+             "pyearth._types",
+             ["pyearth/_types.pyx"],
+             include_dirs=[local_inc,
                            numpy_inc])
          ])
 else:
@@ -62,6 +67,11 @@ else:
         Extension(
             "pyearth._forward",
             ["pyearth/_forward.c"],
+            include_dirs=[local_inc,
+                          numpy_inc]),
+        Extension(
+            "pyearth._types",
+            ["pyearth/_types.c"],
             include_dirs=[local_inc,
                           numpy_inc])
     ]

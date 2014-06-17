@@ -112,7 +112,7 @@ cdef class ForwardPasser:
             endspan = self.endspan
         cdef ConstantBasisFunction root_basis_function = self.basis[0]
         for variable in range(self.n):
-            order = np.argsort(X[:, variable])[::-1]
+            order = np.argsort(X[:, variable])[::-1].astype(np.int)
             if root_basis_function.valid_knots(B[order, 0], X[order, variable],
                                                variable, self.check_every, endspan,
                                                self.minspan, self.minspan_alpha,
