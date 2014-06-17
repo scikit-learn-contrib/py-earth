@@ -1,9 +1,6 @@
 cimport numpy as cnp
 import numpy as np
-ctypedef cnp.float64_t FLOAT_t
-ctypedef cnp.intp_t INT_t
-ctypedef cnp.ulong_t INDEX_t
-ctypedef cnp.uint8_t BOOL_t
+from _types cimport FLOAT_t, INT_t, INDEX_t, BOOL_t
 from _basis cimport Basis
 from _record cimport ForwardPassRecord
 
