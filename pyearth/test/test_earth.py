@@ -138,8 +138,8 @@ class TestEarth(object):
             else:
                 sample_weight = None
             model = Earth(**settings).fit(X, y, sample_weight = sample_weight)
-            with open(os.path.join(directory, case + '.txt'), 'w') as outfile:
-                outfile.write(model.summary())
+#             with open(os.path.join(directory, case + '.txt'), 'w') as outfile:
+#                 outfile.write(model.summary())
             with open(os.path.join(directory, case + '.txt'), 'r') as infile:
                 correct = infile.read()
             assert_equal(model.summary(), correct)
