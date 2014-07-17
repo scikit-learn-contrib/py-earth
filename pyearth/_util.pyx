@@ -10,6 +10,9 @@ from libc.math cimport sqrt, log
 cdef FLOAT_t log2(FLOAT_t x):
     return log(x) / log(2.0)
 
+def strf(v):
+    return '%.18g' % v#("%%.%ig" % int(max(np.ceil(np.log10(v)), 7))) % float(v)
+
 cpdef apply_weights_2d(cnp.ndarray[FLOAT_t, ndim=2] B, cnp.ndarray[FLOAT_t, ndim=1] weights):
     cdef INDEX_t i
     cdef INDEX_t j

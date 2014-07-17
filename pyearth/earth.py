@@ -1,10 +1,11 @@
 from ._forward import ForwardPasser
 from ._pruning import PruningPasser
-from ._util import ascii_table, apply_weights_2d, apply_weights_1d
+from ._util import ascii_table, apply_weights_2d, apply_weights_1d, strf
 from sklearn.base import RegressorMixin, BaseEstimator, TransformerMixin
 from sklearn.utils.validation import assert_all_finite, safe_asarray
 import numpy as np
 from scipy import sparse
+import os
 
 
 class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
@@ -157,7 +158,24 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                 kwargs[name] = call[name]
 
         self.set_params(**kwargs)
-
+    
+    def emit_python_code(self, func_name='model'):
+        functions = []
+        for i, bf in enumerate(self.basis_.piter()):
+            func = '''def bf%d(**kwargs):
+    return %s
+            ''' % (i, bf.emit_python_code())
+            functions.append(func)
+        result = ''
+        for func in functions:
+            result += func
+            result += os.linesep
+        result += '''def %s(**kwargs):
+    return %s
+        ''' % (func_name, ' + '.join(['(%s * bf%d(**kwargs))' % (self.coef_[i], i) for i in range(len(functions))]))
+        return result
+            
+    
     def __eq__(self, other):
         if self.__class__ is not other.__class__:
             return False
@@ -290,7 +308,15 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         assert_all_finite(sample_weight)
 
         return X, y, sample_weight
-
+    
+    def emit_predictor(self):
+        '''
+        Emit a Python function that predicts a single unit based on named inputs.
+        '''
+        
+        
+        
+    
     def fit(self, X, y=None, sample_weight=None, xlabels=None, linvars=[]):
         '''
         Fit an Earth model to the input data X and y.

@@ -25,4 +25,7 @@ y_hat = model.predict(X)
 pyplot.figure()
 pyplot.plot(X[:, 6], y, 'r.')
 pyplot.plot(X[:, 6], y_hat, 'b.')
+exec(model.emit_python_code('sfunc'))
+pyplot.plot(X[:, 6], [sfunc(x6=x) for x in X[:, 6]], 'y+')
 pyplot.show()
+

@@ -5,6 +5,7 @@
 # cython: profile = False
 
 from ._util cimport log2, apply_weights_2d
+from ._util import strf
 from libc.math cimport log
 from libc.math cimport abs
 cdef FLOAT_t ZERO_TOL = 1e-16
@@ -18,7 +19,13 @@ cdef class BasisFunction:
         self.prunable = True
         self.child_map = {}
         self.splittable = True
-
+    
+    def emit_python_function(BasisFunction self):
+        return NotImplemented
+    
+    def emit_python_code(BasisFunction self, simplified=False):
+        return NotImplemented
+    
     def __reduce__(self):
         return (self.__class__, (), self._getstate())
 
@@ -287,7 +294,15 @@ pickle_place_holder = PicklePlaceHolderBasisFunction()
 cdef class ConstantBasisFunction(BasisFunction):
     def __init__(self):  # @DuplicatedSignature
         self.prunable = False
-
+    
+    def emit_python_function(ConstantBasisFunction self):
+        def function(**kwargs):
+            return 1.0
+        return function
+    
+    def emit_python_code(ConstantBasisFunction self, simplified=False):
+        return '1.0'
+    
     def _get_root(self):
         return self
 
@@ -338,7 +353,28 @@ cdef class HingeBasisFunction(BasisFunction):
         self.reverse = reverse
         self.label = label if label is not None else 'x' + str(variable)
         self._set_parent(parent)
-
+    
+    def emit_python_function(HingeBasisFunction self):
+        parent = self.parent.emit_python_function
+        knot = self.knot
+        label = self.label
+        if self.reverse:
+            def function(**kwargs):
+                return parent(**kwargs) * max(0.0, knot - kwargs[label])
+        else:
+            def function(**kwargs):
+                return parent(**kwargs) * max(0.0, kwargs[label] - knot)
+        return function
+    
+    def emit_python_code(HingeBasisFunction self, simplified=False):
+        parent = self.parent.emit_python_code(simplified)
+        if simplified:
+            var = self.label
+        else:
+            var = 'kwargs["%s"]' % self.label
+        knot_str = strf(self.knot)
+        return parent + ' * max(0.0, %s - %s)' % ((knot_str, var) if self.reverse else (var, knot_str))
+    
     def __reduce__(self):
         return (self.__class__, (pickle_place_holder, 1.0, 1, 1, True, ''), self._getstate())
 
@@ -434,7 +470,22 @@ cdef class LinearBasisFunction(BasisFunction):
         self.variable = variable
         self.label = label if label is not None else 'x' + str(variable)
         self._set_parent(parent)
-
+    
+    def emit_python_function(LinearBasisFunction self):
+        parent = self.parent.emit_python_function
+        label = self.label
+        def function(**kwargs):
+            return parent(**kwargs) * kwargs[label]
+        return function
+    
+    def emit_python_code(HingeBasisFunction self, simplified=False):
+        parent = self.parent.emit_python_code(simplified)
+        if simplified:
+            var = self.label
+        else:
+            var = 'kwargs["%s"]' % self.label
+        return parent + ' * %s' % var
+    
     def __reduce__(self):
         return (self.__class__, (pickle_place_holder, 1, ''), self._getstate())
 
@@ -489,7 +540,7 @@ cdef class Basis:
     def __init__(Basis self, num_variables):  # @DuplicatedSignature
         self.order = []
         self.num_variables = num_variables
-
+    
     def __reduce__(self):
         return (self.__class__, (self.num_variables,), self._getstate())
 
