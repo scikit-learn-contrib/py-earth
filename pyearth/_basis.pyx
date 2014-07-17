@@ -806,7 +806,7 @@ cdef class Basis:
         
     cpdef transform_deriv(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] b, 
                           cnp.ndarray[FLOAT_t, ndim=1] j, cnp.ndarray[FLOAT_t, ndim=1] coef,
-                          cnp.ndarray[FLOAT_t, ndim=2] J, bool prezeroed_j=False):
+                          cnp.ndarray[FLOAT_t, ndim=2] J, list variables_of_interest, bool prezeroed_j=False):
         
         cdef BasisFunction bf
         cdef INDEX_t i, j_, m, n
@@ -822,7 +822,7 @@ cdef class Basis:
         # Compute the derivative for each variable
         cdef INDEX_t var, bf_idx, coef_idx, n_bfs = len(self)
         cdef set variables
-        for var in range(self.num_variables):
+        for j_, var in enumerate(variables_of_interest):
             coef_idx=0
             for bf_idx in range(n_bfs):
                 bf = self.order[bf_idx]
@@ -831,7 +831,7 @@ cdef class Basis:
                     continue
                 bf.apply_deriv(X, b, j, var)
                 for i in range(m):
-                    J[i, var] += coef[coef_idx] * j[i]
+                    J[i, j_] += coef[coef_idx] * j[i]
                 coef_idx += 1
 
         

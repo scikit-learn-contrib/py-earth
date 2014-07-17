@@ -158,6 +158,11 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
     `pruning_pass_record_` : _record.PruningPassRecord
         An object containing information about the pruning pass, such as training loss function
         values after each iteration and the selected optimal iteration.
+        
+        
+    `xlabels_` : list
+        List of column names for training predictors.  Defaults to ['x0','x1',....] if column 
+        names are not provided.
 
 
     **References:**
@@ -247,7 +252,10 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                 try:
                     labels = list(X.dtype.names)
                 except TypeError:
-                    labels = None
+                    try:
+                        labels = ['x%d' % i for i in range(X.shape[1])]
+                    except IndexError:
+                        labels = ['x%d' % i for i in range(1)]
 
         return labels
 
@@ -360,12 +368,14 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
         # Format and label the data
         if xlabels is None:
-            xlabels = self._scrape_labels(X)
+            self.xlabels_ = self._scrape_labels(X)
+        else:
+            self.xlabels_ = xlabels
         self.linvars_ = linvars
         X, y, sample_weight = self._scrub(X, y, sample_weight)
-
+        
         # Do the actual work
-        self.forward_pass(X, y, sample_weight, xlabels, linvars)
+        self.forward_pass(X, y, sample_weight, self.xlabels_, linvars)
         self.pruning_pass(X, y, sample_weight)
         if hasattr(self, 'smooth') and self.smooth:
             self.basis_ = self.basis_.smooth(X)
@@ -416,13 +426,15 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
         # Label and format data
         if xlabels is None:
-            xlabels = self._scrape_labels(X)
+            self.xlabels_ = self._scrape_labels(X)
+        else:
+            self.xlabels_ = xlabels
         X, y, sample_weight = self._scrub(X, y, sample_weight)
 
         # Do the actual work
         args = self._pull_forward_args(**self.__dict__)
         forward_passer = ForwardPasser(
-            X, y, sample_weight, xlabels=xlabels, linvars=linvars, **args)
+            X, y, sample_weight, xlabels=self.xlabels_, linvars=linvars, **args)
         forward_passer.run()
         self.forward_pass_record_ = forward_passer.trace()
         self.basis_ = forward_passer.get_basis()
@@ -587,7 +599,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         B = self.transform(X)
         return np.dot(B, self.coef_)
 
-    def predict_deriv(self, X):
+    def predict_deriv(self, X, variables=None):
         '''
         Predict the first derivatives of the response based on the input data X.
         
@@ -597,13 +609,30 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         X : array-like, shape = [m, n] where m is the number of samples and n is the number of features
             The training predictors.  The X parameter can be a numpy array, a pandas DataFrame, or a
             patsy DesignMatrix.
+            
+        
+        variables : list
+            The variables over which derivatives will be computed.  Each column in the resulting array
+            corresponds to a variable.  If not specified, all variables are used (even if some are not
+            relevant to the final model and have derivatives that are identically zero).
 
         '''
+        if type(variables) in (str, int):
+            variables = [variables]
+        if variables is None:
+            variables_of_interest = list(range(len(self.xlabels_)))
+        else:
+            variables_of_interest = []
+            for var in variables:
+                if type(var) is int:
+                    variables_of_interest.append(var)
+                else:
+                    variables_of_interest.append(self.xlabels_.index(var))
         X = self._scrub_x(X)
-        J = np.zeros(shape=(X.shape[0], self.basis_.get_num_variables()))
+        J = np.zeros(shape=(X.shape[0], len(variables_of_interest)))
         b = np.empty(shape=X.shape[0])
         j = np.empty(shape=X.shape[0])
-        self.basis_.transform_deriv(X, b, j, self.coef_, J, True)
+        self.basis_.transform_deriv(X, b, j, self.coef_, J, variables_of_interest, True)
         return J
 
     def score(self, X, y=None, sample_weight=None):

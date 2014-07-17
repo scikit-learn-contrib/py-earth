@@ -23,7 +23,7 @@ print model.summary()
 
 # Get the predicted values and derivatives
 y_hat = model.predict(X)
-y_prime_hat = model.predict_deriv(X)
+y_prime_hat = model.predict_deriv(X, 'x6')
 
 # Plot true and predicted function values and derivatives for the predictive variable
 pyplot.subplot(211)
@@ -32,6 +32,6 @@ pyplot.plot(X[:, 6], y_hat, 'b.')
 pyplot.ylabel('function')
 pyplot.subplot(212)
 pyplot.plot(X[:, 6], y_prime, 'r.')
-pyplot.plot(X[:, 6], y_prime_hat[:,6], 'b.')
+pyplot.plot(X[:, 6], y_prime_hat[:,0], 'b.')
 pyplot.ylabel('derivative')
 pyplot.show()
