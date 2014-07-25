@@ -159,22 +159,23 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
         self.set_params(**kwargs)
     
-    def emit_python_code(self, func_name='model'):
-        functions = []
-        for i, bf in enumerate(self.basis_.piter()):
-            func = '''def bf%d(**kwargs):
-    return %s
-            ''' % (i, bf.emit_python_code())
-            functions.append(func)
-        result = ''
-        for func in functions:
-            result += func
-            result += os.linesep
-        result += '''def %s(**kwargs):
-    return %s
-        ''' % (func_name, ' + '.join(['(%s * bf%d(**kwargs))' % (self.coef_[i], i) for i in range(len(functions))]))
-        return result
-            
+    def emit_python_code(self, func_name=None):
+        '''
+        Return a string containing Python code for a function or expression that will return predictions from the Earth model.
+        
+        func_name : str, optional (default=None)
+            Name of the generated Python function.  If None, only an expression is returned without an enclosing function.
+        
+        '''
+        expr = ' + '.join([('%.16g * ' % c) + bf.emit_python_code(simplified=True) for \
+                           c, bf in zip(self.coef_, self.basis_.piter())])
+        if func_name is None:
+            return expr
+        else:
+            input_names = sorted(list(set([bf._getstate()['label'] for bf in self.basis_ if 'label' in bf._getstate()])))
+            func = ('def %s(%s):' + os.linesep + '    return ' + expr) % \
+                (func_name, ', '.join(input_names))
+            return func
     
     def __eq__(self, other):
         if self.__class__ is not other.__class__:
@@ -308,14 +309,6 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         assert_all_finite(sample_weight)
 
         return X, y, sample_weight
-    
-    def emit_predictor(self):
-        '''
-        Emit a Python function that predicts a single unit based on named inputs.
-        '''
-        
-        
-        
     
     def fit(self, X, y=None, sample_weight=None, xlabels=None, linvars=[]):
         '''
