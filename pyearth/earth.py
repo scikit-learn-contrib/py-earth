@@ -168,7 +168,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         
         '''
         expr = ' + '.join([('%.16g * ' % c) + bf.emit_python_code(simplified=True) for \
-                           c, bf in zip(self.coef_, self.basis_.piter())])
+                           c, bf in zip(self.coef_, self.basis_.piter()) if c != 0.])
         if func_name is None:
             return expr
         else:
