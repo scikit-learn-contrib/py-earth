@@ -2,7 +2,7 @@ from ._forward import ForwardPasser
 from ._pruning import PruningPasser
 from ._util import ascii_table, apply_weights_2d, apply_weights_1d, gcv
 from sklearn.base import RegressorMixin, BaseEstimator, TransformerMixin
-from sklearn.utils.validation import assert_all_finite, safe_asarray
+from sklearn.utils.validation import assert_all_finite
 import numpy as np
 from scipy import sparse
 
@@ -269,7 +269,8 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                             'is required. Use X.toarray() to convert to dense.')
 
         # Convert to internally used data type
-        X = safe_asarray(X, dtype=np.float64)
+        X = np.asarray(X, dtype=np.float64)
+        assert_all_finite(X)
         if len(X.shape) == 1:
             X = X.reshape((X.shape[0], 1))
 
@@ -300,14 +301,16 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         X = self._scrub_x(X, **kwargs)
 
         # Convert y to internally used data type
-        y = safe_asarray(y, dtype=np.float64)
+        y = np.asarray(y, dtype=np.float64)
+        assert_all_finite(y)
         y = y.reshape(y.shape[0])
 
         # Deal with sample_weight
         if sample_weight is None:
             sample_weight = np.ones(y.shape[0], dtype=y.dtype)
         else:
-            sample_weight = safe_asarray(sample_weight)
+            sample_weight = np.asarray(sample_weight)
+            assert_all_finite(sample_weight)
             sample_weight = sample_weight.reshape(sample_weight.shape[0])
 
         # Make sure dimensions match
