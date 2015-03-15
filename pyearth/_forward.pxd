@@ -72,4 +72,8 @@ cdef class ForwardPasser:
 
     cdef next_pair(ForwardPasser self)
 
-    cdef best_knot(ForwardPasser self, INDEX_t parent, INDEX_t variable, INDEX_t k, cnp.ndarray[INT_t, ndim=1] candidates, cnp.ndarray[INT_t, ndim=1] order, FLOAT_t * mse, FLOAT_t * knot, INDEX_t * knot_idx)
+    cdef best_knot(ForwardPasser self, INDEX_t parent, INDEX_t variable,
+                   INDEX_t k, cnp.ndarray[INT_t, ndim=1] candidates,
+                   cnp.ndarray[INT_t, ndim=1] order,
+                   FLOAT_t * mse, FLOAT_t * knot,
+                   INDEX_t * knot_idx)

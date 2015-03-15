@@ -5,7 +5,8 @@
 # cython: profile = False
 
 from ._util cimport gcv_adjust, log2, apply_weights_1d, apply_weights_slice
-from ._basis cimport Basis, BasisFunction, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
+from ._basis cimport (Basis, BasisFunction, ConstantBasisFunction,
+                      HingeBasisFunction, LinearBasisFunction)
 from ._record cimport ForwardPassIteration
 
 from libc.math cimport sqrt, abs, log
@@ -22,7 +23,9 @@ stopping_conditions = {
 
 cdef class ForwardPasser:
 
-    def __init__(ForwardPasser self, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] y, cnp.ndarray[FLOAT_t, ndim=1] sample_weight, **kwargs):
+    def __init__(ForwardPasser self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                 cnp.ndarray[FLOAT_t, ndim=1] y,
+                 cnp.ndarray[FLOAT_t, ndim=1] sample_weight, **kwargs):
         cdef INDEX_t i
         self.X = X
         self.y = y.copy()
@@ -38,7 +41,9 @@ cdef class ForwardPasser:
             'minspan_alpha'] if 'minspan_alpha' in kwargs else .05
         self.max_terms = kwargs[
             'max_terms'] if 'max_terms' in kwargs else 2 * self.n + 10
-        self.allow_linear = kwargs['allow_linear'] if 'allow_linear' in kwargs else True
+        self.allow_linear = (kwargs['allow_linear']
+                             if 'allow_linear' in kwargs
+                             else True)
         self.max_degree = kwargs['max_degree'] if 'max_degree' in kwargs else 1
         self.thresh = kwargs['thresh'] if 'thresh' in kwargs else 0.001
         self.penalty = kwargs['penalty'] if 'penalty' in kwargs else 3.0
@@ -50,10 +55,15 @@ cdef class ForwardPasser:
         if self.xlabels is None:
             self.xlabels = ['x' + str(i) for i in range(self.n)]
         if self.check_every < 0:
-            self.check_every = <int > (self.m / self.min_search_points) if self.m > self.min_search_points else 1
-        self.sst = (np.dot(self.y, self.y) -
-                    (np.dot(np.sqrt(self.sample_weight), self.y) / np.sqrt(np.sum(self.sample_weight))) ** 2) / self.m
+            self.check_every = (<int > (self.m / self.min_search_points)
+                                if self.m > self.min_search_points
+                                else 1)
+
         self.y_squared = np.dot(self.y, self.y)
+        stuff = (np.dot(np.sqrt(self.sample_weight), self.y) /
+                 np.sqrt(np.sum(self.sample_weight))) ** 2
+        self.sst = (self.y_squared - stuff) / self.m
+
         self.record = ForwardPassRecord(
             self.m, self.n, self.penalty, self.sst, self.xlabels)
         self.basis = Basis(self.n)
@@ -103,9 +113,12 @@ cdef class ForwardPasser:
         cdef INDEX_t variable
         cdef INDEX_t endspan
         cdef cnp.ndarray[INT_t, ndim = 1] order
-        cdef cnp.ndarray[INT_t, ndim = 1] linear_variables = <cnp.ndarray[INT_t, ndim = 1] > self.linear_variables
-        cdef cnp.ndarray[FLOAT_t, ndim = 2] B = <cnp.ndarray[FLOAT_t, ndim = 2] > self.B
-        cdef cnp.ndarray[FLOAT_t, ndim = 2] X = <cnp.ndarray[FLOAT_t, ndim = 2] > self.X
+        cdef cnp.ndarray[INT_t, ndim = 1] linear_variables = (
+            <cnp.ndarray[INT_t, ndim = 1] > self.linear_variables)
+        cdef cnp.ndarray[FLOAT_t, ndim = 2] B = (
+            <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)
+        cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
+            <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
         if self.endspan < 0:
             endspan = round(3 - log2(self.endspan_alpha / self.n))
         else:
@@ -114,9 +127,10 @@ cdef class ForwardPasser:
         for variable in range(self.n):
             order = np.argsort(X[:, variable])[::-1].astype(np.int)
             if root_basis_function.valid_knots(B[order, 0], X[order, variable],
-                                               variable, self.check_every, endspan,
-                                               self.minspan, self.minspan_alpha,
-                                               self.n, self.mwork).shape[0] == 0:
+                                               variable, self.check_every,
+                                               endspan, self.minspan,
+                                               self.minspan_alpha, self.n,
+                                               self.mwork).shape[0] == 0:
                 linear_variables[variable] = 1
             else:
                 linear_variables[variable] = 0
@@ -153,14 +167,19 @@ cdef class ForwardPasser:
         return False
 
     cpdef int orthonormal_update(ForwardPasser self, INDEX_t k):
-        '''Orthogonalize and normalize column k of B_orth against all previous columns of B_orth.'''
+        '''Orthogonalize and normalize column k of B_orth against all previous
+           columns of B_orth.'''
         # Currently implemented using modified Gram-Schmidt process
         # TODO: Optimize - replace some for loops with calls to blas
 
-        cdef cnp.ndarray[FLOAT_t, ndim = 2] B_orth = <cnp.ndarray[FLOAT_t, ndim = 2] > self.B_orth
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] c = <cnp.ndarray[FLOAT_t, ndim = 1] > self.c
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] y = <cnp.ndarray[FLOAT_t, ndim = 1] > self.y
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] norms = <cnp.ndarray[FLOAT_t, ndim = 1] > self.norms
+        cdef cnp.ndarray[FLOAT_t, ndim = 2] B_orth = (
+            <cnp.ndarray[FLOAT_t, ndim = 2] > self.B_orth)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] c = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.c)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] y = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.y)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] norms = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.norms)
 
         cdef INDEX_t i
         cdef INDEX_t j
@@ -189,7 +208,7 @@ cdef class ForwardPasser:
             nrm += B_orth[i, k] * B_orth[i, k]
         nrm = sqrt(nrm)
         norms[k] = nrm
-        
+
         if nrm0 <= self.zero_tol or nrm / nrm0 <= self.zero_tol:
             for i in range(self.m):
                 B_orth[i, k] = 0.0
@@ -209,10 +228,11 @@ cdef class ForwardPasser:
 
     cpdef orthonormal_downdate(ForwardPasser self, INDEX_t k):
         '''
-        Undo the effects of the last orthonormal update.  You can only undo the last orthonormal update this way.
-        There will be no warning of any kind if you mess this up.  You'll just get wrong answers.
-        In reality, all this does is downdate c_squared (the elements of c and B_orth are left alone, since they
-        can simply be ignored until they are overwritten).
+        Undo the effects of the last orthonormal update.  You can only undo the
+        last orthonormal update this way. There will be no warning of any kind
+        if you mess this up.  You'll just get wrong answers. In reality, all
+        this does is downdate c_squared (the elements of c and B_orth are left
+        alone, since they can simply be ignored until they are overwritten).
         '''
         self.c_squared -= self.c[k] ** 2
 
@@ -242,20 +262,29 @@ cdef class ForwardPasser:
         cdef INDEX_t endspan
         cdef bint linear_dependence
         cdef bint dependent
-        cdef FLOAT_t gcv_factor_k_plus_1 = gcv_adjust(k + 1, self.m, self.penalty)
-        cdef FLOAT_t gcv_factor_k_plus_2 = gcv_adjust(k + 2, self.m, self.penalty)
+        cdef FLOAT_t gcv_factor_k_plus_1 = gcv_adjust(k + 1, self.m,
+                                                      self.penalty)
+        cdef FLOAT_t gcv_factor_k_plus_2 = gcv_adjust(k + 2, self.m,
+                                                      self.penalty)
         cdef FLOAT_t gcv_
         cdef FLOAT_t mse_
         cdef INDEX_t i
 
-        cdef cnp.ndarray[FLOAT_t, ndim = 2] X = <cnp.ndarray[FLOAT_t, ndim = 2] > self.X
-        cdef cnp.ndarray[FLOAT_t, ndim = 2] B = <cnp.ndarray[FLOAT_t, ndim = 2] > self.B
-        cdef cnp.ndarray[FLOAT_t, ndim = 2] B_orth = <cnp.ndarray[FLOAT_t, ndim = 2] > self.B_orth
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] y = <cnp.ndarray[FLOAT_t, ndim = 1] > self.y
-        cdef cnp.ndarray[INT_t, ndim = 1] linear_variables = <cnp.ndarray[INT_t, ndim = 1] > self.linear_variables
-        cdef cnp.ndarray[INT_t, ndim = 1] sorting = <cnp.ndarray[INT_t, ndim = 1] > self.sorting
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] sample_weight = <cnp.ndarray[FLOAT_t, ndim = 1] > self.sample_weight
-        
+        cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
+            <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
+        cdef cnp.ndarray[FLOAT_t, ndim = 2] B = (
+            <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)
+        cdef cnp.ndarray[FLOAT_t, ndim = 2] B_orth = (
+            <cnp.ndarray[FLOAT_t, ndim = 2] > self.B_orth)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] y = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.y)
+        cdef cnp.ndarray[INT_t, ndim = 1] linear_variables = (
+            <cnp.ndarray[INT_t, ndim = 1] > self.linear_variables)
+        cdef cnp.ndarray[INT_t, ndim = 1] sorting = (
+            <cnp.ndarray[INT_t, ndim = 1] > self.sorting)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] sample_weight = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.sample_weight)
+
         if self.endspan < 0:
             endspan = round(3 - log2(self.endspan_alpha / self.n))
         else:
@@ -289,11 +318,12 @@ cdef class ForwardPasser:
                     B_orth[i, k] = B[i, k]
                 linear_dependence = self.orthonormal_update(k)
 
-                # If a new hinge function does not improve the gcv over the linear term
-                # then just the linear term will be retained (if allow_linear).  Calculate the 
-                # gcv with just the linear term in order to compare later.  Note that the mse 
-                # with another term never increases, but the gcv may because it penalizes 
-                # additional terms.
+                # If a new hinge function does not improve the gcv over the
+                # linear term then just the linear term will be retained
+                # (if allow_linear).  Calculate the gcv with just the linear
+                # term in order to compare later.  Note that the mse with
+                # another term never increases, but the gcv may because it
+                # penalizes additional terms.
                 mse_ = (self.y_squared - self.c_squared) / self.m
                 gcv_ = gcv_factor_k_plus_1 * \
                     (self.y_squared - self.c_squared) / self.m
@@ -304,8 +334,13 @@ cdef class ForwardPasser:
                 else:
 
                     # Find the valid knot candidates
-                    candidates_idx = parent.valid_knots(B[sorting, parent_idx], X[
-                                                        sorting, variable], variable, self.check_every, endspan, self.minspan, self.minspan_alpha, self.n, self.mwork)
+                    candidates_idx = parent.valid_knots(B[sorting, parent_idx],
+                                                        X[sorting, variable],
+                                                        variable,
+                                                        self.check_every,
+                                                        endspan, self.minspan,
+                                                        self.minspan_alpha,
+                                                        self.n, self.mwork)
 
                     if len(candidates_idx) > 0:
                     # Choose the best candidate (if no candidate is an
@@ -314,11 +349,13 @@ cdef class ForwardPasser:
 
                         # Find the best knot location for this parent and
                         # variable combination
-                        self.best_knot(parent_idx, variable, k, candidates_idx, sorting, & mse, & knot, & knot_idx)
+                        self.best_knot(parent_idx, variable, k, candidates_idx,
+                                       sorting, & mse, & knot, & knot_idx)
 
                         # If the hinge function does not decrease the gcv then
                         # just keep the linear term (if allow_linear is True)
-                        if self.allow_linear and (gcv_factor_k_plus_2 * mse >= gcv_):
+                        if (self.allow_linear and
+                            (gcv_factor_k_plus_2 * mse >= gcv_)):
                             mse = mse_
                             knot_idx = -1
 
@@ -360,10 +397,14 @@ cdef class ForwardPasser:
         label = self.xlabels[variable_choice]
         if knot_idx_choice != -1:
             # Add the new basis functions
-            bf1 = HingeBasisFunction(
-                parent_choice, knot_choice, knot_idx_choice, variable_choice, False, label)
-            bf2 = HingeBasisFunction(
-                parent_choice, knot_choice, knot_idx_choice, variable_choice, True, label)
+            bf1 = HingeBasisFunction(parent_choice,
+                                     knot_choice, knot_idx_choice,
+                                     variable_choice,
+                                     False, label)
+            bf2 = HingeBasisFunction(parent_choice,
+                                     knot_choice, knot_idx_choice,
+                                     variable_choice,
+                                     True, label)
             bf1.apply(X, B[:, k])
             apply_weights_slice(B, sample_weight, k)
             bf2.apply(X, B[:, k + 1])
@@ -396,29 +437,45 @@ cdef class ForwardPasser:
             return
 
         # Update the build record
-        self.record.append(ForwardPassIteration(
-            parent_idx_choice, variable_choice, knot_idx_choice, mse_choice, len(self.basis)))
+        self.record.append(ForwardPassIteration(parent_idx_choice,
+                                                variable_choice,
+                                                knot_idx_choice, mse_choice,
+                                                len(self.basis)))
 
-    cdef best_knot(ForwardPasser self, INDEX_t parent, INDEX_t variable, INDEX_t k, cnp.ndarray[INT_t, ndim=1] candidates, cnp.ndarray[INT_t, ndim=1] order, FLOAT_t * mse, FLOAT_t * knot, INDEX_t * knot_idx):
+    cdef best_knot(ForwardPasser self, INDEX_t parent, INDEX_t variable,
+                   INDEX_t k, cnp.ndarray[INT_t, ndim=1] candidates,
+                   cnp.ndarray[INT_t, ndim=1] order,
+                   FLOAT_t * mse, FLOAT_t * knot,
+                   INDEX_t * knot_idx):
         '''
         Find the best knot location (in terms of squared error).
 
         Assumes:
         B[:,k] is the linear term for variable
         X[:,variable] is in decreasing order
-        candidates is in increasing order (it is an array of indices into X[:,variable]
-        mse is a pointer to the mean squared error of including just the linear term in B[:,k]
+        candidates is in increasing order (it is an array of indices
+        into X[:,variable] mse is a pointer to the mean squared error of
+        including just the linear term in B[:,k]
         '''
 
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] b = <cnp.ndarray[FLOAT_t, ndim = 1] > self.B[:, k + 1]
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] b_parent = <cnp.ndarray[FLOAT_t, ndim = 1] > self.B[:, parent]
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] u = <cnp.ndarray[FLOAT_t, ndim = 1] > self.u
-        cdef cnp.ndarray[FLOAT_t, ndim = 2] B_orth = <cnp.ndarray[FLOAT_t, ndim = 2] > self.B_orth
-        cdef cnp.ndarray[FLOAT_t, ndim = 2] X = <cnp.ndarray[FLOAT_t, ndim = 2] > self.X
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] y = <cnp.ndarray[FLOAT_t, ndim = 1] > self.y
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] c = <cnp.ndarray[FLOAT_t, ndim = 1] > self.c
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] B_orth_times_parent_cum = <cnp.ndarray[FLOAT_t, ndim = 1] > self.B_orth_times_parent_cum
-        cdef cnp.ndarray[FLOAT_t, ndim = 2] B = <cnp.ndarray[FLOAT_t, ndim = 2] > self.B
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] b = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.B[:, k + 1])
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] b_parent = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.B[:, parent])
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] u = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.u)
+        cdef cnp.ndarray[FLOAT_t, ndim = 2] B_orth = (
+            <cnp.ndarray[FLOAT_t, ndim = 2] > self.B_orth)
+        cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
+            <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] y = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.y)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] c = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.c)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] B_orth_times_parent_cum = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.B_orth_times_parent_cum)
+        cdef cnp.ndarray[FLOAT_t, ndim = 2] B = (
+            <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)
 
         cdef INDEX_t num_candidates = candidates.shape[0]
 
@@ -520,12 +577,14 @@ cdef class ForwardPasser:
             diff = last_candidate - candidate
             delta_c_end = 0.0
 
-            # What follows is a section of code that has been optimized for speed at the expense of
-            # some readability.  To make it easier to understand this code in the future, I have included a
-            #"simple" block that implements the same math in a more straightforward (but much less efficient)
-            # way.  The (commented out) code between "BEGIN SIMPLE" and "END SIMPLE" should produce the same
-            # output as the code between "BEGIN HYPER-OPTIMIZED" and "END
-            # HYPER-OPTIMIZED".
+            # What follows is a section of code that has been optimized for
+            # speed at the expense of some readability.  To make it easier to
+            # understand this code in the future, I have included a
+            # "simple" block that implements the same math in a more
+            # straightforward (but much less efficient) way.
+            # The (commented out) code between "BEGIN SIMPLE" and "END SIMPLE"
+            # should produce the same output as the code between
+            # "BEGIN HYPER-OPTIMIZED" and "END HYPER-OPTIMIZED".
 
             # BEGIN SIMPLE
 # Calculate delta_b
@@ -555,7 +614,8 @@ cdef class ForwardPasser:
             delta_u_end = 0.0
 
             # Update the accumulators
-            for j_ in range(last_last_candidate_idx + 1, last_candidate_idx + 1):
+            for j_ in range(last_last_candidate_idx + 1,
+                            last_candidate_idx + 1):
                 j = order[j_]
                 y_cum += y[j]
                 for h in range(k + 1):  # TODO: BLAS

@@ -643,7 +643,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         self.gcv_ = gcv(
             self.mse_, self.coef_.shape[0], X.shape[0], self.get_penalty())
 
-        y_avg = y.average(y, weights=sample_weight)
+        y_avg = np.average(y, weights=sample_weight)
         y_sqr = sample_weight * (y - y_avg) ** 2
         mse0 = np.sum(y_sqr) / float(X.shape[0])
 
@@ -742,7 +742,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         residual = y - y_hat
         mse = np.sum(sample_weight * (residual ** 2)) / m
 
-        y_avg = y.average(y, weights=sample_weight)
+        y_avg = np.average(y, weights=sample_weight)
         y_sqr = sample_weight * (y - y_avg) ** 2
         mse0 = np.sum(y_sqr) / m
         return 1 - (mse / mse0)

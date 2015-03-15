@@ -10,7 +10,8 @@ from libc.math cimport sqrt, log
 cdef FLOAT_t log2(FLOAT_t x):
     return log(x) / log(2.0)
 
-cpdef apply_weights_2d(cnp.ndarray[FLOAT_t, ndim=2] B, cnp.ndarray[FLOAT_t, ndim=1] weights):
+cpdef apply_weights_2d(cnp.ndarray[FLOAT_t, ndim=2] B,
+                       cnp.ndarray[FLOAT_t, ndim=1] weights):
     cdef INDEX_t i
     cdef INDEX_t j
     cdef INDEX_t m = B.shape[0]
@@ -19,7 +20,9 @@ cpdef apply_weights_2d(cnp.ndarray[FLOAT_t, ndim=2] B, cnp.ndarray[FLOAT_t, ndim
         for j in range(n):
             B[i, j] *= sqrt(weights[i])
 
-cpdef apply_weights_slice(cnp.ndarray[FLOAT_t, ndim=2] B, cnp.ndarray[FLOAT_t, ndim=1] weights, INDEX_t column):
+cpdef apply_weights_slice(cnp.ndarray[FLOAT_t, ndim=2] B,
+                          cnp.ndarray[FLOAT_t, ndim=1] weights,
+                          INDEX_t column):
     cdef INDEX_t i
     cdef INDEX_t j
     cdef INDEX_t m = B.shape[0]
@@ -27,17 +30,22 @@ cpdef apply_weights_slice(cnp.ndarray[FLOAT_t, ndim=2] B, cnp.ndarray[FLOAT_t, n
     for i in range(m):
         B[i, column] *= sqrt(weights[i])
 
-cpdef apply_weights_1d(cnp.ndarray[FLOAT_t, ndim=1] y, cnp.ndarray[FLOAT_t, ndim=1] weights):
+cpdef apply_weights_1d(cnp.ndarray[FLOAT_t, ndim=1] y,
+                       cnp.ndarray[FLOAT_t, ndim=1] weights):
     cdef INDEX_t i
     cdef INDEX_t m = y.shape[0]
     for i in range(m):
         y[i] *= sqrt(weights[i])
 
-cpdef FLOAT_t gcv(FLOAT_t mse, INDEX_t basis_size, INDEX_t data_size, FLOAT_t penalty):
+cpdef FLOAT_t gcv(FLOAT_t mse, INDEX_t basis_size, INDEX_t data_size,
+                  FLOAT_t penalty):
     return mse * gcv_adjust(basis_size, data_size, penalty)
 
-cpdef FLOAT_t gcv_adjust(INDEX_t basis_size, INDEX_t data_size, FLOAT_t penalty):
-    return 1.0 / ((1 - ((basis_size + penalty * (basis_size - 1)) / data_size)) ** 2)
+cpdef FLOAT_t gcv_adjust(INDEX_t basis_size, INDEX_t data_size,
+                         FLOAT_t penalty):
+    return ( 1.0 /
+            ((1 - ((basis_size + penalty * (basis_size - 1)) / data_size)) ** 2)
+            )
 
 cpdef str_pad(string, length):
     if len(string) >= length:
