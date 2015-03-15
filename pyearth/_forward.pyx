@@ -587,25 +587,25 @@ cdef class ForwardPasser:
             # "BEGIN HYPER-OPTIMIZED" and "END HYPER-OPTIMIZED".
 
             # BEGIN SIMPLE
-# Calculate delta_b
-#            for j  in range(0,last_candidate_idx+1):
-#                delta_b[j] = diff
-#            for j in range(last_candidate_idx+1,candidate_idx):
-#                float_tmp = (X[j,variable] - candidate) * b_parent[j]
-#                delta_b[j] = float_tmp
-#
-# Update u and z_end_squared
-#            u[0:k+1] += np.dot(delta_b,B_orth[:,0:k+1])
-#            u_end += 2*np.dot(delta_b,b) + np.dot(delta_b, delta_b)
-#
-# Update c_end
-#            c_end += np.dot(delta_b,y)
-#
-# Update z_end_squared
-#            z_end_squared = ((c_end - np.dot(u[0:k+1],c[0:k+1]))**2) / (u_end)
-#
-# Update b
-#            b += delta_b
+            # Calculate delta_b
+            #            for j  in range(0,last_candidate_idx+1):
+            #                delta_b[j] = diff
+            #            for j in range(last_candidate_idx+1,candidate_idx):
+            #                float_tmp = (X[j,variable] - candidate) * b_parent[j]
+            #                delta_b[j] = float_tmp
+            #
+            # Update u and z_end_squared
+            #            u[0:k+1] += np.dot(delta_b,B_orth[:,0:k+1])
+            #            u_end += 2*np.dot(delta_b,b) + np.dot(delta_b, delta_b)
+            #
+            # Update c_end
+            #            c_end += np.dot(delta_b,y)
+            #
+            # Update z_end_squared
+            #            z_end_squared = ((c_end - np.dot(u[0:k+1],c[0:k+1]))**2) / (u_end)
+            #
+            # Update b
+            #            b += delta_b
             # END SIMPLE
 
             # BEGIN HYPER-OPTIMIZED

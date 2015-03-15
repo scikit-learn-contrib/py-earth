@@ -9,7 +9,7 @@ from scipy import sparse
 
 class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
-    '''
+    """
     Multivariate Adaptive Regression Splines
 
     A flexible regression method that automatically searches for interactions
@@ -180,12 +180,13 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         Defaults to ['x0','x1',....] if column names are not provided.
 
 
-    **References:**
-    Friedman, Jerome. Multivariate Adaptive Regression Splines.
-    Annals of Statistics. Volume 19,
-        Number 1 (1991), 1-67.
+    References
+    ----------
 
-    '''
+    .. [1] Friedman, Jerome. Multivariate Adaptive Regression Splines.
+           Annals of Statistics. Volume 19, Number 1 (1991), 1-67.
+
+    """
 
     forward_pass_arg_names = set(
         ['endspan', 'minspan', 'endspan_alpha', 'minspan_alpha',
@@ -409,14 +410,14 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         X, y, sample_weight = self._scrub(X, y, sample_weight)
 
         # Do the actual work
-        self.forward_pass(X, y, sample_weight, self.xlabels_, linvars)
-        self.pruning_pass(X, y, sample_weight)
+        self.__forward_pass(X, y, sample_weight, self.xlabels_, linvars)
+        self.__pruning_pass(X, y, sample_weight)
         if hasattr(self, 'smooth') and self.smooth:
             self.basis_ = self.basis_.smooth(X)
-        self.linear_fit(X, y, sample_weight)
+        self.__linear_fit(X, y, sample_weight)
         return self
 
-    def forward_pass(
+    def __forward_pass(
             self, X, y=None, sample_weight=None, xlabels=None, linvars=[]):
         '''
         Perform the forward pass of the multivariate adaptive regression
@@ -483,7 +484,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         self.forward_pass_record_ = forward_passer.trace()
         self.basis_ = forward_passer.get_basis()
 
-    def pruning_pass(self, X, y=None, sample_weight=None):
+    def __pruning_pass(self, X, y=None, sample_weight=None):
         '''
         Perform the pruning pass of the multivariate adaptive regression
         splines algorithm.  Users will normally want to call the fit
@@ -531,14 +532,14 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         pruning_passer.run()
         self.pruning_pass_record_ = pruning_passer.trace()
 
-    def unprune(self, X, y=None):
+    def __unprune(self, X, y=None):
         '''Unprune all pruned basis functions and fit coefficients to X and y
            using the unpruned basis.
         '''
         for bf in self.basis_:
             bf.unprune()
         del self.pruning_pass_record_
-        self.linear_fit(X, y)
+        self.__linear_fit(X, y)
 
     def forward_trace(self):
         '''Return information about the forward pass.'''
@@ -588,7 +589,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             self.mse_, self.gcv_, self.rsq_, self.grsq_)
         return result
 
-    def linear_fit(self, X, y=None, sample_weight=None):
+    def __linear_fit(self, X, y=None, sample_weight=None):
         '''
         Solve the linear least squares problem to determine the coefficients
         of the unpruned basis functions.

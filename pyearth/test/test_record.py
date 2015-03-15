@@ -1,5 +1,5 @@
-from .._record import ForwardPassRecord, ForwardPassIteration, PruningPassRecord, PruningPassIteration
-from .._util import gcv
+from pyearth._record import ForwardPassRecord, ForwardPassIteration, PruningPassRecord, PruningPassIteration
+from pyearth._util import gcv
 from nose.tools import assert_true, assert_equal, assert_list_equal
 
 

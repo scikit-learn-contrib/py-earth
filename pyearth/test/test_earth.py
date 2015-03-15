@@ -4,12 +4,12 @@ Created on Feb 24, 2013
 @author: jasonrudy
 '''
 import numpy
-from .._basis import Basis, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
-from .. import Earth
+from pyearth._basis import Basis, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
+from pyearth import Earth
 import pickle
 import copy
 import os
-from .testing_utils import if_statsmodels, if_pandas, if_patsy
+from testing_utils import if_statsmodels, if_pandas, if_patsy
 from nose.tools import assert_equal, assert_not_equal, assert_true, assert_false, \
     assert_almost_equal, assert_list_equal
 
@@ -42,7 +42,7 @@ class TestEarth(object):
                                    'endspan_alpha': None, 'check_every': None,
                                    'max_terms': None, 'max_degree':
                                    None, 'minspan_alpha': None,
-                                   'thresh': None, 'minspan': None, 'endspan': None, 
+                                   'thresh': None, 'minspan': None, 'endspan': None,
                                    'allow_linear': None, 'smooth': None})
         assert_equal(
             Earth(
@@ -68,7 +68,7 @@ class TestEarth(object):
         soln = GLS(self.y, self.earth.transform(
             self.X), 1.0 / sample_weight).fit().params
         assert_almost_equal(numpy.mean((self.earth.coef_ - soln) ** 2), 0.0)
-    
+
     def test_sample_weight(self):
         group = numpy.random.binomial(1, .5, size=1000) == 1
         sample_weight = 1 / (group * 100 + 1.0)
