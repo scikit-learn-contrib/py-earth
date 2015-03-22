@@ -10,7 +10,9 @@ import numpy as np
 
 cdef class PruningPasser:
     '''Implements the generic pruning pass as described by Friedman, 1991.'''
-    def __init__(PruningPasser self, Basis basis, cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] y, cnp.ndarray[FLOAT_t, ndim=1] weights, **kwargs):
+    def __init__(PruningPasser self, Basis basis,
+                 cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=1] y,
+                 cnp.ndarray[FLOAT_t, ndim=1] weights, **kwargs):
         self.X = X
         self.m = self.X.shape[0]
         self.n = self.X.shape[1]
@@ -19,14 +21,14 @@ cdef class PruningPasser:
         self.basis = basis
         self.B = np.empty(shape=(self.m, len(self.basis) + 1), dtype=np.float)
         self.penalty = kwargs['penalty'] if 'penalty' in kwargs else 3.0
-        self.sst = np.sum(
-            self.weights * (self.y - np.average(self.y, weights=self.weights)) ** 2) / self.m
+        y_avg = np.average(self.y, weights=self.weights)
+        self.sst = np.sum(self.weights * (self.y - y_avg) ** 2) / self.m
 
     cpdef run(PruningPasser self):
-        # This is a totally naive implementation and could potentially be made faster
-        # through the use of updating algorithms.  It is not clear that such
-        # optimization would be worthwhile, as the pruning pass is not the slowest
-        # part of the algorithm.
+        # This is a totally naive implementation and could potentially be made
+        # faster through the use of updating algorithms.  It is not clear that
+        # such optimization would be worthwhile, as the pruning pass is not the
+        # slowest part of the algorithm.
         cdef INDEX_t i
         cdef INDEX_t j
         cdef INDEX_t basis_size = len(self.basis)
@@ -38,10 +40,14 @@ cdef class PruningPasser:
         cdef FLOAT_t best_iteration_gcv
         cdef FLOAT_t best_iteration_mse
 
-        cdef cnp.ndarray[FLOAT_t, ndim = 2] B = <cnp.ndarray[FLOAT_t, ndim = 2] > self.B
-        cdef cnp.ndarray[FLOAT_t, ndim = 2] X = <cnp.ndarray[FLOAT_t, ndim = 2] > self.X
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] y = <cnp.ndarray[FLOAT_t, ndim = 1] > self.y
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] weights = <cnp.ndarray[FLOAT_t, ndim = 1] > self.weights
+        cdef cnp.ndarray[FLOAT_t, ndim = 2] B = (
+            <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)
+        cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
+            <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] y = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.y)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] weights = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.weights)
         cdef cnp.ndarray[FLOAT_t, ndim = 1] weighted_y = y.copy()
 
         # Initial solution
@@ -80,8 +86,9 @@ cdef class PruningPasser:
                 if mse:
                     mse /= self.m
                 else:
-                    mse = (1 / float(self.m)) * np.sum(
-                        (np.dot(B[:, 0:pruned_basis_size], beta) - weighted_y) ** 2)
+                    mse = ((1 / float(self.m)) *
+                           np.sum((np.dot(B[:, 0:pruned_basis_size], beta) -
+                                   weighted_y) ** 2))
                 gcv_ = gcv(mse, pruned_basis_size, self.m, self.penalty)
 
                 if gcv_ <= best_iteration_gcv or first:
@@ -91,9 +98,9 @@ cdef class PruningPasser:
                     first = False
                 bf.unprune()
 
-            # The inner loop found the best basis function to remove for this iteration.
-            # Now check whether this iteration is better than all the previous
-            # ones.
+            # The inner loop found the best basis function to remove for this
+            # iteration. Now check whether this iteration is better than all
+            #the previous ones.
             if best_iteration_gcv <= best_gcv:
                 best_gcv = best_iteration_gcv
                 best_iteration = i

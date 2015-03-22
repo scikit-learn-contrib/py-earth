@@ -1,7 +1,8 @@
 
 import numpy
-from pyearth import Earth
 from matplotlib import pyplot
+
+from pyearth import Earth
 
 # Create some fake data
 numpy.random.seed(2)

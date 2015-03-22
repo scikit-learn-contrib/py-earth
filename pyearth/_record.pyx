@@ -18,7 +18,8 @@ cdef class Record:
             return NotImplemented
 
     def _eq(self, other):
-        return self.__class__ is other.__class__ and self._getstate() == other._getstate()
+        return (self.__class__ is other.__class__ and
+                self._getstate() == other._getstate())
 
     def __getitem__(Record self, int idx):
         return self.iterations[idx]
@@ -40,7 +41,8 @@ cdef class Record:
     cpdef FLOAT_t rsq(Record self, INDEX_t iteration):
         # gcv(self.sst,1,self.num_samples,self.penalty)
         cdef FLOAT_t mse0 = self.sst
-        # gcv(self.mse(iteration):,self.iterations[iteration].get_size(),self.num_samples,self.penalty)#self.gcv(iteration)
+        # gcv(self.mse(iteration):,self.iterations[iteration].get_size(),
+        #        self.num_samples,self.penalty)#self.gcv(iteration)
         cdef FLOAT_t mse = self.mse(iteration)
         return 1 - (mse / mse0)
 
@@ -50,7 +52,9 @@ cdef class Record:
         return 1 - (gcv_ / gcv0)
 
 cdef class PruningPassRecord(Record):
-    def __init__(PruningPassRecord self, INDEX_t num_samples, INDEX_t num_variables, FLOAT_t penalty, FLOAT_t sst, INDEX_t size, FLOAT_t mse):
+    def __init__(PruningPassRecord self, INDEX_t num_samples,
+                 INDEX_t num_variables, FLOAT_t penalty,
+                 FLOAT_t sst, INDEX_t size, FLOAT_t mse):
         self.num_samples = num_samples
         self.num_variables = num_variables
         self.penalty = penalty
@@ -103,7 +107,10 @@ cdef class PruningPassRecord(Record):
         return result
 
 cdef class ForwardPassRecord(Record):
-    def __init__(ForwardPassRecord self, INDEX_t num_samples, INDEX_t num_variables, FLOAT_t penalty, FLOAT_t sst, list xlabels):
+    def __init__(ForwardPassRecord self,
+                 INDEX_t num_samples, INDEX_t num_variables,
+                 FLOAT_t penalty, FLOAT_t sst,
+                 list xlabels):
         self.num_samples = num_samples
         self.num_variables = num_variables
         self.penalty = penalty
@@ -112,7 +119,9 @@ cdef class ForwardPassRecord(Record):
         self.xlabels = xlabels
 
     def __reduce__(ForwardPassRecord self):
-        return (ForwardPassRecord, (self.num_samples, self.num_variables, self.penalty, self.sst, self.xlabels), self._getstate())
+        return (ForwardPassRecord, (self.num_samples, self.num_variables,
+                                    self.penalty, self.sst, self.xlabels),
+                self._getstate())
 
     def _getstate(ForwardPassRecord self):
         return {'num_samples': self.num_samples,
@@ -130,7 +139,8 @@ cdef class ForwardPassRecord(Record):
         self.iterations = state['iterations']
         self.xlabels = state['xlabels']
 
-    cpdef set_stopping_condition(ForwardPassRecord self, int stopping_condition):
+    cpdef set_stopping_condition(ForwardPassRecord self,
+                                 int stopping_condition):
         self.stopping_condition = stopping_condition
 
     def __str__(ForwardPassRecord self):
@@ -138,14 +148,15 @@ cdef class ForwardPassRecord(Record):
                   'mse', 'terms', 'gcv', 'rsq', 'grsq']
         data = []
         for i, iteration in enumerate(self.iterations):
-            data.append(
-                [str(i)] + str(iteration).split('\t') + ('%.3f\t%.3f\t%.3f' %
-                                                         (self.gcv(i), self.rsq(i), self.grsq(i))).split('\t'))
+            data.append([str(i)] + str(iteration).split('\t') +
+                        ('%.3f\t%.3f\t%.3f' % (self.gcv(i), self.rsq(i),
+                                               self.grsq(i))).split('\t'))
         result = ''
         result += 'Forward Pass\n'
         result += ascii_table(header, data)
         result += '\nStopping Condition %d: %s\n' % (
-            self.stopping_condition, stopping_conditions[self.stopping_condition])
+            self.stopping_condition,
+            stopping_conditions[self.stopping_condition])
         return result
 
 cdef class Iteration:
@@ -159,7 +170,8 @@ cdef class Iteration:
             return NotImplemented
 
     def _eq(self, other):
-        return self.__class__ is other.__class__ and self._getstate() == other._getstate()
+        return (self.__class__ is other.__class__ and
+                self._getstate() == other._getstate())
 
     cpdef FLOAT_t get_mse(Iteration self):
         return self.mse
@@ -168,7 +180,9 @@ cdef class Iteration:
         return self.size
 
 cdef class PruningPassIteration(Iteration):
-    def __init__(PruningPassIteration self, INDEX_t pruned, INDEX_t size, FLOAT_t mse):
+    def __init__(PruningPassIteration self,
+                 INDEX_t pruned, INDEX_t size,
+                 FLOAT_t mse):
         self.pruned = pruned
         self.size = size
         self.mse = mse
@@ -216,7 +230,10 @@ cdef class FirstPruningPassIteration(PruningPassIteration):
         return result
 
 cdef class ForwardPassIteration(Iteration):
-    def __init__(ForwardPassIteration self, INDEX_t parent, INDEX_t variable, int knot, FLOAT_t mse, INDEX_t size):
+    def __init__(ForwardPassIteration self,
+                 INDEX_t parent, INDEX_t variable,
+                 int knot, FLOAT_t mse,
+                 INDEX_t size):
         self.parent = parent
         self.variable = variable
         self.knot = knot

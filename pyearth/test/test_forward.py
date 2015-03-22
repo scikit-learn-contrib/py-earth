@@ -3,8 +3,8 @@ Created on Feb 16, 2013
 
 @author: jasonrudy
 '''
-from .._forward import ForwardPasser
-from .._basis import Basis, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
+from pyearth._forward import ForwardPasser
+from pyearth._basis import Basis, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
 import numpy
 import os
 from nose.tools import assert_true, assert_equal
