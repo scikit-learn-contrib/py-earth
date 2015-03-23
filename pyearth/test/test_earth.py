@@ -58,13 +58,13 @@ class TestEarth(object):
     def test_linear_fit(self):
         from statsmodels.regression.linear_model import GLS, OLS
         self.earth.fit(self.X, self.y)
-        self.earth.linear_fit(self.X, self.y)
+        self.earth._Earth__linear_fit(self.X, self.y)
         soln = OLS(self.y, self.earth.transform(self.X)).fit().params
         assert_almost_equal(numpy.mean((self.earth.coef_ - soln) ** 2), 0.0)
 
         sample_weight = 1.0 / (numpy.random.normal(size=self.y.shape) ** 2)
         self.earth.fit(self.X, self.y)
-        self.earth.linear_fit(self.X, self.y, sample_weight)
+        self.earth._Earth__linear_fit(self.X, self.y, sample_weight)
         soln = GLS(self.y, self.earth.transform(
             self.X), 1.0 / sample_weight).fit().params
         assert_almost_equal(numpy.mean((self.earth.coef_ - soln) ** 2), 0.0)
