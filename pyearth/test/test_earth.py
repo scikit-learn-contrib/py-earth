@@ -134,8 +134,7 @@ class TestEarth(object):
         import pandas
         directory = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'pathological_data')
-        cases = {'issue_44': {},
-                 'issue_50': {'penalty': 0.5, 'minspan': 1, 'allow_linear': False,
+        cases = {'issue_50': {'penalty': 0.5, 'minspan': 1, 'allow_linear': False,
                               'endspan': 1, 'check_every': 1, 'sample_weight': 'issue_50_weight.csv'}}
         for case, settings in cases.iteritems():
             data = pandas.read_csv(os.path.join(directory, case + '.csv'))
