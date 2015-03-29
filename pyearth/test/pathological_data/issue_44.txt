@@ -5,4 +5,4 @@ Basis Function  Pruned  Coefficient
 (Intercept)     No      1.13135      
 x               Yes     None         
 -------------------------------------
-MSE: 1.6432, GCV: 1.6765, RSQ: -0.0000, GRSQ: -0.0000
+MSE: 1.6432, GCV: 1.6765, RSQ: 0.0000, GRSQ: 0.0000
