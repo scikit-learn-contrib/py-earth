@@ -20,7 +20,7 @@ cdef class PruningPasser:
         self.weights = weights
         self.basis = basis
         self.B = np.empty(shape=(self.m, len(self.basis) + 1), dtype=np.float)
-        self.penalty = kwargs['penalty'] if 'penalty' in kwargs else 3.0
+        self.penalty = kwargs.get('penalty', 3.0)
         y_avg = np.average(self.y, weights=self.weights)
         self.sst = np.sum(self.weights * (self.y - y_avg) ** 2) / self.m
 

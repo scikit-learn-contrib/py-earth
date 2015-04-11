@@ -33,25 +33,18 @@ cdef class ForwardPasser:
         apply_weights_1d(self.y, self.sample_weight)
         self.m = self.X.shape[0]
         self.n = self.X.shape[1]
-        self.endspan = kwargs['endspan'] if 'endspan' in kwargs else -1
-        self.minspan = kwargs['minspan'] if 'minspan' in kwargs else -1
-        self.endspan_alpha = kwargs[
-            'endspan_alpha'] if 'endspan_alpha' in kwargs else .05
-        self.minspan_alpha = kwargs[
-            'minspan_alpha'] if 'minspan_alpha' in kwargs else .05
-        self.max_terms = kwargs[
-            'max_terms'] if 'max_terms' in kwargs else 2 * self.n + 10
-        self.allow_linear = (kwargs['allow_linear']
-                             if 'allow_linear' in kwargs
-                             else True)
-        self.max_degree = kwargs['max_degree'] if 'max_degree' in kwargs else 1
-        self.thresh = kwargs['thresh'] if 'thresh' in kwargs else 0.001
-        self.penalty = kwargs['penalty'] if 'penalty' in kwargs else 3.0
-        self.check_every = kwargs[
-            'check_every'] if 'check_every' in kwargs else -1
-        self.min_search_points = kwargs[
-            'min_search_points'] if 'min_search_points' in kwargs else 100
-        self.xlabels = kwargs['xlabels'] if 'xlabels' in kwargs else None
+        self.endspan       = kwargs.get('endspan', -1)
+        self.minspan       = kwargs.get('minspan', -1)
+        self.endspan_alpha = kwargs.get('endspan_alpha', .05)
+        self.minspan_alpha = kwargs.get('minspan_alpha', .05)
+        self.max_terms     = kwargs.get('max_terms', 2 * self.n + 10)
+        self.allow_linear  = kwargs.get('allow_linear', True)
+        self.max_degree    = kwargs.get('max_degree', 1)
+        self.thresh        = kwargs.get('thresh', 0.001)
+        self.penalty       = kwargs.get('penalty', 3.0)
+        self.check_every   = kwargs.get('check_every', -1)
+        self.min_search_points = kwargs.get('min_search_points', 100)
+        self.xlabels       = kwargs.get('xlabels')
         if self.xlabels is None:
             self.xlabels = ['x' + str(i) for i in range(self.n)]
         if self.check_every < 0:
@@ -92,15 +85,14 @@ cdef class ForwardPasser:
         self.init_linear_variables()
 
         # Add in user selected linear variables
-        if 'linvars' in kwargs:
-            for linvar in kwargs['linvars']:
-                if linvar in self.xlabels:
-                    self.linear_variables[self.xlabels.index(linvar)] = 1
-                elif linvar in range(self.n):
-                    self.linear_variables[linvar] = 1
-                else:
-                    raise IndexError(
-                        'Unknown variable selected in linvars argument.')
+        for linvar in kwargs.get('linvars',[]):
+            if linvar in self.xlabels:
+                self.linear_variables[self.xlabels.index(linvar)] = 1
+            elif linvar in range(self.n):
+                self.linear_variables[linvar] = 1
+            else:
+                raise IndexError(
+                    'Unknown variable selected in linvars argument.')
 
         # Initialize B_orth, c, and c_squared (assuming column 0 of B_orth is
         # already filled with 1)
