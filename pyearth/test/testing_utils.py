@@ -1,6 +1,20 @@
 from functools import wraps
 from nose import SkipTest
+import os
 
+def if_environ_has(var_name):
+    """Test decorator that skips test if environment variable is not defined."""
+    
+    def if_environ(func):
+        @wraps(func)
+        def run_test(*args, **kwargs):
+            if var_name in os.environ:
+                return func(*args, **kwargs)
+            else:
+                raise SkipTest('Only run if %s environment variable is defined.' \
+                               % var_name)
+        return run_test
+    return if_environ
 
 def if_statsmodels(func):
     """Test decorator that skips test if statsmodels not installed. """

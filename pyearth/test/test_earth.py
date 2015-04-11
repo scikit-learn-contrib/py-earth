@@ -9,7 +9,7 @@ from pyearth import Earth
 import pickle
 import copy
 import os
-from testing_utils import if_statsmodels, if_pandas, if_patsy
+from testing_utils import if_statsmodels, if_pandas, if_patsy, if_environ_has
 from nose.tools import assert_equal, assert_not_equal, assert_true, assert_false, \
     assert_almost_equal, assert_list_equal
 
@@ -130,6 +130,7 @@ class TestEarth(object):
         assert_almost_equal(rsq, model.score(self.X, self.y))
 
     @if_pandas
+    @if_environ_has('test_pathological_cases')
     def test_pathological_cases(self):
         import pandas
         directory = os.path.join(
