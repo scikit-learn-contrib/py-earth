@@ -5,7 +5,7 @@ Created on Feb 24, 2013
 '''
 import numpy
 from pyearth._basis import Basis, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
-from pyearth import Earth
+from pyearth import Earth, export_python_model, export_python_string, export_labelled_coefficients
 import pickle
 import copy
 import os
@@ -199,6 +199,20 @@ class TestEarth(object):
             numpy.all(model.predict(self.X) == model_copy.predict(self.X)))
         assert_true(model.basis_[0] is model.basis_[1]._get_root())
         assert_true(model_copy.basis_[0] is model_copy.basis_[1]._get_root())
+
+    def test_export_model(self):
+        model = self.earth.fit(self.X, self.y)
+        export_model = export_python_model(self.earth)
+        for exp_pred, model_pred in zip(model.predict(self.X), export_model(self.X)):
+            assert_almost_equal(exp_pred, model_pred)
+
+    def test_export_model_string(self):
+        model = self.earth.fit(self.X, self.y)
+        export_model = export_python_string(self.earth, 'my_test_model')
+        exec export_model
+        for exp_pred, model_pred in zip(model.predict(self.X), my_test_model(self.X)):
+            assert_almost_equal(exp_pred, model_pred)
+
 
 if __name__ == '__main__':
     import nose

@@ -1,5 +1,6 @@
 from ._forward import ForwardPasser
 from ._pruning import PruningPasser
+from ._basis import LinearBasisFunction, HingeBasisFunction, ConstantBasisFunction
 from ._util import ascii_table, apply_weights_2d, apply_weights_1d, gcv
 from sklearn.base import RegressorMixin, BaseEstimator, TransformerMixin
 from sklearn.utils.validation import assert_all_finite
@@ -807,3 +808,82 @@ class EarthTrace(object):
 
     def __str__(self):
         return str(self.forward_trace) + '\n' + str(self.pruning_trace)
+
+
+def export_labelled_coefficients(earth_model):
+    """
+    Returns a list of arrays, giving a human readable version of the model
+    :param earth_model:
+    :return:
+    """
+    i = 0
+    coefs = []
+    for bf in earth_model.basis_:
+        if not bf.is_pruned():
+            coefs.append({str(bf): earth_model.coef_[i]})
+            i += 1
+    return coefs
+
+
+def func_factory(bf, coef):
+    if isinstance(bf, HingeBasisFunction):
+        if bf.get_reverse():
+            return lambda j: max(0, bf.get_knot() - j[bf.get_variable()]) * coef
+        return lambda j: max(0, j[bf.get_variable()] - bf.get_knot()) * coef
+    elif isinstance(bf, LinearBasisFunction):
+        return lambda j: j[bf.get_variable()] * coef
+    return lambda j: coef
+
+
+def export_python_model(earth_model):
+    """
+    Exports model as a pure python function, with no numpy/scipy/sklearn
+    :param earth_model: Trained pyearth model
+    :return: a function that accepts an iterator over examples, and returns an iterator over transformed examples
+    """
+    i = 0
+    accessors = []
+    for bf in earth_model.basis_:
+        if not bf.is_pruned():
+            accessors.append(func_factory(bf, earth_model.coef_[i]))
+            i += 1
+
+    def func(example_iterator):
+        return [sum(accessor(row) for accessor in accessors) for row in example_iterator]
+    return func
+
+
+def export_python_string(earth_model, function_name="model"):
+    """
+    Exports model as a pure python function, with no numpy/scipy/sklearn
+    :param earth_model: Trained pyearth model
+    :return: a function that accepts an iterator over examples, and returns an iterator over transformed examples
+    """
+    i = 0
+    accessors = []
+    for bf in earth_model.basis_:
+        if not bf.is_pruned():
+            if isinstance(bf, HingeBasisFunction):
+                if bf.get_reverse():
+                    accessors.append("lambda x: max(0, {:s} - x[{:d}]) * {:s}".format(
+                        str(bf.get_knot()),
+                        bf.get_variable(),
+                        str(earth_model.coef_[i])))
+                else:
+                    accessors.append("lambda x: max(0, x[{:d}] - {:s}) * {:s}".format(
+                        bf.get_variable(),
+                        str(bf.get_knot()),
+                        str(earth_model.coef_[i])))
+            elif isinstance(bf, LinearBasisFunction):
+                accessors.append("lambda x: x[{:d}] * {:s}".format(
+                    bf.get_variable(),
+                    str(earth_model.coef_[i])))
+            else:
+                accessors.append("lambda x: {:s}".format(str(earth_model.coef_[i])))
+            i += 1
+
+    return """def {:s}(example_iterator):
+    accessors = [{:s}]
+    for x in example_iterator:
+        yield sum(accessor(x) for accessor in accessors)
+    """.format(function_name, ",\n\t\t".join(accessors))
