@@ -3,11 +3,15 @@ Created on Feb 16, 2013
 
 @author: jasonrudy
 '''
-from pyearth._forward import ForwardPasser
-from pyearth._basis import Basis, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
-import numpy
+
 import os
+import numpy
+
 from nose.tools import assert_true, assert_equal
+
+from pyearth._forward import ForwardPasser
+from pyearth._basis import (Basis, ConstantBasisFunction,
+                            HingeBasisFunction, LinearBasisFunction)
 
 
 class TestForwardPasser(object):
@@ -43,16 +47,22 @@ class TestForwardPasser(object):
             B_orth[:, i] = 10 * v_ + v
             v = v_
             self.forwardPasser.orthonormal_update(i)
+
+            B_orth_dot_B_orth_T = numpy.dot(B_orth[:, 0:i + 1].transpose(),
+                                            B_orth[:, 0:i + 1])
             assert_true(
-                numpy.max(numpy.abs(numpy.dot(B_orth[:, 0:i + 1].transpose(), B_orth[:, 0:i + 1]) - numpy.eye(i + 1))) < .0000001)
+                numpy.max(numpy.abs(
+                    B_orth_dot_B_orth_T - numpy.eye(i + 1))
+                ) < .0000001
+            )
 
     def test_run(self):
         self.forwardPasser.run()
         res = str(self.forwardPasser.get_basis()) + \
             '\n' + str(self.forwardPasser.trace())
-#        with open('forward_regress.txt','w') as fl:
-#            fl.write(res)
-        with open(os.path.join(os.path.dirname(__file__), 'forward_regress.txt'), 'r') as fl:
+        filename = os.path.join(os.path.dirname(__file__),
+                                'forward_regress.txt')
+        with open(filename, 'r') as fl:
             prev = fl.read()
         assert_equal(res, prev)
 

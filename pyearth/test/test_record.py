@@ -1,6 +1,7 @@
-from pyearth._record import ForwardPassRecord, ForwardPassIteration, PruningPassRecord, PruningPassIteration
+from pyearth._record import (ForwardPassRecord, ForwardPassIteration,
+                             PruningPassRecord, PruningPassIteration)
 from pyearth._util import gcv
-from nose.tools import assert_true, assert_equal, assert_list_equal
+from testing_utils import assert_list_almost_equal
 
 
 class TestForwardPassRecord(object):
@@ -11,8 +12,10 @@ class TestForwardPassRecord(object):
         self.num_variables = 10
         self.penalty = 3.0
         self.sst = 100.0
-        self.record = ForwardPassRecord(
-            self.num_samples, self.num_variables, self.penalty, self.sst, ['x' + str(i) for i in range(self.num_variables)])
+        varnames = ['x' + str(i) for i in range(self.num_variables)]
+        self.record = ForwardPassRecord(self.num_samples, self.num_variables,
+                                        self.penalty, self.sst,
+                                        varnames)
         self.record.append(ForwardPassIteration(0, 3, 3, 63.0, 3))
         self.record.append(ForwardPassIteration(0, 3, 14, 34.0, 5))
         self.record.append(ForwardPassIteration(3, 6, 12, 18.0, 7))
@@ -23,18 +26,19 @@ class TestForwardPassRecord(object):
         mses = [self.record.mse(i) for i in range(len(self.record))]
         mses_ = [self.mses[i] for i in range(len(self.record))]
         gcvs = [self.record.gcv(i) for i in range(len(self.record))]
-        gcvs_ = [gcv(self.mses[i], self.sizes[i], self.num_samples, self.penalty)
+        gcvs_ = [gcv(self.mses[i], self.sizes[i],
+                     self.num_samples, self.penalty)
                  for i in range(len(self.record))]
         rsqs = [self.record.rsq(i) for i in range(len(self.record))]
         rsqs_ = [1 - (self.mses[i] / self.sst)
                  for i in range(len(self.record))]
         grsqs = [self.record.grsq(i) for i in range(len(self.record))]
-        grsqs_ = [1 - (self.record.gcv(i) / gcv(self.sst, 1, self.num_samples, self.penalty))
+        grsqs_ = [1 - (self.record.gcv(i) / gcv(self.sst, 1,
+                                                self.num_samples, self.penalty))
                   for i in range(len(self.record))]
-        assert_list_equal(mses, mses_)
-        assert_list_equal(gcvs, gcvs_)
-        assert_list_equal(rsqs, rsqs_)
-        assert_list_equal(grsqs, grsqs_)
+        assert_list_almost_equal(mses, mses_)
+        assert_list_almost_equal(gcvs, gcvs_)
+        assert_list_almost_equal(rsqs, rsqs_)
 
 
 class TestPruningPassRecord(object):
@@ -45,8 +49,8 @@ class TestPruningPassRecord(object):
         self.num_variables = 10
         self.penalty = 3.0
         self.sst = 100.0
-        self.record = PruningPassRecord(
-            self.num_samples, self.num_variables, self.penalty, self.sst, 7, 18.0)
+        self.record = PruningPassRecord(self.num_samples, self.num_variables,
+                                        self.penalty, self.sst, 7, 18.0)
         self.record.append(PruningPassIteration(2, 6, 25.0))
         self.record.append(PruningPassIteration(1, 5, 34.0))
         self.record.append(PruningPassIteration(3, 4, 87.0))
@@ -57,18 +61,20 @@ class TestPruningPassRecord(object):
         mses = [self.record.mse(i) for i in range(len(self.record))]
         mses_ = [self.mses[i] for i in range(len(self.record))]
         gcvs = [self.record.gcv(i) for i in range(len(self.record))]
-        gcvs_ = [gcv(self.mses[i], self.sizes[i], self.num_samples, self.penalty)
+        gcvs_ = [gcv(self.mses[i], self.sizes[i],
+                     self.num_samples, self.penalty)
                  for i in range(len(self.record))]
         rsqs = [self.record.rsq(i) for i in range(len(self.record))]
         rsqs_ = [1 - (self.mses[i] / self.sst)
                  for i in range(len(self.record))]
         grsqs = [self.record.grsq(i) for i in range(len(self.record))]
-        grsqs_ = [1 - (self.record.gcv(i) / gcv(self.sst, 1, self.num_samples, self.penalty))
+        grsqs_ = [1 - (self.record.gcv(i) / gcv(self.sst, 1,
+                                                self.num_samples, self.penalty))
                   for i in range(len(self.record))]
-        assert_list_equal(mses, mses_)
-        assert_list_equal(gcvs, gcvs_)
-        assert_list_equal(rsqs, rsqs_)
-        assert_list_equal(grsqs, grsqs_)
+        assert_list_almost_equal(mses, mses_)
+        assert_list_almost_equal(gcvs, gcvs_)
+        assert_list_almost_equal(rsqs, rsqs_)
+        assert_list_almost_equal(grsqs, grsqs_)
 
 if __name__ == '__main__':
     import nose
