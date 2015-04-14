@@ -188,18 +188,22 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
     """
 
-    forward_pass_arg_names = set(
-        ['endspan', 'minspan', 'endspan_alpha', 'minspan_alpha',
-         'max_terms', 'max_degree', 'thresh', 'penalty', 'check_every',
-         'min_search_points', 'allow_linear'])
-    pruning_pass_arg_names = set(['penalty'])
+    forward_pass_arg_names = set([
+        'max_terms', 'max_degree', 'penalty',
+        'endspan_alpha', 'endspan',
+        'minspan_alpha', 'minspan',
+        'thresh', 'min_search_points', 'check_every',
+        'allow_linear'
+    ])
+    pruning_pass_arg_names = set([
+        'penalty'
+    ])
 
-    def __init__(
-            self, endspan=None, minspan=None, endspan_alpha=None,
-            minspan_alpha=None, max_terms=None, max_degree=None,
-            thresh=None, penalty=None, check_every=None,
-            min_search_points=None, allow_linear=None, smooth=None):
-
+    def __init__(self, max_terms=None, max_degree=None, penalty=None,
+                 endspan_alpha=None, endspan=None,
+                 minspan_alpha=None, minspan=None,
+                 thresh=None, min_search_points=None, check_every=None,
+                 allow_linear=None, smooth=None):
         kwargs = {}
         call = locals()
         for name in self._get_param_names():
