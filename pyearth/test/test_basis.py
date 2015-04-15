@@ -6,9 +6,9 @@ Created on Feb 17, 2013
 
 import pickle
 import os
+from nose.tools import assert_true, assert_false, assert_equal
 
 import numpy
-from nose.tools import assert_true, assert_false, assert_equal
 
 from pyearth._basis import Basis, ConstantBasisFunction, HingeBasisFunction, \
     LinearBasisFunction, SmoothedHingeBasisFunction
