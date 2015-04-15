@@ -119,7 +119,7 @@ class TestSmoothedHingeBasisFunction(BaseTestClass):
         c1[self.X[:, 1] >= 3.0] = self.X[self.X[:, 1] >= 3.0, 1] - 1.0
         c2 = numpy.ones(m)
         c2[self.X[:, 1] >= 3.0] = 0.0
-        c2[self.X[:, 1] <= 0.0] = -1 * (self.X[self.X[:, 1] <= 0.0] - 1.0)
+        c2.flat[self.X[:, 1] <= 0.0] = -1 * (self.X[self.X[:, 1] <= 0.0] - 1.0)
         c2[(self.X[:, 1] > 0.0) & (self.X[:, 1] < 3.0)] = (
             pminus*((self.X[(self.X[:, 1] > 0.0) &
                     (self.X[:, 1] < 3.0), 1] - 3.0)**2) +
@@ -145,7 +145,7 @@ class TestSmoothedHingeBasisFunction(BaseTestClass):
         c1[self.X[:, 1] >= 3.0] = self.X[self.X[:, 1] >= 3.0, 1] - 1.0
         c2 = numpy.ones(m)
         c2[self.X[:, 1] >= 3.0] = 0.0
-        c2[self.X[:, 1] <= 0.0] = -1 * (self.X[self.X[:, 1] <= 0.0] - 1.0)
+        c2.flat[self.X[:, 1] <= 0.0] = -1 * (self.X[self.X[:, 1] <= 0.0] - 1.0)
         c2[(self.X[:, 1] > 0.0) & (self.X[:, 1] < 3.0)] = (
             pminus*((self.X[(self.X[:, 1] > 0.0) &
                     (self.X[:, 1] < 3.0), 1] - 3.0)**2) +
