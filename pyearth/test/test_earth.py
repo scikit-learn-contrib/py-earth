@@ -3,15 +3,17 @@ Created on Feb 24, 2013
 
 @author: jasonrudy
 '''
-import numpy
-from pyearth._basis import Basis, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
-from pyearth import Earth
 import pickle
 import copy
 import os
 from testing_utils import if_statsmodels, if_pandas, if_patsy, if_environ_has
-from nose.tools import assert_equal, assert_not_equal, assert_true, assert_false, \
+from nose.tools import assert_equal, assert_true, \
     assert_almost_equal, assert_list_equal
+import numpy
+
+from pyearth._basis import (Basis, ConstantBasisFunction,
+                            HingeBasisFunction, LinearBasisFunction)
+from pyearth import Earth
 
 
 class TestEarth(object):
@@ -40,19 +42,22 @@ class TestEarth(object):
         assert_equal(
             Earth().get_params(), {'penalty': None, 'min_search_points': None,
                                    'endspan_alpha': None, 'check_every': None,
-                                   'max_terms': None, 'max_degree':
-                                   None, 'minspan_alpha': None,
-                                   'thresh': None, 'minspan': None, 'endspan': None,
+                                   'max_terms': None, 'max_degree': None,
+                                   'minspan_alpha': None, 'thresh': None,
+                                   'minspan': None, 'endspan': None,
                                    'allow_linear': None, 'smooth': None})
         assert_equal(
             Earth(
-                max_degree=3).get_params(), {'penalty': None, 'min_search_points': None,
+                max_degree=3).get_params(), {'penalty': None,
+                                             'min_search_points': None,
                                              'endspan_alpha': None,
                                              'check_every': None,
-                                             'max_terms': None, 'max_degree':
-                                             3, 'minspan_alpha': None,
-                                             'thresh': None, 'minspan': None, 'endspan': None,
-                                             'allow_linear': None, 'smooth': None})
+                                             'max_terms': None, 'max_degree': 3,
+                                             'minspan_alpha': None,
+                                             'thresh': None, 'minspan': None,
+                                             'endspan': None,
+                                             'allow_linear': None,
+                                             'smooth': None})
 
     @if_statsmodels
     def test_linear_fit(self):
@@ -83,8 +88,10 @@ class TestEarth(object):
             x[numpy.logical_not(group)], y[numpy.logical_not(group)]))
 
         # Make sure that the score function gives the same answer as the trace
+        pruning_trace = model.pruning_trace()
+        rsq_trace = pruning_trace.rsq(model.pruning_trace().get_selected())
         assert_almost_equal(model.score(x, y, sample_weight=sample_weight),
-                            model.pruning_trace().rsq(model.pruning_trace().get_selected()))
+                            rsq_trace)
 
         # Uncomment below to see what this test situation looks like
 #        from matplotlib import pyplot
@@ -98,9 +105,10 @@ class TestEarth(object):
     def test_fit(self):
         self.earth.fit(self.X, self.y)
         res = str(self.earth.trace()) + '\n' + self.earth.summary()
-#        with open(os.path.join(os.path.dirname(__file__), 'earth_regress.txt'),'w') as fl:
 #            fl.write(res)
-        with open(os.path.join(os.path.dirname(__file__), 'earth_regress.txt'), 'r') as fl:
+        filename = os.path.join(os.path.dirname(__file__),
+                                'earth_regress.txt')
+        with open(filename, 'r') as fl:
             prev = fl.read()
         assert_equal(res, prev)
 
@@ -108,18 +116,18 @@ class TestEarth(object):
         model = Earth(penalty=1, smooth=True)
         model.fit(self.X, self.y)
         res = str(model.trace()) + '\n' + model.summary()
-#         with open(os.path.join(os.path.dirname(__file__), 'earth_regress_smooth.txt'),'w') as fl:
-#             fl.write(res)
-        with open(os.path.join(os.path.dirname(__file__), 'earth_regress_smooth.txt'), 'r') as fl:
+        filename = os.path.join(os.path.dirname(__file__),
+                                'earth_regress_smooth.txt')
+        with open(filename, 'r') as fl:
             prev = fl.read()
         assert_equal(res, prev)
 
     def test_linvars(self):
         self.earth.fit(self.X, self.y, linvars=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         res = str(self.earth.trace()) + '\n' + self.earth.summary()
-#        with open(os.path.dirname(__file__), 'earth_linvars_regress.txt'),'w') as fl:
-#            fl.write(res)
-        with open(os.path.join(os.path.dirname(__file__), 'earth_linvars_regress.txt'), 'r') as fl:
+        filename = os.path.join(os.path.dirname(__file__),
+                                'earth_linvars_regress.txt')
+        with open(filename, 'r') as fl:
             prev = fl.read()
         assert_equal(res, prev)
 
@@ -136,21 +144,25 @@ class TestEarth(object):
         directory = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'pathological_data')
         cases = {'issue_44': {},
-                 'issue_50': {'penalty': 0.5, 'minspan': 1, 'allow_linear': False,
-                              'endspan': 1, 'check_every': 1, 'sample_weight': 'issue_50_weight.csv'}}
+                 'issue_50': {'penalty': 0.5,
+                              'minspan': 1,
+                              'allow_linear': False,
+                              'endspan': 1,
+                              'check_every': 1,
+                              'sample_weight': 'issue_50_weight.csv'}}
         for case, settings in cases.iteritems():
             data = pandas.read_csv(os.path.join(directory, case + '.csv'))
             y = data['y']
             del data['y']
             X = data
             if 'sample_weight' in settings:
-                sample_weight = pandas.read_csv(os.path.join(directory, settings['sample_weight']))['sample_weight']
+                filename = os.path.join(directory, settings['sample_weight'])
+                sample_weight = pandas.read_csv(filename)['sample_weight']
                 del settings['sample_weight']
             else:
                 sample_weight = None
-            model = Earth(**settings).fit(X, y, sample_weight = sample_weight)
-#             with open(os.path.join(directory, case + '.txt'), 'w') as outfile:
-#                 outfile.write(model.summary())
+            model = Earth(**settings)
+            model.fit(X, y, sample_weight=sample_weight)
             with open(os.path.join(directory, case + '.txt'), 'r') as infile:
                 correct = infile.read()
             assert_equal(model.summary(), correct)
@@ -177,7 +189,8 @@ class TestEarth(object):
         X.columns = colnames
         X['y'] = y
         y, X = patsy.dmatrices(
-            'y ~ xx0 + xx1 + xx2 + xx3 + xx4 + xx5 + xx6 + xx7 + xx8 + xx9 - 1', data=X)
+            'y ~ xx0 + xx1 + xx2 + xx3 + xx4 + xx5 + xx6 + xx7 + xx8 + xx9 - 1',
+            data=X)
         model = self.earth.fit(X, y)
         assert_list_equal(
             colnames, model.forward_trace()._getstate()['xlabels'])
