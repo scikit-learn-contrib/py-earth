@@ -28,9 +28,8 @@ cdef class ForwardPasser:
                  cnp.ndarray[FLOAT_t, ndim=1] sample_weight, **kwargs):
         cdef INDEX_t i
         self.X = X
-        self.y = y.copy()
+        self.y = y * np.sqrt(sample_weight)
         self.sample_weight = sample_weight
-        apply_weights_1d(self.y, self.sample_weight)
         self.m = self.X.shape[0]
         self.n = self.X.shape[1]
         self.endspan       = kwargs.get('endspan', -1)
@@ -66,9 +65,9 @@ cdef class ForwardPasser:
         self.mwork = np.empty(shape=self.m, dtype=np.int)
         self.u = np.empty(shape=self.max_terms, dtype=float)
         self.B_orth_times_parent_cum = np.empty(
-            shape=self.max_terms, dtype=np.float)
+            shape=self.max_terms, order='F', dtype=np.float)
         self.B = np.ones(
-            shape=(self.m, self.max_terms), order='C', dtype=np.float)
+            shape=(self.m, self.max_terms), order='F', dtype=np.float)
         self.basis.weighted_transform(self.X, self.B[:,0:1], self.sample_weight)
         # An orthogonal matrix with the same column space as B
         self.B_orth = self.B.copy()
@@ -162,59 +161,34 @@ cdef class ForwardPasser:
         '''Orthogonalize and normalize column k of B_orth against all previous
            columns of B_orth.'''
         # Currently implemented using modified Gram-Schmidt process
-        # TODO: Optimize - replace some for loops with calls to blas
 
         cdef cnp.ndarray[FLOAT_t, ndim = 2] B_orth = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B_orth)
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] c = (
-            <cnp.ndarray[FLOAT_t, ndim = 1] > self.c)
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] y = (
-            <cnp.ndarray[FLOAT_t, ndim = 1] > self.y)
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] norms = (
-            <cnp.ndarray[FLOAT_t, ndim = 1] > self.norms)
 
         cdef INDEX_t i
-        cdef INDEX_t j
         cdef FLOAT_t nrm
         cdef FLOAT_t nrm0
-        cdef FLOAT_t dot_prod
 
         # Get the original norm
-        nrm0 = 0.0
-        for i in range(self.m):
-            nrm0 += B_orth[i, k] * B_orth[i, k]
-        nrm0 = sqrt(nrm0)
+        nrm0 = sqrt(np.dot(B_orth[:, k], B_orth[:, k]))
 
         # Orthogonalize
-        if k > 0:
-            for i in range(k):
-                dot_prod = 0.0
-                for j in range(self.m):
-                    dot_prod += B_orth[j, k] * B_orth[j, i]
-                for j in range(self.m):
-                    B_orth[j, k] -= B_orth[j, i] * dot_prod
+        for i in range(k):
+            B_orth[:, k] -= B_orth[:, i] * np.dot(B_orth[:, k], B_orth[:, i])
 
         # Normalize
-        nrm = 0.0
-        for i in range(self.m):
-            nrm += B_orth[i, k] * B_orth[i, k]
-        nrm = sqrt(nrm)
-        norms[k] = nrm
+        self.norms[k] = nrm = sqrt(np.dot(B_orth[:, k], B_orth[:, k]))
 
         if nrm0 <= self.zero_tol or nrm / nrm0 <= self.zero_tol:
-            for i in range(self.m):
-                B_orth[i, k] = 0.0
-            c[k] = 0.0
+            B_orth[:, k] = 0.0
+            self.c[k] = 0.0
             # The new column is in the column space of the previous columns
             return 1
-        for i in range(self.m):
-            B_orth[i, k] /= nrm
+        B_orth[:, k] /= nrm
 
         # Update c
-        c[k] = 0.0
-        for i in range(self.m):
-            c[k] += B_orth[i, k] * y[i]
-        self.c_squared += c[k] ** 2
+        self.c[k] = np.dot(B_orth[:, k], self.y)
+        self.c_squared += self.c[k] ** 2
 
         return 0  # No problems
 
