@@ -13,59 +13,58 @@ from pyearth._forward import ForwardPasser
 from pyearth._basis import (Basis, ConstantBasisFunction,
                             HingeBasisFunction, LinearBasisFunction)
 
+numpy.random.seed(0)
+basis = Basis(10)
+constant = ConstantBasisFunction()
+basis.append(constant)
+bf1 = HingeBasisFunction(constant, 0.1, 10, 1, False, 'x1')
+bf2 = HingeBasisFunction(constant, 0.1, 10, 1, True, 'x1')
+bf3 = LinearBasisFunction(bf1, 2, 'x2')
+basis.append(bf1)
+basis.append(bf2)
+basis.append(bf3)
+X = numpy.random.normal(size=(100, 10))
+B = numpy.empty(shape=(100, 4), dtype=numpy.float64)
+basis.transform(X, B)
+beta = numpy.random.normal(size=4)
+y = numpy.empty(shape=100, dtype=numpy.float64)
+y[:] = numpy.dot(B, beta) + numpy.random.normal(size=100)
 
-class TestForwardPasser(object):
 
-    def __init__(self):
-        numpy.random.seed(0)
-        self.basis = Basis(10)
-        constant = ConstantBasisFunction()
-        self.basis.append(constant)
-        bf1 = HingeBasisFunction(constant, 0.1, 10, 1, False, 'x1')
-        bf2 = HingeBasisFunction(constant, 0.1, 10, 1, True, 'x1')
-        bf3 = LinearBasisFunction(bf1, 2, 'x2')
-        self.basis.append(bf1)
-        self.basis.append(bf2)
-        self.basis.append(bf3)
-        self.X = numpy.random.normal(size=(100, 10))
-        self.B = numpy.empty(shape=(100, 4), dtype=numpy.float64)
-        self.basis.transform(self.X, self.B)
-        self.beta = numpy.random.normal(size=4)
-        self.y = numpy.empty(shape=100, dtype=numpy.float64)
-        self.y[:] = numpy.dot(
-            self.B, self.beta) + numpy.random.normal(size=100)
-        self.forwardPasser = ForwardPasser(
-            self.X, self.y, numpy.ones(self.y.shape), max_terms=1000, penalty=1)
+def test_orthonormal_update():
 
-    def test_orthonormal_update(self):
-        numpy.set_printoptions(precision=4)
-        m, n = self.X.shape
-        B_orth = self.forwardPasser.get_B_orth()
-        v = numpy.random.normal(size=m)
-        for i in range(1, 10):
-            v_ = numpy.random.normal(size=m)
-            B_orth[:, i] = 10 * v_ + v
-            v = v_
-            self.forwardPasser.orthonormal_update(i)
+    forwardPasser = ForwardPasser(X, y, numpy.ones(y.shape),
+                                  max_terms=1000, penalty=1)
 
-            B_orth_dot_B_orth_T = numpy.dot(B_orth[:, 0:i + 1].transpose(),
-                                            B_orth[:, 0:i + 1])
-            assert_true(
-                numpy.max(numpy.abs(
-                    B_orth_dot_B_orth_T - numpy.eye(i + 1))
-                ) < .0000001
-            )
+    numpy.set_printoptions(precision=4)
+    m, n = X.shape
+    B_orth = forwardPasser.get_B_orth()
+    v = numpy.random.normal(size=m)
+    for i in range(1, 10):
+        v_ = numpy.random.normal(size=m)
+        B_orth[:, i] = 10 * v_ + v
+        v = v_
+        forwardPasser.orthonormal_update(i)
 
-    def test_run(self):
-        self.forwardPasser.run()
-        res = str(self.forwardPasser.get_basis()) + \
-            '\n' + str(self.forwardPasser.trace())
-        filename = os.path.join(os.path.dirname(__file__),
-                                'forward_regress.txt')
-        with open(filename, 'r') as fl:
-            prev = fl.read()
-        assert_equal(res, prev)
+        B_orth_dot_B_orth_T = numpy.dot(B_orth[:, 0:i + 1].transpose(),
+                                        B_orth[:, 0:i + 1])
+        assert_true(
+            numpy.max(numpy.abs(
+                B_orth_dot_B_orth_T - numpy.eye(i + 1))
+            ) < .0000001
+        )
 
-if __name__ == '__main__':
-    import nose
-    nose.run(argv=[__file__, '-s', '-v'])
+
+def test_run():
+
+    forwardPasser = ForwardPasser(X, y, numpy.ones(y.shape),
+                                  max_terms=1000, penalty=1)
+
+    forwardPasser.run()
+    res = str(forwardPasser.get_basis()) + \
+        '\n' + str(forwardPasser.trace())
+    filename = os.path.join(os.path.dirname(__file__),
+                            'forward_regress.txt')
+    with open(filename, 'r') as fl:
+        prev = fl.read()
+    assert_equal(res, prev)
