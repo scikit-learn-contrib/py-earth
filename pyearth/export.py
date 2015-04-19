@@ -1,18 +1,3 @@
-def export_labelled_coefficients(earth_model):
-    """
-    Returns a list of arrays, giving a human readable version of the model
-    :param earth_model:
-    :return:
-    """
-    i = 0
-    coefs = []
-    for bf in earth_model.basis_:
-        if not bf.is_pruned():
-            coefs.append({str(bf): earth_model.coef_[i]})
-            i += 1
-    return coefs
-
-
 def export_python_function(earth_model):
     """
     Exports model as a pure python function, with no numpy/scipy/sklearn dependencies.
