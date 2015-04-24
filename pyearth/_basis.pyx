@@ -353,10 +353,7 @@ cdef class RootBasisFunction(BasisFunction):
                   for computing derivatives.
         It is the derivative of the ConstantBasisFunction.
         '''
-        cdef INDEX_t i  # @DuplicatedSignature
-        cdef INDEX_t m = len(b)  # @DuplicatedSignature
-        for i in range(m):
-            b[i] = self.eval()
+        b[:] = self.eval()
 
     cpdef apply_deriv(RootBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
                       cnp.ndarray[FLOAT_t, ndim=1] b,
@@ -366,11 +363,8 @@ cdef class RootBasisFunction(BasisFunction):
         b - holds the value of the basis function
         j - holds the value of the derivative
         '''
-        cdef INDEX_t i  # @DuplicatedSignature
-        cdef INDEX_t m = len(b)  # @DuplicatedSignature
-        for i in range(m):
-            b[i] = self.eval()
-            j[i] = self.eval_deriv()
+        b[:] = self.eval()
+        j[:] = self.eval_deriv()
 
 @cython.final
 cdef class ConstantBasisFunction(RootBasisFunction):
@@ -403,10 +397,7 @@ cdef class VariableBasisFunction(BasisFunction):
         '''
         if recurse:
             self.parent.apply(X, b, recurse=True)
-        cdef INDEX_t i  # @DuplicatedSignature
-        cdef INDEX_t m = len(b)  # @DuplicatedSignature
-        for i in range(m):
-            b[i] *= self.eval(X[i, self.variable])
+        b *= self.eval(X[:, self.variable])
 
     cpdef apply_deriv(VariableBasisFunction self,
                       cnp.ndarray[FLOAT_t, ndim=2] X,
@@ -418,17 +409,16 @@ cdef class VariableBasisFunction(BasisFunction):
         '''
         cdef INDEX_t i, this_var = self.get_variable()  # @DuplicatedSignature
         cdef INDEX_t m = len(b)  # @DuplicatedSignature
-        cdef FLOAT_t this_val, this_deriv, x
+        cdef FLOAT_t x
         self.parent.apply_deriv(X, b, j, var)
+        this_val = self.eval(X[:,this_var])
+        this_deriv = self.eval_deriv(X[:,this_var])
         for i in range(m):
             x = X[i,this_var]
-            this_val = self.eval(x)
+            j[i] = j[i]*this_val[i]
             if this_var == var:
-                this_deriv = self.eval_deriv(x)
-            else:
-                this_deriv = 0.0
-            j[i] = b[i]*this_deriv + j[i]*this_val
-            b[i] *= this_val
+                j[i] += b[i]*this_deriv[i]
+            b[i] *= this_val[i]
 
 cdef class HingeBasisFunctionBase(VariableBasisFunction):
     cpdef bint has_knot(HingeBasisFunctionBase self):
@@ -520,55 +510,31 @@ cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
                  self.knot_idx, self.variable, self.reverse, self.label),
                 self._getstate())
 
-    cpdef inline FLOAT_t eval(SmoothedHingeBasisFunction self, FLOAT_t x):
-        cdef FLOAT_t tmp
-        cdef FLOAT_t tmp2
-        cdef FLOAT_t result
+    def eval(SmoothedHingeBasisFunction self, x):
         # See Friedman, 1991, eq (34)
         if not self.reverse:
-            tmp = x
-            if tmp <= self.knot_minus:
-                result = 0.0
-            elif self.knot_minus < tmp and tmp < self.knot_plus:
-                tmp2 = tmp - self.knot_minus
-                result = self.p*tmp2*tmp2 + self.r*tmp2*tmp2*tmp2
-            else:
-                result = tmp - self.knot
+            tmp2 = x - self.knot_minus
+            return np.where(x <= self.knot_minus, 0.0,
+                np.where((self.knot_minus < x) & (x < self.knot_plus),
+                    self.p*tmp2**2 + self.r*tmp2**3, x - self.knot))
         else:
-            tmp = x
-            if tmp <= self.knot_minus:
-                result = self.knot - tmp
-            elif self.knot_minus < tmp and tmp < self.knot_plus:
-                tmp2 = tmp - self.knot_plus
-                result = self.p*tmp2*tmp2 + self.r*tmp2*tmp2*tmp2
-            else:
-                result = 0.0
-        return result
+            tmp2 = x - self.knot_plus
+            return np.where(x <= self.knot_minus, self.knot - x,
+                np.where((self.knot_minus < x) & (x < self.knot_plus),
+                    self.p*tmp2**2 + self.r*tmp2**3, 0.0))
 
-    cpdef inline FLOAT_t eval_deriv(SmoothedHingeBasisFunction self, FLOAT_t x):
-        cdef FLOAT_t tmp
-        cdef FLOAT_t tmp2
-        cdef FLOAT_t result
+    def eval_deriv(SmoothedHingeBasisFunction self, x):
         # See Friedman, 1991, eq (34)
         if not self.reverse:
-            tmp = x
-            if tmp <= self.knot_minus:
-                result = 0.0
-            elif self.knot_minus < tmp and tmp < self.knot_plus:
-                tmp2 = tmp - self.knot_minus
-                result = 2.0*self.p*tmp2 + 3.0*self.r*tmp2*tmp2
-            else:
-                result = 1.0
+            tmp2 = x - self.knot_minus
+            return np.where(x <= self.knot_minus, 0.0,
+                np.where((self.knot_minus < x) & (x < self.knot_plus),
+                    2.0*self.p*tmp2 + 3.0*self.r*tmp2**2, 1.0))
         else:
-            tmp = x
-            if tmp <= self.knot_minus:
-                result = -1.0
-            elif self.knot_minus < tmp and tmp < self.knot_plus:
-                tmp2 = tmp - self.knot_plus
-                result = 2.0*self.p*tmp2 + 3.0*self.r*tmp2*tmp2
-            else:
-                result = 0.0
-        return result
+            tmp2 = x - self.knot_plus
+            return np.where(x <= self.knot_minus, -1.0,
+                np.where((self.knot_minus < x) & (x < self.knot_plus),
+                    2.0*self.p*tmp2 + 3.0*self.r*tmp2**2, 0.0))
 
 @cython.final
 cdef class HingeBasisFunction(HingeBasisFunctionBase):
@@ -616,35 +582,17 @@ cdef class HingeBasisFunction(HingeBasisFunctionBase):
             result += '*%s' % (str(self.parent),)
         return result
 
-    cpdef inline FLOAT_t eval(HingeBasisFunction self, FLOAT_t x):
-        cdef FLOAT_t result
+    def eval(HingeBasisFunction self, x):
         if self.reverse:
-            if x > self.knot:
-                result = 0.0
-            else:
-                result = self.knot - x
+            return np.where(x  > self.knot, 0.0, self.knot - x)
         else:
-            if x <= self.knot:
-                result = 0.0
-            else:
-                result = x - self.knot
-        if result < 0:
-            result = 0.0
-        return result
+            return np.where(x <= self.knot, 0.0, x - self.knot)
 
-    cpdef inline FLOAT_t eval_deriv(HingeBasisFunction self, FLOAT_t x):
-        cdef FLOAT_t result
+    def eval_deriv(HingeBasisFunction self, x):
         if self.reverse:
-            if x > self.knot:
-                result = 0.0
-            else:
-                result = -1.0
+            return np.where(x  > self.knot, 0.0, -1.0)
         else:
-            if x <= self.knot:
-                result = 0.0
-            else:
-                result = 1.0
-        return result
+            return np.where(x <= self.knot, 0.0,  1.0)
 
 @cython.final
 cdef class LinearBasisFunction(VariableBasisFunction):
@@ -678,11 +626,11 @@ cdef class LinearBasisFunction(VariableBasisFunction):
     cpdef INDEX_t get_variable(LinearBasisFunction self):
         return self.variable
 
-    cpdef inline FLOAT_t eval(LinearBasisFunction self, FLOAT_t x):
+    def eval(LinearBasisFunction self, x):
         return x
 
-    cpdef inline FLOAT_t eval_deriv(LinearBasisFunction self, FLOAT_t x):
-        return <FLOAT_t> 1.0
+    def eval_deriv(LinearBasisFunction self, x):
+        return np.ones(len(x))
 
 cdef class Basis:
     '''A container that provides functionality related to a set of
@@ -823,32 +771,23 @@ cdef class Basis:
 
     cpdef INDEX_t plen(Basis self):
         cdef INDEX_t length = 0
-        cdef INDEX_t i
-        cdef INDEX_t n = len(self.order)
-        for i in range(n):
-            if not self.order[i].is_pruned():
+        for bf in self.order:
+            if not bf.is_pruned():
                 length += 1
         return length
 
     cpdef transform(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X,
                     cnp.ndarray[FLOAT_t, ndim=2] B):
-        cdef INDEX_t i  # @DuplicatedSignature
-        cdef INDEX_t n = self.__len__()
         cdef BasisFunction bf
         cdef INDEX_t col = 0
-        for i in range(n):
-            bf = self.order[i]
-            if bf.is_pruned():
-                continue
-            bf.apply(X, B[:, col], recurse=True)
-            col += 1
+        for bf in self.order:
+            if not bf.is_pruned():
+                bf.apply(X, B[:, col], recurse=True)
+                col += 1
 
     cpdef weighted_transform(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X,
                              cnp.ndarray[FLOAT_t, ndim=2] B,
                              cnp.ndarray[FLOAT_t, ndim=1] weights):
-        cdef INDEX_t i  # @DuplicatedSignature
-        cdef INDEX_t n = self.__len__()
-
         self.transform(X, B)
         apply_weights_2d(B, weights)
 
