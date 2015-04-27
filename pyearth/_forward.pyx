@@ -130,11 +130,11 @@ cdef class ForwardPasser:
         return self.B_orth
 
     cpdef run(ForwardPasser self):
-        cdef INDEX_t i
-        while True:
-            self.next_pair()
-            if self.stop_check():
-                break
+        if self.max_terms > 1:
+            while True:
+                self.next_pair()
+                if self.stop_check():
+                    break
 
     cdef stop_check(ForwardPasser self):
         last = self.record.__len__() - 1

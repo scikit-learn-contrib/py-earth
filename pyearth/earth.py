@@ -2,7 +2,8 @@ from ._forward import ForwardPasser
 from ._pruning import PruningPasser
 from ._util import ascii_table, apply_weights_2d, apply_weights_1d, gcv
 from sklearn.base import RegressorMixin, BaseEstimator, TransformerMixin
-from sklearn.utils.validation import assert_all_finite
+from sklearn.utils.validation import (assert_all_finite, check_is_fitted,
+                                      check_X_y)
 import numpy as np
 from scipy import sparse
 
@@ -130,6 +131,9 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         derivatives.
         For details, see section 3.7, Friedman, 1991.
 
+    enable_pruning : bool, optional(default=True)
+        If False, the pruning pass will be skipped.
+
 
     Attributes
     ----------
@@ -203,7 +207,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                  endspan_alpha=None, endspan=None,
                  minspan_alpha=None, minspan=None,
                  thresh=None, min_search_points=None, check_every=None,
-                 allow_linear=None, smooth=None):
+                 allow_linear=None, smooth=None, enable_pruning=True):
         kwargs = {}
         call = locals()
         for name in self._get_param_names():
@@ -230,6 +234,9 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                     return False
         return True
 
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def _pull_forward_args(self, **kwargs):
         '''
         Pull named arguments relevant to the forward pass.
@@ -247,19 +254,6 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         result = {}
         for name in self.pruning_pass_arg_names:
             if name in kwargs:
-                result[name] = kwargs[name]
-        return result
-
-    def _pull_unknown_args(self, **kwargs):
-        '''
-        Pull unknown named arguments.  Usually an exception is raised
-        if any are actually found, but raising exceptions is the
-        responsibility of the caller.
-        '''
-        result = {}
-        known_args = self.forward_pass_arg_names | self.pruning_pass_arg_names
-        for name in kwargs.iterkeys():
-            if name not in known_args:
                 result[name] = kwargs[name]
         return result
 
@@ -404,18 +398,23 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
 
         '''
-
+        check_X_y(X, y, accept_sparse=None)
         # Format and label the data
         if xlabels is None:
             self.xlabels_ = self._scrape_labels(X)
         else:
+            if len(xlabels) != X.shape[1]:
+                raise ValueError('The length of xlabels is not the '
+                                 'same as the number of columns of X')
             self.xlabels_ = xlabels
+
         self.linvars_ = linvars
         X, y, sample_weight = self._scrub(X, y, sample_weight)
 
         # Do the actual work
         self.__forward_pass(X, y, sample_weight, self.xlabels_, linvars)
-        self.__pruning_pass(X, y, sample_weight)
+        if self.enable_pruning is True:
+            self.__pruning_pass(X, y, sample_weight)
         if hasattr(self, 'smooth') and self.smooth:
             self.basis_ = self.basis_.smooth(X)
         self.__linear_fit(X, y, sample_weight)
@@ -535,15 +534,6 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             self.basis_, X, y, sample_weight, **args)
         pruning_passer.run()
         self.pruning_pass_record_ = pruning_passer.trace()
-
-    def __unprune(self, X, y=None):
-        '''Unprune all pruned basis functions and fit coefficients to X and y
-           using the unpruned basis.
-        '''
-        for bf in self.basis_:
-            bf.unprune()
-        del self.pruning_pass_record_
-        self.__linear_fit(X, y)
 
     def forward_trace(self):
         '''Return information about the forward pass.'''
@@ -692,6 +682,9 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             to the final model and have derivatives that are identically zero).
 
         '''
+
+        check_is_fitted(self, "basis_")
+
         if type(variables) in (str, int):
             variables = [variables]
         if variables is None:
@@ -741,6 +734,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             In such cases, the weight should be proportional to the inverse of
             the (known) variance.
         '''
+        check_is_fitted(self, "basis_")
         X, y, sample_weight = self._scrub(X, y, sample_weight)
         y_hat = self.predict(X)
         m, _ = X.shape
@@ -770,6 +764,8 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             The training predictors.  The X parameter can be a numpy array, a
             pandas DataFrame, or a patsy DesignMatrix.
         '''
+
+        check_is_fitted(self, "basis_")
         X = self._scrub_x(X)
         B = np.empty(shape=(X.shape[0], self.basis_.plen()))
         self.basis_.transform(X, B)
@@ -781,21 +777,6 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             return self.penalty
         else:
             return 3.0
-
-    def __repr__(self):
-        result = 'Earth('
-        first = True
-        for k, v in self.get_params().iteritems():
-            if not first:
-                result += ', '
-            else:
-                first = False
-            result += '%s=%s' % (str(k), str(v))
-        result += ')'
-        return result
-
-    def __str__(self):
-        return self.__repr__()
 
 
 class EarthTrace(object):
