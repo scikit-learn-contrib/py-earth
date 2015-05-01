@@ -25,7 +25,7 @@ import matplotlib.font_manager as fm
 import os
 import urllib2
 if not os.path.exists('Humor-Sans.ttf'):
-    fhandle = urllib2.urlopen('http://antiyawn.com/uploads/Humor-Sans.ttf')
+    fhandle = urllib2.urlopen('https://github.com/shreyankg/xkcd-desktop/raw/master/Humor-Sans.ttf')
     open('Humor-Sans.ttf', 'wb').write(fhandle.read())
 
 

@@ -1,6 +1,13 @@
+"""
+===============================
+Plotting the absolute value function
+===============================
+
+A simple example plotting a fit of the absolute value function.
+"""
 
 import numpy
-from matplotlib import pyplot
+import matplotlib.pyplot as plt
 
 from pyearth import Earth
 
@@ -16,12 +23,12 @@ model = Earth(max_degree=1)
 model.fit(X, y)
 
 # Print the model
-print model.trace()
-print model.summary()
+print(model.trace())
+print(model.summary())
 
 # Plot the model
 y_hat = model.predict(X)
-pyplot.figure()
-pyplot.plot(X[:, 6], y, 'r.')
-pyplot.plot(X[:, 6], y_hat, 'b.')
-pyplot.show()
+plt.figure()
+plt.plot(X[:, 6], y, 'r.')
+plt.plot(X[:, 6], y_hat, 'b.')
+plt.show()

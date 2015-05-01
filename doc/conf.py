@@ -25,6 +25,8 @@ sys.path.insert(0, os.path.abspath(os.path.join('..')))
 # Create the figures
 import generate_figures
 
+import sphinxgallery
+
 # -- General configuration -----------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -35,7 +37,7 @@ import generate_figures
 extensions = ['sphinx.ext.doctest', 'sphinx.ext.todo', 'sphinx.ext.coverage',
               'sphinx.ext.pngmath', 'sphinx.ext.mathjax', 'sphinx.ext.ifconfig',
               'sphinx.ext.viewcode', 'sphinx.ext.autodoc', 'numpydoc', 'sphinx.ext.autosummary',
-              'sphinxcontrib.bibtex']
+              'sphinxcontrib.bibtex', 'sphinxgallery.gen_gallery']
 
 autosummary_generate = True
 numpydoc_show_class_members = False
@@ -107,7 +109,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -136,7 +138,7 @@ html_theme = 'default'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ['_static', sphinxgallery.path_static()]
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
