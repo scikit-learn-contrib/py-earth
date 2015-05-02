@@ -1,7 +1,7 @@
 """
-===============================
+=============================
 Plotting simple sine function
-===============================
+=============================
 
 A simple example plotting a fit of the sine function.
 """
