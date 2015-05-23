@@ -10,6 +10,7 @@
 .pydevproject
 .settings/org.eclipse.core.resources.prefs
 MANIFEST
+dist
 build
 dist/py-earth-0.1.0.tar.gz
 doc/Humor-Sans.ttf

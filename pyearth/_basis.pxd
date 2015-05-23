@@ -130,19 +130,11 @@ cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
 
     cpdef get_r(SmoothedHingeBasisFunction self)
 
-    cpdef inline FLOAT_t eval(SmoothedHingeBasisFunction self, FLOAT_t x)
-
-    cpdef inline FLOAT_t eval_deriv(SmoothedHingeBasisFunction self, FLOAT_t x)
-
 cdef class HingeBasisFunction(HingeBasisFunctionBase):
 
     cpdef _smoothed_version(HingeBasisFunction self,
                             BasisFunction parent,
                             dict knot_dict, dict translation)
-
-    cpdef inline FLOAT_t eval(HingeBasisFunction self, FLOAT_t x)
-
-    cpdef inline FLOAT_t eval_deriv(HingeBasisFunction self, FLOAT_t x)
 
 cdef class LinearBasisFunction(VariableBasisFunction):
     cdef str label
@@ -151,10 +143,6 @@ cdef class LinearBasisFunction(VariableBasisFunction):
                             dict knot_dict, dict translation)
 
     cpdef INDEX_t get_variable(self)
-
-    cpdef inline FLOAT_t eval(LinearBasisFunction self, FLOAT_t x)
-
-    cpdef inline FLOAT_t eval_deriv(LinearBasisFunction self, FLOAT_t x)
 
 cdef class Basis:
     '''A wrapper that provides functionality related to a set of BasisFunctions

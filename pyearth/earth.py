@@ -294,10 +294,10 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                             'is required. Use X.toarray() to convert to dense.')
 
         # Convert to internally used data type
-        X = np.asarray(X, dtype=np.float64)
+        X = np.asarray(X, dtype=np.float64, order='F')
         assert_all_finite(X)
-        if len(X.shape) == 1:
-            X = X.reshape((X.shape[0], 1))
+        if X.ndim == 1:
+            X = X[:, np.newaxis]
 
         # Ensure correct number of columns
         if hasattr(self, 'basis_') and self.basis_ is not None:
@@ -771,7 +771,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             pandas DataFrame, or a patsy DesignMatrix.
         '''
         X = self._scrub_x(X)
-        B = np.empty(shape=(X.shape[0], self.basis_.plen()))
+        B = np.empty(shape=(X.shape[0], self.basis_.plen()), order='F')
         self.basis_.transform(X, B)
         return B
 
