@@ -1,8 +1,13 @@
-'''
-This script recreates the scikit-learn classifier comparison example found at http://scikit-learn.org/dev/auto_examples/plot_classifier_comparison.html.
-It has been modified to include an Earth based classifier.
-'''
+"""
+======================================================
+Plotting sckit-learn classifiers comparison with Earth
+======================================================
 
+This script recreates the scikit-learn classifier comparison example found at
+http://scikit-learn.org/stable/auto_examples/classification/plot_classifier_comparison.html.
+It has been modified to include an Earth based classifier.
+"""
+print(__doc__)
 # Code source: Gael Varoqueux
 #              Andreas Mueller
 # Modified for Documentation merge by Jaques Grobler
@@ -10,7 +15,7 @@ It has been modified to include an Earth based classifier.
 # Modified to include pyearth by Jason Rudy
 
 import numpy as np
-import pylab as pl
+import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from sklearn.cross_validation import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -25,10 +30,9 @@ from sklearn.qda import QDA
 
 h = .02  # step size in the mesh
 
-from pyearth.earth import Earth
 from sklearn.linear_model.logistic import LogisticRegression
-from sklearn.metrics import accuracy_score
 from sklearn.pipeline import Pipeline
+from pyearth.earth import Earth
 
 np.random.seed(1)
 
@@ -60,7 +64,7 @@ datasets = [make_moons(noise=0.3, random_state=0),
             linearly_separable
             ]
 
-figure = pl.figure(figsize=(27, 9))
+figure = plt.figure(figsize=(27, 9))
 i = 1
 # iterate over datasets
 for ds in datasets:
@@ -75,9 +79,9 @@ for ds in datasets:
                          np.arange(y_min, y_max, h))
 
     # just plot the dataset first
-    cm = pl.cm.RdBu
+    cm = plt.cm.RdBu
     cm_bright = ListedColormap(['#FF0000', '#0000FF'])
-    ax = pl.subplot(len(datasets), len(classifiers) + 1, i)
+    ax = plt.subplot(len(datasets), len(classifiers) + 1, i)
     # Plot the training points
     ax.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap=cm_bright)
     # and testing points
@@ -90,7 +94,7 @@ for ds in datasets:
 
     # iterate over classifiers
     for name, clf in zip(names, classifiers):
-        ax = pl.subplot(len(datasets), len(classifiers) + 1, i)
+        ax = plt.subplot(len(datasets), len(classifiers) + 1, i)
         clf.fit(X_train, y_train)
         score = clf.score(X_test, y_test)
 
@@ -121,5 +125,5 @@ for ds in datasets:
         i += 1
 
 figure.subplots_adjust(left=.02, right=.98)
-pl.savefig('classifier_comp.pdf', transparent=True)
-pl.show()
+plt.savefig('classifier_comp.pdf', transparent=True)
+plt.show()

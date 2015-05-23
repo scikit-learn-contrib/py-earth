@@ -1,7 +1,14 @@
+"""
+=============================
+Plotting simple sine function
+=============================
 
+A simple example plotting a fit of the sine function.
+"""
 import numpy
+import matplotlib.pyplot as plt
+
 from pyearth import Earth
-from matplotlib import pyplot
 
 # Create some fake data
 numpy.random.seed(2)
@@ -17,12 +24,11 @@ model = Earth(max_degree=3, minspan_alpha=.5)
 model.fit(X, y)
 
 # Print the model
-print model.trace()
-print model.summary()
+print(model.trace())
+print(model.summary())
 
 # Plot the model
 y_hat = model.predict(X)
-pyplot.figure()
-pyplot.plot(X[:, 6], y, 'r.')
-pyplot.plot(X[:, 6], y_hat, 'b.')
-pyplot.show()
+plt.plot(X[:, 6], y, 'r.')
+plt.plot(X[:, 6], y_hat, 'b.')
+plt.show()

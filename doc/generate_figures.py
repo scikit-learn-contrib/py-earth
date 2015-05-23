@@ -1,5 +1,5 @@
-
-
+import matplotlib as mpl
+mpl.use('Agg')
 import numpy
 from pyearth import Earth
 from matplotlib import pyplot
