@@ -785,7 +785,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
     def __repr__(self):
         result = 'Earth('
         first = True
-        for k, v in self.get_params().iteritems():
+        for k, v in self.get_params().items():
             if not first:
                 result += ', '
             else:
