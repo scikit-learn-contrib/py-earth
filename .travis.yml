@@ -3,7 +3,7 @@ python:
   - "2.7_with_system_site_packages"
   - "3.4"
 install: 
-  - sudo apt-get install -qq python-numpy python-scipy
+  - pip install scipy
   - pip install patsy
   - pip install pandas
   - pip install scikit-learn
