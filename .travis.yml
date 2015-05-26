@@ -1,28 +1,19 @@
 language: python
-# make it explicit that we favor the new container-based travis workers
-sudo: false
-addons:
-  apt:
-    packages:
-      # Only used by the DISTRIB="ubuntu" setting
-      - libatlas3gf-base
-      - libatlas-dev
-      - python-scipy
-env:
-  matrix:
-    # This environment tests that scikit-learn can be built against
-    # versions of numpy, scipy with ATLAS that comes with Ubuntu Precise 12.04
-    - DISTRIB="ubuntu" PYTHON_VERSION="2.7" COVERAGE="true"
-    # This environment tests the oldest supported anaconda env
-    - DISTRIB="conda" PYTHON_VERSION="2.6" INSTALL_MKL="false"
-      NUMPY_VERSION="1.6.2" SCIPY_VERSION="0.11.0"
-    # This environment tests the newest supported anaconda env
-    - DISTRIB="conda" PYTHON_VERSION="3.4" INSTALL_MKL="true"
-      NUMPY_VERSION="1.8.1" SCIPY_VERSION="0.14.0"
-install: 
-  - pip install patsy
-  - pip install pandas
-  - pip install scikit-learn
+python:
+  - 2.7
+  - 3.4
+ # Setup anaconda
+before_install:
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b
+  - export PATH=/home/travis/miniconda/bin:$PATH
+  - conda update --yes conda
+  # The next couple lines fix a crash with multiprocessing on Travis and are not specific to using Miniconda
+  - sudo rm -rf /dev/shm
+  - sudo ln -s /run/shm /dev/shm
+# Install packages
+install:
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION atlas numpy scipy matplotlib nose dateutil pandas patsy statsmodels scikit-learn
   - python setup.py build_ext --inplace
-
 script: nosetests -s -v pyearth
