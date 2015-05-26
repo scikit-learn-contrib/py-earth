@@ -37,6 +37,6 @@ def test_export_python_string():
     for smooth in (True, False):
         model = Earth(penalty=1, smooth=smooth).fit(X, y)
         export_model = export_python_string(model, 'my_test_model')
-        exec export_model
+        exec(export_model)
         for exp_pred, model_pred in zip(model.predict(X), my_test_model(X)):
             assert_almost_equal(exp_pred, model_pred)

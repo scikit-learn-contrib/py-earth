@@ -6,7 +6,7 @@ Created on Feb 24, 2013
 import pickle
 import copy
 import os
-from testing_utils import if_statsmodels, if_pandas, if_patsy, if_environ_has
+from .testing_utils import if_statsmodels, if_pandas, if_patsy, if_environ_has
 from nose.tools import assert_equal, assert_true, \
     assert_almost_equal, assert_list_equal
 import numpy

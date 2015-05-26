@@ -3,7 +3,7 @@ import numpy
 
 from nose.tools import assert_equal
 
-from base import BaseContainer
+from .base import BaseContainer
 from pyearth._basis import SmoothedHingeBasisFunction, ConstantBasisFunction
 
 
