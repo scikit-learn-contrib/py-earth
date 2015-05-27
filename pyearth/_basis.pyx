@@ -11,6 +11,10 @@ cimport cython
 cdef FLOAT_t ZERO_TOL = 1e-16
 import numpy as np
 import sys
+import six
+
+# Python 3 compatibility
+max_int = sys.maxint if six.PY2 else sys.maxsize
 
 cdef class BasisFunction:
 
@@ -22,7 +26,7 @@ cdef class BasisFunction:
         self.splittable = True
 
     def __hash__(BasisFunction self):
-        return id(self) % sys.maxsize # avoid "OverflowError Python
+        return id(self) % max_int # avoid "OverflowError Python
                                      # int too large to convert to C long"
 
     cpdef smooth(BasisFunction self, dict knot_dict, dict translation):

@@ -2,7 +2,7 @@ from pyearth._basis import Basis, ConstantBasisFunction, HingeBasisFunction, Lin
 from pyearth.export import export_python_function, export_python_string
 from nose.tools import assert_almost_equal
 import numpy
-
+import six
 from pyearth import Earth
 
 numpy.random.seed(0)
@@ -37,6 +37,6 @@ def test_export_python_string():
     for smooth in (True, False):
         model = Earth(penalty=1, smooth=smooth).fit(X, y)
         export_model = export_python_string(model, 'my_test_model')
-        exec(export_model)
+        six.exec_(export_model, globals())
         for exp_pred, model_pred in zip(model.predict(X), my_test_model(X)):
             assert_almost_equal(exp_pred, model_pred)
