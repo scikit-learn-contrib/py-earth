@@ -215,7 +215,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
     def __eq__(self, other):
         if self.__class__ is not other.__class__:
             return False
-        keys = set(self.__dict__.keys() + other.__dict__.keys())
+        keys = set(self.__dict__.keys()) | set(other.__dict__.keys())
         for k in keys:
             try:
                 v_self = self.__dict__[k]
