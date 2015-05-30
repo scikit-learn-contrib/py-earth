@@ -88,7 +88,9 @@ setup_args = {'name': 'py-earth',
               'py_modules': ['pyearth.earth', 'pyearth._version'],
               'ext_modules': ext_modules,
               'classifiers': ['Development Status :: 3 - Alpha'],
-              'requires': ['numpy', 'scipy', 'sklearn']}
+              'requires': ['numpy', 'scipy'],
+              'install_requires': ['scikit-learn',
+                                   'sphinx_gallery']}
 
 # Add the build_ext command only if cythonizing
 if cythonize_switch:
