@@ -866,8 +866,8 @@ cdef class Basis:
     cpdef transform_deriv(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X,
                           cnp.ndarray[FLOAT_t, ndim=1] b,
                           cnp.ndarray[FLOAT_t, ndim=1] j,
-                          cnp.ndarray[FLOAT_t, ndim=1] coef,
-                          cnp.ndarray[FLOAT_t, ndim=2] J,
+                          cnp.ndarray[FLOAT_t, ndim=2] coef,
+                          cnp.ndarray[FLOAT_t, ndim=3] J,
                           list variables_of_interest, bool prezeroed_j=False):
 
         cdef BasisFunction bf
@@ -876,22 +876,25 @@ cdef class Basis:
         # Zero out J if necessary
         m = J.shape[0]
         n = J.shape[1]
+        p = J.shape[2]
         if not prezeroed_j:
             for j_ in range(n):
                 for i in range(m):
-                    J[i, j_] = 0.0
-
-        # Compute the derivative for each variable
+                    for p_ in range(p):
+                        J[i, j_, p_] = 0.0
         cdef INDEX_t var, bf_idx, coef_idx, n_bfs = len(self)
         cdef set variables
-        for j_, var in enumerate(variables_of_interest):
-            coef_idx=0
-            for bf_idx in range(n_bfs):
-                bf = self.order[bf_idx]
-                variables = bf.variables()
-                if (variables and var not in variables) or bf.is_pruned():
-                    continue
-                bf.apply_deriv(X, b, j, var)
-                for i in range(m):
-                    J[i, j_] += coef[coef_idx] * j[i]
-                coef_idx += 1
+
+        for p_ in range(p):
+            # Compute the derivative for each variable
+            for j_, var in enumerate(variables_of_interest):
+                coef_idx=0
+                for bf_idx in range(n_bfs):
+                    bf = self.order[bf_idx]
+                    variables = bf.variables()
+                    if (variables and var not in variables) or bf.is_pruned():
+                        continue
+                    bf.apply_deriv(X, b, j, var)
+                    for i in range(m):
+                        J[i, j_, p_] += coef[coef_idx, p_] * j[i]
+                    coef_idx += 1

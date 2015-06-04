@@ -133,7 +133,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
     Attributes
     ----------
-    `coef_` : array, shape = [pruned basis length]
+    `coef_` : array, shape = [pruned basis length, number of outputs]
         The weights of the model terms that have not been pruned.
 
 
@@ -329,7 +329,9 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         # Convert y to internally used data type
         y = np.asarray(y, dtype=np.float64)
         assert_all_finite(y)
-        y = y.reshape(y.shape[0])
+
+        if len(y.shape) == 1:
+            y = y[:, np.newaxis]
 
         # Deal with sample_weight
         if sample_weight is None:
@@ -338,11 +340,10 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             sample_weight = np.asarray(sample_weight)
             assert_all_finite(sample_weight)
             sample_weight = sample_weight.reshape(sample_weight.shape[0])
-
         # Make sure dimensions match
         if y.shape[0] != X.shape[0]:
             raise ValueError('X and y do not have compatible dimensions.')
-        if y.shape != sample_weight.shape:
+        if y.shape[0] != sample_weight.shape[0]:
             raise ValueError(
                 'y and sample_weight do not have compatible dimensions.')
 
@@ -367,12 +368,12 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             output by patsy.dmatrices.
 
 
-        y : array-like, optional (default=None), shape = [m] where m is the
-            number of samples The training response.  The y parameter can be
-            a numpy array, a pandas DataFrame with one column, a Patsy
-            DesignMatrix, or can be left as None (default) if X was the output
-            of a call to patsy.dmatrices (in which case, X contains the
-            response).
+        y : array-like, optional (default=None), shape = [m, p] where m is the
+            number of samples The training response, p the number of outputs.
+            The y parameter can be a numpy array, a pandas DataFrame,
+            a Patsy DesignMatrix, or can be left as None (default) if X was
+            the output of a call to patsy.dmatrices (in which case, X contains
+            the response).
 
 
         sample_weight : array-like, optional (default=None), shape = [m] where
@@ -437,14 +438,12 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             be a numpy array, a pandas DataFrame, a patsy DesignMatrix, or a
             tuple of patsy DesignMatrix objects as output by patsy.dmatrices.
 
-
-        y : array-like, optional (default=None), shape = [m] where m is the
-            number of samples The training response.  The y parameter can be
-            a numpy array, a pandas DataFrame with one column, a Patsy
-            DesignMatrix, or can be left as None (default) if X was the output
-            of a call to patsy.dmatrices (in which case, X contains the
-            response).
-
+        y : array-like, optional (default=None), shape = [m, p] where m is the
+            number of samples, p the number of outputs.
+            The y parameter can be a numpy array, a pandas DataFrame,
+            a Patsy DesignMatrix, or can be left as None (default) if X was
+            the output of a call to patsy.dmatrices (in which case, X contains
+            the response).
 
         sample_weight : array-like, optional (default=None), shape = [m] where m
                         is the number of samples
@@ -504,14 +503,12 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             DesignMatrix, or a tuple of patsy DesignMatrix objects as output
             by patsy.dmatrices.
 
-
-        y : array-like, optional (default=None), shape = [m] where m is the
-            number of samples The training response.  The y parameter can be
-            a numpy array, a pandas DataFrame with one column, a Patsy
-            DesignMatrix, or can be left as None (default) if X was the output
-            of a call to patsy.dmatrices (in which case, X contains
+        y : array-like, optional (default=None), shape = [m, p] where m is the
+            number of samples, p the number of outputs.
+            The y parameter can be a numpy array, a pandas DataFrame,
+            a Patsy DesignMatrix, or can be left as None (default) if X was
+            the output of a call to patsy.dmatrices (in which case, X contains
             the response).
-
 
         sample_weight : array-like, optional (default=None), shape = [m]
                         where m is the number of samples
@@ -529,7 +526,6 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
         # Pull arguments from self
         args = self._pull_pruning_args(**self.__dict__)
-
         # Do the actual work
         pruning_passer = PruningPasser(
             self.basis_, X, y, sample_weight, **args)
@@ -577,8 +573,9 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         data = []
         i = 0
         for bf in self.basis_:
-            data.append([str(bf), 'Yes' if bf.is_pruned() else 'No', '%g' %
-                         self.coef_[i] if not bf.is_pruned() else 'None'])
+            #'%s' % ",".join(['%.2f' % c for c in self.coef_.T[i]])
+            data.append([str(bf), 'Yes' if bf.is_pruned() else 'No', '%g' % self.coef_[0, i]
+                         if not bf.is_pruned() else 'None'])
             if not bf.is_pruned():
                 i += 1
         result += ascii_table(header, data)
@@ -607,14 +604,12 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             DesignMatrix, or a tuple of patsy DesignMatrix objects as output
             by patsy.dmatrices.
 
-
-        y : array-like, optional (default=None), shape = [m] where m is the
-            number of samples The training response.  The y parameter can be
-            a numpy array, a pandas DataFrame with one column, a Patsy
-            DesignMatrix, or can be left as None (default) if X was the output
-            of a call to patsy.dmatrices (in which case, X contains the
-            response).
-
+        y : array-like, optional (default=None), shape = [m, p] where m is the
+            number of samples, p the number of outputs.
+            The y parameter can be a numpy array, a pandas DataFrame,
+            a Patsy DesignMatrix, or can be left as None (default) if X was
+            the output of a call to patsy.dmatrices (in which case, X contains
+            the response).
 
         sample_weight : array-like, optional (default=None), shape = [m] where
                         m is the number of samples
@@ -625,31 +620,34 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             cases, the weight should be proportional to the inverse of the
             (known) variance.
         '''
-
         # Format data
         X, y, sample_weight = self._scrub(X, y, sample_weight)
 
         # Transform into basis space
         B = self.transform(X)
-
         # Apply weights to B
         apply_weights_2d(B, sample_weight)
 
         # Apply weights to y
         weighted_y = y.copy()
-        apply_weights_1d(weighted_y, sample_weight)
-
+        apply_weights_2d(weighted_y, sample_weight)
         # Solve the linear least squares problem
-        self.coef_, resid = np.linalg.lstsq(B, weighted_y)[0:2]
-
+        self.coef_ = []
+        resid_ = []
+        for i in range(y.shape[1]):
+            coef, resid = np.linalg.lstsq(B, weighted_y[:, i])[0:2]
+            self.coef_.append(coef)
+            resid_.append(resid)
+        self.coef_ = np.array(self.coef_)
         # Compute the final mse, gcv, rsq, and grsq (may be different from the
         # pruning scores if the model has been smoothed)
-        self.mse_ = np.sum(resid) / float(X.shape[0])
-        self.gcv_ = gcv(
-            self.mse_, self.coef_.shape[0], X.shape[0], self.get_penalty())
-
-        y_avg = np.average(y, weights=sample_weight)
-        y_sqr = sample_weight * (y - y_avg) ** 2
+        self.mse_ = np.sum(resid_) / float(X.shape[0])
+        self.gcv_ = 0
+        for coef in self.coef_:
+            self.gcv_ += gcv(
+                self.mse_, coef.shape[0], X.shape[0], self.get_penalty())
+        y_avg = np.average(y, weights=sample_weight, axis=0)
+        y_sqr = sample_weight[:, np.newaxis] * (y - y_avg[np.newaxis, :]) ** 2
         mse0 = np.sum(y_sqr) / float(X.shape[0])
 
         gcv0 = gcv(mse0, 1, X.shape[0], self.get_penalty())
@@ -671,7 +669,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         '''
         X = self._scrub_x(X)
         B = self.transform(X)
-        return np.dot(B, self.coef_)
+        return np.dot(B, self.coef_.T)
 
     def predict_deriv(self, X, variables=None):
         '''
@@ -704,7 +702,9 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                 else:
                     variables_of_interest.append(self.xlabels_.index(var))
         X = self._scrub_x(X)
-        J = np.zeros(shape=(X.shape[0], len(variables_of_interest)))
+        J = np.zeros(shape=(X.shape[0],
+                            len(variables_of_interest),
+                            self.coef_.shape[0]))
         b = np.empty(shape=X.shape[0])
         j = np.empty(shape=X.shape[0])
         self.basis_.transform_deriv(
@@ -724,12 +724,11 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             DesignMatrix, or a tuple of patsy DesignMatrix objects as output
             by patsy.dmatrices.
 
-
-        y : array-like, optional (default=None), shape = [m] where m is the
-            number of samples The training response.  The y parameter can be
-            a numpy array, a pandas DataFrame with one column, a Patsy
-            DesignMatrix, or can be left as None (default) if X was the
-            output of a call to patsy.dmatrices (in which case, X contains
+        y : array-like, optional (default=None), shape = [m, p] where m is the
+            number of samples, p the number of outputs.
+            The y parameter can be a numpy array, a pandas DataFrame,
+            a Patsy DesignMatrix, or can be left as None (default) if X was
+            the output of a call to patsy.dmatrices (in which case, X contains
             the response).
 
         sample_weight : array-like, optional (default=None), shape = [m] where
@@ -745,10 +744,9 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         y_hat = self.predict(X)
         m, _ = X.shape
         residual = y - y_hat
-        mse = np.sum(sample_weight * (residual ** 2)) / m
-
-        y_avg = np.average(y, weights=sample_weight)
-        y_sqr = sample_weight * (y - y_avg) ** 2
+        mse = np.sum(sample_weight[:, np.newaxis] * (residual ** 2)) / m
+        y_avg = np.average(y, weights=sample_weight, axis=0)
+        y_sqr = sample_weight[:, np.newaxis] * (y - y_avg[np.newaxis, :]) ** 2
         mse0 = np.sum(y_sqr) / m
         return 1 - (mse / mse0)
 

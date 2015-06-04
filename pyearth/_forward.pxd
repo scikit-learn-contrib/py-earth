@@ -33,6 +33,8 @@ cdef class ForwardPasser:
     # Input data
     cdef cnp.ndarray X
     cdef cnp.ndarray y
+    cdef cnp.ndarray y_col_sum
+    cdef cnp.ndarray y_row_sum
     cdef cnp.ndarray sample_weight
     cdef INDEX_t m
     cdef INDEX_t n
@@ -43,6 +45,7 @@ cdef class ForwardPasser:
     cdef cnp.ndarray B  # Data matrix in basis space
     cdef cnp.ndarray B_orth  # Orthogonalized version of B
     cdef cnp.ndarray c
+    cdef cnp.ndarray c_sqr
     cdef cnp.ndarray norms
     cdef cnp.ndarray u
     cdef cnp.ndarray B_orth_times_parent_cum

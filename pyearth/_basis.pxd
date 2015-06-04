@@ -174,6 +174,6 @@ cdef class Basis:
     cpdef transform_deriv(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X,
                           cnp.ndarray[FLOAT_t, ndim=1] b,
                           cnp.ndarray[FLOAT_t, ndim=1] j,
-                          cnp.ndarray[FLOAT_t, ndim=1] coef,
-                          cnp.ndarray[FLOAT_t, ndim=2] J,
+                          cnp.ndarray[FLOAT_t, ndim=2] coef,
+                          cnp.ndarray[FLOAT_t, ndim=3] J,
                           list variables_of_interest, bool prezeroed_j=?)

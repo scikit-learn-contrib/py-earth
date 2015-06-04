@@ -8,7 +8,7 @@ def export_python_function(earth_model):
     accessors = []
     for bf in earth_model.basis_:
         if not bf.is_pruned():
-            accessors.append(bf.func_factory(earth_model.coef_[i]))
+            accessors.append(bf.func_factory(earth_model.coef_[0, i]))
             i += 1
 
     def func(example_iterator):
@@ -28,7 +28,7 @@ def export_python_string(earth_model, function_name="model"):
     accessors = []
     for bf in earth_model.basis_:
         if not bf.is_pruned():
-            accessors.append(bf.func_string_factory(earth_model.coef_[i]))
+            accessors.append(bf.func_string_factory(earth_model.coef_[0, i]))
             i += 1
 
     return """def {:s}(example_iterator):
