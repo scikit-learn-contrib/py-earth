@@ -80,7 +80,8 @@ setup_args = {'name': 'py-earth',
               'version': __version__,
               'author': 'Jason Rudy',
               'author_email': 'jcrudy@gmail.com',
-              'packages': ['pyearth', 'pyearth.test'],
+              'packages': ['pyearth', 'pyearth.test',
+                           'pyearth.test.basis', 'pyearth.test.record'],
               'license': 'LICENSE.txt',
               'description':
               'A Python implementation of Jerome Friedman\'s MARS algorithm.',
@@ -89,7 +90,7 @@ setup_args = {'name': 'py-earth',
               'ext_modules': ext_modules,
               'classifiers': ['Development Status :: 3 - Alpha'],
               'requires': ['numpy', 'scipy'],
-              'install_requires': ['scikit-learn',
+              'install_requires': ['scikit-learn >= 0.16',
                                    'sphinx_gallery']}
 
 # Add the build_ext command only if cythonizing

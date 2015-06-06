@@ -1,2 +1,5 @@
 include pyearth/*.c
 include pyearth/*.pxd
+include pyearth/test/*.txt
+include pyearth/test/*.csv
+include pyearth/test/pathological_data
