@@ -6,14 +6,22 @@ Created on Feb 24, 2013
 import pickle
 import copy
 import os
-from .testing_utils import if_statsmodels, if_pandas, if_patsy, if_environ_has
-from nose.tools import assert_equal, assert_true, \
-    assert_almost_equal, assert_list_equal
+
+from nose.tools import (assert_equal, assert_not_equal, assert_true,
+                        assert_almost_equal, assert_list_equal, assert_raises)
 import numpy
+from scipy.sparse import csr_matrix
+
+from sklearn.utils.validation import NotFittedError
 
 from pyearth._basis import (Basis, ConstantBasisFunction,
                             HingeBasisFunction, LinearBasisFunction)
 from pyearth import Earth
+
+from .testing_utils import (if_statsmodels, if_pandas, if_patsy, if_environ_has,
+                           assert_list_almost_equal,
+                           assert_list_almost_equal_value)
+
 
 numpy.random.seed(0)
 
@@ -42,7 +50,8 @@ def test_get_params():
                                'max_terms': None, 'max_degree': None,
                                'minspan_alpha': None, 'thresh': None,
                                'minspan': None, 'endspan': None,
-                               'allow_linear': None, 'smooth': None})
+                               'allow_linear': None, 'smooth': None,
+                               'enable_pruning': True})
     assert_equal(
         Earth(
             max_degree=3).get_params(), {'penalty': None,
@@ -54,7 +63,8 @@ def test_get_params():
                                          'thresh': None, 'minspan': None,
                                          'endspan': None,
                                          'allow_linear': None,
-                                         'smooth': None})
+                                         'smooth': None,
+                                         'enable_pruning': True})
 
 
 @if_statsmodels
@@ -82,7 +92,7 @@ def test_sample_weight():
         y = numpy.abs(x)
         y[group] = numpy.abs(x[group] - 5)
         y += numpy.random.normal(0, 1, size=1000)
-        model = Earth().fit(x, y, sample_weight=sample_weight)
+        model = Earth().fit(x[:, numpy.newaxis], y, sample_weight=sample_weight)
 
         # Check that the model fits better for the more heavily weighted group
         assert_true(model.score(x[group], y[group]) < model.score(
@@ -136,6 +146,26 @@ def test_linvars():
         prev = fl.read()
 
     assert_equal(res, prev)
+
+
+def test_linvars_coefs():
+    nb_vars = 11
+    coefs = numpy.random.uniform(size=(nb_vars,))
+    X = numpy.random.uniform(size=(100, nb_vars))
+    bias = 1
+    y = numpy.dot(X, coefs[:, numpy.newaxis]) + bias
+    earth = Earth(max_terms=nb_vars * 2,
+                  max_degree=1,
+                  enable_pruning=False,
+                  check_every=1,
+                  thresh=0,
+                  minspan=1,
+                  endspan=1).fit(X, y, linvars=range(nb_vars))
+    earth_bias = earth.coef_[0]
+    earth_coefs = sorted(earth.coef_[1:])
+
+    assert_almost_equal(earth_bias, bias)
+    assert_list_almost_equal(earth_coefs, sorted(coefs))
 
 
 def test_score():
@@ -229,3 +259,147 @@ def test_copy_compatibility():
         numpy.all(model.predict(X) == model_copy.predict(X)))
     assert_true(model.basis_[0] is model.basis_[1]._get_root())
     assert_true(model_copy.basis_[0] is model_copy.basis_[1]._get_root())
+
+
+def test_exhaustive_search():
+    model = Earth(max_terms=13,
+                  enable_pruning=False,
+                  check_every=1,
+                  thresh=0,
+                  minspan=1,
+                  endspan=1)
+    model.fit(X, y)
+    assert_equal(len(model.basis_), len(model.coef_))
+    assert_equal(model.transform(X).shape[1], len(model.basis_))
+
+
+def test_nb_terms():
+
+    for max_terms in (1, 3, 12, 13):
+        model = Earth(max_terms=max_terms)
+        model.fit(X, y)
+        assert_true(len(model.basis_) <= max_terms)
+        assert_true(len(model.coef_) <= len(model.basis_))
+        assert_true(len(model.coef_) >= 1)
+        if max_terms == 1:
+            assert_list_almost_equal_value(model.predict(X), y.mean())
+
+
+def test_nb_degrees():
+    for max_degree in (1, 2, 12, 13):
+        model = Earth(max_terms=10,
+                      max_degree=max_degree,
+                      enable_pruning=False,
+                      check_every=1,
+                      thresh=0,
+                      minspan=1,
+                      endspan=1)
+        model.fit(X, y)
+        for basis in model.basis_:
+            assert_true(basis.degree() >= 0)
+            assert_true(basis.degree() <= max_degree)
+
+
+def test_eq():
+    model1 = Earth(**default_params)
+    model2 = Earth(**default_params)
+    assert_equal(model1, model2)
+    assert_not_equal(model1, 5)
+
+    params = {}
+    params.update(default_params)
+    params["penalty"] = 15
+    model2 = Earth(**params)
+    assert_not_equal(model1, model2)
+
+    model3 = Earth(**default_params)
+    model3.unknown_parameter = 5
+    assert_not_equal(model1, model3)
+
+
+def test_sparse():
+    X_sparse = csr_matrix(X)
+
+    model = Earth(**default_params)
+    assert_raises(TypeError, model.fit, X_sparse, y)
+
+    model = Earth(**default_params)
+    model.fit(X, y)
+    assert_raises(TypeError, model.predict, X_sparse)
+    assert_raises(TypeError, model.predict_deriv, X_sparse)
+    assert_raises(TypeError, model.transform, X_sparse)
+    assert_raises(TypeError, model.score, X_sparse)
+
+    model = Earth(**default_params)
+    sample_weight = csr_matrix([1.] * X.shape[0])
+    assert_raises(TypeError, model.fit, X, y, sample_weight)
+
+
+def test_shape():
+    model = Earth(**default_params)
+    model.fit(X, y)
+
+    X_reduced = X[:, 0:5]
+    assert_raises(ValueError, model.predict, X_reduced)
+    assert_raises(ValueError, model.predict_deriv, X_reduced)
+    assert_raises(ValueError, model.transform, X_reduced)
+    assert_raises(ValueError, model.score, X_reduced)
+
+    model = Earth(**default_params)
+    X_subsampled = X[0:10]
+    assert_raises(ValueError, model.fit, X_subsampled, y)
+
+    model = Earth(**default_params)
+    y_subsampled = X[0:10]
+    assert_raises(ValueError, model.fit, X, y_subsampled)
+
+    model = Earth(**default_params)
+    sample_weights = numpy.array([1.] * len(X))
+    sample_weights_subsampled = sample_weights[0:10]
+    assert_raises(ValueError, model.fit, X, y, sample_weights_subsampled)
+
+
+def test_deriv():
+
+    model = Earth(**default_params)
+    model.fit(X, y)
+    assert_equal(X.shape, model.predict_deriv(X).shape)
+    assert_equal((X.shape[0], 1), model.predict_deriv(X, variables=0).shape)
+    assert_equal((X.shape[0], 1), model.predict_deriv(X, variables='x0').shape)
+    assert_equal((X.shape[0], 3),
+                 model.predict_deriv(X, variables=[1, 5, 7]).shape)
+    assert_equal((X.shape[0], 0), model.predict_deriv(X, variables=[]).shape)
+
+    res_deriv = model.predict_deriv(X, variables=['x2', 'x7', 'x0', 'x1'])
+    assert_equal((X.shape[0], 4), res_deriv.shape)
+
+    res_deriv = model.predict_deriv(X, variables=['x0'])
+    assert_equal((X.shape[0], 1), res_deriv.shape)
+
+    assert_equal((X.shape[0], 1), model.predict_deriv(X, variables=[0]).shape)
+
+
+def test_xlabels():
+
+    model = Earth(**default_params)
+    assert_raises(ValueError, model.fit, X[:, 0:5], y, xlabels=['var1', 'var2'])
+
+    model = Earth(**default_params)
+    model.fit(X[:, 0:3], y, xlabels=['var1', 'var2', 'var3'])
+
+    model = Earth(**default_params)
+    model.fit(X[:, 0:3], y, xlabels=['var1', 'var2', 'var3'])
+
+
+def test_untrained():
+
+    model = Earth(**default_params)
+    assert_raises(NotFittedError, model.predict, X)
+    assert_raises(NotFittedError, model.transform, X)
+    assert_raises(NotFittedError, model.predict_deriv, X)
+    assert_raises(NotFittedError, model.score, X)
+
+    # the following should be changed to raise NotFittedError
+    assert_equal(model.forward_trace(), None)
+    assert_equal(model.pruning_trace(), None)
+    assert_equal(model.summary(), "Untrained Earth Model")

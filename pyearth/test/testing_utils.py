@@ -65,3 +65,7 @@ def if_patsy(func):
 def assert_list_almost_equal(list1, list2):
     for el1, el2 in zip(list1, list2):
         assert_almost_equal(el1, el2)
+
+def assert_list_almost_equal_value(list, value):
+    for el in list:
+        assert_almost_equal(el, value)
