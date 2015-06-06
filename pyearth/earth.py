@@ -398,7 +398,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
 
         '''
-        check_X_y(X, y, accept_sparse=None)
+        check_X_y(X, y, accept_sparse=None, multi_output=True)
         # Format and label the data
         if xlabels is None:
             self.xlabels_ = self._scrape_labels(X)
