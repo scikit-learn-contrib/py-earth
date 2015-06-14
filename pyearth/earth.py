@@ -335,15 +335,16 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
         # Deal with sample_weight
         if sample_weight is None:
-            sample_weight = np.ones(y.shape[0], dtype=y.dtype)
+            sample_weight = np.ones(y.shape, dtype=y.dtype)
         else:
             sample_weight = np.asarray(sample_weight)
+            if len(sample_weight.shape) == 1:
+                sample_weight = sample_weight[:, np.newaxis]
             assert_all_finite(sample_weight)
-            sample_weight = sample_weight.reshape(sample_weight.shape[0])
         # Make sure dimensions match
         if y.shape[0] != X.shape[0]:
             raise ValueError('X and y do not have compatible dimensions.')
-        if y.shape[0] != sample_weight.shape[0]:
+        if y.shape != sample_weight.shape:
             raise ValueError(
                 'y and sample_weight do not have compatible dimensions.')
 
@@ -376,11 +377,12 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             the response).
 
 
-        sample_weight : array-like, optional (default=None), shape = [m] where
-             m is the number of samples
+        sample_weight : array-like, optional (default=None), shape = [m, p]
+             where m is the number of samples, p the number of outputs.
              Sample weights for training.  Weights must be greater than or equal
-             to zero.  Rows with greater weights contribute more strongly to the
-             fitted model.  Rows with zero weight do not contribute at all.
+             to zero.  For a given output, rows with greater weights contribute
+             more strongly to the fitted model.  Rows with zero weight do not
+             contribute at all.
              Weights are useful when dealing with heteroscedasticity.  In such
              cases, the weight should be proportional to the inverse of the
              (known) variance.
@@ -445,15 +447,15 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             the output of a call to patsy.dmatrices (in which case, X contains
             the response).
 
-        sample_weight : array-like, optional (default=None), shape = [m] where m
-                        is the number of samples
-            Sample weights for training.  Weights must be greater than or
-            equal to zero.  Rows with greater weights contribute more strongly
-            to the fitted model.  Rows with zero weight do not contribute at
-            all.  Weights are useful when dealing with heteroscedasticity.
-            In such cases, the weight should be proportional to the inverse
-            of the (known) variance.
-
+        sample_weight : array-like, optional (default=None), shape = [m, p]
+             where m is the number of samples, p the number of outputs.
+             Sample weights for training.  Weights must be greater than or equal
+             to zero.  For a given output, rows with greater weights contribute
+             more strongly to the fitted model.  Rows with zero weight do not
+             contribute at all.
+             Weights are useful when dealing with heteroscedasticity.  In such
+             cases, the weight should be proportional to the inverse of the
+             (known) variance.
 
         linvars : iterable of strings or ints, optional (empty by default)
             Used to specify features that may only enter terms as linear basis
@@ -510,15 +512,15 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             the output of a call to patsy.dmatrices (in which case, X contains
             the response).
 
-        sample_weight : array-like, optional (default=None), shape = [m]
-                        where m is the number of samples
-            Sample weights for training.  Weights must be greater than or
-            equal to zero.  Rows with greater weights contribute more strongly
-            to the fitted model.  Rows with zero weight do not contribute at
-            all.  Weights are useful when dealing with heteroscedasticity.
-            In such cases, the weight should be proportional to the inverse
-            of the (known) variance.
-
+        sample_weight : array-like, optional (default=None), shape = [m, p]
+             where m is the number of samples, p the number of outputs.
+             Sample weights for training.  Weights must be greater than or equal
+             to zero.  For a given output, rows with greater weights contribute
+             more strongly to the fitted model.  Rows with zero weight do not
+             contribute at all.
+             Weights are useful when dealing with heteroscedasticity.  In such
+             cases, the weight should be proportional to the inverse of the
+             (known) variance.
 
         '''
         # Format data
@@ -611,14 +613,16 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             the output of a call to patsy.dmatrices (in which case, X contains
             the response).
 
-        sample_weight : array-like, optional (default=None), shape = [m] where
-                        m is the number of samples
-            Sample weights for training.  Weights must be greater than or equal
-            to zero.  Rows with greater weights contribute more strongly to
-            the fitted model.  Rows with zero weight do not contribute at all.
-            Weights are useful when dealing with heteroscedasticity.  In such
-            cases, the weight should be proportional to the inverse of the
-            (known) variance.
+        sample_weight : array-like, optional (default=None), shape = [m, p]
+                    where m is the number of samples, p the number of outputs.
+                    Sample weights for training.  Weights must be greater than or equal
+                    to zero.  For a given output, rows with greater weights contribute
+                    more strongly to the fitted model.  Rows with zero weight do not
+                    contribute at all.
+                    Weights are useful when dealing with heteroscedasticity.  In such
+                    cases, the weight should be proportional to the inverse of the
+                    (known) variance.
+
         '''
         # Format data
         X, y, sample_weight = self._scrub(X, y, sample_weight)
@@ -626,11 +630,12 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         # Transform into basis space
         B = self.transform(X)
         # Apply weights to B
-        apply_weights_2d(B, sample_weight)
+        sample_weight_per_example = sample_weight.mean(axis=1)
+        apply_weights_2d(B, sample_weight_per_example)
 
         # Apply weights to y
         weighted_y = y.copy()
-        apply_weights_2d(weighted_y, sample_weight)
+        weighted_y *= np.sqrt(sample_weight)
         # Solve the linear least squares problem
         self.coef_ = []
         resid_ = []
@@ -647,7 +652,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             self.gcv_ += gcv(
                 self.mse_, coef.shape[0], X.shape[0], self.get_penalty())
         y_avg = np.average(y, weights=sample_weight, axis=0)
-        y_sqr = sample_weight[:, np.newaxis] * (y - y_avg[np.newaxis, :]) ** 2
+        y_sqr = sample_weight * (y - y_avg[np.newaxis, :]) ** 2
         mse0 = np.sum(y_sqr) / float(X.shape[0])
 
         gcv0 = gcv(mse0, 1, X.shape[0], self.get_penalty())
@@ -731,22 +736,24 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             the output of a call to patsy.dmatrices (in which case, X contains
             the response).
 
-        sample_weight : array-like, optional (default=None), shape = [m] where
-                        m is the number of samples
-            Sample weights for training.  Weights must be greater than or
-            equal to zero.  Rows with greater weights contribute more strongly
-            to the fitted model.  Rows with zero weight do not contribute at
-            all.  Weights are useful when dealing with heteroscedasticity.
-            In such cases, the weight should be proportional to the inverse of
-            the (known) variance.
+        sample_weight : array-like, optional (default=None), shape = [m, p]
+                    where m is the number of samples, p the number of outputs.
+                    Sample weights for training.  Weights must be greater than or equal
+                    to zero.  For a given output, rows with greater weights contribute
+                    more strongly to the fitted model.  Rows with zero weight do not
+                    contribute at all.
+                    Weights are useful when dealing with heteroscedasticity.  In such
+                    cases, the weight should be proportional to the inverse of the
+                    (known) variance.
+
         '''
         X, y, sample_weight = self._scrub(X, y, sample_weight)
         y_hat = self.predict(X)
         m, _ = X.shape
         residual = y - y_hat
-        mse = np.sum(sample_weight[:, np.newaxis] * (residual ** 2)) / m
+        mse = np.sum(sample_weight * (residual ** 2)) / m
         y_avg = np.average(y, weights=sample_weight, axis=0)
-        y_sqr = sample_weight[:, np.newaxis] * (y - y_avg[np.newaxis, :]) ** 2
+        y_sqr = sample_weight * (y - y_avg[np.newaxis, :]) ** 2
         mse0 = np.sum(y_sqr) / m
         return 1 - (mse / mse0)
 

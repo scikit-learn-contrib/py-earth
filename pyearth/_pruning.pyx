@@ -12,17 +12,18 @@ cdef class PruningPasser:
     '''Implements the generic pruning pass as described by Friedman, 1991.'''
     def __init__(PruningPasser self, Basis basis,
                  cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=2] y,
-                 cnp.ndarray[FLOAT_t, ndim=1] weights, **kwargs):
+                 cnp.ndarray[FLOAT_t, ndim=2] weights, **kwargs):
         self.X = X
         self.m = self.X.shape[0]
         self.n = self.X.shape[1]
         self.y = y
         self.weights = weights
+        self.weights_per_example = weights.mean(axis=1)
         self.basis = basis
         self.B = np.empty(shape=(self.m, len(self.basis) + 1), dtype=np.float)
         self.penalty = kwargs.get('penalty', 3.0)
         y_avg = np.average(self.y, weights=self.weights, axis=0)
-        self.sst = np.sum(self.weights[:, np.newaxis] * (self.y - y_avg[np.newaxis, :]) ** 2) / self.m
+        self.sst = np.sum(self.weights * (self.y - y_avg[np.newaxis, :]) ** 2) / self.m
 
     cpdef run(PruningPasser self):
         # This is a totally naive implementation and could potentially be made
@@ -46,13 +47,15 @@ cdef class PruningPasser:
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] y = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.y)
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] weights = (
-            <cnp.ndarray[FLOAT_t, ndim = 1] > self.weights)
+        cdef cnp.ndarray[FLOAT_t, ndim = 2] weights = (
+            <cnp.ndarray[FLOAT_t, ndim = 2] > self.weights)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] weights_per_example = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.weights_per_example)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] weighted_y = y.copy()
 
         # Initial solution
-        apply_weights_2d(weighted_y, weights)
-        self.basis.weighted_transform(X, B, weights)
+        weighted_y *= np.sqrt(weights)
+        self.basis.weighted_transform(X, B, weights_per_example)
 
         mse = 0.
         for p in range(y.shape[1]):
@@ -83,7 +86,7 @@ cdef class PruningPasser:
                 if not bf.is_prunable():
                     continue
                 bf.prune()
-                self.basis.weighted_transform(X, B, weights)
+                self.basis.weighted_transform(X, B, self.weights_per_example)
 
                 mse = 0.
                 for p in range(y.shape[1]):

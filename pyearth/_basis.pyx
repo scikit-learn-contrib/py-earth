@@ -896,5 +896,5 @@ cdef class Basis:
                         continue
                     bf.apply_deriv(X, b, j, var)
                     for i in range(m):
-                        J[i, j_, p_] += coef[coef_idx, p_] * j[i]
+                        J[i, j_, p_] += coef[p_, coef_idx] * j[i]
                     coef_idx += 1

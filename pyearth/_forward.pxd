@@ -36,6 +36,7 @@ cdef class ForwardPasser:
     cdef cnp.ndarray y_col_sum
     cdef cnp.ndarray y_row_sum
     cdef cnp.ndarray sample_weight
+    cdef cnp.ndarray sample_weight_per_example
     cdef INDEX_t m
     cdef INDEX_t n
     cdef FLOAT_t sst

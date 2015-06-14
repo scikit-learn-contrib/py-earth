@@ -25,11 +25,12 @@ cdef class ForwardPasser:
 
     def __init__(ForwardPasser self, cnp.ndarray[FLOAT_t, ndim=2] X,
                  cnp.ndarray[FLOAT_t, ndim=2] y,
-                 cnp.ndarray[FLOAT_t, ndim=1] sample_weight, **kwargs):
+                 cnp.ndarray[FLOAT_t, ndim=2] sample_weight, **kwargs):
         cdef INDEX_t i
         self.X = X
-        self.y = y * np.sqrt(sample_weight)[:, np.newaxis]
+        self.y = y * np.sqrt(sample_weight)
         self.sample_weight = sample_weight
+        self.sample_weight_per_example = sample_weight.mean(axis=1)
         self.m = self.X.shape[0]
         self.n = self.X.shape[1]
         self.endspan       = kwargs.get('endspan', -1)
@@ -52,8 +53,7 @@ cdef class ForwardPasser:
                                 else 1)
 
         self.y_squared = (self.y**2).sum()
-        stuff = (((np.sqrt(self.sample_weight[:, np.newaxis]) * y) /
-                  np.sqrt(np.sum(self.sample_weight))).sum(axis=0) ** 2).sum()
+        stuff = ((((np.sqrt(self.sample_weight) * y)).sum(axis=0) ** 2) / self.sample_weight.sum(axis=0)).sum()
         self.sst = (self.y_squared - stuff) / (self.m)
 
         self.record = ForwardPassRecord(
@@ -68,7 +68,7 @@ cdef class ForwardPasser:
             shape=self.max_terms, order='F', dtype=np.float)
         self.B = np.ones(
             shape=(self.m, self.max_terms), order='F', dtype=np.float)
-        self.basis.weighted_transform(self.X, self.B[:,0:1], self.sample_weight)
+        self.basis.weighted_transform(self.X, self.B[:,0:1], self.sample_weight_per_example)
         # An orthogonal matrix with the same column space as B
         self.B_orth = self.B.copy()
         self.u = np.empty(shape=self.max_terms, dtype=np.float)
@@ -249,8 +249,8 @@ cdef class ForwardPasser:
             <cnp.ndarray[INT_t, ndim = 1] > self.linear_variables)
         cdef cnp.ndarray[INT_t, ndim = 1] sorting = (
             <cnp.ndarray[INT_t, ndim = 1] > self.sorting)
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] sample_weight = (
-            <cnp.ndarray[FLOAT_t, ndim = 1] > self.sample_weight)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] sample_weight_per_example = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.sample_weight_per_example)
 
         if self.endspan < 0:
             endspan = round(3 - log2(self.endspan_alpha / self.n))
@@ -373,9 +373,9 @@ cdef class ForwardPasser:
                                      variable_choice,
                                      True, label)
             bf1.apply(X, B[:, k])
-            apply_weights_slice(B, sample_weight, k)
+            apply_weights_slice(B, sample_weight_per_example, k)
             bf2.apply(X, B[:, k + 1])
-            apply_weights_slice(B, sample_weight, k + 1)
+            apply_weights_slice(B, sample_weight_per_example, k + 1)
             self.basis.append(bf1)
             self.basis.append(bf2)
 
@@ -390,7 +390,7 @@ cdef class ForwardPasser:
             # In this case, only add the linear basis function
             bf1 = LinearBasisFunction(parent_choice, variable_choice, label)
             bf1.apply(X, B[:, k])
-            apply_weights_slice(B, sample_weight, k)
+            apply_weights_slice(B, sample_weight_per_example, k)
             self.basis.append(bf1)
 
             # Orthogonalize the new basis
