@@ -573,21 +573,23 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             result += 'Earth Model\n'
         header = ['Basis Function', 'Pruned', 'Coefficient']
         data = []
-        i = 0
-        for bf in self.basis_:
-            #'%s' % ",".join(['%.2f' % c for c in self.coef_.T[i]])
-            data.append([str(bf), 'Yes' if bf.is_pruned() else 'No', '%g' % self.coef_[0, i]
-                         if not bf.is_pruned() else 'None'])
-            if not bf.is_pruned():
-                i += 1
-        result += ascii_table(header, data)
-        if self.pruning_trace() is not None:
-            record = self.pruning_trace()
-            selection = record.get_selected()
-        else:
-            record = self.forward_trace()
-            selection = len(record) - 1
-        result += '\n'
+        for c in range(self.coef_.shape[0]):
+            i = 0
+            for bf in self.basis_:
+                data.append([str(bf), 'Yes'
+                             if bf.is_pruned()
+                             else 'No', '%g' % self.coef_[c, i]
+                             if not bf.is_pruned() else 'None'])
+                if not bf.is_pruned():
+                    i += 1
+            result += ascii_table(header, data)
+            if self.pruning_trace() is not None:
+                record = self.pruning_trace()
+                selection = record.get_selected()
+            else:
+                record = self.forward_trace()
+                selection = len(record) - 1
+            result += '\n'
         result += 'MSE: %.4f, GCV: %.4f, RSQ: %.4f, GRSQ: %.4f' % (
             self.mse_, self.gcv_, self.rsq_, self.grsq_)
         return result
