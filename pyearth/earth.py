@@ -1,6 +1,6 @@
 from ._forward import ForwardPasser
 from ._pruning import PruningPasser
-from ._util import ascii_table, apply_weights_2d, apply_weights_1d, gcv
+from ._util import ascii_table, apply_weights_2d, gcv
 from sklearn.base import RegressorMixin, BaseEstimator, TransformerMixin
 from sklearn.utils.validation import assert_all_finite
 import numpy as np
@@ -144,24 +144,24 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
     `mse_` : float
         The mean squared error of the model after the final linear fit.
-        If sample_weight is given, this score is weighted appropriately.
+        If sample_weight and/or output_weight are given, this score is
+        weighted appropriately.
 
 
     `rsq_` : float
         The generalized r^2 of the model after the final linear fit.
-        If sample_weight is given, this score is weighted appropriately.
-
+        If sample_weight and/or output_weight are given, this score is
+        weighted appropriately.
 
     `gcv_` : float
         The generalized cross validation (GCV) score of the model after the
-        final linear fit.  If sample_weight is given, this score is
-        weighted appropriately.
-
+        final linear fit. If sample_weight and/or output_weight are
+        given, this score is weighted appropriately.
 
     `grsq_` : float
-        An r^2 like score based on the GCV.  If sample_weight is given, this
-        score is weighted appropriately.
-
+        An r^2 like score based on the GCV. If sample_weight and/or
+        output_weight are given, this score is
+        weighted appropriately.
 
     `forward_pass_record_` : _record.ForwardPassRecord
         An object containing information about the forward pass, such as
@@ -306,7 +306,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
         return X
 
-    def _scrub(self, X, y, sample_weight, **kwargs):
+    def _scrub(self, X, y, sample_weight, output_weight, **kwargs):
         '''
         Sanitize input data.
         '''
@@ -317,6 +317,10 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         if sparse.issparse(sample_weight):
             raise TypeError('A sparse matrix was passed, but dense data '
                             'is required. Use sample_weight.toarray()'
+                            'to convert to dense.')
+        if sparse.issparse(output_weight):
+            raise TypeError('A sparse matrix was passed, but dense data '
+                            'is required. Use output_weight.toarray()'
                             'to convert to dense.')
 
         # Check whether X is the output of patsy.dmatrices
@@ -335,27 +339,39 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
         # Deal with sample_weight
         if sample_weight is None:
-            sample_weight = np.ones(y.shape, dtype=y.dtype)
+            sample_weight = np.ones(y.shape[0], dtype=y.dtype)
         else:
             sample_weight = np.asarray(sample_weight)
-            if len(sample_weight.shape) == 1:
-                sample_weight = sample_weight[:, np.newaxis]
             assert_all_finite(sample_weight)
+        # Deal with output_weight
+        if output_weight is None:
+            output_weight = np.ones(y.shape[1], dtype=y.dtype)
+        else:
+            output_weight = np.asarray(output_weight)
+            assert_all_finite(output_weight)
+
         # Make sure dimensions match
         if y.shape[0] != X.shape[0]:
             raise ValueError('X and y do not have compatible dimensions.')
-        if y.shape != sample_weight.shape:
+        if y.shape[0] != sample_weight.shape[0]:
             raise ValueError(
                 'y and sample_weight do not have compatible dimensions.')
+        if y.shape[1] != output_weight.shape[0]:
+            raise ValueError(
+                'y and output_weight do not have compatible dimensions.')
 
         # Make sure everything is finite
         assert_all_finite(X)
         assert_all_finite(y)
         assert_all_finite(sample_weight)
+        assert_all_finite(output_weight)
 
-        return X, y, sample_weight
+        return X, y, sample_weight, output_weight
 
-    def fit(self, X, y=None, sample_weight=None, xlabels=None, linvars=[]):
+    def fit(self, X, y=None,
+            sample_weight=None,
+            output_weight=None,
+            xlabels=None, linvars=[]):
         '''
         Fit an Earth model to the input data X and y.
 
@@ -377,16 +393,18 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             the response).
 
 
-        sample_weight : array-like, optional (default=None), shape = [m, p]
-             where m is the number of samples, p the number of outputs.
+        sample_weight : array-like, optional (default=None), shape = [m]
+             where m is the number of samples.
              Sample weights for training.  Weights must be greater than or equal
-             to zero.  For a given output, rows with greater weights contribute
-             more strongly to the fitted model.  Rows with zero weight do not
-             contribute at all.
+             to zero. Rows with zero weight do not contribute at all.
              Weights are useful when dealing with heteroscedasticity.  In such
              cases, the weight should be proportional to the inverse of the
              (known) variance.
 
+        output_weight : array-like, optional (default=None), shape = [p]
+             where p is the number of outputs.
+             Output weights for training.  Weights must be greater than or equal
+             to zero. Output with zero weight do not contribute at all.
 
         linvars : iterable of strings or ints, optional (empty by default)
             Used to specify features that may only enter terms as linear basis
@@ -414,18 +432,23 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         else:
             self.xlabels_ = xlabels
         self.linvars_ = linvars
-        X, y, sample_weight = self._scrub(X, y, sample_weight)
+        X, y, sample_weight, output_weight = self._scrub(
+            X, y, sample_weight, output_weight)
 
         # Do the actual work
-        self.__forward_pass(X, y, sample_weight, self.xlabels_, linvars)
-        self.__pruning_pass(X, y, sample_weight)
+        self.__forward_pass(X, y,
+                            sample_weight, output_weight,
+                            self.xlabels_, linvars)
+        self.__pruning_pass(X, y,
+                            sample_weight, output_weight)
         if hasattr(self, 'smooth') and self.smooth:
             self.basis_ = self.basis_.smooth(X)
-        self.__linear_fit(X, y, sample_weight)
+        self.__linear_fit(X, y, sample_weight, output_weight)
         return self
 
-    def __forward_pass(
-            self, X, y=None, sample_weight=None, xlabels=None, linvars=[]):
+    def __forward_pass(self, X, y=None,
+                       sample_weight=None, output_weight=None,
+                       xlabels=None, linvars=[]):
         '''
         Perform the forward pass of the multivariate adaptive regression
         splines algorithm.  Users will normally want to call the fit method
@@ -447,15 +470,22 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             the output of a call to patsy.dmatrices (in which case, X contains
             the response).
 
-        sample_weight : array-like, optional (default=None), shape = [m, p]
-             where m is the number of samples, p the number of outputs.
+        sample_weight : array-like, optional (default=None), shape = [m]
+             where m is the number of samples.
              Sample weights for training.  Weights must be greater than or equal
-             to zero.  For a given output, rows with greater weights contribute
-             more strongly to the fitted model.  Rows with zero weight do not
-             contribute at all.
+             to zero. Rows with zero weight do not contribute at all.
              Weights are useful when dealing with heteroscedasticity.  In such
              cases, the weight should be proportional to the inverse of the
              (known) variance.
+
+        output_weight : array-like, optional (default=None), shape = [p]
+             where p is the number of outputs.
+             The total mean squared error (MSE) is a weighted sum of
+             mean squared errors (MSE) associated to each output, where
+             the weights are given by output_weight.
+             Output weights must be greater than or equal
+             to zero. Outputs with zero weight do not contribute at all
+             to the total mean squared error (MSE).
 
         linvars : iterable of strings or ints, optional (empty by default)
             Used to specify features that may only enter terms as linear basis
@@ -479,17 +509,19 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             self.xlabels_ = self._scrape_labels(X)
         else:
             self.xlabels_ = xlabels
-        X, y, sample_weight = self._scrub(X, y, sample_weight)
+        X, y, sample_weight, output_weight = self._scrub(
+            X, y, sample_weight, output_weight)
 
         # Do the actual work
         args = self._pull_forward_args(**self.__dict__)
         forward_passer = ForwardPasser(
-            X, y, sample_weight, xlabels=self.xlabels_, linvars=linvars, **args)
+            X, y, sample_weight, output_weight,
+            xlabels=self.xlabels_, linvars=linvars, **args)
         forward_passer.run()
         self.forward_pass_record_ = forward_passer.trace()
         self.basis_ = forward_passer.get_basis()
 
-    def __pruning_pass(self, X, y=None, sample_weight=None):
+    def __pruning_pass(self, X, y=None, sample_weight=None, output_weight=None):
         '''
         Perform the pruning pass of the multivariate adaptive regression
         splines algorithm.  Users will normally want to call the fit
@@ -512,25 +544,33 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             the output of a call to patsy.dmatrices (in which case, X contains
             the response).
 
-        sample_weight : array-like, optional (default=None), shape = [m, p]
-             where m is the number of samples, p the number of outputs.
+        sample_weight : array-like, optional (default=None), shape = [m]
+             where m is the number of samples.
              Sample weights for training.  Weights must be greater than or equal
-             to zero.  For a given output, rows with greater weights contribute
-             more strongly to the fitted model.  Rows with zero weight do not
-             contribute at all.
+             to zero. Rows with zero weight do not contribute at all.
              Weights are useful when dealing with heteroscedasticity.  In such
              cases, the weight should be proportional to the inverse of the
              (known) variance.
 
+        output_weight : array-like, optional (default=None), shape = [p]
+             where p is the number of outputs.
+             The total mean squared error (MSE) is a weighted sum of
+             mean squared errors (MSE) associated to each output, where
+             the weights are given by output_weight.
+             Output weights must be greater than or equal
+             to zero. Outputs with zero weight do not contribute at all
+             to the total mean squared error (MSE).
+
         '''
         # Format data
-        X, y, sample_weight = self._scrub(X, y, sample_weight)
+        X, y, sample_weight, output_weight = self._scrub(
+            X, y, sample_weight, output_weight)
 
         # Pull arguments from self
         args = self._pull_pruning_args(**self.__dict__)
         # Do the actual work
         pruning_passer = PruningPasser(
-            self.basis_, X, y, sample_weight, **args)
+            self.basis_, X, y, sample_weight, output_weight, **args)
         pruning_passer.run()
         self.pruning_pass_record_ = pruning_passer.trace()
 
@@ -594,7 +634,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             self.mse_, self.gcv_, self.rsq_, self.grsq_)
         return result
 
-    def __linear_fit(self, X, y=None, sample_weight=None):
+    def __linear_fit(self, X, y=None, sample_weight=None, output_weight=None):
         '''
         Solve the linear least squares problem to determine the coefficients
         of the unpruned basis functions.
@@ -615,29 +655,36 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             the output of a call to patsy.dmatrices (in which case, X contains
             the response).
 
-        sample_weight : array-like, optional (default=None), shape = [m, p]
-                    where m is the number of samples, p the number of outputs.
-                    Sample weights for training.  Weights must be greater than or equal
-                    to zero.  For a given output, rows with greater weights contribute
-                    more strongly to the fitted model.  Rows with zero weight do not
-                    contribute at all.
-                    Weights are useful when dealing with heteroscedasticity.  In such
-                    cases, the weight should be proportional to the inverse of the
-                    (known) variance.
+        sample_weight : array-like, optional (default=None), shape = [m]
+             where m is the number of samples.
+             Sample weights for training.  Weights must be greater than or equal
+             to zero. Rows with zero weight do not contribute at all.
+             Weights are useful when dealing with heteroscedasticity.  In such
+             cases, the weight should be proportional to the inverse of the
+             (known) variance.
+
+        output_weight : array-like, optional (default=None), shape = [p]
+             where p is the number of outputs.
+             The total mean squared error (MSE) is a weighted sum of
+             mean squared errors (MSE) associated to each output, where
+             the weights are given by output_weight.
+             Output weights must be greater than or equal
+             to zero. Outputs with zero weight do not contribute at all
+             to the total mean squared error (MSE).
 
         '''
         # Format data
-        X, y, sample_weight = self._scrub(X, y, sample_weight)
+        X, y, sample_weight, output_weight = self._scrub(
+            X, y, sample_weight, output_weight)
 
         # Transform into basis space
         B = self.transform(X)
         # Apply weights to B
-        sample_weight_per_example = sample_weight.mean(axis=1)
-        apply_weights_2d(B, sample_weight_per_example)
+        apply_weights_2d(B, sample_weight)
 
         # Apply weights to y
         weighted_y = y.copy()
-        weighted_y *= np.sqrt(sample_weight)
+        weighted_y *= np.sqrt(sample_weight[:, np.newaxis])
         # Solve the linear least squares problem
         self.coef_ = []
         resid_ = []
@@ -645,17 +692,18 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             coef, resid = np.linalg.lstsq(B, weighted_y[:, i])[0:2]
             self.coef_.append(coef)
             resid_.append(resid)
+        resid_ = np.array(resid_)
         self.coef_ = np.array(self.coef_)
         # Compute the final mse, gcv, rsq, and grsq (may be different from the
         # pruning scores if the model has been smoothed)
-        self.mse_ = np.sum(resid_) / float(X.shape[0])
+        self.mse_ = np.sum(resid_ * output_weight) / float(X.shape[0])
         self.gcv_ = 0
         for coef in self.coef_:
             self.gcv_ += gcv(
                 self.mse_, coef.shape[0], X.shape[0], self.get_penalty())
         y_avg = np.average(y, weights=sample_weight, axis=0)
-        y_sqr = sample_weight * (y - y_avg[np.newaxis, :]) ** 2
-        mse0 = np.sum(y_sqr) / float(X.shape[0])
+        y_sqr = sample_weight[:, np.newaxis] * (y - y_avg[np.newaxis, :]) ** 2
+        mse0 = np.sum(y_sqr * output_weight) / float(X.shape[0])
 
         gcv0 = gcv(mse0, 1, X.shape[0], self.get_penalty())
         self.rsq_ = 1.0 - (self.mse_ / mse0)
@@ -718,7 +766,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             X, b, j, self.coef_, J, variables_of_interest, True)
         return J
 
-    def score(self, X, y=None, sample_weight=None):
+    def score(self, X, y=None, sample_weight=None, output_weight=None):
         '''
         Calculate the generalized r^2 of the model on data X and y.
 
@@ -738,26 +786,41 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             the output of a call to patsy.dmatrices (in which case, X contains
             the response).
 
-        sample_weight : array-like, optional (default=None), shape = [m, p]
-                    where m is the number of samples, p the number of outputs.
-                    Sample weights for training.  Weights must be greater than or equal
-                    to zero.  For a given output, rows with greater weights contribute
-                    more strongly to the fitted model.  Rows with zero weight do not
-                    contribute at all.
-                    Weights are useful when dealing with heteroscedasticity.  In such
-                    cases, the weight should be proportional to the inverse of the
-                    (known) variance.
+        sample_weight : array-like, optional (default=None), shape = [m]
+             where m is the number of samples.
+             Sample weights for training.  Weights must be greater than or equal
+             to zero. Rows with zero weight do not contribute at all.
+             Weights are useful when dealing with heteroscedasticity.  In such
+             cases, the weight should be proportional to the inverse of the
+             (known) variance.
+
+        output_weight : array-like, optional (default=None), shape = [p]
+             where p is the number of outputs.
+             The total mean squared error (MSE) is a weighted sum of
+             mean squared errors (MSE) associated to each output, where
+             the weights are given by output_weight.
+             Output weights must be greater than or equal
+             to zero. Outputs with zero weight do not contribute at all
+             to the total mean squared error (MSE).
 
         '''
-        X, y, sample_weight = self._scrub(X, y, sample_weight)
+        X, y, sample_weight, output_weight = self._scrub(
+            X, y, sample_weight, output_weight)
         y_hat = self.predict(X)
         m, _ = X.shape
         residual = y - y_hat
-        mse = np.sum(sample_weight * (residual ** 2)) / m
+        mse = np.sum(sample_weight[:, np.newaxis] * (residual ** 2)) / m
         y_avg = np.average(y, weights=sample_weight, axis=0)
-        y_sqr = sample_weight * (y - y_avg[np.newaxis, :]) ** 2
-        mse0 = np.sum(y_sqr) / m
+        y_sqr = sample_weight[:, np.newaxis] * (y - y_avg[np.newaxis, :]) ** 2
+        mse0 = np.sum(y_sqr * output_weight) / m
         return 1 - (mse / mse0)
+
+    def score_samples(self, X, y=None):
+        X, y, sample_weight, output_weight = self._scrub(
+            X, y, None, None)
+        y_hat = self.predict(X)
+        residual = 1 - (y - y_hat) ** 2 / y**2
+        return residual
 
     def transform(self, X):
         '''

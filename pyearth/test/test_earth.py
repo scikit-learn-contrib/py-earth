@@ -76,32 +76,49 @@ def test_linear_fit():
 
 
 def test_sample_weight():
-        group = numpy.random.binomial(1, .5, size=1000) == 1
-        sample_weight = 1 / (group * 100 + 1.0)
-        x = numpy.random.uniform(-10, 10, size=1000)
-        y = numpy.abs(x)
-        y[group] = numpy.abs(x[group] - 5)
-        y += numpy.random.normal(0, 1, size=1000)
-        model = Earth().fit(x, y, sample_weight=sample_weight)
+    group = numpy.random.binomial(1, .5, size=1000) == 1
+    sample_weight = 1 / (group * 100 + 1.0)
+    x = numpy.random.uniform(-10, 10, size=1000)
+    y = numpy.abs(x)
+    y[group] = numpy.abs(x[group] - 5)
+    y += numpy.random.normal(0, 1, size=1000)
+    model = Earth().fit(x, y, sample_weight=sample_weight)
 
-        # Check that the model fits better for the more heavily weighted group
-        assert_true(model.score(x[group], y[group]) < model.score(
-            x[numpy.logical_not(group)], y[numpy.logical_not(group)]))
+    # Check that the model fits better for the more heavily weighted group
+    assert_true(model.score(x[group], y[group]) < model.score(
+        x[numpy.logical_not(group)], y[numpy.logical_not(group)]))
 
-        # Make sure that the score function gives the same answer as the trace
-        pruning_trace = model.pruning_trace()
-        rsq_trace = pruning_trace.rsq(model.pruning_trace().get_selected())
-        assert_almost_equal(model.score(x, y, sample_weight=sample_weight),
-                            rsq_trace)
+    # Make sure that the score function gives the same answer as the trace
+    pruning_trace = model.pruning_trace()
+    rsq_trace = pruning_trace.rsq(model.pruning_trace().get_selected())
+    assert_almost_equal(model.score(x, y, sample_weight=sample_weight),
+                        rsq_trace)
 
-        # Uncomment below to see what this test situation looks like
-        #        from matplotlib import pyplot
-        #        print model.summary()
-        #        print model.score(x,y,sample_weight = sample_weight)
-        #        pyplot.figure()
-        #        pyplot.plot(x,y,'b.')
-        #        pyplot.plot(x,model.predict(x),'r.')
-        #        pyplot.show()
+    # Uncomment below to see what this test situation looks like
+    #        from matplotlib import pyplot
+    #        print model.summary()
+    #        print model.score(x,y,sample_weight = sample_weight)
+    #        pyplot.figure()
+    #        pyplot.plot(x,y,'b.')
+    #        pyplot.plot(x,model.predict(x),'r.')
+    #        pyplot.show()
+
+
+def test_output_weight():
+    x = numpy.random.uniform(-1, 1, size=(1000, 1))
+    y = (numpy.dot(x, numpy.random.normal(0, 1, size=(1, 10)))) ** 5 + 1
+    y = (y - y.mean(axis=0)) / y.std(axis=0)
+    group = numpy.array([1] * 5 + [0] * 5)
+    output_weight = numpy.array([1] * 5 + [2] * 5, dtype=float)
+    model = Earth().fit(x, y, output_weight=output_weight)
+
+    # Check that the model fits at least better
+    # the more heavily weighted group
+    mse = ((model.predict(x) - y)**2).mean(axis=0)
+    group1_mean = mse[group].mean()
+    group2_mean = mse[numpy.logical_not(group)].mean()
+    assert_true(group1_mean > group2_mean or
+                round(abs(group1_mean - group2_mean), 7) == 0)
 
 
 def test_fit():

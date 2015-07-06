@@ -34,7 +34,8 @@ y[:] = numpy.dot(B, beta) + numpy.random.normal(size=100)
 def test_orthonormal_update():
 
     forwardPasser = ForwardPasser(X, y[:, numpy.newaxis],
-                                  numpy.ones(y[:, numpy.newaxis].shape),
+                                  numpy.ones(X.shape[0]),
+                                  numpy.ones(1),
                                   max_terms=1000, penalty=1)
 
     numpy.set_printoptions(precision=4)
@@ -59,7 +60,8 @@ def test_orthonormal_update():
 def test_run():
 
     forwardPasser = ForwardPasser(X, y[:, numpy.newaxis],
-                                  numpy.ones(y[:, numpy.newaxis].shape),
+                                  numpy.ones(X.shape[0]),
+                                  numpy.ones(1),
                                   max_terms=1000, penalty=1)
 
     forwardPasser.run()

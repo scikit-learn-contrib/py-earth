@@ -25,12 +25,14 @@ cdef class ForwardPasser:
 
     def __init__(ForwardPasser self, cnp.ndarray[FLOAT_t, ndim=2] X,
                  cnp.ndarray[FLOAT_t, ndim=2] y,
-                 cnp.ndarray[FLOAT_t, ndim=2] sample_weight, **kwargs):
+                 cnp.ndarray[FLOAT_t, ndim=1] sample_weight,
+                 cnp.ndarray[FLOAT_t, ndim=1] output_weight,
+                 **kwargs):
         cdef INDEX_t i
         self.X = X
-        self.y = y * np.sqrt(sample_weight)
+        self.y = y * np.sqrt(sample_weight[:, np.newaxis])
         self.sample_weight = sample_weight
-        self.sample_weight_per_example = sample_weight.mean(axis=1)
+        self.output_weight = output_weight
         self.m = self.X.shape[0]
         self.n = self.X.shape[1]
         self.endspan       = kwargs.get('endspan', -1)
@@ -52,8 +54,9 @@ cdef class ForwardPasser:
                                 if self.m > self.min_search_points
                                 else 1)
 
-        self.y_squared = (self.y**2).sum()
-        stuff = ((((np.sqrt(self.sample_weight) * y)).sum(axis=0) ** 2) / self.sample_weight.sum(axis=0)).sum()
+        self.y_squared = ((self.y** 2) * self.output_weight).sum()
+        stuff_per_example = ((((np.sqrt(self.sample_weight[:, np.newaxis]) * y)).sum(axis=0) ** 2) / self.sample_weight.sum())
+        stuff = (stuff_per_example * self.output_weight).sum()
         self.sst = (self.y_squared - stuff) / (self.m)
 
         self.record = ForwardPassRecord(
@@ -68,11 +71,12 @@ cdef class ForwardPasser:
             shape=self.max_terms, order='F', dtype=np.float)
         self.B = np.ones(
             shape=(self.m, self.max_terms), order='F', dtype=np.float)
-        self.basis.weighted_transform(self.X, self.B[:,0:1], self.sample_weight_per_example)
+        self.basis.weighted_transform(self.X, self.B[:,0:1], self.sample_weight)
         # An orthogonal matrix with the same column space as B
         self.B_orth = self.B.copy()
         self.u = np.empty(shape=self.max_terms, dtype=np.float)
-        self.c = np.empty(shape=(self.max_terms, self.y.shape[1]), dtype=np.float)
+        self.c = np.empty(shape=(self.max_terms, self.y.shape[1]),
+                          dtype=np.float)
         self.norms = np.empty(shape=self.max_terms, dtype=np.float)
         self.c_squared = 0.0
         self.sort_tracker = np.empty(shape=self.m, dtype=np.int)
@@ -189,7 +193,7 @@ cdef class ForwardPasser:
 
         # Update c
         self.c[k] = (B_orth[:, k][:, np.newaxis] * self.y).sum(axis=0)
-        self.c_squared += (self.c[k] ** 2).sum()
+        self.c_squared += ( (self.c[k] ** 2) * self.output_weight).sum()
 
         return 0  # No problems
 
@@ -201,7 +205,7 @@ cdef class ForwardPasser:
         this does is downdate c_squared (the elements of c and B_orth are left
         alone, since they can simply be ignored until they are overwritten).
         '''
-        self.c_squared -= (self.c[k] ** 2).sum()
+        self.c_squared -= ( (self.c[k]**2) * self.output_weight).sum()
 
     def trace(self):
         return self.record
@@ -249,8 +253,10 @@ cdef class ForwardPasser:
             <cnp.ndarray[INT_t, ndim = 1] > self.linear_variables)
         cdef cnp.ndarray[INT_t, ndim = 1] sorting = (
             <cnp.ndarray[INT_t, ndim = 1] > self.sorting)
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] sample_weight_per_example = (
-            <cnp.ndarray[FLOAT_t, ndim = 1] > self.sample_weight_per_example)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] sample_weight = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.sample_weight)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] output_weight = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.output_weight)
 
         if self.endspan < 0:
             endspan = round(3 - log2(self.endspan_alpha / self.n))
@@ -373,9 +379,9 @@ cdef class ForwardPasser:
                                      variable_choice,
                                      True, label)
             bf1.apply(X, B[:, k])
-            apply_weights_slice(B, sample_weight_per_example, k)
+            apply_weights_slice(B, sample_weight, k)
             bf2.apply(X, B[:, k + 1])
-            apply_weights_slice(B, sample_weight_per_example, k + 1)
+            apply_weights_slice(B, sample_weight, k + 1)
             self.basis.append(bf1)
             self.basis.append(bf2)
 
@@ -390,7 +396,7 @@ cdef class ForwardPasser:
             # In this case, only add the linear basis function
             bf1 = LinearBasisFunction(parent_choice, variable_choice, label)
             bf1.apply(X, B[:, k])
-            apply_weights_slice(B, sample_weight_per_example, k)
+            apply_weights_slice(B, sample_weight, k)
             self.basis.append(bf1)
 
             # Orthogonalize the new basis
@@ -443,6 +449,12 @@ cdef class ForwardPasser:
             <cnp.ndarray[FLOAT_t, ndim = 1] > self.B_orth_times_parent_cum)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] B = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] sample_weight = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.sample_weight)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] output_weight = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.output_weight)
+
+
 
         cdef INDEX_t num_candidates = candidates.shape[0]
 
@@ -477,7 +489,12 @@ cdef class ForwardPasser:
         cdef FLOAT_t delta_b_j
         cdef FLOAT_t z_denom
 
-        # Compute the initial basis function
+        # Compute the initial n the R package earth, Stephen Milborrow gets
+        # around this problem by only allowing a separable weight matrix. That
+        # is, there are row weights and (output) column weights, so the
+        # resulting weight matrix is basically an outer product of the two. That
+        # way no additional copy of B or B_orth is needed because they would all
+        # be simply scalar multiples of each other.
         candidate_idx = candidates[0]
         candidate = X[order[candidate_idx], variable]
         for i in range(self.m):  # TODO: Vectorize?
@@ -501,7 +518,7 @@ cdef class ForwardPasser:
         for i in range(self.m):
             u_end += b[i] * b[i]
             for p in range(self.y.shape[1]):
-                c_end[p] += b[i] * y[i, p]
+                c_end[p] += b[i] * y[i, p]  #* output_weight[p]
 
         # Compute the last element of z (the others are identical to c)
         for p in range(self.y.shape[1]):
@@ -510,14 +527,14 @@ cdef class ForwardPasser:
         for i in range(k + 1):
             u_dot_u += u[i] * u[i]
             for p in range(self.y.shape[1]):
-                u_dot_c[p] += u[i] * c[i, p]
-        z_denom = u_end - u_dot_u
+                u_dot_c[p] +=  u[i] * c[i, p] #* self.output_weight[p]
+        z_denom = (u_end - u_dot_u)
         if z_denom <= self.zero_tol:
             z_end_squared = np.nan
         else:
             z_end_squared = 0.
             for p in range(self.y.shape[1]):
-                z_end_squared += ((c_end[p] - u_dot_c[p]) ** 2)
+                z_end_squared += ((c_end[p] - u_dot_c[p]) ** 2) * (output_weight[p])
             z_end_squared /= z_denom
 
         # Minimizing the norm is actually equivalent to maximizing z_end_squared
@@ -535,7 +552,7 @@ cdef class ForwardPasser:
         parent_squared_cum = b_parent[i] ** 2
 
         for p in range(self.y.shape[1]):
-            parent_times_y_cum[p] += b_parent[i] * y[i, p]
+            parent_times_y_cum[p] +=  b_parent[i] * y[i, p] #* output_weight[p]
 
         # Now loop over the remaining candidates and update z_end_squared for
         # each, looking for the greatest value
@@ -551,9 +568,6 @@ cdef class ForwardPasser:
 
             # Update the accumulators and compute delta_b
             diff = last_candidate - candidate
-
-            for p in range(self.y.shape[1]):
-                delta_c_end[p] = 0.0
 
             # What follows is a section of code that has been optimized for
             # speed at the expense of some readability.  To make it easier to
@@ -604,7 +618,7 @@ cdef class ForwardPasser:
                 b_times_parent_cum += b[j] * b_parent[j]
                 parent_squared_cum += b_parent[j] ** 2
                 for p in range(self.y.shape[1]):
-                    parent_times_y_cum[p] += b_parent[j] * y[j, p]
+                    parent_times_y_cum[p] +=  b_parent[j] * y[j, p] #* output_weight[p]
             for p in range(self.y.shape[1]):
                 delta_c_end[p] += diff * parent_times_y_cum[p]
             delta_u_end += 2 * diff * b_times_parent_cum
@@ -615,7 +629,7 @@ cdef class ForwardPasser:
                 float_tmp = diff * B_orth_times_parent_cum[j]
 
                 for p in range(self.y.shape[1]):
-                    u_dot_c[p] += float_tmp * c[j, p]
+                    u_dot_c[p] += float_tmp * c[j, p] #* output_weight[p]
                 u_dot_u += 2 * u[j] * float_tmp + float_tmp * float_tmp
                 u[j] += float_tmp
             for j_ in range(last_candidate_idx + 1, candidate_idx):
@@ -624,13 +638,13 @@ cdef class ForwardPasser:
                 delta_b_squared += delta_b_j ** 2
 
                 for p in range(self.y.shape[1]):
-                    delta_c_end[p] += delta_b_j * y[j, p]
+                    delta_c_end[p] += delta_b_j * y[j, p]# * output_weight[p]
                 delta_u_end += 2 * delta_b_j * b[j]
                 for h in range(k + 1):
                     float_tmp = delta_b_j * B_orth[j, h]
 
                     for p in range(self.y.shape[1]):
-                        u_dot_c[p] += float_tmp * c[h, p]
+                        u_dot_c[p] +=  float_tmp * c[h, p] #* output_weight[p]
                     u_dot_u += 2 * u[h] * float_tmp + float_tmp * float_tmp
                     u[h] += float_tmp
                 b[j] += delta_b_j
@@ -654,7 +668,7 @@ cdef class ForwardPasser:
             z_end_squared = 0.
 
             for p in range(self.y.shape[1]):
-                z_end_squared += ((c_end[p] - u_dot_c[p]) ** 2)
+                z_end_squared += ((c_end[p] - u_dot_c[p]) ** 2) * output_weight[p]
             z_end_squared /= (u_end - u_dot_u)
             # END HYPER-OPTIMIZED
 
