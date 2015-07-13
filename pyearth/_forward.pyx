@@ -518,7 +518,7 @@ cdef class ForwardPasser:
         for i in range(self.m):
             u_end += b[i] * b[i]
             for p in range(self.y.shape[1]):
-                c_end[p] += b[i] * y[i, p]  #* output_weight[p]
+                c_end[p] += b[i] * y[i, p]
 
         # Compute the last element of z (the others are identical to c)
         for p in range(self.y.shape[1]):
@@ -527,7 +527,7 @@ cdef class ForwardPasser:
         for i in range(k + 1):
             u_dot_u += u[i] * u[i]
             for p in range(self.y.shape[1]):
-                u_dot_c[p] +=  u[i] * c[i, p] #* self.output_weight[p]
+                u_dot_c[p] +=  u[i] * c[i, p]
         z_denom = (u_end - u_dot_u)
         if z_denom <= self.zero_tol:
             z_end_squared = np.nan
@@ -552,7 +552,7 @@ cdef class ForwardPasser:
         parent_squared_cum = b_parent[i] ** 2
 
         for p in range(self.y.shape[1]):
-            parent_times_y_cum[p] +=  b_parent[i] * y[i, p] #* output_weight[p]
+            parent_times_y_cum[p] +=  b_parent[i] * y[i, p]
 
         # Now loop over the remaining candidates and update z_end_squared for
         # each, looking for the greatest value
@@ -618,7 +618,7 @@ cdef class ForwardPasser:
                 b_times_parent_cum += b[j] * b_parent[j]
                 parent_squared_cum += b_parent[j] ** 2
                 for p in range(self.y.shape[1]):
-                    parent_times_y_cum[p] +=  b_parent[j] * y[j, p] #* output_weight[p]
+                    parent_times_y_cum[p] +=  b_parent[j] * y[j, p]
             for p in range(self.y.shape[1]):
                 delta_c_end[p] += diff * parent_times_y_cum[p]
             delta_u_end += 2 * diff * b_times_parent_cum
@@ -629,7 +629,7 @@ cdef class ForwardPasser:
                 float_tmp = diff * B_orth_times_parent_cum[j]
 
                 for p in range(self.y.shape[1]):
-                    u_dot_c[p] += float_tmp * c[j, p] #* output_weight[p]
+                    u_dot_c[p] += float_tmp * c[j, p] 
                 u_dot_u += 2 * u[j] * float_tmp + float_tmp * float_tmp
                 u[j] += float_tmp
             for j_ in range(last_candidate_idx + 1, candidate_idx):
@@ -638,13 +638,13 @@ cdef class ForwardPasser:
                 delta_b_squared += delta_b_j ** 2
 
                 for p in range(self.y.shape[1]):
-                    delta_c_end[p] += delta_b_j * y[j, p]# * output_weight[p]
+                    delta_c_end[p] += delta_b_j * y[j, p]
                 delta_u_end += 2 * delta_b_j * b[j]
                 for h in range(k + 1):
                     float_tmp = delta_b_j * B_orth[j, h]
 
                     for p in range(self.y.shape[1]):
-                        u_dot_c[p] +=  float_tmp * c[h, p] #* output_weight[p]
+                        u_dot_c[p] +=  float_tmp * c[h, p]
                     u_dot_u += 2 * u[h] * float_tmp + float_tmp * float_tmp
                     u[h] += float_tmp
                 b[j] += delta_b_j

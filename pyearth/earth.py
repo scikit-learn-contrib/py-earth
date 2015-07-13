@@ -697,17 +697,25 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         # Compute the final mse, gcv, rsq, and grsq (may be different from the
         # pruning scores if the model has been smoothed)
         self.mse_ = np.sum(resid_ * output_weight) / float(X.shape[0])
-        self.gcv_ = 0
-        for coef in self.coef_:
-            self.gcv_ += gcv(
-                self.mse_, coef.shape[0], X.shape[0], self.get_penalty())
-        y_avg = np.average(y, weights=sample_weight, axis=0)
-        y_sqr = sample_weight[:, np.newaxis] * (y - y_avg[np.newaxis, :]) ** 2
-        mse0 = np.sum(y_sqr * output_weight) / float(X.shape[0])
 
-        gcv0 = gcv(mse0, 1, X.shape[0], self.get_penalty())
-        self.rsq_ = 1.0 - (self.mse_ / mse0)
-        self.grsq_ = 1.0 - (self.gcv_ / gcv0)
+        gcv_ = np.empty(y.shape[1])
+        self.gcv_ = 0
+        for p, coef in enumerate(self.coef_):
+            mse_p = resid_[p].sum() / float(X.shape[0])
+            gcv_[p] = gcv(mse_p,
+                          coef.shape[0], X.shape[0],
+                          self.get_penalty())
+            self.gcv_ += gcv_[p] * output_weight[p]
+        y_avg = np.average(y, weights=sample_weight, axis=0)
+        y_sqr = (y - y_avg[np.newaxis, :]) ** 2
+
+        rsq_ = ((1 - resid_.sum(axis=1) / y_sqr.sum(axis=0)) * output_weight)
+        self.rsq_ = rsq_.sum()
+        gcv0 = np.empty(y.shape[1])
+        for p in range(y.shape[1]):
+            mse0_p = (y_sqr[:, p].sum()) / float(X.shape[0])
+            gcv0[p] = gcv(mse0_p, 1, X.shape[0], self.get_penalty())
+        self.grsq_ = ((1 - (gcv_ / gcv0)) * output_weight).sum()
 
     def predict(self, X):
         '''
