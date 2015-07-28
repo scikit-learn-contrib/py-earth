@@ -307,6 +307,9 @@ cdef class BasisFunction:
                 j += 1
 
         return result
+    
+    def func_factory(HingeBasisFunction self, coef):
+        return eval(self.func_string_factory(coef))
 
 cdef class PicklePlaceHolderBasisFunction(BasisFunction):
     '''This is a place holder for unpickling the basis function tree.'''
@@ -382,12 +385,12 @@ cdef class ConstantBasisFunction(RootBasisFunction):
     def __str__(ConstantBasisFunction self):
         return '(Intercept)'
 
-    def func_factory(ConstantBasisFunction self, FLOAT_t coef):
-        return lambda j: coef
-
-    def func_string_factory(ConstantBasisFunction self, FLOAT_t coef):
-        return "lambda x: {:s}".format(str(coef))
-
+    def func_string_factory(ConstantBasisFunction self, coef):
+        if coef is not None:
+            return "lambda x: {:s}".format(str(coef))
+        else:
+            return ''
+        
 cdef class VariableBasisFunction(BasisFunction):
     cpdef set variables(VariableBasisFunction self):
         cdef set result = self.parent.variables()
@@ -473,7 +476,7 @@ cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
         result = SmoothedHingeBasisFunction(translation[parent], self.knot,
                                             self.knot_minus, self.knot_plus,
                                             self.knot_idx, self.variable,
-                                            self.reverse)
+                                            self.reverse, self.label)
         if self.is_pruned():
             result.prune()
         return result
@@ -546,43 +549,25 @@ cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
                 np.where((self.knot_minus < x) & (x < self.knot_plus),
                     2.0*self.p*tmp2 + 3.0*self.r*tmp2**2, 0.0))
 
-    def func_factory(SmoothedHingeBasisFunction self, FLOAT_t coef):
-        p = self.p
-        r = self.r
-        t_minus = self.knot_minus
-        t_plus = self.knot_plus
-        t = self.knot
-        if not self.reverse:
-            def func(x):
-                v = x[self.variable]
-                if v <= t_minus:
-                    return 0
-                if v >= t_plus:
-                    return (v - t) * coef
-                return (p * (v - t_minus) ** 2 + r * (v - t_minus) ** 3) * coef
-        else:
-            def func(x):
-                v = x[self.variable]
-                if v <= t_minus:
-                    return -(v - t) * coef
-                if v >= t_plus:
-                    return 0
-                return (p * (v - t_plus) ** 2 + r * (v - t_plus) ** 3) * coef
-        return func
-
-    def func_string_factory(SmoothedHingeBasisFunction self, FLOAT_t coef):
+    def func_string_factory(SmoothedHingeBasisFunction self, coef):
+        parent = self.parent.func_string_factory(None)
+        parent = ' * ' + parent if parent else ''
         args = {"p" : self.p,
                 "r": self.r,
                 "t_minus": self.knot_minus,
                 "t_plus": self.knot_plus,
                 "t": self.knot,
                 "idx": self.variable,
-                "coef": coef}
+                "parent": parent}
         if not self.reverse:
-            return "lambda x: 0 if x[{idx}] <= {t_minus} else (x[{idx}] - {t}) * {coef} if x[{idx}] >= {t_plus} else ({p} * (x[{idx}] - {t_minus}) ** 2 + {r} * (x[{idx}] - {t_minus}) ** 3) * {coef}".format(**args)
+            result = "(0 if x[{idx}] <= {t_minus} else (x[{idx}] - {t}) if x[{idx}] >= {t_plus} else ({p} * (x[{idx}] - {t_minus}) ** 2 + {r} * (x[{idx}] - {t_minus}) ** 3)){parent}".format(**args)
         else:
-            return "lambda x: -(x[{idx}] - {t}) * {coef} if x[{idx}] <= {t_minus} else 0 if x[{idx}] >= {t_plus} else ({p} * (x[{idx}] - {t_plus}) ** 2 + {r} * (x[{idx}] - {t_plus}) ** 3) * {coef}".format(**args)
-
+            result = "(-(x[{idx}] - {t}) if x[{idx}] <= {t_minus} else 0 if x[{idx}] >= {t_plus} else ({p} * (x[{idx}] - {t_plus}) ** 2 + {r} * (x[{idx}] - {t_plus}) ** 3)){parent}".format(**args)
+        
+        if coef is not None:
+            result = 'lambda x: {:s} * {:s}'.format(str(coef), result)
+        return result
+        
 @cython.final
 cdef class HingeBasisFunction(HingeBasisFunctionBase):
 
@@ -601,7 +586,7 @@ cdef class HingeBasisFunction(HingeBasisFunctionBase):
         result = SmoothedHingeBasisFunction(translation[parent], self.knot,
                                             knot_minus, knot_plus,
                                             self.knot_idx, self.variable,
-                                            self.reverse)
+                                            self.reverse, self.label)
         if self.is_pruned():
             result.prune()
         return result
@@ -641,23 +626,23 @@ cdef class HingeBasisFunction(HingeBasisFunctionBase):
         else:
             return np.where(x <= self.knot, 0.0,  1.0)
 
-    def func_factory(HingeBasisFunction self, FLOAT_t coef):
+    def func_string_factory(HingeBasisFunction self, coef):
+        parent = self.parent.func_string_factory(None)
+        parent = ' * ' + parent if parent else ''
         if self.reverse:
-            return lambda j: max(0, self.knot - j[self.variable]) * coef
-        return lambda j: max(0, j[self.variable] - self.knot) * coef
-
-    def func_string_factory(HingeBasisFunction self, FLOAT_t coef):
-        if self.reverse:
-            return "lambda x: max(0, {:s} - x[{:d}]) * {:s}".format(
+            result = "max(0, {:s} - x[{:d}]){:s}".format(
                 str(self.knot),
                 self.variable,
-                str(coef))
+                parent)
         else:
-            return "lambda x: max(0, x[{:d}] - {:s}) * {:s}".format(
+            result = "max(0, x[{:d}] - {:s}){:s}".format(
                 self.variable,
                 str(self.knot),
-                str(coef))
-
+                parent)
+        if coef is not None:
+            result = 'lambda x: {:s} * {:s}'.format(str(coef), result)
+        return result
+            
 @cython.final
 cdef class LinearBasisFunction(VariableBasisFunction):
     #@DuplicatedSignature
@@ -696,14 +681,16 @@ cdef class LinearBasisFunction(VariableBasisFunction):
     def eval_deriv(LinearBasisFunction self, x):
         return np.ones(len(x))
 
-    def func_factory(LinearBasisFunction self, FLOAT_t coef):
-        return lambda j: j[self.variable] * coef
-
-    def func_string_factory(LinearBasisFunction self, FLOAT_t coef):
-        return "lambda x: x[{:d}] * {:s}".format(
+    def func_string_factory(LinearBasisFunction self, coef):
+        parent = self.parent.func_string_factory(None)
+        parent = ' * ' + parent if parent else ''
+        result = "x[{:d}]{:s}".format(
             self.variable,
-            str(coef))
-
+            parent)
+        if coef is not None:
+            result = 'lambda x: {:s} * {:s}'.format(str(coef), result)
+        return result
+        
 cdef class Basis:
     '''A container that provides functionality related to a set of
     BasisFunctions with a common ConstantBasisFunction ancestor.
