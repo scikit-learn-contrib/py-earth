@@ -29,6 +29,10 @@ cdef class ForwardPasser:
     cdef int min_search_points
     cdef list xlabels
     cdef FLOAT_t zero_tol
+    cdef list fast_heap
+    cdef int use_fast
+    cdef long fast_K
+    cdef long fast_h
 
     # Input data
     cdef cnp.ndarray X
@@ -53,6 +57,7 @@ cdef class ForwardPasser:
     cdef cnp.ndarray sorting
     cdef cnp.ndarray mwork
     cdef cnp.ndarray linear_variables
+    cdef int iteration_number
 
     # Object construction
     cdef ForwardPassRecord record

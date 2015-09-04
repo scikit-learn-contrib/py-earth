@@ -6,6 +6,7 @@ Created on Feb 24, 2013
 import pickle
 import copy
 import os
+import sys
 from .testing_utils import if_statsmodels, if_pandas, if_patsy, if_environ_has
 from nose.tools import assert_equal, assert_true, \
     assert_almost_equal, assert_list_equal
@@ -14,6 +15,7 @@ import numpy
 from pyearth._basis import (Basis, ConstantBasisFunction,
                             HingeBasisFunction, LinearBasisFunction)
 from pyearth import Earth
+
 
 numpy.random.seed(0)
 
@@ -42,7 +44,9 @@ def test_get_params():
                                'max_terms': None, 'max_degree': None,
                                'minspan_alpha': None, 'thresh': None,
                                'minspan': None, 'endspan': None,
-                               'allow_linear': None, 'smooth': None})
+                               'allow_linear': None, 
+                               'use_fast': None, 'fast_K': None, 
+                               'fast_h': None, 'smooth': None})
     assert_equal(
         Earth(
             max_degree=3).get_params(), {'penalty': None,
@@ -53,7 +57,8 @@ def test_get_params():
                                          'minspan_alpha': None,
                                          'thresh': None, 'minspan': None,
                                          'endspan': None,
-                                         'allow_linear': None,
+                                         'allow_linear': None, 'use_fast': None,
+                                         'fast_K': None, 'fast_h': None,
                                          'smooth': None})
 
 
@@ -229,3 +234,20 @@ def test_copy_compatibility():
         numpy.all(model.predict(X) == model_copy.predict(X)))
     assert_true(model.basis_[0] is model.basis_[1]._get_root())
     assert_true(model_copy.basis_[0] is model_copy.basis_[1]._get_root())
+
+
+def test_fast():
+    earth = Earth(max_terms=10,
+                  max_degree=5,
+                  **default_params)
+    earth.fit(X, y)
+    normal_summary = earth.summary()
+    earth = Earth(use_fast=True,
+                  max_terms=10,
+                  max_degree=5,
+                  fast_K=10,
+                  fast_h=1,
+                  **default_params)
+    earth.fit(X, y)
+    fast_summary = earth.summary()
+    assert_equal(normal_summary, fast_summary)
