@@ -729,10 +729,17 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             The training predictors.  The X parameter can be a numpy
             array, a pandas DataFrame, or a patsy DesignMatrix.
 
+       Returns
+       -------
+            y : array of shape = [m] or [m, p] where m is the number of samples
+                and p is the number of outputs
+                The predicted values.
         '''
         X = self._scrub_x(X)
         B = self.transform(X)
-        return np.dot(B, self.coef_.T)
+        y = np.dot(B, self.coef_.T)
+        if y.shape[1] == 1:
+            return y[:, 0]
 
     def predict_deriv(self, X, variables=None):
         '''
