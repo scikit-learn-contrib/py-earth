@@ -1007,6 +1007,10 @@ struct __pyx_obj_7pyearth_8_forward_ForwardPasser {
   int min_search_points;
   PyObject *xlabels;
   __pyx_t_7pyearth_6_types_FLOAT_t zero_tol;
+  PyObject *fast_heap;
+  int use_fast;
+  long fast_K;
+  long fast_h;
   PyArrayObject *X;
   PyArrayObject *y;
   PyArrayObject *y_col_sum;
@@ -1029,6 +1033,7 @@ struct __pyx_obj_7pyearth_8_forward_ForwardPasser {
   PyArrayObject *sorting;
   PyArrayObject *mwork;
   PyArrayObject *linear_variables;
+  int iteration_number;
   struct __pyx_obj_7pyearth_7_record_ForwardPassRecord *record;
   struct __pyx_obj_7pyearth_6_basis_Basis *basis;
 };

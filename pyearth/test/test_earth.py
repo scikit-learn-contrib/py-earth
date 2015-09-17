@@ -6,9 +6,11 @@ Created on Feb 24, 2013
 import pickle
 import copy
 import os
-
-from nose.tools import (assert_equal, assert_not_equal, assert_true,
-                        assert_almost_equal, assert_list_equal, assert_raises)
+import sys
+from .testing_utils import if_statsmodels, if_pandas, if_patsy, if_environ_has, \
+    assert_list_almost_equal_value, assert_list_almost_equal
+from nose.tools import assert_equal, assert_true, \
+    assert_almost_equal, assert_list_equal, assert_raises, assert_not_equal
 import numpy
 from scipy.sparse import csr_matrix
 
@@ -17,11 +19,6 @@ from sklearn.utils.validation import NotFittedError
 from pyearth._basis import (Basis, ConstantBasisFunction,
                             HingeBasisFunction, LinearBasisFunction)
 from pyearth import Earth
-
-from .testing_utils import (if_statsmodels, if_pandas, if_patsy, if_environ_has,
-                           assert_list_almost_equal,
-                           assert_list_almost_equal_value)
-
 
 numpy.random.seed(0)
 
@@ -50,7 +47,9 @@ def test_get_params():
                                'max_terms': None, 'max_degree': None,
                                'minspan_alpha': None, 'thresh': None,
                                'minspan': None, 'endspan': None,
-                               'allow_linear': None, 'smooth': None,
+                               'allow_linear': None, 
+                               'use_fast': None, 'fast_K': None, 
+                               'fast_h': None, 'smooth': None,
                                'enable_pruning': True})
     assert_equal(
         Earth(
@@ -62,9 +61,9 @@ def test_get_params():
                                          'minspan_alpha': None,
                                          'thresh': None, 'minspan': None,
                                          'endspan': None,
-                                         'allow_linear': None,
-                                         'smooth': None,
-                                         'enable_pruning': True})
+                                         'allow_linear': None, 'use_fast': None,
+                                         'fast_K': None, 'fast_h': None,
+                                         'smooth': None, 'enable_pruning': True})
 
 
 @if_statsmodels
@@ -420,3 +419,19 @@ def test_untrained():
     assert_equal(model.forward_trace(), None)
     assert_equal(model.pruning_trace(), None)
     assert_equal(model.summary(), "Untrained Earth Model")
+
+def test_fast():
+    earth = Earth(max_terms=10,
+                  max_degree=5,
+                  **default_params)
+    earth.fit(X, y)
+    normal_summary = earth.summary()
+    earth = Earth(use_fast=True,
+                  max_terms=10,
+                  max_degree=5,
+                  fast_K=10,
+                  fast_h=1,
+                  **default_params)
+    earth.fit(X, y)
+    fast_summary = earth.summary()
+    assert_equal(normal_summary, fast_summary)

@@ -13,6 +13,29 @@ from libc.math cimport sqrt, abs, log
 import numpy as np
 cnp.import_array()
 
+from heapq import heappush, heappop
+class FastHeapContent:
+
+    def __init__(self, idx, mse=-np.inf, m=-np.inf, v=None):
+        """
+        This class defines an entry of the priority queue as defined in [1].
+        The entry stores information about parent basis functions and is
+        used by the priority queue in the forward pass 
+        to choose the next parent basis function to try.
+
+        References
+        ----------
+        .. [1] Fast MARS, Jerome H.Friedman, Technical Report No.110, May 1993. 
+
+        """
+        self.idx = idx
+        self.mse = mse
+        self.m = m
+        self.v = v
+
+    def __lt__(self, other):
+        return self.mse < other.mse
+
 stopping_conditions = {
     MAXTERMS: "Reached maximum number of terms",
     MAXRSQ: "Achieved RSQ value within threshold of 1",
@@ -47,6 +70,13 @@ cdef class ForwardPasser:
         self.check_every   = kwargs.get('check_every', -1)
         self.min_search_points = kwargs.get('min_search_points', 100)
         self.xlabels       = kwargs.get('xlabels')
+        self.use_fast = kwargs.get('use_fast', False)
+        self.fast_K = kwargs.get("fast_K", 5)
+        self.fast_h = kwargs.get("fast_h", 1)
+
+        
+        self.fast_heap = []
+
         if self.xlabels is None:
             self.xlabels = ['x' + str(i) for i in range(self.n)]
         if self.check_every < 0:
@@ -63,6 +93,8 @@ cdef class ForwardPasser:
             self.m, self.n, self.penalty, self.sst, self.xlabels)
         self.basis = Basis(self.n)
         self.basis.append(ConstantBasisFunction())
+        if self.use_fast is True:
+            heappush(self.fast_heap, FastHeapContent(idx=0))
 
         self.sorting = np.empty(shape=self.m, dtype=np.int)
         self.mwork = np.empty(shape=self.m, dtype=np.int)
@@ -86,6 +118,8 @@ cdef class ForwardPasser:
 
         self.linear_variables = np.zeros(shape=self.n, dtype=np.int)
         self.init_linear_variables()
+
+        self.iteration_number = 0
 
         # Add in user selected linear variables
         for linvar in kwargs.get('linvars',[]):
@@ -139,6 +173,7 @@ cdef class ForwardPasser:
                 self.next_pair()
                 if self.stop_check():
                     break
+                self.iteration_number += 1
 
     cdef stop_check(ForwardPasser self):
         last = self.record.__len__() - 1
@@ -222,9 +257,13 @@ cdef class ForwardPasser:
         cdef INDEX_t knot_idx
         cdef FLOAT_t knot_choice
         cdef FLOAT_t mse_choice
+        cdef FLOAT_t mse_choice_cur_parent
+        cdef int variable_choice_cur_parent
         cdef int knot_idx_choice
         cdef INDEX_t parent_idx_choice
         cdef BasisFunction parent_choice
+        parent_basis_content_choice = None
+        parent_basis_content = None
         cdef INDEX_t variable_choice
         cdef bint first = True
         cdef BasisFunction bf1
@@ -263,24 +302,55 @@ cdef class ForwardPasser:
         else:
             endspan = self.endspan
 
-        # Iterate over variables
-        for variable in range(self.n):
+        if self.use_fast is True:
+            # choose only among the top "fast_K" basis functions
+            # as parents
+            nb_basis = min(self.fast_K, k)
+        else:
+            nb_basis = k
 
-            # Sort the data
-            # TODO: eliminate Python call / data copy
-            sorting[:] = np.argsort(X[:, variable])[::-1]
-
+        content_to_be_repushed = []
+        for idx in range(nb_basis):
             # Iterate over parents
-            for parent_idx in range(k):
+            if self.use_fast is True:
+                # retrieve the next basis function to try as parent
+                parent_basis_content = heappop(self.fast_heap)
+                content_to_be_repushed.append(parent_basis_content)
+                parent_idx = parent_basis_content.idx
+                mse_choice_cur_parent = -1
+                variable_choice_cur_parent = -1
+            else:
+                parent_idx = idx
+
+            parent = self.basis.get(parent_idx)
+            if self.max_degree >= 0:
+                parent_degree = parent.degree()
+                if parent_degree >= self.max_degree:
+                    continue
+            if not parent.is_splittable():
+                continue
+
+            
+            if self.use_fast is True:
+                # each "fast_h" iteration, force to pass through all the variables,
+                if self.iteration_number - parent_basis_content.m > self.fast_h:
+                    variables = range(self.n)
+                    parent_basis_content.m = self.iteration_number
+                # in the opposite case, just use the last chosen variable
+                else:
+                    variables = [parent_basis_content.v]
+                variables = range(self.n)
+            else:
+                variables = range(self.n)
+
+
+            for variable in variables:
+                # Sort the data
+                # TODO: eliminate Python call / data copy
+                sorting[:] = np.argsort(X[:, variable])[::-1]
+
                 linear_dependence = False
 
-                parent = self.basis.get(parent_idx)
-                if self.max_degree >= 0:
-                    parent_degree = parent.degree()
-                    if parent_degree >= self.max_degree:
-                        continue
-                if not parent.is_splittable():
-                    continue
 
                 # Add the linear term to B
                 for i in range(self.m):
@@ -348,6 +418,8 @@ cdef class ForwardPasser:
                     knot_idx_choice = knot_idx
                     parent_idx_choice = parent_idx
                     parent_choice = parent
+                    if self.use_fast is True:
+                        parent_basis_content_choice = parent_basis_content
                     variable_choice = variable
                     first = False
                     dependent = linear_dependence
@@ -357,8 +429,23 @@ cdef class ForwardPasser:
                     knot_idx_choice = knot_idx
                     parent_idx_choice = parent_idx
                     parent_choice = parent
+                    if self.use_fast is True:
+                        parent_basis_content_choice = parent_basis_content
                     variable_choice = variable
                     dependent = linear_dependence
+
+                if self.use_fast is True:
+                    if (mse_choice_cur_parent == -1) or (mse < mse_choice_cur_parent):
+                        mse_choice_cur_parent = mse
+                        variable_choice_cur_parent = variable
+            if self.use_fast is True:
+                if mse_choice_cur_parent != -1:
+                    parent_basis_content.mse = mse_choice_cur_parent
+                    parent_basis_content.v = variable_choice_cur_parent
+        
+        if self.use_fast is True:
+            for content in content_to_be_repushed:
+                heappush(self.fast_heap, content)
 
         # Make sure at least one candidate was checked
         if first:
@@ -366,7 +453,6 @@ cdef class ForwardPasser:
             return
 
         # Add the new basis functions
-        parent = self.basis.get(parent_idx)
         label = self.xlabels[variable_choice]
         if knot_idx_choice != -1:
             # Add the new basis functions
@@ -382,8 +468,15 @@ cdef class ForwardPasser:
             apply_weights_slice(B, sample_weight, k)
             bf2.apply(X, B[:, k + 1])
             apply_weights_slice(B, sample_weight, k + 1)
-            self.basis.append(bf1)
+
+            self.basis.append(bf1)        
             self.basis.append(bf2)
+
+            if self.use_fast is True:
+                bf1_content = FastHeapContent(idx=k)
+                heappush(self.fast_heap, bf1_content)
+                bf2_content = FastHeapContent(idx=k + 1)
+                heappush(self.fast_heap, bf2_content)
 
             # Orthogonalize the new basis
             B_orth[:, k] = B[:, k]
@@ -398,7 +491,9 @@ cdef class ForwardPasser:
             bf1.apply(X, B[:, k])
             apply_weights_slice(B, sample_weight, k)
             self.basis.append(bf1)
-
+            if self.use_fast is True:
+                bf1_content = FastHeapContent(idx=k)
+                heappush(self.fast_heap, bf1_content)
             # Orthogonalize the new basis
             B_orth[:, k] = B[:, k]
             if self.orthonormal_update(k) == 1:
@@ -408,6 +503,8 @@ cdef class ForwardPasser:
             # the forward pass
             self.record[len(self.record) - 1].set_no_candidates(True)
             return
+        if self.use_fast is True: 
+            parent_basis_content_choice.m = -np.inf
 
         # Update the build record
         self.record.append(ForwardPassIteration(parent_idx_choice,

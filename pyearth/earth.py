@@ -125,6 +125,30 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         will have knots except those with variables specified by the linvars
         argument (see the fit method).
 
+    use_fast : bool, optional (default=False)
+        if True, use the approximation procedure defined in [2] to speed up the
+        forward pass. The procedure uses two hyper-parameters : fast_K
+        and fast_h. Check below for more details.
+
+    fast_K : int, optional (default=5)
+        Only used if use_fast is True. As defined in [2], section 3.0, it
+        defines the maximum number of basis functions to look at when
+        we search for a parent, that is we look at only the fast_K top
+        terms ranked by the mean squared error of the model the last time
+        the term was chosen as a parent. The smaller fast_K is, the more
+        gains in speed we get but the more approximate is the result.
+        If fast_K is the maximum number of terms and fast_h is 1,
+        the behavior is the same as in the normal case
+        (when use_fast is False).
+
+    fast_h : int, optional (default=1)
+        Only used if use_fast is True. As defined in [2], section 4.0, it
+        determines the number of iterations before repassing through all
+        the variables when searching for the variable to use for a
+        given parent term. Before reaching fast_h number of iterations
+        only the last chosen variable for the parent term is used. The
+        bigger fast_h is, the more speed gains we get, but the result
+        is more approximate.
 
     smooth : bool, optional (default=False)
         If True, the model will be smoothed such that it has continuous first
@@ -190,6 +214,9 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
     .. [1] Friedman, Jerome. Multivariate Adaptive Regression Splines.
            Annals of Statistics. Volume 19, Number 1 (1991), 1-67.
 
+    .. [2] Fast MARS, Jerome H.Friedman, Technical Report No.110, May 1993.
+
+
     """
 
     forward_pass_arg_names = set([
@@ -197,7 +224,9 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         'endspan_alpha', 'endspan',
         'minspan_alpha', 'minspan',
         'thresh', 'min_search_points', 'check_every',
-        'allow_linear'
+        'allow_linear',
+        'use_fast',
+        'fast_K', 'fast_h'
     ])
     pruning_pass_arg_names = set([
         'penalty'
@@ -207,13 +236,13 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                  endspan_alpha=None, endspan=None,
                  minspan_alpha=None, minspan=None,
                  thresh=None, min_search_points=None, check_every=None,
-                 allow_linear=None, smooth=None, enable_pruning=True):
+                 allow_linear=None, use_fast=None, fast_K=None,
+                 fast_h=None, smooth=None, enable_pruning=True):
         kwargs = {}
         call = locals()
         for name in self._get_param_names():
             if call[name] is not None:
                 kwargs[name] = call[name]
-
         self.set_params(**kwargs)
 
     def __eq__(self, other):
