@@ -7,7 +7,8 @@ cdef class PruningPasser:
     cdef cnp.ndarray X
     cdef cnp.ndarray B
     cdef cnp.ndarray y
-    cdef cnp.ndarray weights
+    cdef cnp.ndarray sample_weight
+    cdef cnp.ndarray output_weight
     cdef INDEX_t m
     cdef INDEX_t n
     cdef Basis basis

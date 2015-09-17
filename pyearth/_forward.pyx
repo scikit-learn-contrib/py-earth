@@ -24,12 +24,15 @@ stopping_conditions = {
 cdef class ForwardPasser:
 
     def __init__(ForwardPasser self, cnp.ndarray[FLOAT_t, ndim=2] X,
-                 cnp.ndarray[FLOAT_t, ndim=1] y,
-                 cnp.ndarray[FLOAT_t, ndim=1] sample_weight, **kwargs):
+                 cnp.ndarray[FLOAT_t, ndim=2] y,
+                 cnp.ndarray[FLOAT_t, ndim=1] sample_weight,
+                 cnp.ndarray[FLOAT_t, ndim=1] output_weight,
+                 **kwargs):
         cdef INDEX_t i
         self.X = X
-        self.y = y * np.sqrt(sample_weight)
+        self.y = y * np.sqrt(sample_weight[:, np.newaxis])
         self.sample_weight = sample_weight
+        self.output_weight = output_weight
         self.m = self.X.shape[0]
         self.n = self.X.shape[1]
         self.endspan       = kwargs.get('endspan', -1)
@@ -51,10 +54,10 @@ cdef class ForwardPasser:
                                 if self.m > self.min_search_points
                                 else 1)
 
-        self.y_squared = np.dot(self.y, self.y)
-        stuff = (np.dot(np.sqrt(self.sample_weight), self.y) /
-                 np.sqrt(np.sum(self.sample_weight))) ** 2
-        self.sst = (self.y_squared - stuff) / self.m
+        self.y_squared = ((self.y** 2) * self.output_weight).sum()
+        stuff_per_example = ((((np.sqrt(self.sample_weight[:, np.newaxis]) * y)).sum(axis=0) ** 2) / self.sample_weight.sum())
+        stuff = (stuff_per_example * self.output_weight).sum()
+        self.sst = (self.y_squared - stuff) / (self.m)
 
         self.record = ForwardPassRecord(
             self.m, self.n, self.penalty, self.sst, self.xlabels)
@@ -72,7 +75,8 @@ cdef class ForwardPasser:
         # An orthogonal matrix with the same column space as B
         self.B_orth = self.B.copy()
         self.u = np.empty(shape=self.max_terms, dtype=np.float)
-        self.c = np.empty(shape=self.max_terms, dtype=np.float)
+        self.c = np.empty(shape=(self.max_terms, self.y.shape[1]),
+                          dtype=np.float)
         self.norms = np.empty(shape=self.max_terms, dtype=np.float)
         self.c_squared = 0.0
         self.sort_tracker = np.empty(shape=self.m, dtype=np.int)
@@ -181,14 +185,15 @@ cdef class ForwardPasser:
 
         if nrm0 <= self.zero_tol or nrm / nrm0 <= self.zero_tol:
             B_orth[:, k] = 0.0
-            self.c[k] = 0.0
+            for p in range(self.y.shape[1]):
+                self.c[k, p] = 0.0
             # The new column is in the column space of the previous columns
             return 1
         B_orth[:, k] /= nrm
 
         # Update c
-        self.c[k] = np.dot(B_orth[:, k], self.y)
-        self.c_squared += self.c[k] ** 2
+        self.c[k] = (B_orth[:, k][:, np.newaxis] * self.y).sum(axis=0)
+        self.c_squared += ( (self.c[k] ** 2) * self.output_weight).sum()
 
         return 0  # No problems
 
@@ -200,7 +205,7 @@ cdef class ForwardPasser:
         this does is downdate c_squared (the elements of c and B_orth are left
         alone, since they can simply be ignored until they are overwritten).
         '''
-        self.c_squared -= self.c[k] ** 2
+        self.c_squared -= ( (self.c[k]**2) * self.output_weight).sum()
 
     def trace(self):
         return self.record
@@ -242,14 +247,16 @@ cdef class ForwardPasser:
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] B_orth = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B_orth)
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] y = (
-            <cnp.ndarray[FLOAT_t, ndim = 1] > self.y)
+        cdef cnp.ndarray[FLOAT_t, ndim = 2] y = (
+            <cnp.ndarray[FLOAT_t, ndim = 2] > self.y)
         cdef cnp.ndarray[INT_t, ndim = 1] linear_variables = (
             <cnp.ndarray[INT_t, ndim = 1] > self.linear_variables)
         cdef cnp.ndarray[INT_t, ndim = 1] sorting = (
             <cnp.ndarray[INT_t, ndim = 1] > self.sorting)
         cdef cnp.ndarray[FLOAT_t, ndim = 1] sample_weight = (
             <cnp.ndarray[FLOAT_t, ndim = 1] > self.sample_weight)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] output_weight = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.output_weight)
 
         if self.endspan < 0:
             endspan = round(3 - log2(self.endspan_alpha / self.n))
@@ -434,14 +441,20 @@ cdef class ForwardPasser:
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B_orth)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] y = (
-            <cnp.ndarray[FLOAT_t, ndim = 1] > self.y)
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] c = (
-            <cnp.ndarray[FLOAT_t, ndim = 1] > self.c)
+        cdef cnp.ndarray[FLOAT_t, ndim = 2] y = (
+            <cnp.ndarray[FLOAT_t, ndim = 2] > self.y)
+        cdef cnp.ndarray[FLOAT_t, ndim = 2] c = (
+            <cnp.ndarray[FLOAT_t, ndim = 2] > self.c)
         cdef cnp.ndarray[FLOAT_t, ndim = 1] B_orth_times_parent_cum = (
             <cnp.ndarray[FLOAT_t, ndim = 1] > self.B_orth_times_parent_cum)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] B = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] sample_weight = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.sample_weight)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] output_weight = (
+            <cnp.ndarray[FLOAT_t, ndim = 1] > self.output_weight)
+
+
 
         cdef INDEX_t num_candidates = candidates.shape[0]
 
@@ -452,7 +465,7 @@ cdef class ForwardPasser:
         cdef INDEX_t i_
         cdef INDEX_t j_
         cdef FLOAT_t u_end
-        cdef FLOAT_t c_end
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] c_end = np.zeros(self.y.shape[1])
         cdef FLOAT_t z_end_squared
         cdef INDEX_t candidate_idx
         cdef INDEX_t last_candidate_idx
@@ -466,17 +479,22 @@ cdef class ForwardPasser:
         cdef FLOAT_t b_times_parent_cum
         cdef FLOAT_t diff
         cdef FLOAT_t delta_b_squared
-        cdef FLOAT_t delta_c_end
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] delta_c_end = np.zeros(self.y.shape[1])
         cdef FLOAT_t delta_u_end
         cdef FLOAT_t parent_squared_cum
-        cdef FLOAT_t parent_times_y_cum
-        cdef FLOAT_t u_dot_c
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] parent_times_y_cum = np.zeros(self.y.shape[1])
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] u_dot_c = np.zeros(self.y.shape[1])
         cdef FLOAT_t u_dot_u
         cdef FLOAT_t float_tmp
         cdef FLOAT_t delta_b_j
         cdef FLOAT_t z_denom
 
-        # Compute the initial basis function
+        # Compute the initial n the R package earth, Stephen Milborrow gets
+        # around this problem by only allowing a separable weight matrix. That
+        # is, there are row weights and (output) column weights, so the
+        # resulting weight matrix is basically an outer product of the two. That
+        # way no additional copy of B or B_orth is needed because they would all
+        # be simply scalar multiples of each other.
         candidate_idx = candidates[0]
         candidate = X[order[candidate_idx], variable]
         for i in range(self.m):  # TODO: Vectorize?
@@ -494,23 +512,30 @@ cdef class ForwardPasser:
         u[0:k + 1] = np.dot(b, B_orth[:, 0:k + 1])
 
         # Compute the new last elements of c and u
-        c_end = 0.0
+        for p in range(self.y.shape[1]):
+            c_end[p] = 0.0
         u_end = 0.0
         for i in range(self.m):
             u_end += b[i] * b[i]
-            c_end += b[i] * y[i]
+            for p in range(self.y.shape[1]):
+                c_end[p] += b[i] * y[i, p]
 
         # Compute the last element of z (the others are identical to c)
-        u_dot_c = 0.0
+        for p in range(self.y.shape[1]):
+            u_dot_c[p] = 0.0
         u_dot_u = 0.0
         for i in range(k + 1):
             u_dot_u += u[i] * u[i]
-            u_dot_c += u[i] * c[i]
-        z_denom = u_end - u_dot_u
+            for p in range(self.y.shape[1]):
+                u_dot_c[p] +=  u[i] * c[i, p]
+        z_denom = (u_end - u_dot_u)
         if z_denom <= self.zero_tol:
             z_end_squared = np.nan
         else:
-            z_end_squared = ((c_end - u_dot_c) ** 2) / z_denom
+            z_end_squared = 0.
+            for p in range(self.y.shape[1]):
+                z_end_squared += ((c_end[p] - u_dot_c[p]) ** 2) * (output_weight[p])
+            z_end_squared /= z_denom
 
         # Minimizing the norm is actually equivalent to maximizing z_end_squared
         # Store z_end_squared and the current candidate as the best knot choice
@@ -521,11 +546,13 @@ cdef class ForwardPasser:
         # Initialize the accumulators
         i = order[0]
         last_candidate_idx = 0
-        y_cum = y[i]
+        y_cum = y[i, 0]
         B_orth_times_parent_cum[0:k + 1] = B_orth[i, 0:k + 1] * b_parent[i]
         b_times_parent_cum = b[i] * b_parent[i]
         parent_squared_cum = b_parent[i] ** 2
-        parent_times_y_cum = b_parent[i] * y[i]
+
+        for p in range(self.y.shape[1]):
+            parent_times_y_cum[p] +=  b_parent[i] * y[i, p]
 
         # Now loop over the remaining candidates and update z_end_squared for
         # each, looking for the greatest value
@@ -541,7 +568,6 @@ cdef class ForwardPasser:
 
             # Update the accumulators and compute delta_b
             diff = last_candidate - candidate
-            delta_c_end = 0.0
 
             # What follows is a section of code that has been optimized for
             # speed at the expense of some readability.  To make it easier to
@@ -576,38 +602,49 @@ cdef class ForwardPasser:
 
             # BEGIN HYPER-OPTIMIZED
             delta_b_squared = 0.0
-            delta_c_end = 0.0
+
+
+            for p in range(self.y.shape[1]):
+                delta_c_end[p] = 0.0
             delta_u_end = 0.0
 
             # Update the accumulators
             for j_ in range(last_last_candidate_idx + 1,
                             last_candidate_idx + 1):
                 j = order[j_]
-                y_cum += y[j]
+                y_cum += y[j, 0]
                 for h in range(k + 1):  # TODO: BLAS
                     B_orth_times_parent_cum[h] += B_orth[j, h] * b_parent[j]
                 b_times_parent_cum += b[j] * b_parent[j]
                 parent_squared_cum += b_parent[j] ** 2
-                parent_times_y_cum += b_parent[j] * y[j]
-            delta_c_end += diff * parent_times_y_cum
+                for p in range(self.y.shape[1]):
+                    parent_times_y_cum[p] +=  b_parent[j] * y[j, p]
+            for p in range(self.y.shape[1]):
+                delta_c_end[p] += diff * parent_times_y_cum[p]
             delta_u_end += 2 * diff * b_times_parent_cum
             delta_b_squared = (diff ** 2) * parent_squared_cum
 
             # Update u and a bunch of other stuff
             for j in range(k + 1):
                 float_tmp = diff * B_orth_times_parent_cum[j]
-                u_dot_c += float_tmp * c[j]
+
+                for p in range(self.y.shape[1]):
+                    u_dot_c[p] += float_tmp * c[j, p] 
                 u_dot_u += 2 * u[j] * float_tmp + float_tmp * float_tmp
                 u[j] += float_tmp
             for j_ in range(last_candidate_idx + 1, candidate_idx):
                 j = order[j_]
                 delta_b_j = (X[j, variable] - candidate) * b_parent[j]
                 delta_b_squared += delta_b_j ** 2
-                delta_c_end += delta_b_j * y[j]
+
+                for p in range(self.y.shape[1]):
+                    delta_c_end[p] += delta_b_j * y[j, p]
                 delta_u_end += 2 * delta_b_j * b[j]
                 for h in range(k + 1):
                     float_tmp = delta_b_j * B_orth[j, h]
-                    u_dot_c += float_tmp * c[h]
+
+                    for p in range(self.y.shape[1]):
+                        u_dot_c[p] +=  float_tmp * c[h, p]
                     u_dot_u += 2 * u[h] * float_tmp + float_tmp * float_tmp
                     u[h] += float_tmp
                 b[j] += delta_b_j
@@ -617,7 +654,9 @@ cdef class ForwardPasser:
             u_end += delta_u_end
 
             # Update c_end
-            c_end += delta_c_end
+
+            for p in range(self.y.shape[1]):
+                c_end[p] += delta_c_end[p]
 
             # Update b_times_parent_cum
             b_times_parent_cum += parent_squared_cum * diff
@@ -626,7 +665,11 @@ cdef class ForwardPasser:
             # optimizing)
             if (u_end - u_dot_u) <= self.zero_tol:
                 continue
-            z_end_squared = ((c_end - u_dot_c) ** 2) / (u_end - u_dot_u)
+            z_end_squared = 0.
+
+            for p in range(self.y.shape[1]):
+                z_end_squared += ((c_end[p] - u_dot_c[p]) ** 2) * output_weight[p]
+            z_end_squared /= (u_end - u_dot_u)
             # END HYPER-OPTIMIZED
 
             # Update the best if necessary

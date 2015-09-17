@@ -86,32 +86,78 @@ def test_linear_fit():
 
 
 def test_sample_weight():
-        group = numpy.random.binomial(1, .5, size=1000) == 1
-        sample_weight = 1 / (group * 100 + 1.0)
-        x = numpy.random.uniform(-10, 10, size=1000)
-        y = numpy.abs(x)
-        y[group] = numpy.abs(x[group] - 5)
-        y += numpy.random.normal(0, 1, size=1000)
-        model = Earth().fit(x[:, numpy.newaxis], y, sample_weight=sample_weight)
+# <<<<<<< HEAD
+    group = numpy.random.binomial(1, .5, size=1000) == 1
+    sample_weight = 1 / (group * 100 + 1.0)
+    x = numpy.random.uniform(-10, 10, size=1000)
+    y = numpy.abs(x)
+    y[group] = numpy.abs(x[group] - 5)
+    y += numpy.random.normal(0, 1, size=1000)
+    model = Earth().fit(x[:, numpy.newaxis], y, sample_weight=sample_weight)
+    
+    # Check that the model fits better for the more heavily weighted group
+    assert_true(model.score(x[group], y[group]) < model.score(
+        x[numpy.logical_not(group)], y[numpy.logical_not(group)]))
+    
+    # Make sure that the score function gives the same answer as the trace
+    pruning_trace = model.pruning_trace()
+    rsq_trace = pruning_trace.rsq(model.pruning_trace().get_selected())
+    assert_almost_equal(model.score(x, y, sample_weight=sample_weight),
+                        rsq_trace)
+    
+    # Uncomment below to see what this test situation looks like
+    #        from matplotlib import pyplot
+    #        print model.summary()
+    #        print model.score(x,y,sample_weight = sample_weight)
+    #        pyplot.figure()
+    #        pyplot.plot(x,y,'b.')
+    #        pyplot.plot(x,model.predict(x),'r.')
+    #        pyplot.show()
+# =======
+#     group = numpy.random.binomial(1, .5, size=1000) == 1
+#     sample_weight = 1 / (group * 100 + 1.0)
+#     x = numpy.random.uniform(-10, 10, size=1000)
+#     y = numpy.abs(x)
+#     y[group] = numpy.abs(x[group] - 5)
+#     y += numpy.random.normal(0, 1, size=1000)
+#     model = Earth().fit(x, y, sample_weight=sample_weight)
+# 
+#     # Check that the model fits better for the more heavily weighted group
+#     assert_true(model.score(x[group], y[group]) < model.score(
+#         x[numpy.logical_not(group)], y[numpy.logical_not(group)]))
+# 
+#     # Make sure that the score function gives the same answer as the trace
+#     pruning_trace = model.pruning_trace()
+#     rsq_trace = pruning_trace.rsq(model.pruning_trace().get_selected())
+#     assert_almost_equal(model.score(x, y, sample_weight=sample_weight),
+#                         rsq_trace)
+# 
+#     # Uncomment below to see what this test situation looks like
+#     #        from matplotlib import pyplot
+#     #        print model.summary()
+#     #        print model.score(x,y,sample_weight = sample_weight)
+#     #        pyplot.figure()
+#     #        pyplot.plot(x,y,'b.')
+#     #        pyplot.plot(x,model.predict(x),'r.')
+#     #        pyplot.show()
 
-        # Check that the model fits better for the more heavily weighted group
-        assert_true(model.score(x[group], y[group]) < model.score(
-            x[numpy.logical_not(group)], y[numpy.logical_not(group)]))
 
-        # Make sure that the score function gives the same answer as the trace
-        pruning_trace = model.pruning_trace()
-        rsq_trace = pruning_trace.rsq(model.pruning_trace().get_selected())
-        assert_almost_equal(model.score(x, y, sample_weight=sample_weight),
-                            rsq_trace)
+def test_output_weight():
+    x = numpy.random.uniform(-1, 1, size=(1000, 1))
+    y = (numpy.dot(x, numpy.random.normal(0, 1, size=(1, 10)))) ** 5 + 1
+    y = (y - y.mean(axis=0)) / y.std(axis=0)
+    group = numpy.array([1] * 5 + [0] * 5)
+    output_weight = numpy.array([1] * 5 + [2] * 5, dtype=float)
+    model = Earth().fit(x, y, output_weight=output_weight)
 
-        # Uncomment below to see what this test situation looks like
-        #        from matplotlib import pyplot
-        #        print model.summary()
-        #        print model.score(x,y,sample_weight = sample_weight)
-        #        pyplot.figure()
-        #        pyplot.plot(x,y,'b.')
-        #        pyplot.plot(x,model.predict(x),'r.')
-        #        pyplot.show()
+    # Check that the model fits at least better
+    # the more heavily weighted group
+    mse = ((model.predict(x) - y)**2).mean(axis=0)
+    group1_mean = mse[group].mean()
+    group2_mean = mse[numpy.logical_not(group)].mean()
+    assert_true(group1_mean > group2_mean or
+                round(abs(group1_mean - group2_mean), 7) == 0)
+# >>>>>>> 24027da468930c9155db99ea6b656e7f8c522ff0
 
 
 def test_fit():
@@ -161,7 +207,7 @@ def test_linvars_coefs():
                   thresh=0,
                   minspan=1,
                   endspan=1).fit(X, y, linvars=range(nb_vars))
-    earth_bias = earth.coef_[0]
+    earth_bias = earth.coef_[0, 0]
     earth_coefs = sorted(earth.coef_[1:])
 
     assert_almost_equal(earth_bias, bias)
@@ -269,7 +315,7 @@ def test_exhaustive_search():
                   minspan=1,
                   endspan=1)
     model.fit(X, y)
-    assert_equal(len(model.basis_), len(model.coef_))
+    assert_equal(model.basis_.plen(), model.coef_.shape[1])
     assert_equal(model.transform(X).shape[1], len(model.basis_))
 
 
@@ -363,20 +409,20 @@ def test_deriv():
 
     model = Earth(**default_params)
     model.fit(X, y)
-    assert_equal(X.shape, model.predict_deriv(X).shape)
-    assert_equal((X.shape[0], 1), model.predict_deriv(X, variables=0).shape)
-    assert_equal((X.shape[0], 1), model.predict_deriv(X, variables='x0').shape)
-    assert_equal((X.shape[0], 3),
+    assert_equal(X.shape + (1,), model.predict_deriv(X).shape)
+    assert_equal((X.shape[0], 1, 1), model.predict_deriv(X, variables=0).shape)
+    assert_equal((X.shape[0], 1, 1), model.predict_deriv(X, variables='x0').shape)
+    assert_equal((X.shape[0], 3, 1),
                  model.predict_deriv(X, variables=[1, 5, 7]).shape)
-    assert_equal((X.shape[0], 0), model.predict_deriv(X, variables=[]).shape)
+    assert_equal((X.shape[0], 0, 1), model.predict_deriv(X, variables=[]).shape)
 
     res_deriv = model.predict_deriv(X, variables=['x2', 'x7', 'x0', 'x1'])
-    assert_equal((X.shape[0], 4), res_deriv.shape)
+    assert_equal((X.shape[0], 4, 1), res_deriv.shape)
 
     res_deriv = model.predict_deriv(X, variables=['x0'])
-    assert_equal((X.shape[0], 1), res_deriv.shape)
+    assert_equal((X.shape[0], 1, 1), res_deriv.shape)
 
-    assert_equal((X.shape[0], 1), model.predict_deriv(X, variables=[0]).shape)
+    assert_equal((X.shape[0], 1, 1), model.predict_deriv(X, variables=[0]).shape)
 
 
 def test_xlabels():

@@ -1559,6 +1559,7 @@ static CYTHON_INLINE int __Pyx_ListComp_Append(PyObject* list, PyObject* x) {
 #define __Pyx_ListComp_Append(L,x) PyList_Append(L,x)
 #endif
 
+#define __Pyx_BufPtrStrided3d(type, buf, i0, s0, i1, s1, i2, s2) (type)((char*)buf + i0 * s0 + i1 * s1 + i2 * s2)
 static CYTHON_INLINE int __Pyx_PySequence_Contains(PyObject* item, PyObject* seq, int eq) {
     int result = PySequence_Contains(seq, item);
     return unlikely(result < 0) ? result : (result == (eq == Py_EQ));
@@ -1623,6 +1624,10 @@ static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
 static CYTHON_INLINE PyObject *__Pyx_GetAttr(PyObject *, PyObject *);
 
 static PyObject* __Pyx_Globals(void);
+
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_Py_intptr_t(Py_intptr_t value);
+
+static CYTHON_INLINE Py_intptr_t __Pyx_PyInt_As_Py_intptr_t(PyObject *);
 
 #if CYTHON_CCOMPLEX
   #ifdef __cplusplus
@@ -21892,8 +21897,8 @@ static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_42transform_deriv(PyObject *__
 static PyObject *__pyx_f_7pyearth_6_basis_5Basis_transform_deriv(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self, PyArrayObject *__pyx_v_X, PyArrayObject *__pyx_v_b, PyArrayObject *__pyx_v_j, PyArrayObject *__pyx_v_coef, PyArrayObject *__pyx_v_J, PyObject *__pyx_v_variables_of_interest, int __pyx_skip_dispatch, struct __pyx_opt_args_7pyearth_6_basis_5Basis_transform_deriv *__pyx_optional_args) {
 
   /* "pyearth/_basis.pyx":858
- *                           cnp.ndarray[FLOAT_t, ndim=1] coef,
- *                           cnp.ndarray[FLOAT_t, ndim=2] J,
+ *                           cnp.ndarray[FLOAT_t, ndim=2] coef,
+ *                           cnp.ndarray[FLOAT_t, ndim=3] J,
  *                           list variables_of_interest, bool prezeroed_j=False):             # <<<<<<<<<<<<<<
  * 
  *         cdef BasisFunction bf
@@ -21904,6 +21909,8 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_transform_deriv(struct __pyx_ob
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_j_;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_m;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_n;
+  npy_intp __pyx_v_p;
+  npy_intp __pyx_v_p_;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_var;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_bf_idx;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_coef_idx;
@@ -21933,16 +21940,21 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_transform_deriv(struct __pyx_ob
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_10;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_11;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_12;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_13;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_14;
-  int __pyx_t_15;
-  Py_ssize_t __pyx_t_16;
-  PyObject *__pyx_t_17 = NULL;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_18;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_19;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_20;
+  npy_intp __pyx_t_13;
+  npy_intp __pyx_t_14;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_15;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_16;
+  npy_intp __pyx_t_17;
+  int __pyx_t_18;
+  Py_ssize_t __pyx_t_19;
+  PyObject *__pyx_t_20 = NULL;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_21;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_22;
+  npy_intp __pyx_t_22;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_23;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_24;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_25;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_26;
+  npy_intp __pyx_t_27;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -21989,14 +22001,14 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_transform_deriv(struct __pyx_ob
   __pyx_pybuffernd_j.diminfo[0].strides = __pyx_pybuffernd_j.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_j.diminfo[0].shape = __pyx_pybuffernd_j.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_coef.rcbuffer->pybuffer, (PyObject*)__pyx_v_coef, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 853; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_coef.rcbuffer->pybuffer, (PyObject*)__pyx_v_coef, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 853; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
-  __pyx_pybuffernd_coef.diminfo[0].strides = __pyx_pybuffernd_coef.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_coef.diminfo[0].shape = __pyx_pybuffernd_coef.rcbuffer->pybuffer.shape[0];
+  __pyx_pybuffernd_coef.diminfo[0].strides = __pyx_pybuffernd_coef.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_coef.diminfo[0].shape = __pyx_pybuffernd_coef.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_coef.diminfo[1].strides = __pyx_pybuffernd_coef.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_coef.diminfo[1].shape = __pyx_pybuffernd_coef.rcbuffer->pybuffer.shape[1];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_J.rcbuffer->pybuffer, (PyObject*)__pyx_v_J, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES| PyBUF_WRITABLE, 2, 0, __pyx_stack) == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 853; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_J.rcbuffer->pybuffer, (PyObject*)__pyx_v_J, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES| PyBUF_WRITABLE, 3, 0, __pyx_stack) == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 853; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
-  __pyx_pybuffernd_J.diminfo[0].strides = __pyx_pybuffernd_J.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_J.diminfo[0].shape = __pyx_pybuffernd_J.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_J.diminfo[1].strides = __pyx_pybuffernd_J.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_J.diminfo[1].shape = __pyx_pybuffernd_J.rcbuffer->pybuffer.shape[1];
+  __pyx_pybuffernd_J.diminfo[0].strides = __pyx_pybuffernd_J.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_J.diminfo[0].shape = __pyx_pybuffernd_J.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_J.diminfo[1].strides = __pyx_pybuffernd_J.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_J.diminfo[1].shape = __pyx_pybuffernd_J.rcbuffer->pybuffer.shape[1]; __pyx_pybuffernd_J.diminfo[2].strides = __pyx_pybuffernd_J.rcbuffer->pybuffer.strides[2]; __pyx_pybuffernd_J.diminfo[2].shape = __pyx_pybuffernd_J.rcbuffer->pybuffer.shape[2];
 
   /* "pyearth/_basis.pyx":853
  *         apply_weights_2d(B, weights)
@@ -22069,7 +22081,7 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_transform_deriv(struct __pyx_ob
  *         # Zero out J if necessary
  *         m = J.shape[0]             # <<<<<<<<<<<<<<
  *         n = J.shape[1]
- *         if not prezeroed_j:
+ *         p = J.shape[2]
  */
   __pyx_v_m = (__pyx_v_J->dimensions[0]);
 
@@ -22077,54 +22089,76 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_transform_deriv(struct __pyx_ob
  *         # Zero out J if necessary
  *         m = J.shape[0]
  *         n = J.shape[1]             # <<<<<<<<<<<<<<
+ *         p = J.shape[2]
  *         if not prezeroed_j:
- *             for j_ in range(n):
  */
   __pyx_v_n = (__pyx_v_J->dimensions[1]);
 
   /* "pyearth/_basis.pyx":866
  *         m = J.shape[0]
  *         n = J.shape[1]
+ *         p = J.shape[2]             # <<<<<<<<<<<<<<
+ *         if not prezeroed_j:
+ *             for j_ in range(n):
+ */
+  __pyx_v_p = (__pyx_v_J->dimensions[2]);
+
+  /* "pyearth/_basis.pyx":867
+ *         n = J.shape[1]
+ *         p = J.shape[2]
  *         if not prezeroed_j:             # <<<<<<<<<<<<<<
  *             for j_ in range(n):
  *                 for i in range(m):
  */
-  __pyx_t_7 = __Pyx_PyObject_IsTrue(((PyObject *)__pyx_v_prezeroed_j)); if (unlikely(__pyx_t_7 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 866; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_7 = __Pyx_PyObject_IsTrue(((PyObject *)__pyx_v_prezeroed_j)); if (unlikely(__pyx_t_7 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 867; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_t_8 = ((!__pyx_t_7) != 0);
   if (__pyx_t_8) {
 
-    /* "pyearth/_basis.pyx":867
- *         n = J.shape[1]
+    /* "pyearth/_basis.pyx":868
+ *         p = J.shape[2]
  *         if not prezeroed_j:
  *             for j_ in range(n):             # <<<<<<<<<<<<<<
  *                 for i in range(m):
- *                     J[i, j_] = 0.0
+ *                     for p_ in range(p):
  */
     __pyx_t_9 = __pyx_v_n;
     for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
       __pyx_v_j_ = __pyx_t_10;
 
-      /* "pyearth/_basis.pyx":868
+      /* "pyearth/_basis.pyx":869
  *         if not prezeroed_j:
  *             for j_ in range(n):
  *                 for i in range(m):             # <<<<<<<<<<<<<<
- *                     J[i, j_] = 0.0
- * 
+ *                     for p_ in range(p):
+ *                         J[i, j_, p_] = 0.0
  */
       __pyx_t_11 = __pyx_v_m;
       for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
         __pyx_v_i = __pyx_t_12;
 
-        /* "pyearth/_basis.pyx":869
+        /* "pyearth/_basis.pyx":870
  *             for j_ in range(n):
  *                 for i in range(m):
- *                     J[i, j_] = 0.0             # <<<<<<<<<<<<<<
- * 
- *         # Compute the derivative for each variable
+ *                     for p_ in range(p):             # <<<<<<<<<<<<<<
+ *                         J[i, j_, p_] = 0.0
+ *         cdef INDEX_t var, bf_idx, coef_idx, n_bfs = len(self)
  */
-        __pyx_t_13 = __pyx_v_i;
-        __pyx_t_14 = __pyx_v_j_;
-        *__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_J.rcbuffer->pybuffer.buf, __pyx_t_13, __pyx_pybuffernd_J.diminfo[0].strides, __pyx_t_14, __pyx_pybuffernd_J.diminfo[1].strides) = 0.0;
+        __pyx_t_13 = __pyx_v_p;
+        for (__pyx_t_14 = 0; __pyx_t_14 < __pyx_t_13; __pyx_t_14+=1) {
+          __pyx_v_p_ = __pyx_t_14;
+
+          /* "pyearth/_basis.pyx":871
+ *                 for i in range(m):
+ *                     for p_ in range(p):
+ *                         J[i, j_, p_] = 0.0             # <<<<<<<<<<<<<<
+ *         cdef INDEX_t var, bf_idx, coef_idx, n_bfs = len(self)
+ *         cdef set variables
+ */
+          __pyx_t_15 = __pyx_v_i;
+          __pyx_t_16 = __pyx_v_j_;
+          __pyx_t_17 = __pyx_v_p_;
+          *__Pyx_BufPtrStrided3d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_J.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_J.diminfo[0].strides, __pyx_t_16, __pyx_pybuffernd_J.diminfo[1].strides, __pyx_t_17, __pyx_pybuffernd_J.diminfo[2].strides) = 0.0;
+        }
       }
     }
     goto __pyx_L3;
@@ -22132,232 +22166,246 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_transform_deriv(struct __pyx_ob
   __pyx_L3:;
 
   /* "pyearth/_basis.pyx":872
- * 
- *         # Compute the derivative for each variable
+ *                     for p_ in range(p):
+ *                         J[i, j_, p_] = 0.0
  *         cdef INDEX_t var, bf_idx, coef_idx, n_bfs = len(self)             # <<<<<<<<<<<<<<
  *         cdef set variables
- *         for j_, var in enumerate(variables_of_interest):
+ * 
  */
   __pyx_t_5 = PyObject_Length(((PyObject *)__pyx_v_self)); if (unlikely(__pyx_t_5 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 872; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_n_bfs = __pyx_t_5;
 
-  /* "pyearth/_basis.pyx":874
- *         cdef INDEX_t var, bf_idx, coef_idx, n_bfs = len(self)
+  /* "pyearth/_basis.pyx":875
  *         cdef set variables
- *         for j_, var in enumerate(variables_of_interest):             # <<<<<<<<<<<<<<
- *             coef_idx=0
- *             for bf_idx in range(n_bfs):
+ * 
+ *         for p_ in range(p):             # <<<<<<<<<<<<<<
+ *             # Compute the derivative for each variable
+ *             for j_, var in enumerate(variables_of_interest):
  */
-  __pyx_t_9 = 0;
-  __pyx_t_1 = __pyx_v_variables_of_interest; __Pyx_INCREF(__pyx_t_1); __pyx_t_5 = 0;
-  for (;;) {
-    if (__pyx_t_5 >= PyList_GET_SIZE(__pyx_t_1)) break;
-    #if CYTHON_COMPILING_IN_CPYTHON
-    __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_5); __Pyx_INCREF(__pyx_t_2); __pyx_t_5++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 874; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    #else
-    __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 874; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_2);
-    #endif
-    __pyx_t_10 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_2); if (unlikely((__pyx_t_10 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 874; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_v_var = __pyx_t_10;
-    __pyx_v_j_ = __pyx_t_9;
-    __pyx_t_9 = (__pyx_t_9 + 1);
+  __pyx_t_13 = __pyx_v_p;
+  for (__pyx_t_14 = 0; __pyx_t_14 < __pyx_t_13; __pyx_t_14+=1) {
+    __pyx_v_p_ = __pyx_t_14;
 
-    /* "pyearth/_basis.pyx":875
- *         cdef set variables
- *         for j_, var in enumerate(variables_of_interest):
- *             coef_idx=0             # <<<<<<<<<<<<<<
- *             for bf_idx in range(n_bfs):
- *                 bf = self.order[bf_idx]
+    /* "pyearth/_basis.pyx":877
+ *         for p_ in range(p):
+ *             # Compute the derivative for each variable
+ *             for j_, var in enumerate(variables_of_interest):             # <<<<<<<<<<<<<<
+ *                 coef_idx=0
+ *                 for bf_idx in range(n_bfs):
  */
-    __pyx_v_coef_idx = 0;
-
-    /* "pyearth/_basis.pyx":876
- *         for j_, var in enumerate(variables_of_interest):
- *             coef_idx=0
- *             for bf_idx in range(n_bfs):             # <<<<<<<<<<<<<<
- *                 bf = self.order[bf_idx]
- *                 variables = bf.variables()
- */
-    __pyx_t_10 = __pyx_v_n_bfs;
-    for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_10; __pyx_t_11+=1) {
-      __pyx_v_bf_idx = __pyx_t_11;
-
-      /* "pyearth/_basis.pyx":877
- *             coef_idx=0
- *             for bf_idx in range(n_bfs):
- *                 bf = self.order[bf_idx]             # <<<<<<<<<<<<<<
- *                 variables = bf.variables()
- *                 if (variables and var not in variables) or bf.is_pruned():
- */
-      if (unlikely(__pyx_v_self->order == Py_None)) {
-        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 877; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      }
-      if (!(likely(((PyList_GET_ITEM(__pyx_v_self->order, __pyx_v_bf_idx)) == Py_None) || likely(__Pyx_TypeTest(PyList_GET_ITEM(__pyx_v_self->order, __pyx_v_bf_idx), __pyx_ptype_7pyearth_6_basis_BasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 877; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __pyx_t_2 = PyList_GET_ITEM(__pyx_v_self->order, __pyx_v_bf_idx);
-      __Pyx_INCREF(__pyx_t_2);
-      __Pyx_XDECREF_SET(__pyx_v_bf, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_2));
-      __pyx_t_2 = 0;
+    __pyx_t_9 = 0;
+    __pyx_t_1 = __pyx_v_variables_of_interest; __Pyx_INCREF(__pyx_t_1); __pyx_t_5 = 0;
+    for (;;) {
+      if (__pyx_t_5 >= PyList_GET_SIZE(__pyx_t_1)) break;
+      #if CYTHON_COMPILING_IN_CPYTHON
+      __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_5); __Pyx_INCREF(__pyx_t_2); __pyx_t_5++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 877; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      #else
+      __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 877; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_2);
+      #endif
+      __pyx_t_10 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_2); if (unlikely((__pyx_t_10 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 877; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __pyx_v_var = __pyx_t_10;
+      __pyx_v_j_ = __pyx_t_9;
+      __pyx_t_9 = (__pyx_t_9 + 1);
 
       /* "pyearth/_basis.pyx":878
- *             for bf_idx in range(n_bfs):
- *                 bf = self.order[bf_idx]
- *                 variables = bf.variables()             # <<<<<<<<<<<<<<
- *                 if (variables and var not in variables) or bf.is_pruned():
- *                     continue
+ *             # Compute the derivative for each variable
+ *             for j_, var in enumerate(variables_of_interest):
+ *                 coef_idx=0             # <<<<<<<<<<<<<<
+ *                 for bf_idx in range(n_bfs):
+ *                     bf = self.order[bf_idx]
  */
-      __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_bf), __pyx_n_s_variables); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 878; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_6 = NULL;
-      if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_3))) {
-        __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_3);
-        if (likely(__pyx_t_6)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-          __Pyx_INCREF(__pyx_t_6);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_3, function);
-        }
-      }
-      if (__pyx_t_6) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_6); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 878; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 878; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      }
-      __Pyx_GOTREF(__pyx_t_2);
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (!(likely(PySet_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "set", Py_TYPE(__pyx_t_2)->tp_name), 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 878; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_XDECREF_SET(__pyx_v_variables, ((PyObject*)__pyx_t_2));
-      __pyx_t_2 = 0;
+      __pyx_v_coef_idx = 0;
 
       /* "pyearth/_basis.pyx":879
- *                 bf = self.order[bf_idx]
- *                 variables = bf.variables()
- *                 if (variables and var not in variables) or bf.is_pruned():             # <<<<<<<<<<<<<<
- *                     continue
- *                 bf.apply_deriv(X, b, j, var)
+ *             for j_, var in enumerate(variables_of_interest):
+ *                 coef_idx=0
+ *                 for bf_idx in range(n_bfs):             # <<<<<<<<<<<<<<
+ *                     bf = self.order[bf_idx]
+ *                     variables = bf.variables()
  */
-      __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_v_variables); if (unlikely(__pyx_t_7 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 879; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      if (!__pyx_t_7) {
-        goto __pyx_L14_next_or;
-      } else {
-      }
-      __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_var); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 879; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_7 = (__Pyx_PySequence_Contains(__pyx_t_2, __pyx_v_variables, Py_NE)); if (unlikely(__pyx_t_7 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 879; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __pyx_t_15 = (__pyx_t_7 != 0);
-      if (!__pyx_t_15) {
-      } else {
-        __pyx_t_8 = __pyx_t_15;
-        goto __pyx_L13_bool_binop_done;
-      }
-      __pyx_L14_next_or:;
-      __pyx_t_15 = (((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf->__pyx_vtab)->is_pruned(__pyx_v_bf, 0) != 0);
-      __pyx_t_8 = __pyx_t_15;
-      __pyx_L13_bool_binop_done:;
-      if (__pyx_t_8) {
+      __pyx_t_10 = __pyx_v_n_bfs;
+      for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_10; __pyx_t_11+=1) {
+        __pyx_v_bf_idx = __pyx_t_11;
 
         /* "pyearth/_basis.pyx":880
- *                 variables = bf.variables()
- *                 if (variables and var not in variables) or bf.is_pruned():
- *                     continue             # <<<<<<<<<<<<<<
- *                 bf.apply_deriv(X, b, j, var)
- *                 for i in range(m):
+ *                 coef_idx=0
+ *                 for bf_idx in range(n_bfs):
+ *                     bf = self.order[bf_idx]             # <<<<<<<<<<<<<<
+ *                     variables = bf.variables()
+ *                     if (variables and var not in variables) or bf.is_pruned():
  */
-        goto __pyx_L10_continue;
-      }
-
-      /* "pyearth/_basis.pyx":881
- *                 if (variables and var not in variables) or bf.is_pruned():
- *                     continue
- *                 bf.apply_deriv(X, b, j, var)             # <<<<<<<<<<<<<<
- *                 for i in range(m):
- *                     J[i, j_] += coef[coef_idx] * j[i]
- */
-      __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_bf), __pyx_n_s_apply_deriv); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 881; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_6 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_var); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 881; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_4 = NULL;
-      __pyx_t_16 = 0;
-      if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_3))) {
-        __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
-        if (likely(__pyx_t_4)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-          __Pyx_INCREF(__pyx_t_4);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_3, function);
-          __pyx_t_16 = 1;
+        if (unlikely(__pyx_v_self->order == Py_None)) {
+          PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+          {__pyx_filename = __pyx_f[0]; __pyx_lineno = 880; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         }
-      }
-      __pyx_t_17 = PyTuple_New(4+__pyx_t_16); if (unlikely(!__pyx_t_17)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 881; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_17);
-      if (__pyx_t_4) {
-        __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_17, 0, __pyx_t_4); __pyx_t_4 = NULL;
-      }
-      __Pyx_INCREF(((PyObject *)__pyx_v_X));
-      __Pyx_GIVEREF(((PyObject *)__pyx_v_X));
-      PyTuple_SET_ITEM(__pyx_t_17, 0+__pyx_t_16, ((PyObject *)__pyx_v_X));
-      __Pyx_INCREF(((PyObject *)__pyx_v_b));
-      __Pyx_GIVEREF(((PyObject *)__pyx_v_b));
-      PyTuple_SET_ITEM(__pyx_t_17, 1+__pyx_t_16, ((PyObject *)__pyx_v_b));
-      __Pyx_INCREF(((PyObject *)__pyx_v_j));
-      __Pyx_GIVEREF(((PyObject *)__pyx_v_j));
-      PyTuple_SET_ITEM(__pyx_t_17, 2+__pyx_t_16, ((PyObject *)__pyx_v_j));
-      __Pyx_GIVEREF(__pyx_t_6);
-      PyTuple_SET_ITEM(__pyx_t_17, 3+__pyx_t_16, __pyx_t_6);
-      __pyx_t_6 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_17, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 881; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_2);
-      __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+        if (!(likely(((PyList_GET_ITEM(__pyx_v_self->order, __pyx_v_bf_idx)) == Py_None) || likely(__Pyx_TypeTest(PyList_GET_ITEM(__pyx_v_self->order, __pyx_v_bf_idx), __pyx_ptype_7pyearth_6_basis_BasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 880; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_2 = PyList_GET_ITEM(__pyx_v_self->order, __pyx_v_bf_idx);
+        __Pyx_INCREF(__pyx_t_2);
+        __Pyx_XDECREF_SET(__pyx_v_bf, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_2));
+        __pyx_t_2 = 0;
 
-      /* "pyearth/_basis.pyx":882
- *                     continue
- *                 bf.apply_deriv(X, b, j, var)
- *                 for i in range(m):             # <<<<<<<<<<<<<<
- *                     J[i, j_] += coef[coef_idx] * j[i]
- *                 coef_idx += 1
+        /* "pyearth/_basis.pyx":881
+ *                 for bf_idx in range(n_bfs):
+ *                     bf = self.order[bf_idx]
+ *                     variables = bf.variables()             # <<<<<<<<<<<<<<
+ *                     if (variables and var not in variables) or bf.is_pruned():
+ *                         continue
  */
-      __pyx_t_12 = __pyx_v_m;
-      for (__pyx_t_18 = 0; __pyx_t_18 < __pyx_t_12; __pyx_t_18+=1) {
-        __pyx_v_i = __pyx_t_18;
+        __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_bf), __pyx_n_s_variables); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 881; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_3);
+        __pyx_t_6 = NULL;
+        if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_3))) {
+          __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_3);
+          if (likely(__pyx_t_6)) {
+            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+            __Pyx_INCREF(__pyx_t_6);
+            __Pyx_INCREF(function);
+            __Pyx_DECREF_SET(__pyx_t_3, function);
+          }
+        }
+        if (__pyx_t_6) {
+          __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_6); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 881; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+        } else {
+          __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 881; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        }
+        __Pyx_GOTREF(__pyx_t_2);
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        if (!(likely(PySet_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "set", Py_TYPE(__pyx_t_2)->tp_name), 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 881; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_XDECREF_SET(__pyx_v_variables, ((PyObject*)__pyx_t_2));
+        __pyx_t_2 = 0;
 
-        /* "pyearth/_basis.pyx":883
- *                 bf.apply_deriv(X, b, j, var)
- *                 for i in range(m):
- *                     J[i, j_] += coef[coef_idx] * j[i]             # <<<<<<<<<<<<<<
- *                 coef_idx += 1
+        /* "pyearth/_basis.pyx":882
+ *                     bf = self.order[bf_idx]
+ *                     variables = bf.variables()
+ *                     if (variables and var not in variables) or bf.is_pruned():             # <<<<<<<<<<<<<<
+ *                         continue
+ *                     bf.apply_deriv(X, b, j, var)
  */
-        __pyx_t_19 = __pyx_v_coef_idx;
-        __pyx_t_20 = __pyx_v_i;
-        __pyx_t_21 = __pyx_v_i;
-        __pyx_t_22 = __pyx_v_j_;
-        *__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_J.rcbuffer->pybuffer.buf, __pyx_t_21, __pyx_pybuffernd_J.diminfo[0].strides, __pyx_t_22, __pyx_pybuffernd_J.diminfo[1].strides) += ((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_coef.rcbuffer->pybuffer.buf, __pyx_t_19, __pyx_pybuffernd_coef.diminfo[0].strides)) * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_j.rcbuffer->pybuffer.buf, __pyx_t_20, __pyx_pybuffernd_j.diminfo[0].strides)));
+        __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_v_variables); if (unlikely(__pyx_t_7 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 882; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        if (!__pyx_t_7) {
+          goto __pyx_L18_next_or;
+        } else {
+        }
+        __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_var); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 882; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_2);
+        __pyx_t_7 = (__Pyx_PySequence_Contains(__pyx_t_2, __pyx_v_variables, Py_NE)); if (unlikely(__pyx_t_7 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 882; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __pyx_t_18 = (__pyx_t_7 != 0);
+        if (!__pyx_t_18) {
+        } else {
+          __pyx_t_8 = __pyx_t_18;
+          goto __pyx_L17_bool_binop_done;
+        }
+        __pyx_L18_next_or:;
+        __pyx_t_18 = (((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf->__pyx_vtab)->is_pruned(__pyx_v_bf, 0) != 0);
+        __pyx_t_8 = __pyx_t_18;
+        __pyx_L17_bool_binop_done:;
+        if (__pyx_t_8) {
+
+          /* "pyearth/_basis.pyx":883
+ *                     variables = bf.variables()
+ *                     if (variables and var not in variables) or bf.is_pruned():
+ *                         continue             # <<<<<<<<<<<<<<
+ *                     bf.apply_deriv(X, b, j, var)
+ *                     for i in range(m):
+ */
+          goto __pyx_L14_continue;
+        }
+
+        /* "pyearth/_basis.pyx":884
+ *                     if (variables and var not in variables) or bf.is_pruned():
+ *                         continue
+ *                     bf.apply_deriv(X, b, j, var)             # <<<<<<<<<<<<<<
+ *                     for i in range(m):
+ *                         J[i, j_, p_] += coef[p_, coef_idx] * j[i]
+ */
+        __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_bf), __pyx_n_s_apply_deriv); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 884; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_3);
+        __pyx_t_6 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_var); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 884; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_6);
+        __pyx_t_4 = NULL;
+        __pyx_t_19 = 0;
+        if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_3))) {
+          __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+          if (likely(__pyx_t_4)) {
+            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+            __Pyx_INCREF(__pyx_t_4);
+            __Pyx_INCREF(function);
+            __Pyx_DECREF_SET(__pyx_t_3, function);
+            __pyx_t_19 = 1;
+          }
+        }
+        __pyx_t_20 = PyTuple_New(4+__pyx_t_19); if (unlikely(!__pyx_t_20)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 884; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_20);
+        if (__pyx_t_4) {
+          __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_20, 0, __pyx_t_4); __pyx_t_4 = NULL;
+        }
+        __Pyx_INCREF(((PyObject *)__pyx_v_X));
+        __Pyx_GIVEREF(((PyObject *)__pyx_v_X));
+        PyTuple_SET_ITEM(__pyx_t_20, 0+__pyx_t_19, ((PyObject *)__pyx_v_X));
+        __Pyx_INCREF(((PyObject *)__pyx_v_b));
+        __Pyx_GIVEREF(((PyObject *)__pyx_v_b));
+        PyTuple_SET_ITEM(__pyx_t_20, 1+__pyx_t_19, ((PyObject *)__pyx_v_b));
+        __Pyx_INCREF(((PyObject *)__pyx_v_j));
+        __Pyx_GIVEREF(((PyObject *)__pyx_v_j));
+        PyTuple_SET_ITEM(__pyx_t_20, 2+__pyx_t_19, ((PyObject *)__pyx_v_j));
+        __Pyx_GIVEREF(__pyx_t_6);
+        PyTuple_SET_ITEM(__pyx_t_20, 3+__pyx_t_19, __pyx_t_6);
+        __pyx_t_6 = 0;
+        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_20, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 884; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_2);
+        __Pyx_DECREF(__pyx_t_20); __pyx_t_20 = 0;
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+        /* "pyearth/_basis.pyx":885
+ *                         continue
+ *                     bf.apply_deriv(X, b, j, var)
+ *                     for i in range(m):             # <<<<<<<<<<<<<<
+ *                         J[i, j_, p_] += coef[p_, coef_idx] * j[i]
+ *                     coef_idx += 1
+ */
+        __pyx_t_12 = __pyx_v_m;
+        for (__pyx_t_21 = 0; __pyx_t_21 < __pyx_t_12; __pyx_t_21+=1) {
+          __pyx_v_i = __pyx_t_21;
+
+          /* "pyearth/_basis.pyx":886
+ *                     bf.apply_deriv(X, b, j, var)
+ *                     for i in range(m):
+ *                         J[i, j_, p_] += coef[p_, coef_idx] * j[i]             # <<<<<<<<<<<<<<
+ *                     coef_idx += 1
+ */
+          __pyx_t_22 = __pyx_v_p_;
+          __pyx_t_23 = __pyx_v_coef_idx;
+          __pyx_t_24 = __pyx_v_i;
+          __pyx_t_25 = __pyx_v_i;
+          __pyx_t_26 = __pyx_v_j_;
+          __pyx_t_27 = __pyx_v_p_;
+          *__Pyx_BufPtrStrided3d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_J.rcbuffer->pybuffer.buf, __pyx_t_25, __pyx_pybuffernd_J.diminfo[0].strides, __pyx_t_26, __pyx_pybuffernd_J.diminfo[1].strides, __pyx_t_27, __pyx_pybuffernd_J.diminfo[2].strides) += ((*__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_coef.rcbuffer->pybuffer.buf, __pyx_t_22, __pyx_pybuffernd_coef.diminfo[0].strides, __pyx_t_23, __pyx_pybuffernd_coef.diminfo[1].strides)) * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_j.rcbuffer->pybuffer.buf, __pyx_t_24, __pyx_pybuffernd_j.diminfo[0].strides)));
+        }
+
+        /* "pyearth/_basis.pyx":887
+ *                     for i in range(m):
+ *                         J[i, j_, p_] += coef[p_, coef_idx] * j[i]
+ *                     coef_idx += 1             # <<<<<<<<<<<<<<
+ */
+        __pyx_v_coef_idx = (__pyx_v_coef_idx + 1);
+        __pyx_L14_continue:;
       }
 
-      /* "pyearth/_basis.pyx":884
- *                 for i in range(m):
- *                     J[i, j_] += coef[coef_idx] * j[i]
- *                 coef_idx += 1             # <<<<<<<<<<<<<<
+      /* "pyearth/_basis.pyx":877
+ *         for p_ in range(p):
+ *             # Compute the derivative for each variable
+ *             for j_, var in enumerate(variables_of_interest):             # <<<<<<<<<<<<<<
+ *                 coef_idx=0
+ *                 for bf_idx in range(n_bfs):
  */
-      __pyx_v_coef_idx = (__pyx_v_coef_idx + 1);
-      __pyx_L10_continue:;
     }
-
-    /* "pyearth/_basis.pyx":874
- *         cdef INDEX_t var, bf_idx, coef_idx, n_bfs = len(self)
- *         cdef set variables
- *         for j_, var in enumerate(variables_of_interest):             # <<<<<<<<<<<<<<
- *             coef_idx=0
- *             for bf_idx in range(n_bfs):
- */
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "pyearth/_basis.pyx":853
  *         apply_weights_2d(B, weights)
@@ -22376,7 +22424,7 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_transform_deriv(struct __pyx_ob
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_XDECREF(__pyx_t_17);
+  __Pyx_XDECREF(__pyx_t_20);
   { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
     __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_J.rcbuffer->pybuffer);
@@ -22423,8 +22471,8 @@ static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_42transform_deriv(PyObject *__
     PyObject* values[7] = {0,0,0,0,0,0,0};
 
     /* "pyearth/_basis.pyx":858
- *                           cnp.ndarray[FLOAT_t, ndim=1] coef,
- *                           cnp.ndarray[FLOAT_t, ndim=2] J,
+ *                           cnp.ndarray[FLOAT_t, ndim=2] coef,
+ *                           cnp.ndarray[FLOAT_t, ndim=3] J,
  *                           list variables_of_interest, bool prezeroed_j=False):             # <<<<<<<<<<<<<<
  * 
  *         cdef BasisFunction bf
@@ -22594,14 +22642,14 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_41transform_deriv(struct __pyx
   __pyx_pybuffernd_j.diminfo[0].strides = __pyx_pybuffernd_j.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_j.diminfo[0].shape = __pyx_pybuffernd_j.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_coef.rcbuffer->pybuffer, (PyObject*)__pyx_v_coef, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 853; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_coef.rcbuffer->pybuffer, (PyObject*)__pyx_v_coef, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 853; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
-  __pyx_pybuffernd_coef.diminfo[0].strides = __pyx_pybuffernd_coef.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_coef.diminfo[0].shape = __pyx_pybuffernd_coef.rcbuffer->pybuffer.shape[0];
+  __pyx_pybuffernd_coef.diminfo[0].strides = __pyx_pybuffernd_coef.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_coef.diminfo[0].shape = __pyx_pybuffernd_coef.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_coef.diminfo[1].strides = __pyx_pybuffernd_coef.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_coef.diminfo[1].shape = __pyx_pybuffernd_coef.rcbuffer->pybuffer.shape[1];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_J.rcbuffer->pybuffer, (PyObject*)__pyx_v_J, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 853; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_J.rcbuffer->pybuffer, (PyObject*)__pyx_v_J, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 3, 0, __pyx_stack) == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 853; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
-  __pyx_pybuffernd_J.diminfo[0].strides = __pyx_pybuffernd_J.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_J.diminfo[0].shape = __pyx_pybuffernd_J.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_J.diminfo[1].strides = __pyx_pybuffernd_J.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_J.diminfo[1].shape = __pyx_pybuffernd_J.rcbuffer->pybuffer.shape[1];
+  __pyx_pybuffernd_J.diminfo[0].strides = __pyx_pybuffernd_J.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_J.diminfo[0].shape = __pyx_pybuffernd_J.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_J.diminfo[1].strides = __pyx_pybuffernd_J.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_J.diminfo[1].shape = __pyx_pybuffernd_J.rcbuffer->pybuffer.shape[1]; __pyx_pybuffernd_J.diminfo[2].strides = __pyx_pybuffernd_J.rcbuffer->pybuffer.strides[2]; __pyx_pybuffernd_J.diminfo[2].shape = __pyx_pybuffernd_J.rcbuffer->pybuffer.shape[2];
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_2.__pyx_n = 1;
   __pyx_t_2.prezeroed_j = __pyx_v_prezeroed_j;
@@ -25931,7 +25979,7 @@ static int __Pyx_InitCachedBuiltins(void) {
   __pyx_builtin_NotImplemented = __Pyx_GetBuiltinName(__pyx_n_s_NotImplemented); if (!__pyx_builtin_NotImplemented) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 88; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_builtin_eval = __Pyx_GetBuiltinName(__pyx_n_s_eval); if (!__pyx_builtin_eval) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 312; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_builtin_NotImplementedError = __Pyx_GetBuiltinName(__pyx_n_s_NotImplementedError); if (!__pyx_builtin_NotImplementedError) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 349; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 874; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 877; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 218; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 802; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   return 0;
@@ -29457,6 +29505,137 @@ bad:
     Py_XDECREF(names);
     Py_XDECREF(globals);
     return NULL;
+}
+
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_Py_intptr_t(Py_intptr_t value) {
+    const Py_intptr_t neg_one = (Py_intptr_t) -1, const_zero = 0;
+    const int is_unsigned = neg_one > const_zero;
+    if (is_unsigned) {
+        if (sizeof(Py_intptr_t) < sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(Py_intptr_t) <= sizeof(unsigned long)) {
+            return PyLong_FromUnsignedLong((unsigned long) value);
+        } else if (sizeof(Py_intptr_t) <= sizeof(unsigned PY_LONG_LONG)) {
+            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
+        }
+    } else {
+        if (sizeof(Py_intptr_t) <= sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(Py_intptr_t) <= sizeof(PY_LONG_LONG)) {
+            return PyLong_FromLongLong((PY_LONG_LONG) value);
+        }
+    }
+    {
+        int one = 1; int little = (int)*(unsigned char *)&one;
+        unsigned char *bytes = (unsigned char *)&value;
+        return _PyLong_FromByteArray(bytes, sizeof(Py_intptr_t),
+                                     little, !is_unsigned);
+    }
+}
+
+static CYTHON_INLINE Py_intptr_t __Pyx_PyInt_As_Py_intptr_t(PyObject *x) {
+    const Py_intptr_t neg_one = (Py_intptr_t) -1, const_zero = 0;
+    const int is_unsigned = neg_one > const_zero;
+#if PY_MAJOR_VERSION < 3
+    if (likely(PyInt_Check(x))) {
+        if (sizeof(Py_intptr_t) < sizeof(long)) {
+            __PYX_VERIFY_RETURN_INT(Py_intptr_t, long, PyInt_AS_LONG(x))
+        } else {
+            long val = PyInt_AS_LONG(x);
+            if (is_unsigned && unlikely(val < 0)) {
+                goto raise_neg_overflow;
+            }
+            return (Py_intptr_t) val;
+        }
+    } else
+#endif
+    if (likely(PyLong_Check(x))) {
+        if (is_unsigned) {
+#if CYTHON_COMPILING_IN_CPYTHON && PY_MAJOR_VERSION >= 3
+ #if CYTHON_USE_PYLONG_INTERNALS
+            switch (Py_SIZE(x)) {
+                case  0: return 0;
+                case  1: __PYX_VERIFY_RETURN_INT(Py_intptr_t, digit, ((PyLongObject*)x)->ob_digit[0]);
+            }
+ #endif
+#endif
+#if CYTHON_COMPILING_IN_CPYTHON
+            if (unlikely(Py_SIZE(x) < 0)) {
+                goto raise_neg_overflow;
+            }
+#else
+            {
+                int result = PyObject_RichCompareBool(x, Py_False, Py_LT);
+                if (unlikely(result < 0))
+                    return (Py_intptr_t) -1;
+                if (unlikely(result == 1))
+                    goto raise_neg_overflow;
+            }
+#endif
+            if (sizeof(Py_intptr_t) <= sizeof(unsigned long)) {
+                __PYX_VERIFY_RETURN_INT(Py_intptr_t, unsigned long, PyLong_AsUnsignedLong(x))
+            } else if (sizeof(Py_intptr_t) <= sizeof(unsigned PY_LONG_LONG)) {
+                __PYX_VERIFY_RETURN_INT(Py_intptr_t, unsigned PY_LONG_LONG, PyLong_AsUnsignedLongLong(x))
+            }
+        } else {
+#if CYTHON_COMPILING_IN_CPYTHON && PY_MAJOR_VERSION >= 3
+ #if CYTHON_USE_PYLONG_INTERNALS
+            switch (Py_SIZE(x)) {
+                case  0: return 0;
+                case  1: __PYX_VERIFY_RETURN_INT(Py_intptr_t,  digit, +(((PyLongObject*)x)->ob_digit[0]));
+                case -1: __PYX_VERIFY_RETURN_INT(Py_intptr_t, sdigit, -(sdigit) ((PyLongObject*)x)->ob_digit[0]);
+            }
+ #endif
+#endif
+            if (sizeof(Py_intptr_t) <= sizeof(long)) {
+                __PYX_VERIFY_RETURN_INT(Py_intptr_t, long, PyLong_AsLong(x))
+            } else if (sizeof(Py_intptr_t) <= sizeof(PY_LONG_LONG)) {
+                __PYX_VERIFY_RETURN_INT(Py_intptr_t, PY_LONG_LONG, PyLong_AsLongLong(x))
+            }
+        }
+        {
+#if CYTHON_COMPILING_IN_PYPY && !defined(_PyLong_AsByteArray)
+            PyErr_SetString(PyExc_RuntimeError,
+                            "_PyLong_AsByteArray() not available in PyPy, cannot convert large numbers");
+#else
+            Py_intptr_t val;
+            PyObject *v = __Pyx_PyNumber_Int(x);
+ #if PY_MAJOR_VERSION < 3
+            if (likely(v) && !PyLong_Check(v)) {
+                PyObject *tmp = v;
+                v = PyNumber_Long(tmp);
+                Py_DECREF(tmp);
+            }
+ #endif
+            if (likely(v)) {
+                int one = 1; int is_little = (int)*(unsigned char *)&one;
+                unsigned char *bytes = (unsigned char *)&val;
+                int ret = _PyLong_AsByteArray((PyLongObject *)v,
+                                              bytes, sizeof(val),
+                                              is_little, !is_unsigned);
+                Py_DECREF(v);
+                if (likely(!ret))
+                    return val;
+            }
+#endif
+            return (Py_intptr_t) -1;
+        }
+    } else {
+        Py_intptr_t val;
+        PyObject *tmp = __Pyx_PyNumber_Int(x);
+        if (!tmp) return (Py_intptr_t) -1;
+        val = __Pyx_PyInt_As_Py_intptr_t(tmp);
+        Py_DECREF(tmp);
+        return val;
+    }
+raise_overflow:
+    PyErr_SetString(PyExc_OverflowError,
+        "value too large to convert to Py_intptr_t");
+    return (Py_intptr_t) -1;
+raise_neg_overflow:
+    PyErr_SetString(PyExc_OverflowError,
+        "can't convert negative value to Py_intptr_t");
+    return (Py_intptr_t) -1;
 }
 
 #if CYTHON_CCOMPLEX
