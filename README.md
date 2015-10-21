@@ -66,7 +66,7 @@ I am aware of the following implementations of Multivariate Adaptive Regression 
 7. ARESLab (written in Matlab by Gints Jekabsons): http://www.cs.rtu.lv/jekabsons/regression.html
 
 The R package earth was most useful to me in understanding the algorithm, particularly because of Stephen Milborrow's 
-thorough and easy to read vignette (http://cran.r-project.org/web/packages/earth/vignettes/earth-notes.pdf).
+thorough and easy to read vignette (http://www.milbo.org/doc/earth-notes.pdf).
  
 ##References
 
