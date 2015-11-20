@@ -672,9 +672,6 @@ cdef class LinearBasisFunction(VariableBasisFunction):
             result += '*' + parent
         return result
 
-    cpdef INDEX_t get_variable(LinearBasisFunction self):
-        return self.variable
-
     def eval(LinearBasisFunction self, x):
         return x
 

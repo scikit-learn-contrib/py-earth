@@ -81,6 +81,7 @@ cdef class ConstantBasisFunction(RootBasisFunction):
 
 cdef class VariableBasisFunction(BasisFunction):
     cdef INDEX_t variable
+    cdef str label
 
     cpdef set variables(VariableBasisFunction self)
 
@@ -98,7 +99,6 @@ cdef class HingeBasisFunctionBase(VariableBasisFunction):
     cdef FLOAT_t knot
     cdef INDEX_t knot_idx
     cdef bint reverse
-    cdef str label
 
     cpdef bint has_knot(HingeBasisFunctionBase self)
 
@@ -137,12 +137,8 @@ cdef class HingeBasisFunction(HingeBasisFunctionBase):
                             dict knot_dict, dict translation)
 
 cdef class LinearBasisFunction(VariableBasisFunction):
-    cdef str label
-
     cpdef _smoothed_version(LinearBasisFunction self, BasisFunction parent,
                             dict knot_dict, dict translation)
-
-    cpdef INDEX_t get_variable(self)
 
 cdef class Basis:
     '''A wrapper that provides functionality related to a set of BasisFunctions
