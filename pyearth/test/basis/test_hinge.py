@@ -28,8 +28,9 @@ def test_getters():
 def test_apply():
     cnt = Container()
     m, _ = cnt.X.shape
+    missing = numpy.zeros_like(cnt.X)
     B = numpy.ones(shape=(m, 10))
-    cnt.bf.apply(cnt.X, B[:, 0])
+    cnt.bf.apply(cnt.X, missing, B[:, 0])
     numpy.testing.assert_almost_equal(
         B[:, 0],
         (cnt.X[:, 1] - 1.0) * (cnt.X[:, 1] > 1.0)
@@ -39,9 +40,10 @@ def test_apply():
 def test_apply_deriv():
     cnt = Container()
     m, _ = cnt.X.shape
+    missing = numpy.zeros_like(cnt.X)
     b = numpy.empty(shape=m)
     j = numpy.empty(shape=m)
-    cnt.bf.apply_deriv(cnt.X, b, j, 1)
+    cnt.bf.apply_deriv(cnt.X, missing, b, j, 1)
     numpy.testing.assert_almost_equal(
         (cnt.X[:, 1] - 1.0) * (cnt.X[:, 1] > 1.0),
         b

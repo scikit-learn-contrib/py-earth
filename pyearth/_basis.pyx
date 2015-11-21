@@ -155,6 +155,7 @@ cdef class BasisFunction:
         return self.parent.degree() + 1
 
     cpdef apply(BasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                cnp.ndarray[FLOAT_t, ndim=2] missing,
                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=True):
         '''
         X - Data matrix
@@ -352,9 +353,11 @@ cdef class RootBasisFunction(BasisFunction):
         return None
 
     cpdef apply(RootBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                cnp.ndarray[FLOAT_t, ndim=2] missing,
                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=False):
         '''
         X - Data matrix
+        missing - missingness matrix
         b - parent vector
         recurse - The ZeroBasisFunction is an alternative RootBasisFunction used
                   for computing derivatives.
@@ -363,10 +366,12 @@ cdef class RootBasisFunction(BasisFunction):
         b[:] = self.eval()
 
     cpdef apply_deriv(RootBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                      cnp.ndarray[FLOAT_t, ndim=2] missing,
                       cnp.ndarray[FLOAT_t, ndim=1] b,
                       cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var):
         '''
         X - Data matrix
+        missing - missingness matrix
         b - holds the value of the basis function
         j - holds the value of the derivative
         '''
@@ -400,30 +405,35 @@ cdef class VariableBasisFunction(BasisFunction):
     cpdef INDEX_t get_variable(VariableBasisFunction self):
         return self.variable
 
-    cpdef apply(VariableBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
+cdef class DataVariableBasisFunction(VariableBasisFunction):
+    cpdef apply(DataVariableBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                cnp.ndarray[FLOAT_t, ndim=2] missing,
                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=True):
         '''
         X - Data matrix
+        missing - missingness matrix
         b - parent vector
         recurse - If False, assume b already contains the result of the parent
                   function.  Otherwise, recurse to compute parent function.
         '''
         if recurse:
-            self.parent.apply(X, b, recurse=True)
+            self.parent.apply(X, missing, b, recurse=True)
         b *= self.eval(X[:, self.variable])
 
-    cpdef apply_deriv(VariableBasisFunction self,
+    cpdef apply_deriv(DataVariableBasisFunction self,
                       cnp.ndarray[FLOAT_t, ndim=2] X,
+                      cnp.ndarray[FLOAT_t, ndim=2] missing,
                       cnp.ndarray[FLOAT_t, ndim=1] b,
                       cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var):
         '''
         X - Data matrix
+        missing - missingness matrix
         j - result vector
         '''
         cdef INDEX_t i, this_var = self.get_variable()  # @DuplicatedSignature
         cdef INDEX_t m = len(b)  # @DuplicatedSignature
         cdef FLOAT_t x
-        self.parent.apply_deriv(X, b, j, var)
+        self.parent.apply_deriv(X, missing, b, j, var)
         this_val = self.eval(X[:,this_var])
         this_deriv = self.eval_deriv(X[:,this_var])
         for i in range(m):
@@ -433,7 +443,95 @@ cdef class VariableBasisFunction(BasisFunction):
                 j[i] += b[i]*this_deriv[i]
             b[i] *= this_val[i]
 
-cdef class HingeBasisFunctionBase(VariableBasisFunction):
+@cython.final
+cdef class MissingnessBasisFunction(VariableBasisFunction):
+    def __init__(MissingnessBasisFunction self, BasisFunction parent,
+                 INDEX_t variable, bint complement,
+                 label=None):
+        self.variable = variable
+        self.complement = complement
+        self.label = label if label is not None else 'x' + str(variable)
+        self._set_parent(parent)
+    
+    cpdef apply(MissingnessBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                cnp.ndarray[FLOAT_t, ndim=2] missing,
+                cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=True):
+        '''
+        X - Data matrix
+        b - parent vector
+        recurse - If False, assume b already contains the result of the parent
+                  function.  Otherwise, recurse to compute parent function.
+        '''
+        if recurse:
+            self.parent.apply(X, missing, b, recurse=True)
+        if self.complement:
+            b *= (1.0 - missing[:, self.variable])
+        else:
+            b *= missing[:, self.variable]
+        
+
+    cpdef apply_deriv(MissingnessBasisFunction self,
+                      cnp.ndarray[FLOAT_t, ndim=2] X,
+                      cnp.ndarray[FLOAT_t, ndim=2] missing,
+                      cnp.ndarray[FLOAT_t, ndim=1] b,
+                      cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var):
+        '''
+        X - Data matrix
+        j - result vector
+        '''
+        cdef INDEX_t i, this_var = self.get_variable()  # @DuplicatedSignature
+        cdef INDEX_t m = len(b)  # @DuplicatedSignature
+        cdef FLOAT_t x
+        self.parent.apply_deriv(X, missing, b, j, var)
+        if self.complement:
+            this_val = 1.0 - missing[:,this_var]
+        else:
+            this_val = 1.0 - missing[:,this_var]
+        this_deriv = 1.0
+        for i in range(m):
+            x = X[i,this_var]
+            j[i] *= this_val[i]
+            b[i] *= this_val[i]
+    
+    cpdef _smoothed_version(MissingnessBasisFunction self, BasisFunction parent,
+                            dict knot_dict, dict translation):
+        result = MissingnessBasisFunction(translation[parent], self.variable, 
+                                          self.complement, self.label)
+        if self.is_pruned():
+            result.prune()
+        return result
+
+    def __reduce__(MissingnessBasisFunction self):
+        return (self.__class__,
+                (pickle_place_holder, self.variable, self.complement,
+                self.label),
+                self._getstate())
+
+    def __str__(MissingnessBasisFunction self):
+        result = 'missing(%s)' % self.label
+        parent = (str(self.parent)
+                  if not self.parent.__class__ is ConstantBasisFunction
+                  else '')
+        if parent != '':
+            result += '*%s' % (str(self.parent),)
+        return result
+
+    def func_string_factory(MissingnessBasisFunction self, coef):
+        parent = self.parent.func_string_factory(None)
+        parent = ' * ' + parent if parent else ''
+        if self.complement:
+            result = "(x[{:d}] is not None){:s}".format(
+                self.variable,
+                parent)
+        else:
+            result = "(x[{:d}] is None){:s}".format(
+                self.variable,
+                parent)
+        if coef is not None:
+            result = 'lambda x: {:s} * {:s}'.format(str(coef), result)
+        return result
+
+cdef class HingeBasisFunctionBase(DataVariableBasisFunction):
     cpdef bint has_knot(HingeBasisFunctionBase self):
         return True
 
@@ -644,7 +742,7 @@ cdef class HingeBasisFunction(HingeBasisFunctionBase):
         return result
             
 @cython.final
-cdef class LinearBasisFunction(VariableBasisFunction):
+cdef class LinearBasisFunction(DataVariableBasisFunction):
     #@DuplicatedSignature
     def __init__(LinearBasisFunction self, BasisFunction parent,
                  INDEX_t variable, label=None):
@@ -839,7 +937,7 @@ cdef class Basis:
         cdef INDEX_t col = 0
         for bf in self.order:
             if not bf.is_pruned():
-                bf.apply(X, B[:, col], recurse=True)
+                bf.apply(X, missing, B[:, col], recurse=True)
                 col += 1
 
     cpdef weighted_transform(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X,
@@ -881,7 +979,7 @@ cdef class Basis:
                     variables = bf.variables()
                     if (variables and var not in variables) or bf.is_pruned():
                         continue
-                    bf.apply_deriv(X, b, j, var)
+                    bf.apply_deriv(X, missing, b, j, var)
                     for i in range(m):
                         J[i, j_, p_] += coef[p_, coef_idx] * j[i]
                     coef_idx += 1

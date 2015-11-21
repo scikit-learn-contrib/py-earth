@@ -43,6 +43,7 @@ cdef class BasisFunction:
     cpdef INDEX_t degree(BasisFunction self)
 
     cpdef apply(BasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                cnp.ndarray[FLOAT_t, ndim=2] missing,
                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse= ?)
 
     cpdef cnp.ndarray[INT_t, ndim = 1] valid_knots(BasisFunction self,
@@ -67,9 +68,11 @@ cdef class RootBasisFunction(BasisFunction):
     cpdef BasisFunction get_parent(RootBasisFunction self)
 
     cpdef apply(RootBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                cnp.ndarray[FLOAT_t, ndim=2] missing,
                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=?)
 
     cpdef apply_deriv(RootBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                      cnp.ndarray[FLOAT_t, ndim=2] missing,
                       cnp.ndarray[FLOAT_t, ndim=1] b,
                       cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var)
 
@@ -87,15 +90,34 @@ cdef class VariableBasisFunction(BasisFunction):
 
     cpdef INDEX_t get_variable(VariableBasisFunction self)
 
-    cpdef apply(VariableBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
+cdef class DataVariableBasisFunction(VariableBasisFunction):
+    cpdef apply(DataVariableBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                cnp.ndarray[FLOAT_t, ndim=2] missing,
                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=?)
 
-    cpdef apply_deriv(VariableBasisFunction self,
+    cpdef apply_deriv(DataVariableBasisFunction self,
                       cnp.ndarray[FLOAT_t, ndim=2] X,
+                      cnp.ndarray[FLOAT_t, ndim=2] missing,
                       cnp.ndarray[FLOAT_t, ndim=1] b,
                       cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var)
 
-cdef class HingeBasisFunctionBase(VariableBasisFunction):
+cdef class MissingnessBasisFunction(VariableBasisFunction):
+    cdef bint complement
+    
+    cpdef apply(MissingnessBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                cnp.ndarray[FLOAT_t, ndim=2] missing,
+                cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=?)
+
+    cpdef apply_deriv(MissingnessBasisFunction self,
+                      cnp.ndarray[FLOAT_t, ndim=2] X,
+                      cnp.ndarray[FLOAT_t, ndim=2] missing,
+                      cnp.ndarray[FLOAT_t, ndim=1] b,
+                      cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var)
+    
+    cpdef _smoothed_version(MissingnessBasisFunction self, BasisFunction parent,
+                            dict knot_dict, dict translation)
+
+cdef class HingeBasisFunctionBase(DataVariableBasisFunction):
     cdef FLOAT_t knot
     cdef INDEX_t knot_idx
     cdef bint reverse
@@ -136,7 +158,7 @@ cdef class HingeBasisFunction(HingeBasisFunctionBase):
                             BasisFunction parent,
                             dict knot_dict, dict translation)
 
-cdef class LinearBasisFunction(VariableBasisFunction):
+cdef class LinearBasisFunction(DataVariableBasisFunction):
     cpdef _smoothed_version(LinearBasisFunction self, BasisFunction parent,
                             dict knot_dict, dict translation)
 

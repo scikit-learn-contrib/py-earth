@@ -284,6 +284,8 @@ cdef class ForwardPasser:
 
         cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
+        cdef cnp.ndarray[FLOAT_t, ndim = 2] missing = (
+            <cnp.ndarray[FLOAT_t, ndim = 2] > self.missing)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] B = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] B_orth = (
@@ -466,9 +468,9 @@ cdef class ForwardPasser:
                                      knot_choice, knot_idx_choice,
                                      variable_choice,
                                      True, label)
-            bf1.apply(X, B[:, k])
+            bf1.apply(X, missing, B[:, k])
             apply_weights_slice(B, sample_weight, k)
-            bf2.apply(X, B[:, k + 1])
+            bf2.apply(X, missing, B[:, k + 1])
             apply_weights_slice(B, sample_weight, k + 1)
 
             self.basis.append(bf1)        
@@ -490,7 +492,7 @@ cdef class ForwardPasser:
         elif not dependent and knot_idx_choice == -1:
             # In this case, only add the linear basis function
             bf1 = LinearBasisFunction(parent_choice, variable_choice, label)
-            bf1.apply(X, B[:, k])
+            bf1.apply(X, missing, B[:, k])
             apply_weights_slice(B, sample_weight, k)
             self.basis.append(bf1)
             if self.use_fast is True:

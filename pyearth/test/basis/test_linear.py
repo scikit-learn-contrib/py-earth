@@ -18,17 +18,19 @@ class Container(BaseContainer):
 def test_apply():
     cnt = Container()
     m, n = cnt.X.shape
+    missing = numpy.zeros_like(cnt.X)
     B = numpy.ones(shape=(m, 10))
-    cnt.bf.apply(cnt.X, B[:, 0])
+    cnt.bf.apply(cnt.X, missing, B[:, 0])
     assert_true(numpy.all(B[:, 0] == cnt.X[:, 1]))
 
 
 def test_apply_deriv():
     cnt = Container()
     m, _ = cnt.X.shape
+    missing = numpy.zeros_like(cnt.X)
     b = numpy.empty(shape=m)
     j = numpy.empty(shape=m)
-    cnt.bf.apply_deriv(cnt.X, b, j, 1)
+    cnt.bf.apply_deriv(cnt.X, missing, b, j, 1)
     numpy.testing.assert_almost_equal(b, cnt.X[:, 1])
     numpy.testing.assert_almost_equal(j, 1.0)
 
