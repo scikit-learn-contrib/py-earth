@@ -33,6 +33,7 @@ cdef class ForwardPasser:
     cdef int use_fast
     cdef long fast_K
     cdef long fast_h
+    cdef bint allow_missing
 
     # Input data
     cdef cnp.ndarray X
@@ -63,6 +64,7 @@ cdef class ForwardPasser:
     cdef cnp.ndarray mwork
     cdef cnp.ndarray linear_variables
     cdef int iteration_number
+    cdef cnp.ndarray has_missing
 
     # Object construction
     cdef ForwardPassRecord record
@@ -82,7 +84,7 @@ cdef class ForwardPasser:
 
     cdef next_pair(ForwardPasser self)
 
-    cdef best_knot(ForwardPasser self, INDEX_t parent, INDEX_t variable,
+    cdef best_knot(ForwardPasser self, INDEX_t parent, cnp.ndarray[FLOAT_t, ndim=1] x,
                    INDEX_t k, cnp.ndarray[INT_t, ndim=1] candidates,
                    cnp.ndarray[INT_t, ndim=1] order,
                    FLOAT_t * mse, FLOAT_t * knot,

@@ -11,7 +11,11 @@ cdef class BasisFunction:
     cdef bint pruned
     cdef bint prunable
     cdef bint splittable
-
+    
+    cpdef bint covered(BasisFunction self, INDEX_t variable)
+    
+    cpdef bint eligible(BasisFunction self, INDEX_t variable)
+    
     cpdef smooth(BasisFunction self, dict knot_dict, dict translation)
 
     cpdef bint has_knot(BasisFunction self)
@@ -103,6 +107,10 @@ cdef class DataVariableBasisFunction(VariableBasisFunction):
 
 cdef class MissingnessBasisFunction(VariableBasisFunction):
     cdef bint complement
+    
+    cpdef bint covered(MissingnessBasisFunction self, INDEX_t variable)
+    
+    cpdef bint eligible(MissingnessBasisFunction self, INDEX_t variable)
     
     cpdef apply(MissingnessBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
                 cnp.ndarray[FLOAT_t, ndim=2] missing,

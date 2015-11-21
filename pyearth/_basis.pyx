@@ -28,7 +28,21 @@ cdef class BasisFunction:
     def __hash__(BasisFunction self):
         return id(self) % max_int # avoid "OverflowError Python
                                      # int too large to convert to C long"
-
+    
+    cpdef bint covered(BasisFunction self, INDEX_t variable):
+        '''
+        Is this an covered parent for variable? (If not, a covering 
+        MissingnessBasisFunction must be added before the variable can 
+        be used).
+        '''
+        return False or self.parent.eligible(variable)
+    
+    cpdef bint eligible(BasisFunction self, INDEX_t variable):
+        '''
+        Is this an eligible parent for variable?
+        '''
+        return True and self.parent.eligible(variable)
+    
     cpdef smooth(BasisFunction self, dict knot_dict, dict translation):
         '''
         Modifies translation in place.
@@ -38,7 +52,7 @@ cdef class BasisFunction:
                                                    translation)
         for i in range(n):
             self.children[i].smooth(knot_dict, translation)
-
+    
     def __reduce__(BasisFunction self):
         return (self.__class__, (), self._getstate())
 
@@ -452,6 +466,26 @@ cdef class MissingnessBasisFunction(VariableBasisFunction):
         self.complement = complement
         self.label = label if label is not None else 'x' + str(variable)
         self._set_parent(parent)
+    
+    cpdef bint covered(MissingnessBasisFunction self, INDEX_t variable):
+        '''
+        Is this an covered parent for variable? (If not, a covering 
+        MissingnessBasisFunction must be added before the variable can 
+        be used).
+        '''
+        if (not self.complement) and (variable == self.variable):
+            return True
+        else:
+            return False or self.parent.eligible(variable)
+    
+    cpdef bint eligible(MissingnessBasisFunction self, INDEX_t variable):
+        '''
+        Is this an eligible parent for variable?
+        '''
+        if self.complement and (variable == self.variable):
+            return False
+        else:
+            return True and self.parent.eligible(variable)
     
     cpdef apply(MissingnessBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
                 cnp.ndarray[FLOAT_t, ndim=2] missing,
