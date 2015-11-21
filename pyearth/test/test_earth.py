@@ -32,8 +32,9 @@ basis.append(bf1)
 basis.append(bf2)
 basis.append(bf3)
 X = numpy.random.normal(size=(100, 10))
+missing = numpy.zeros_like(X)
 B = numpy.empty(shape=(100, 4), dtype=numpy.float64)
-basis.transform(X, B)
+basis.transform(X, missing, B)
 beta = numpy.random.normal(size=4)
 y = numpy.empty(shape=100, dtype=numpy.float64)
 y[:] = numpy.dot(B, beta) + numpy.random.normal(size=100)
@@ -50,7 +51,8 @@ def test_get_params():
                                'allow_linear': None, 
                                'use_fast': None, 'fast_K': None, 
                                'fast_h': None, 'smooth': None,
-                               'enable_pruning': True})
+                               'enable_pruning': True,
+                               'allow_missing': False})
     assert_equal(
         Earth(
             max_degree=3).get_params(), {'penalty': None,
@@ -63,7 +65,8 @@ def test_get_params():
                                          'endspan': None,
                                          'allow_linear': None, 'use_fast': None,
                                          'fast_K': None, 'fast_h': None,
-                                         'smooth': None, 'enable_pruning': True})
+                                         'smooth': None, 'enable_pruning': True,
+                                         'allow_missing': False})
 
 
 @if_statsmodels

@@ -47,12 +47,14 @@ stopping_conditions = {
 cdef class ForwardPasser:
 
     def __init__(ForwardPasser self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                 cnp.ndarray[FLOAT_t, ndim=2] missing,
                  cnp.ndarray[FLOAT_t, ndim=2] y,
                  cnp.ndarray[FLOAT_t, ndim=1] sample_weight,
                  cnp.ndarray[FLOAT_t, ndim=1] output_weight,
                  **kwargs):
         cdef INDEX_t i
         self.X = X
+        self.missing = missing
         self.y = y * np.sqrt(sample_weight[:, np.newaxis])
         self.sample_weight = sample_weight
         self.output_weight = output_weight
@@ -103,7 +105,7 @@ cdef class ForwardPasser:
             shape=self.max_terms, order='F', dtype=np.float)
         self.B = np.ones(
             shape=(self.m, self.max_terms), order='F', dtype=np.float)
-        self.basis.weighted_transform(self.X, self.B[:,0:1], self.sample_weight)
+        self.basis.weighted_transform(self.X, self.missing, self.B[:,0:1], self.sample_weight)
         # An orthogonal matrix with the same column space as B
         self.B_orth = self.B.copy()
         self.u = np.empty(shape=self.max_terms, dtype=np.float)

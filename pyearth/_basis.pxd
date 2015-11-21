@@ -161,13 +161,16 @@ cdef class Basis:
     cpdef BasisFunction get(Basis self, INDEX_t i)
 
     cpdef transform(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                    cnp.ndarray[FLOAT_t, ndim=2] missing,
                     cnp.ndarray[FLOAT_t, ndim=2] B)
 
     cpdef weighted_transform(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                             cnp.ndarray[FLOAT_t, ndim=2] missing,
                              cnp.ndarray[FLOAT_t, ndim=2] B,
                              cnp.ndarray[FLOAT_t, ndim=1] weights)
 
     cpdef transform_deriv(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                          cnp.ndarray[FLOAT_t, ndim=2] missing,
                           cnp.ndarray[FLOAT_t, ndim=1] b,
                           cnp.ndarray[FLOAT_t, ndim=1] j,
                           cnp.ndarray[FLOAT_t, ndim=2] coef,

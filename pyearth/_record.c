@@ -832,12 +832,12 @@ struct __pyx_opt_args_7pyearth_6_basis_21VariableBasisFunction_apply {
   int recurse;
 };
 
-/* "_basis.pxd":170
+/* "_basis.pxd":172
  *                              cnp.ndarray[FLOAT_t, ndim=1] weights)
  * 
  *     cpdef transform_deriv(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X,             # <<<<<<<<<<<<<<
+ *                           cnp.ndarray[FLOAT_t, ndim=2] missing,
  *                           cnp.ndarray[FLOAT_t, ndim=1] b,
- *                           cnp.ndarray[FLOAT_t, ndim=1] j,
  */
 struct __pyx_opt_args_7pyearth_6_basis_5Basis_transform_deriv {
   int __pyx_n;
@@ -1015,6 +1015,7 @@ struct __pyx_obj_7pyearth_8_forward_ForwardPasser {
   long fast_K;
   long fast_h;
   PyArrayObject *X;
+  PyArrayObject *missing;
   PyArrayObject *y;
   PyArrayObject *y_col_sum;
   PyArrayObject *y_row_sum;
@@ -1318,9 +1319,9 @@ struct __pyx_vtabstruct_7pyearth_6_basis_Basis {
   PyObject *(*append)(struct __pyx_obj_7pyearth_6_basis_Basis *, struct __pyx_obj_7pyearth_6_basis_BasisFunction *, int __pyx_skip_dispatch);
   __pyx_t_7pyearth_6_types_INDEX_t (*plen)(struct __pyx_obj_7pyearth_6_basis_Basis *, int __pyx_skip_dispatch);
   struct __pyx_obj_7pyearth_6_basis_BasisFunction *(*get)(struct __pyx_obj_7pyearth_6_basis_Basis *, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch);
-  PyObject *(*transform)(struct __pyx_obj_7pyearth_6_basis_Basis *, PyArrayObject *, PyArrayObject *, int __pyx_skip_dispatch);
-  PyObject *(*weighted_transform)(struct __pyx_obj_7pyearth_6_basis_Basis *, PyArrayObject *, PyArrayObject *, PyArrayObject *, int __pyx_skip_dispatch);
-  PyObject *(*transform_deriv)(struct __pyx_obj_7pyearth_6_basis_Basis *, PyArrayObject *, PyArrayObject *, PyArrayObject *, PyArrayObject *, PyArrayObject *, PyObject *, int __pyx_skip_dispatch, struct __pyx_opt_args_7pyearth_6_basis_5Basis_transform_deriv *__pyx_optional_args);
+  PyObject *(*transform)(struct __pyx_obj_7pyearth_6_basis_Basis *, PyArrayObject *, PyArrayObject *, PyArrayObject *, int __pyx_skip_dispatch);
+  PyObject *(*weighted_transform)(struct __pyx_obj_7pyearth_6_basis_Basis *, PyArrayObject *, PyArrayObject *, PyArrayObject *, PyArrayObject *, int __pyx_skip_dispatch);
+  PyObject *(*transform_deriv)(struct __pyx_obj_7pyearth_6_basis_Basis *, PyArrayObject *, PyArrayObject *, PyArrayObject *, PyArrayObject *, PyArrayObject *, PyArrayObject *, PyObject *, int __pyx_skip_dispatch, struct __pyx_opt_args_7pyearth_6_basis_5Basis_transform_deriv *__pyx_optional_args);
 };
 static struct __pyx_vtabstruct_7pyearth_6_basis_Basis *__pyx_vtabptr_7pyearth_6_basis_Basis;
 

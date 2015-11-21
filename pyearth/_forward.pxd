@@ -36,6 +36,7 @@ cdef class ForwardPasser:
 
     # Input data
     cdef cnp.ndarray X
+    cdef cnp.ndarray missing
     cdef cnp.ndarray y
     cdef cnp.ndarray y_col_sum
     cdef cnp.ndarray y_row_sum
