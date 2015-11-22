@@ -563,7 +563,10 @@ cdef class MissingnessBasisFunction(VariableBasisFunction):
                 self._getstate())
 
     def __str__(MissingnessBasisFunction self):
-        result = 'missing(%s)' % self.label
+        if self.complement:
+            result = 'present(%s)' % self.label
+        else:
+            result = 'missing(%s)' % self.label
         parent = (str(self.parent)
                   if not self.parent.__class__ is ConstantBasisFunction
                   else '')

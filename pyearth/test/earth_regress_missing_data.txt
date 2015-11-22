@@ -53,31 +53,31 @@ Earth Model
 Basis Function              Pruned  Coefficient  
 -------------------------------------------------
 (Intercept)                 No      1.59443      
-h(x1-0.949246)*missing(x1)  No      2.01458      
-h(0.949246-x1)*missing(x1)  No      -0.598631    
+h(x1-0.949246)*present(x1)  No      2.01458      
+h(0.949246-x1)*present(x1)  No      -0.598631    
+present(x1)                 Yes     None         
 missing(x1)                 Yes     None         
-missing(x1)                 Yes     None         
-h(x2-1.03441)*missing(x2)   Yes     None         
-h(1.03441-x2)*missing(x2)   No      -0.431431    
+h(x2-1.03441)*present(x2)   Yes     None         
+h(1.03441-x2)*present(x2)   No      -0.431431    
+present(x2)                 Yes     None         
 missing(x2)                 Yes     None         
-missing(x2)                 Yes     None         
-x3*missing(x3)*missing(x3)  Yes     None         
-missing(x3)*missing(x3)     Yes     None         
-missing(x3)*missing(x3)     Yes     None         
-x6*missing(x6)*missing(x6)  Yes     None         
-missing(x6)*missing(x6)     Yes     None         
-missing(x6)*missing(x6)     Yes     None         
-x5*missing(x5)*missing(x5)  Yes     None         
-missing(x5)*missing(x5)     Yes     None         
-missing(x5)*missing(x5)     Yes     None         
-x4*missing(x4)*missing(x4)  Yes     None         
-missing(x4)*missing(x4)     Yes     None         
-missing(x4)*missing(x4)     Yes     None         
-x8*missing(x8)*missing(x8)  Yes     None         
-missing(x8)*missing(x8)     Yes     None         
-missing(x8)*missing(x8)     Yes     None         
-x7*missing(x7)*missing(x7)  Yes     None         
-missing(x7)*missing(x7)     Yes     None         
-missing(x7)*missing(x7)     Yes     None         
+x3*present(x3)*present(x3)  Yes     None         
+present(x3)*present(x3)     Yes     None         
+missing(x3)*present(x3)     Yes     None         
+x6*present(x6)*present(x6)  Yes     None         
+present(x6)*present(x6)     Yes     None         
+missing(x6)*present(x6)     Yes     None         
+x5*present(x5)*present(x5)  Yes     None         
+present(x5)*present(x5)     Yes     None         
+missing(x5)*present(x5)     Yes     None         
+x4*present(x4)*present(x4)  Yes     None         
+present(x4)*present(x4)     Yes     None         
+missing(x4)*present(x4)     Yes     None         
+x8*present(x8)*present(x8)  Yes     None         
+present(x8)*present(x8)     Yes     None         
+missing(x8)*present(x8)     Yes     None         
+x7*present(x7)*present(x7)  Yes     None         
+present(x7)*present(x7)     Yes     None         
+missing(x7)*present(x7)     Yes     None         
 -------------------------------------------------
 MSE: 0.7448, GCV: 0.8611, RSQ: 0.4576, GRSQ: 0.3853
