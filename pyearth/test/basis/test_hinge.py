@@ -4,6 +4,7 @@ import numpy
 from nose.tools import assert_equal, assert_true
 
 from .base import BaseContainer
+from pyearth._types import BOOL
 from pyearth._basis import (HingeBasisFunction, SmoothedHingeBasisFunction,
                             ConstantBasisFunction)
 
@@ -28,7 +29,7 @@ def test_getters():
 def test_apply():
     cnt = Container()
     m, _ = cnt.X.shape
-    missing = numpy.zeros_like(cnt.X)
+    missing = numpy.zeros_like(cnt.X, dtype=BOOL)
     B = numpy.ones(shape=(m, 10))
     cnt.bf.apply(cnt.X, missing, B[:, 0])
     numpy.testing.assert_almost_equal(
@@ -40,7 +41,7 @@ def test_apply():
 def test_apply_deriv():
     cnt = Container()
     m, _ = cnt.X.shape
-    missing = numpy.zeros_like(cnt.X)
+    missing = numpy.zeros_like(cnt.X, dtype=BOOL)
     b = numpy.empty(shape=m)
     j = numpy.empty(shape=m)
     cnt.bf.apply_deriv(cnt.X, missing, b, j, 1)

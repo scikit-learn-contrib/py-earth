@@ -12,6 +12,7 @@ from nose.tools import assert_true, assert_equal
 from pyearth._forward import ForwardPasser
 from pyearth._basis import (Basis, ConstantBasisFunction,
                             HingeBasisFunction, LinearBasisFunction)
+from pyearth._types import BOOL
 
 numpy.random.seed(0)
 basis = Basis(10)
@@ -24,7 +25,7 @@ basis.append(bf1)
 basis.append(bf2)
 basis.append(bf3)
 X = numpy.random.normal(size=(100, 10))
-missing = numpy.zeros_like(X)
+missing = numpy.zeros_like(X).astype(BOOL)
 B = numpy.empty(shape=(100, 4), dtype=numpy.float64)
 basis.transform(X, missing, B)
 beta = numpy.random.normal(size=4)

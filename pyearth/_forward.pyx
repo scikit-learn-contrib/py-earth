@@ -9,6 +9,7 @@ from ._basis cimport (Basis, BasisFunction, ConstantBasisFunction,
                       HingeBasisFunction, LinearBasisFunction, 
                       MissingnessBasisFunction)
 from ._record cimport ForwardPassIteration
+from ._types import BOOL
 
 from libc.math cimport sqrt, abs, log
 import numpy as np
@@ -48,7 +49,7 @@ stopping_conditions = {
 cdef class ForwardPasser:
 
     def __init__(ForwardPasser self, cnp.ndarray[FLOAT_t, ndim=2] X,
-                 cnp.ndarray[FLOAT_t, ndim=2] missing,
+                 cnp.ndarray[BOOL_t, ndim=2] missing,
                  cnp.ndarray[FLOAT_t, ndim=2] y,
                  cnp.ndarray[FLOAT_t, ndim=1] sample_weight,
                  cnp.ndarray[FLOAT_t, ndim=1] output_weight,
@@ -78,9 +79,8 @@ cdef class ForwardPasser:
         self.fast_h = kwargs.get("fast_h", 1)
         self.allow_missing = kwargs.get("allow_missing", False)
         if self.allow_missing:
-            self.has_missing = np.any(missing, axis=0)
+            self.has_missing = np.any(self.missing, axis=0).astype(BOOL)
 
-        
         self.fast_heap = []
 
         if self.xlabels is None:
@@ -294,8 +294,8 @@ cdef class ForwardPasser:
         
         cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
-        cdef cnp.ndarray[FLOAT_t, ndim = 2] missing = (
-            <cnp.ndarray[FLOAT_t, ndim = 2] > self.missing)
+        cdef cnp.ndarray[BOOL_t, ndim = 2] missing = (
+            <cnp.ndarray[BOOL_t, ndim = 2] > self.missing)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] B = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] B_orth = (
@@ -347,7 +347,6 @@ cdef class ForwardPasser:
             if not parent.is_splittable():
                 continue
 
-            
             if self.use_fast is True:
                 # each "fast_h" iteration, force to pass through all the variables,
                 if self.iteration_number - parent_basis_content.m > self.fast_h:
@@ -359,7 +358,6 @@ cdef class ForwardPasser:
                 variables = range(self.n)
             else:
                 variables = range(self.n)
-
 
             for variable in variables:
                 if self.allow_missing and has_missing[variable]:
@@ -379,10 +377,10 @@ cdef class ForwardPasser:
                 # If necessary, protect from missing data
                 if missing_flag and not covered:
                     x = X[:, variable]
-                    x[missing[:, variable]] = 0.0
+                    x[missing[:, variable]==1] = 0.0
                 else:
                     x = X[:, variable]
-                
+
                 # Sort the data
                 # TODO: eliminate Python call / data copy
                 sorting[:] = np.argsort(x)[::-1]
@@ -531,7 +529,7 @@ cdef class ForwardPasser:
                     heappush(self.fast_heap, FastHeapContent(idx=k + 2))
                     bf4_content = FastHeapContent(idx=k + 3)
                     heappush(self.fast_heap, FastHeapContent(idx=k + 3))
-
+                    
             # Orthogonalize the new basis
             B_orth[:, k] = B[:, k]
             if self.orthonormal_update(k) == 1:

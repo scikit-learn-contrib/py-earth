@@ -799,11 +799,11 @@ struct __pyx_opt_args_7pyearth_6_basis_25DataVariableBasisFunction_apply;
 struct __pyx_opt_args_7pyearth_6_basis_24MissingnessBasisFunction_apply;
 struct __pyx_opt_args_7pyearth_6_basis_5Basis_transform_deriv;
 
-/* "_basis.pxd":49
+/* "_basis.pxd":45
  *     cpdef INDEX_t degree(BasisFunction self)
  * 
  *     cpdef apply(BasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,             # <<<<<<<<<<<<<<
- *                 cnp.ndarray[FLOAT_t, ndim=2] missing,
+ *                 cnp.ndarray[BOOL_t, ndim=2] missing,
  *                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse= ?)
  */
 struct __pyx_opt_args_7pyearth_6_basis_13BasisFunction_apply {
@@ -811,11 +811,11 @@ struct __pyx_opt_args_7pyearth_6_basis_13BasisFunction_apply {
   int recurse;
 };
 
-/* "_basis.pxd":74
+/* "_basis.pxd":73
  *     cpdef BasisFunction get_parent(RootBasisFunction self)
  * 
  *     cpdef apply(RootBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,             # <<<<<<<<<<<<<<
- *                 cnp.ndarray[FLOAT_t, ndim=2] missing,
+ *                 cnp.ndarray[BOOL_t, ndim=2] missing,
  *                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=?)
  */
 struct __pyx_opt_args_7pyearth_6_basis_17RootBasisFunction_apply {
@@ -823,11 +823,11 @@ struct __pyx_opt_args_7pyearth_6_basis_17RootBasisFunction_apply {
   int recurse;
 };
 
-/* "_basis.pxd":98
+/* "_basis.pxd":101
+ *     cpdef bint eligible(DataVariableBasisFunction self, INDEX_t variable)
  * 
- * cdef class DataVariableBasisFunction(VariableBasisFunction):
  *     cpdef apply(DataVariableBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,             # <<<<<<<<<<<<<<
- *                 cnp.ndarray[FLOAT_t, ndim=2] missing,
+ *                 cnp.ndarray[BOOL_t, ndim=2] missing,
  *                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=?)
  */
 struct __pyx_opt_args_7pyearth_6_basis_25DataVariableBasisFunction_apply {
@@ -835,11 +835,11 @@ struct __pyx_opt_args_7pyearth_6_basis_25DataVariableBasisFunction_apply {
   int recurse;
 };
 
-/* "_basis.pxd":115
+/* "_basis.pxd":122
  *     cpdef bint eligible(MissingnessBasisFunction self, INDEX_t variable)
  * 
  *     cpdef apply(MissingnessBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,             # <<<<<<<<<<<<<<
- *                 cnp.ndarray[FLOAT_t, ndim=2] missing,
+ *                 cnp.ndarray[BOOL_t, ndim=2] missing,
  *                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=?)
  */
 struct __pyx_opt_args_7pyearth_6_basis_24MissingnessBasisFunction_apply {
@@ -847,11 +847,11 @@ struct __pyx_opt_args_7pyearth_6_basis_24MissingnessBasisFunction_apply {
   int recurse;
 };
 
-/* "_basis.pxd":202
+/* "_basis.pxd":209
  *                              cnp.ndarray[FLOAT_t, ndim=1] weights)
  * 
  *     cpdef transform_deriv(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X,             # <<<<<<<<<<<<<<
- *                           cnp.ndarray[FLOAT_t, ndim=2] missing,
+ *                           cnp.ndarray[BOOL_t, ndim=2] missing,
  *                           cnp.ndarray[FLOAT_t, ndim=1] b,
  */
 struct __pyx_opt_args_7pyearth_6_basis_5Basis_transform_deriv {
@@ -894,19 +894,19 @@ struct __pyx_obj_7pyearth_6_basis_BasisFunction {
 };
 
 
-/* "_basis.pxd":61
+/* "_basis.pxd":57
  *         cnp.ndarray[INT_t, ndim=1] workspace)
  * 
  * cdef class RootBasisFunction(BasisFunction):             # <<<<<<<<<<<<<<
+ *     cpdef bint covered(RootBasisFunction self, INDEX_t variable)
  * 
- *     cpdef set variables(RootBasisFunction self)
  */
 struct __pyx_obj_7pyearth_6_basis_RootBasisFunction {
   struct __pyx_obj_7pyearth_6_basis_BasisFunction __pyx_base;
 };
 
 
-/* "_basis.pxd":83
+/* "_basis.pxd":82
  *                       cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var)
  * 
  * cdef class ConstantBasisFunction(RootBasisFunction):             # <<<<<<<<<<<<<<
@@ -918,7 +918,7 @@ struct __pyx_obj_7pyearth_6_basis_ConstantBasisFunction {
 };
 
 
-/* "_basis.pxd":89
+/* "_basis.pxd":88
  *     cpdef inline FLOAT_t eval_deriv(ConstantBasisFunction self)
  * 
  * cdef class VariableBasisFunction(BasisFunction):             # <<<<<<<<<<<<<<
@@ -932,19 +932,19 @@ struct __pyx_obj_7pyearth_6_basis_VariableBasisFunction {
 };
 
 
-/* "_basis.pxd":97
+/* "_basis.pxd":96
  *     cpdef INDEX_t get_variable(VariableBasisFunction self)
  * 
  * cdef class DataVariableBasisFunction(VariableBasisFunction):             # <<<<<<<<<<<<<<
- *     cpdef apply(DataVariableBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
- *                 cnp.ndarray[FLOAT_t, ndim=2] missing,
+ *     cpdef bint covered(DataVariableBasisFunction self, INDEX_t variable)
+ * 
  */
 struct __pyx_obj_7pyearth_6_basis_DataVariableBasisFunction {
   struct __pyx_obj_7pyearth_6_basis_VariableBasisFunction __pyx_base;
 };
 
 
-/* "_basis.pxd":108
+/* "_basis.pxd":111
  *                       cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var)
  * 
  * cdef class MissingnessBasisFunction(VariableBasisFunction):             # <<<<<<<<<<<<<<
@@ -957,7 +957,7 @@ struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction {
 };
 
 
-/* "_basis.pxd":128
+/* "_basis.pxd":135
  *                             dict knot_dict, dict translation)
  * 
  * cdef class HingeBasisFunctionBase(DataVariableBasisFunction):             # <<<<<<<<<<<<<<
@@ -972,7 +972,7 @@ struct __pyx_obj_7pyearth_6_basis_HingeBasisFunctionBase {
 };
 
 
-/* "_basis.pxd":143
+/* "_basis.pxd":150
  *     cpdef INDEX_t get_knot_idx(HingeBasisFunctionBase self)
  * 
  * cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):             # <<<<<<<<<<<<<<
@@ -988,7 +988,7 @@ struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction {
 };
 
 
-/* "_basis.pxd":163
+/* "_basis.pxd":170
  *     cpdef get_r(SmoothedHingeBasisFunction self)
  * 
  * cdef class HingeBasisFunction(HingeBasisFunctionBase):             # <<<<<<<<<<<<<<
@@ -1000,7 +1000,7 @@ struct __pyx_obj_7pyearth_6_basis_HingeBasisFunction {
 };
 
 
-/* "_basis.pxd":169
+/* "_basis.pxd":176
  *                             dict knot_dict, dict translation)
  * 
  * cdef class LinearBasisFunction(DataVariableBasisFunction):             # <<<<<<<<<<<<<<
@@ -1012,7 +1012,7 @@ struct __pyx_obj_7pyearth_6_basis_LinearBasisFunction {
 };
 
 
-/* "_basis.pxd":173
+/* "_basis.pxd":180
  *                             dict knot_dict, dict translation)
  * 
  * cdef class Basis:             # <<<<<<<<<<<<<<
@@ -1208,8 +1208,6 @@ struct __pyx_obj_7pyearth_7_record_FirstForwardPassIteration {
  */
 
 struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction {
-  int (*covered)(struct __pyx_obj_7pyearth_6_basis_BasisFunction *, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch);
-  int (*eligible)(struct __pyx_obj_7pyearth_6_basis_BasisFunction *, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch);
   PyObject *(*smooth)(struct __pyx_obj_7pyearth_6_basis_BasisFunction *, PyObject *, PyObject *, int __pyx_skip_dispatch);
   int (*has_knot)(struct __pyx_obj_7pyearth_6_basis_BasisFunction *, int __pyx_skip_dispatch);
   int (*is_prunable)(struct __pyx_obj_7pyearth_6_basis_BasisFunction *, int __pyx_skip_dispatch);
@@ -1231,16 +1229,18 @@ struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction {
 static struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *__pyx_vtabptr_7pyearth_6_basis_BasisFunction;
 
 
-/* "_basis.pxd":61
+/* "_basis.pxd":57
  *         cnp.ndarray[INT_t, ndim=1] workspace)
  * 
  * cdef class RootBasisFunction(BasisFunction):             # <<<<<<<<<<<<<<
+ *     cpdef bint covered(RootBasisFunction self, INDEX_t variable)
  * 
- *     cpdef set variables(RootBasisFunction self)
  */
 
 struct __pyx_vtabstruct_7pyearth_6_basis_RootBasisFunction {
   struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction __pyx_base;
+  int (*covered)(struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch);
+  int (*eligible)(struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch);
   PyObject *(*variables)(struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *, int __pyx_skip_dispatch);
   PyObject *(*_smoothed_version)(struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *, struct __pyx_obj_7pyearth_6_basis_BasisFunction *, PyObject *, PyObject *, int __pyx_skip_dispatch);
   PyObject *(*apply_deriv)(struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *, PyArrayObject *, PyArrayObject *, PyArrayObject *, PyArrayObject *, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch);
@@ -1248,7 +1248,7 @@ struct __pyx_vtabstruct_7pyearth_6_basis_RootBasisFunction {
 static struct __pyx_vtabstruct_7pyearth_6_basis_RootBasisFunction *__pyx_vtabptr_7pyearth_6_basis_RootBasisFunction;
 
 
-/* "_basis.pxd":83
+/* "_basis.pxd":82
  *                       cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var)
  * 
  * cdef class ConstantBasisFunction(RootBasisFunction):             # <<<<<<<<<<<<<<
@@ -1264,7 +1264,7 @@ struct __pyx_vtabstruct_7pyearth_6_basis_ConstantBasisFunction {
 static struct __pyx_vtabstruct_7pyearth_6_basis_ConstantBasisFunction *__pyx_vtabptr_7pyearth_6_basis_ConstantBasisFunction;
 
 
-/* "_basis.pxd":89
+/* "_basis.pxd":88
  *     cpdef inline FLOAT_t eval_deriv(ConstantBasisFunction self)
  * 
  * cdef class VariableBasisFunction(BasisFunction):             # <<<<<<<<<<<<<<
@@ -1280,22 +1280,24 @@ struct __pyx_vtabstruct_7pyearth_6_basis_VariableBasisFunction {
 static struct __pyx_vtabstruct_7pyearth_6_basis_VariableBasisFunction *__pyx_vtabptr_7pyearth_6_basis_VariableBasisFunction;
 
 
-/* "_basis.pxd":97
+/* "_basis.pxd":96
  *     cpdef INDEX_t get_variable(VariableBasisFunction self)
  * 
  * cdef class DataVariableBasisFunction(VariableBasisFunction):             # <<<<<<<<<<<<<<
- *     cpdef apply(DataVariableBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
- *                 cnp.ndarray[FLOAT_t, ndim=2] missing,
+ *     cpdef bint covered(DataVariableBasisFunction self, INDEX_t variable)
+ * 
  */
 
 struct __pyx_vtabstruct_7pyearth_6_basis_DataVariableBasisFunction {
   struct __pyx_vtabstruct_7pyearth_6_basis_VariableBasisFunction __pyx_base;
+  int (*covered)(struct __pyx_obj_7pyearth_6_basis_DataVariableBasisFunction *, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch);
+  int (*eligible)(struct __pyx_obj_7pyearth_6_basis_DataVariableBasisFunction *, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch);
   PyObject *(*apply_deriv)(struct __pyx_obj_7pyearth_6_basis_DataVariableBasisFunction *, PyArrayObject *, PyArrayObject *, PyArrayObject *, PyArrayObject *, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch);
 };
 static struct __pyx_vtabstruct_7pyearth_6_basis_DataVariableBasisFunction *__pyx_vtabptr_7pyearth_6_basis_DataVariableBasisFunction;
 
 
-/* "_basis.pxd":108
+/* "_basis.pxd":111
  *                       cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var)
  * 
  * cdef class MissingnessBasisFunction(VariableBasisFunction):             # <<<<<<<<<<<<<<
@@ -1305,13 +1307,15 @@ static struct __pyx_vtabstruct_7pyearth_6_basis_DataVariableBasisFunction *__pyx
 
 struct __pyx_vtabstruct_7pyearth_6_basis_MissingnessBasisFunction {
   struct __pyx_vtabstruct_7pyearth_6_basis_VariableBasisFunction __pyx_base;
+  int (*covered)(struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch);
+  int (*eligible)(struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch);
   PyObject *(*apply_deriv)(struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *, PyArrayObject *, PyArrayObject *, PyArrayObject *, PyArrayObject *, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch);
   PyObject *(*_smoothed_version)(struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *, struct __pyx_obj_7pyearth_6_basis_BasisFunction *, PyObject *, PyObject *, int __pyx_skip_dispatch);
 };
 static struct __pyx_vtabstruct_7pyearth_6_basis_MissingnessBasisFunction *__pyx_vtabptr_7pyearth_6_basis_MissingnessBasisFunction;
 
 
-/* "_basis.pxd":128
+/* "_basis.pxd":135
  *                             dict knot_dict, dict translation)
  * 
  * cdef class HingeBasisFunctionBase(DataVariableBasisFunction):             # <<<<<<<<<<<<<<
@@ -1328,7 +1332,7 @@ struct __pyx_vtabstruct_7pyearth_6_basis_HingeBasisFunctionBase {
 static struct __pyx_vtabstruct_7pyearth_6_basis_HingeBasisFunctionBase *__pyx_vtabptr_7pyearth_6_basis_HingeBasisFunctionBase;
 
 
-/* "_basis.pxd":143
+/* "_basis.pxd":150
  *     cpdef INDEX_t get_knot_idx(HingeBasisFunctionBase self)
  * 
  * cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):             # <<<<<<<<<<<<<<
@@ -1348,7 +1352,7 @@ struct __pyx_vtabstruct_7pyearth_6_basis_SmoothedHingeBasisFunction {
 static struct __pyx_vtabstruct_7pyearth_6_basis_SmoothedHingeBasisFunction *__pyx_vtabptr_7pyearth_6_basis_SmoothedHingeBasisFunction;
 
 
-/* "_basis.pxd":163
+/* "_basis.pxd":170
  *     cpdef get_r(SmoothedHingeBasisFunction self)
  * 
  * cdef class HingeBasisFunction(HingeBasisFunctionBase):             # <<<<<<<<<<<<<<
@@ -1363,7 +1367,7 @@ struct __pyx_vtabstruct_7pyearth_6_basis_HingeBasisFunction {
 static struct __pyx_vtabstruct_7pyearth_6_basis_HingeBasisFunction *__pyx_vtabptr_7pyearth_6_basis_HingeBasisFunction;
 
 
-/* "_basis.pxd":169
+/* "_basis.pxd":176
  *                             dict knot_dict, dict translation)
  * 
  * cdef class LinearBasisFunction(DataVariableBasisFunction):             # <<<<<<<<<<<<<<
@@ -1378,7 +1382,7 @@ struct __pyx_vtabstruct_7pyearth_6_basis_LinearBasisFunction {
 static struct __pyx_vtabstruct_7pyearth_6_basis_LinearBasisFunction *__pyx_vtabptr_7pyearth_6_basis_LinearBasisFunction;
 
 
-/* "_basis.pxd":173
+/* "_basis.pxd":180
  *                             dict knot_dict, dict translation)
  * 
  * cdef class Basis:             # <<<<<<<<<<<<<<
@@ -12861,26 +12865,26 @@ PyMODINIT_FUNC PyInit__record(void)
   __pyx_ptype_5numpy_ufunc = __Pyx_ImportType("numpy", "ufunc", sizeof(PyUFuncObject), 0); if (unlikely(!__pyx_ptype_5numpy_ufunc)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 861; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_7pyearth_6_basis_BasisFunction = __Pyx_ImportType("pyearth._basis", "BasisFunction", sizeof(struct __pyx_obj_7pyearth_6_basis_BasisFunction), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_BasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_vtabptr_7pyearth_6_basis_BasisFunction = (struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_BasisFunction->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_BasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 5; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_ptype_7pyearth_6_basis_RootBasisFunction = __Pyx_ImportType("pyearth._basis", "RootBasisFunction", sizeof(struct __pyx_obj_7pyearth_6_basis_RootBasisFunction), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_RootBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 61; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_vtabptr_7pyearth_6_basis_RootBasisFunction = (struct __pyx_vtabstruct_7pyearth_6_basis_RootBasisFunction*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_RootBasisFunction->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_RootBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 61; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_ptype_7pyearth_6_basis_ConstantBasisFunction = __Pyx_ImportType("pyearth._basis", "ConstantBasisFunction", sizeof(struct __pyx_obj_7pyearth_6_basis_ConstantBasisFunction), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_ConstantBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_vtabptr_7pyearth_6_basis_ConstantBasisFunction = (struct __pyx_vtabstruct_7pyearth_6_basis_ConstantBasisFunction*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_ConstantBasisFunction->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_ConstantBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_ptype_7pyearth_6_basis_VariableBasisFunction = __Pyx_ImportType("pyearth._basis", "VariableBasisFunction", sizeof(struct __pyx_obj_7pyearth_6_basis_VariableBasisFunction), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_VariableBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 89; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_vtabptr_7pyearth_6_basis_VariableBasisFunction = (struct __pyx_vtabstruct_7pyearth_6_basis_VariableBasisFunction*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_VariableBasisFunction->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_VariableBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 89; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_ptype_7pyearth_6_basis_DataVariableBasisFunction = __Pyx_ImportType("pyearth._basis", "DataVariableBasisFunction", sizeof(struct __pyx_obj_7pyearth_6_basis_DataVariableBasisFunction), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_DataVariableBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_vtabptr_7pyearth_6_basis_DataVariableBasisFunction = (struct __pyx_vtabstruct_7pyearth_6_basis_DataVariableBasisFunction*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_DataVariableBasisFunction->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_DataVariableBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction = __Pyx_ImportType("pyearth._basis", "MissingnessBasisFunction", sizeof(struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 108; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_vtabptr_7pyearth_6_basis_MissingnessBasisFunction = (struct __pyx_vtabstruct_7pyearth_6_basis_MissingnessBasisFunction*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_MissingnessBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 108; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_ptype_7pyearth_6_basis_HingeBasisFunctionBase = __Pyx_ImportType("pyearth._basis", "HingeBasisFunctionBase", sizeof(struct __pyx_obj_7pyearth_6_basis_HingeBasisFunctionBase), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_HingeBasisFunctionBase)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 128; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_vtabptr_7pyearth_6_basis_HingeBasisFunctionBase = (struct __pyx_vtabstruct_7pyearth_6_basis_HingeBasisFunctionBase*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_HingeBasisFunctionBase->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_HingeBasisFunctionBase)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 128; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_ptype_7pyearth_6_basis_SmoothedHingeBasisFunction = __Pyx_ImportType("pyearth._basis", "SmoothedHingeBasisFunction", sizeof(struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_SmoothedHingeBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_vtabptr_7pyearth_6_basis_SmoothedHingeBasisFunction = (struct __pyx_vtabstruct_7pyearth_6_basis_SmoothedHingeBasisFunction*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_SmoothedHingeBasisFunction->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_SmoothedHingeBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_ptype_7pyearth_6_basis_HingeBasisFunction = __Pyx_ImportType("pyearth._basis", "HingeBasisFunction", sizeof(struct __pyx_obj_7pyearth_6_basis_HingeBasisFunction), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_HingeBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_vtabptr_7pyearth_6_basis_HingeBasisFunction = (struct __pyx_vtabstruct_7pyearth_6_basis_HingeBasisFunction*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_HingeBasisFunction->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_HingeBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_ptype_7pyearth_6_basis_LinearBasisFunction = __Pyx_ImportType("pyearth._basis", "LinearBasisFunction", sizeof(struct __pyx_obj_7pyearth_6_basis_LinearBasisFunction), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_LinearBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 169; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_vtabptr_7pyearth_6_basis_LinearBasisFunction = (struct __pyx_vtabstruct_7pyearth_6_basis_LinearBasisFunction*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_LinearBasisFunction->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_LinearBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 169; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_ptype_7pyearth_6_basis_Basis = __Pyx_ImportType("pyearth._basis", "Basis", sizeof(struct __pyx_obj_7pyearth_6_basis_Basis), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_Basis)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 173; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_vtabptr_7pyearth_6_basis_Basis = (struct __pyx_vtabstruct_7pyearth_6_basis_Basis*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_Basis->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_Basis)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 173; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_ptype_7pyearth_6_basis_RootBasisFunction = __Pyx_ImportType("pyearth._basis", "RootBasisFunction", sizeof(struct __pyx_obj_7pyearth_6_basis_RootBasisFunction), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_RootBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 57; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_vtabptr_7pyearth_6_basis_RootBasisFunction = (struct __pyx_vtabstruct_7pyearth_6_basis_RootBasisFunction*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_RootBasisFunction->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_RootBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 57; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_ptype_7pyearth_6_basis_ConstantBasisFunction = __Pyx_ImportType("pyearth._basis", "ConstantBasisFunction", sizeof(struct __pyx_obj_7pyearth_6_basis_ConstantBasisFunction), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_ConstantBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_vtabptr_7pyearth_6_basis_ConstantBasisFunction = (struct __pyx_vtabstruct_7pyearth_6_basis_ConstantBasisFunction*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_ConstantBasisFunction->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_ConstantBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_ptype_7pyearth_6_basis_VariableBasisFunction = __Pyx_ImportType("pyearth._basis", "VariableBasisFunction", sizeof(struct __pyx_obj_7pyearth_6_basis_VariableBasisFunction), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_VariableBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 88; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_vtabptr_7pyearth_6_basis_VariableBasisFunction = (struct __pyx_vtabstruct_7pyearth_6_basis_VariableBasisFunction*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_VariableBasisFunction->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_VariableBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 88; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_ptype_7pyearth_6_basis_DataVariableBasisFunction = __Pyx_ImportType("pyearth._basis", "DataVariableBasisFunction", sizeof(struct __pyx_obj_7pyearth_6_basis_DataVariableBasisFunction), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_DataVariableBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_vtabptr_7pyearth_6_basis_DataVariableBasisFunction = (struct __pyx_vtabstruct_7pyearth_6_basis_DataVariableBasisFunction*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_DataVariableBasisFunction->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_DataVariableBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction = __Pyx_ImportType("pyearth._basis", "MissingnessBasisFunction", sizeof(struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_vtabptr_7pyearth_6_basis_MissingnessBasisFunction = (struct __pyx_vtabstruct_7pyearth_6_basis_MissingnessBasisFunction*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_MissingnessBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_ptype_7pyearth_6_basis_HingeBasisFunctionBase = __Pyx_ImportType("pyearth._basis", "HingeBasisFunctionBase", sizeof(struct __pyx_obj_7pyearth_6_basis_HingeBasisFunctionBase), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_HingeBasisFunctionBase)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_vtabptr_7pyearth_6_basis_HingeBasisFunctionBase = (struct __pyx_vtabstruct_7pyearth_6_basis_HingeBasisFunctionBase*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_HingeBasisFunctionBase->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_HingeBasisFunctionBase)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_ptype_7pyearth_6_basis_SmoothedHingeBasisFunction = __Pyx_ImportType("pyearth._basis", "SmoothedHingeBasisFunction", sizeof(struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_SmoothedHingeBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_vtabptr_7pyearth_6_basis_SmoothedHingeBasisFunction = (struct __pyx_vtabstruct_7pyearth_6_basis_SmoothedHingeBasisFunction*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_SmoothedHingeBasisFunction->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_SmoothedHingeBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_ptype_7pyearth_6_basis_HingeBasisFunction = __Pyx_ImportType("pyearth._basis", "HingeBasisFunction", sizeof(struct __pyx_obj_7pyearth_6_basis_HingeBasisFunction), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_HingeBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_vtabptr_7pyearth_6_basis_HingeBasisFunction = (struct __pyx_vtabstruct_7pyearth_6_basis_HingeBasisFunction*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_HingeBasisFunction->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_HingeBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_ptype_7pyearth_6_basis_LinearBasisFunction = __Pyx_ImportType("pyearth._basis", "LinearBasisFunction", sizeof(struct __pyx_obj_7pyearth_6_basis_LinearBasisFunction), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_LinearBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 176; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_vtabptr_7pyearth_6_basis_LinearBasisFunction = (struct __pyx_vtabstruct_7pyearth_6_basis_LinearBasisFunction*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_LinearBasisFunction->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_LinearBasisFunction)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 176; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_ptype_7pyearth_6_basis_Basis = __Pyx_ImportType("pyearth._basis", "Basis", sizeof(struct __pyx_obj_7pyearth_6_basis_Basis), 1); if (unlikely(!__pyx_ptype_7pyearth_6_basis_Basis)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 180; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_vtabptr_7pyearth_6_basis_Basis = (struct __pyx_vtabstruct_7pyearth_6_basis_Basis*)__Pyx_GetVtable(__pyx_ptype_7pyearth_6_basis_Basis->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_6_basis_Basis)) {__pyx_filename = __pyx_f[5]; __pyx_lineno = 180; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_7pyearth_8_forward_ForwardPasser = __Pyx_ImportType("pyearth._forward", "ForwardPasser", sizeof(struct __pyx_obj_7pyearth_8_forward_ForwardPasser), 1); if (unlikely(!__pyx_ptype_7pyearth_8_forward_ForwardPasser)) {__pyx_filename = __pyx_f[6]; __pyx_lineno = 16; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_vtabptr_7pyearth_8_forward_ForwardPasser = (struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser*)__Pyx_GetVtable(__pyx_ptype_7pyearth_8_forward_ForwardPasser->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_8_forward_ForwardPasser)) {__pyx_filename = __pyx_f[6]; __pyx_lineno = 16; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   /*--- Variable import code ---*/

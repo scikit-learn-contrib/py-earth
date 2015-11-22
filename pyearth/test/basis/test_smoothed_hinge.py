@@ -4,6 +4,7 @@ import numpy
 from nose.tools import assert_equal
 
 from .base import BaseContainer
+from pyearth._types import BOOL
 from pyearth._basis import SmoothedHingeBasisFunction, ConstantBasisFunction
 
 
@@ -66,7 +67,7 @@ def test_p_r():
 def test_apply():
     cnt = Container()
     m, _ = cnt.X.shape
-    missing = numpy.zeros_like(cnt.X)
+    missing = numpy.zeros_like(cnt.X, dtype=BOOL)
     B = numpy.ones(shape=(m, 10))
     cnt.bf1.apply(cnt.X, missing, B[:, 0])
     cnt.bf2.apply(cnt.X, missing, B[:, 1])
@@ -98,7 +99,7 @@ def test_apply():
 def test_apply_deriv():
     cnt = Container()
     m, _ = cnt.X.shape
-    missing = numpy.zeros_like(cnt.X)
+    missing = numpy.zeros_like(cnt.X, dtype=BOOL)
     pplus = (2*3.0 + 0.0 - 3*1.0) / ((3.0 - 0.0)**2)
     rplus = (2*1.0 - 3.0 - 0.0) / ((3.0 - 0.0)**3)
     pminus = (3*1.0 - 2*0.0 - 3.0) / ((0.0 - 3.0)**2)

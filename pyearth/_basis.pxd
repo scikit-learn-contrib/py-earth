@@ -12,10 +12,6 @@ cdef class BasisFunction:
     cdef bint prunable
     cdef bint splittable
     
-    cpdef bint covered(BasisFunction self, INDEX_t variable)
-    
-    cpdef bint eligible(BasisFunction self, INDEX_t variable)
-    
     cpdef smooth(BasisFunction self, dict knot_dict, dict translation)
 
     cpdef bint has_knot(BasisFunction self)
@@ -47,7 +43,7 @@ cdef class BasisFunction:
     cpdef INDEX_t degree(BasisFunction self)
 
     cpdef apply(BasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
-                cnp.ndarray[FLOAT_t, ndim=2] missing,
+                cnp.ndarray[BOOL_t, ndim=2] missing,
                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse= ?)
 
     cpdef cnp.ndarray[INT_t, ndim = 1] valid_knots(BasisFunction self,
@@ -59,7 +55,10 @@ cdef class BasisFunction:
         cnp.ndarray[INT_t, ndim=1] workspace)
 
 cdef class RootBasisFunction(BasisFunction):
-
+    cpdef bint covered(RootBasisFunction self, INDEX_t variable)
+    
+    cpdef bint eligible(RootBasisFunction self, INDEX_t variable)
+    
     cpdef set variables(RootBasisFunction self)
 
     cpdef _smoothed_version(RootBasisFunction self, BasisFunction parent,
@@ -72,11 +71,11 @@ cdef class RootBasisFunction(BasisFunction):
     cpdef BasisFunction get_parent(RootBasisFunction self)
 
     cpdef apply(RootBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
-                cnp.ndarray[FLOAT_t, ndim=2] missing,
+                cnp.ndarray[BOOL_t, ndim=2] missing,
                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=?)
 
     cpdef apply_deriv(RootBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
-                      cnp.ndarray[FLOAT_t, ndim=2] missing,
+                      cnp.ndarray[BOOL_t, ndim=2] missing,
                       cnp.ndarray[FLOAT_t, ndim=1] b,
                       cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var)
 
@@ -95,13 +94,17 @@ cdef class VariableBasisFunction(BasisFunction):
     cpdef INDEX_t get_variable(VariableBasisFunction self)
 
 cdef class DataVariableBasisFunction(VariableBasisFunction):
+    cpdef bint covered(DataVariableBasisFunction self, INDEX_t variable)
+    
+    cpdef bint eligible(DataVariableBasisFunction self, INDEX_t variable)
+    
     cpdef apply(DataVariableBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
-                cnp.ndarray[FLOAT_t, ndim=2] missing,
+                cnp.ndarray[BOOL_t, ndim=2] missing,
                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=?)
 
     cpdef apply_deriv(DataVariableBasisFunction self,
                       cnp.ndarray[FLOAT_t, ndim=2] X,
-                      cnp.ndarray[FLOAT_t, ndim=2] missing,
+                      cnp.ndarray[BOOL_t, ndim=2] missing,
                       cnp.ndarray[FLOAT_t, ndim=1] b,
                       cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var)
 
@@ -112,13 +115,17 @@ cdef class MissingnessBasisFunction(VariableBasisFunction):
     
     cpdef bint eligible(MissingnessBasisFunction self, INDEX_t variable)
     
+    cpdef bint covered(MissingnessBasisFunction self, INDEX_t variable)
+    
+    cpdef bint eligible(MissingnessBasisFunction self, INDEX_t variable)
+    
     cpdef apply(MissingnessBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
-                cnp.ndarray[FLOAT_t, ndim=2] missing,
+                cnp.ndarray[BOOL_t, ndim=2] missing,
                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=?)
 
     cpdef apply_deriv(MissingnessBasisFunction self,
                       cnp.ndarray[FLOAT_t, ndim=2] X,
-                      cnp.ndarray[FLOAT_t, ndim=2] missing,
+                      cnp.ndarray[BOOL_t, ndim=2] missing,
                       cnp.ndarray[FLOAT_t, ndim=1] b,
                       cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var)
     
@@ -191,16 +198,16 @@ cdef class Basis:
     cpdef BasisFunction get(Basis self, INDEX_t i)
 
     cpdef transform(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X,
-                    cnp.ndarray[FLOAT_t, ndim=2] missing,
+                    cnp.ndarray[BOOL_t, ndim=2] missing,
                     cnp.ndarray[FLOAT_t, ndim=2] B)
 
     cpdef weighted_transform(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X,
-                             cnp.ndarray[FLOAT_t, ndim=2] missing,
+                             cnp.ndarray[BOOL_t, ndim=2] missing,
                              cnp.ndarray[FLOAT_t, ndim=2] B,
                              cnp.ndarray[FLOAT_t, ndim=1] weights)
 
     cpdef transform_deriv(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X,
-                          cnp.ndarray[FLOAT_t, ndim=2] missing,
+                          cnp.ndarray[BOOL_t, ndim=2] missing,
                           cnp.ndarray[FLOAT_t, ndim=1] b,
                           cnp.ndarray[FLOAT_t, ndim=1] j,
                           cnp.ndarray[FLOAT_t, ndim=2] coef,

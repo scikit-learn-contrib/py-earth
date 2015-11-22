@@ -1,6 +1,7 @@
 from ._forward import ForwardPasser
 from ._pruning import PruningPasser
 from ._util import ascii_table, apply_weights_2d, gcv
+from ._types import BOOL
 from sklearn.base import RegressorMixin, BaseEstimator, TransformerMixin
 from sklearn.utils.validation import (assert_all_finite, check_is_fitted,
                                       check_X_y)
@@ -329,10 +330,20 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         if sparse.issparse(X):
             raise TypeError('A sparse matrix was passed, but dense data '
                             'is required. Use X.toarray() to convert to dense.')
-
+        
+        # Figure out missingness
+        if missing is None:
+            # Infer missingness
+            missing = np.isnan(X)
+            
         # Convert to internally used data type
+        missing = np.asarray(missing, dtype=BOOL, order='F')
+        assert_all_finite(missing)
+        if missing.ndim == 1:
+            missing = missing[:, np.newaxis]
         X = np.asarray(X, dtype=np.float64, order='F')
-        assert_all_finite(X)
+        if not self.allow_missing:
+            assert_all_finite(X)
         if X.ndim == 1:
             X = X[:, np.newaxis]
 
@@ -341,10 +352,6 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             if X.shape[1] != self.basis_.num_variables:
                 raise ValueError('Wrong number of columns in X')
         
-        # TODO: Implement actual missingness
-        if missing is None:
-            missing = np.zeros_like(X)
-            
         return X, missing
 
     def _scrub(self, X, y, sample_weight, output_weight, missing, **kwargs):
@@ -401,12 +408,16 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             raise ValueError(
                 'y and output_weight do not have compatible dimensions.')
 
-        # Make sure everything is finite
-        assert_all_finite(X)
+        # Make sure everything is finite (except X, which is allowed to have
+        # missing values)
         assert_all_finite(missing)
         assert_all_finite(y)
         assert_all_finite(sample_weight)
         assert_all_finite(output_weight)
+        
+        # Make sure everything is consistent
+        check_X_y(X, y, accept_sparse=None, multi_output=True,
+                  force_all_finite=False)
 
         return X, y, sample_weight, output_weight, missing
 
@@ -477,7 +488,6 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
 
         '''
-        check_X_y(X, y, accept_sparse=None, multi_output=True)
         # Format and label the data
         if xlabels is None:
             self.xlabels_ = self._scrape_labels(X)
@@ -492,7 +502,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             X, y, sample_weight, output_weight, missing)
 
         # Do the actual work
-        self.__forward_pass(X, y,
+        self.__forward_pass(X, y, 
                             sample_weight, output_weight, missing,
                             self.xlabels_, linvars)
         if self.enable_pruning is True:
@@ -570,7 +580,6 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
 
         '''
-
         # Label and format data
         if xlabels is None:
             self.xlabels_ = self._scrape_labels(X)

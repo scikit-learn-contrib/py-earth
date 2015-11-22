@@ -6,16 +6,14 @@ Created on Feb 24, 2013
 import pickle
 import copy
 import os
-import sys
 from .testing_utils import if_statsmodels, if_pandas, if_patsy, if_environ_has, \
     assert_list_almost_equal_value, assert_list_almost_equal
 from nose.tools import assert_equal, assert_true, \
     assert_almost_equal, assert_list_equal, assert_raises, assert_not_equal
 import numpy
 from scipy.sparse import csr_matrix
-
 from sklearn.utils.validation import NotFittedError
-
+from pyearth._types import BOOL
 from pyearth._basis import (Basis, ConstantBasisFunction,
                             HingeBasisFunction, LinearBasisFunction)
 from pyearth import Earth
@@ -32,7 +30,7 @@ basis.append(bf1)
 basis.append(bf2)
 basis.append(bf3)
 X = numpy.random.normal(size=(100, 10))
-missing = numpy.zeros_like(X)
+missing = numpy.zeros_like(X, dtype=BOOL)
 B = numpy.empty(shape=(100, 4), dtype=numpy.float64)
 basis.transform(X, missing, B)
 beta = numpy.random.normal(size=4)
@@ -132,6 +130,20 @@ def test_output_weight():
     assert_true(group1_mean > group2_mean or
                 round(abs(group1_mean - group2_mean), 7) == 0)
 
+def test_missing_data():
+    earth = Earth(allow_missing=True, **default_params)
+    missing_ = numpy.random.binomial(1, .05, X.shape).astype(bool)
+    X_ = X.copy()
+    X_[missing_] = None
+    earth.fit(X_, y)
+    res = str(earth.trace()) + '\n' + earth.summary()
+    filename = os.path.join(os.path.dirname(__file__),
+                            'earth_regress_missing_data.txt')
+#     with open(filename, 'w') as fl:
+#         fl.write(res)
+    with open(filename, 'r') as fl:
+        prev = fl.read()
+    assert_equal(res, prev)
 
 def test_fit():
     earth = Earth(**default_params)

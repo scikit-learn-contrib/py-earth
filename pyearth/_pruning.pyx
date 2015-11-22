@@ -12,7 +12,7 @@ cdef class PruningPasser:
     '''Implements the generic pruning pass as described by Friedman, 1991.'''
     def __init__(PruningPasser self, Basis basis,
                  cnp.ndarray[FLOAT_t, ndim=2] X, 
-                 cnp.ndarray[FLOAT_t, ndim=2] missing, 
+                 cnp.ndarray[BOOL_t, ndim=2] missing, 
                  cnp.ndarray[FLOAT_t, ndim=2] y,
                  cnp.ndarray[FLOAT_t, ndim=1] sample_weight,
                  cnp.ndarray[FLOAT_t, ndim=1] output_weight,
@@ -50,8 +50,8 @@ cdef class PruningPasser:
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
-        cdef cnp.ndarray[FLOAT_t, ndim = 2] missing = (
-            <cnp.ndarray[FLOAT_t, ndim = 2] > self.missing)
+        cdef cnp.ndarray[BOOL_t, ndim = 2] missing = (
+            <cnp.ndarray[BOOL_t, ndim = 2] > self.missing)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] y = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.y)
         cdef cnp.ndarray[FLOAT_t, ndim = 1] sample_weight = (
