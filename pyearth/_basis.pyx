@@ -852,6 +852,22 @@ cdef class Basis:
     def __init__(Basis self, num_variables):  # @DuplicatedSignature
         self.order = []
         self.num_variables = num_variables
+        self.coverage = dict()
+        
+    cpdef add_coverage(Basis self, int variable, MissingnessBasisFunction b1, \
+                       MissingnessBasisFunction b2):
+        cdef int index = len(self.order)
+        self.coverage[variable] = (index, index + 1)
+        self.append(b1)
+        self.append(b2)
+        
+    cpdef get_coverage(Basis self, int variable):
+        cdef int idx1, idx2
+        idx1, idx2 = self.coverage[variable]
+        return self.order[idx1], self.order[idx2]
+    
+    cpdef bint has_coverage(Basis self, int variable):
+        return variable in self.coverage
 
     def __reduce__(Basis self):
         return (self.__class__, (self.num_variables,), self._getstate())

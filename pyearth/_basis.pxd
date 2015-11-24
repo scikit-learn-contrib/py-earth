@@ -184,6 +184,14 @@ cdef class Basis:
 
     cdef list order
     cdef readonly INDEX_t num_variables
+    cdef dict coverage
+    
+    cpdef add_coverage(Basis self, int variable, MissingnessBasisFunction b1, \
+                       MissingnessBasisFunction b2)
+        
+    cpdef get_coverage(Basis self, int variable)
+    
+    cpdef bint has_coverage(Basis self, int variable)
 
     cpdef int get_num_variables(Basis self)
 

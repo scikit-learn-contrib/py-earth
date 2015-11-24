@@ -276,6 +276,7 @@ cdef class ForwardPasser:
         cdef BasisFunction bf2
         cdef BasisFunction bf3
         cdef BasisFunction bf4
+        cdef bint already_covered
         cdef INDEX_t k = len(self.basis)
         cdef INDEX_t endspan
         cdef bint linear_dependence
@@ -490,6 +491,11 @@ cdef class ForwardPasser:
                                            True, label)
             bf4 = MissingnessBasisFunction(parent_choice, variable_choice,
                                            False, label)
+            if self.basis.has_coverage(variable_choice):
+                bf3, bf4 = self.basis.get_coverage(variable_choice)
+                already_covered = True
+            else:
+                already_covered = False
             parent_choice = bf3
         if knot_idx_choice != -1:
             # Add the new basis functions
@@ -511,13 +517,18 @@ cdef class ForwardPasser:
             self.basis.append(bf2)
             
             if choice_needs_coverage:
-                bf3.apply(X, missing, B[:, k + 2])
-                apply_weights_slice(B, sample_weight, k + 2)
-                bf4.apply(X, missing, B[:, k + 3])
-                apply_weights_slice(B, sample_weight, k + 3)
-    
-                self.basis.append(bf3)        
-                self.basis.append(bf4)
+                if not already_covered:
+                    bf3.apply(X, missing, B[:, k + 2])
+                    apply_weights_slice(B, sample_weight, k + 2)
+                    bf4.apply(X, missing, B[:, k + 3])
+                    apply_weights_slice(B, sample_weight, k + 3)
+                    self.basis.add_coverage(variable_choice, bf3, bf4) 
+#                     print bf3
+#                 if not bf4_done:
+#                     bf4.apply(X, missing, B[:, k + 3])
+#                     apply_weights_slice(B, sample_weight, k + 3)
+#                     self.basis.append(bf4)
+#                     print bf4
 
             if self.use_fast is True:
                 bf1_content = FastHeapContent(idx=k)
@@ -525,10 +536,11 @@ cdef class ForwardPasser:
                 bf2_content = FastHeapContent(idx=k + 1)
                 heappush(self.fast_heap, bf2_content)
                 if choice_needs_coverage:
-                    bf3_content = FastHeapContent(idx=k + 2)
-                    heappush(self.fast_heap, FastHeapContent(idx=k + 2))
-                    bf4_content = FastHeapContent(idx=k + 3)
-                    heappush(self.fast_heap, FastHeapContent(idx=k + 3))
+                    if not already_covered:
+                        bf3_content = FastHeapContent(idx=k + 2)
+                        heappush(self.fast_heap, FastHeapContent(idx=k + 2))
+                        bf4_content = FastHeapContent(idx=k + 3)
+                        heappush(self.fast_heap, FastHeapContent(idx=k + 3))
                     
             # Orthogonalize the new basis
             B_orth[:, k] = B[:, k]
@@ -538,12 +550,13 @@ cdef class ForwardPasser:
             if self.orthonormal_update(k + 1) == 1:
                 bf2.make_unsplittable()
             if choice_needs_coverage:
-                B_orth[:, k + 2] = B[:, k + 2]
-                if self.orthonormal_update(k + 2) == 1:
-                    bf3.make_unsplittable()
-                B_orth[:, k + 3] = B[:, k + 3]
-                if self.orthonormal_update(k + 3) == 1:
-                    bf4.make_unsplittable()
+                if not already_covered:
+                    B_orth[:, k + 2] = B[:, k + 2]
+                    if self.orthonormal_update(k + 2) == 1:
+                        bf3.make_unsplittable()
+                    B_orth[:, k + 3] = B[:, k + 3]
+                    if self.orthonormal_update(k + 3) == 1:
+                        bf4.make_unsplittable()
         elif not dependent and knot_idx_choice == -1:
             # In this case, only add the linear basis function (in addition to 
             # covering missingness basis functions if needed)
@@ -552,37 +565,44 @@ cdef class ForwardPasser:
                                                True, label)
                 bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
                                                False, label)
+                if self.basis.has_coverage(variable_choice):
+                    bf2, bf3 = self.basis.get_coverage(variable_choice)
+                    already_covered = True
+                else:
+                    already_covered = False
                 parent_choice = bf2
             bf1 = LinearBasisFunction(parent_choice, variable_choice, label)
             bf1.apply(X, missing, B[:, k])
             apply_weights_slice(B, sample_weight, k)
             self.basis.append(bf1)
             if choice_needs_coverage:
-                bf2.apply(X, missing, B[:, k + 1])
-                apply_weights_slice(B, sample_weight, k + 1)
-                self.basis.append(bf2)
-                bf3.apply(X, missing, B[:, k + 2])
-                apply_weights_slice(B, sample_weight, k + 2)
-                self.basis.append(bf3)
+                if not already_covered:
+                    bf2.apply(X, missing, B[:, k + 1])
+                    apply_weights_slice(B, sample_weight, k + 1)
+                    bf3.apply(X, missing, B[:, k + 2])
+                    apply_weights_slice(B, sample_weight, k + 2)
+                    self.basis.add_coverage(variable_choice, bf2, bf3)
             if self.use_fast is True:
                 bf1_content = FastHeapContent(idx=k)
                 heappush(self.fast_heap, bf1_content)
                 if choice_needs_coverage:
-                    bf2_content = FastHeapContent(idx=k + 1)
-                    heappush(self.fast_heap, bf2_content)
-                    bf3_content = FastHeapContent(idx=k + 2)
-                    heappush(self.fast_heap, bf3_content)
+                    if not already_covered:
+                        bf2_content = FastHeapContent(idx=k + 1)
+                        heappush(self.fast_heap, bf2_content)
+                        bf3_content = FastHeapContent(idx=k + 2)
+                        heappush(self.fast_heap, bf3_content)
             # Orthogonalize the new basis
             B_orth[:, k] = B[:, k]
             if self.orthonormal_update(k) == 1:
                 bf1.make_unsplittable()
             if choice_needs_coverage:
-                B_orth[:, k + 1] = B[:, k + 1]
-                if self.orthonormal_update(k + 1) == 1:
-                    bf2.make_unsplittable()
-                B_orth[:, k + 2] = B[:, k + 2]
-                if self.orthonormal_update(k + 2) == 1:
-                    bf3.make_unsplittable()
+                if not already_covered:
+                    B_orth[:, k + 1] = B[:, k + 1]
+                    if self.orthonormal_update(k + 1) == 1:
+                        bf2.make_unsplittable()
+                    B_orth[:, k + 2] = B[:, k + 2]
+                    if self.orthonormal_update(k + 2) == 1:
+                        bf3.make_unsplittable()
         else:  # dependent and knot_idx_choice == -1
             # In this case there were no acceptable choices remaining, so end
             # the forward pass

@@ -883,7 +883,7 @@ struct __pyx_opt_args_7pyearth_6_basis_24MissingnessBasisFunction_apply {
   int recurse;
 };
 
-/* "_basis.pxd":209
+/* "_basis.pxd":217
  *                              cnp.ndarray[FLOAT_t, ndim=1] weights)
  * 
  *     cpdef transform_deriv(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X,             # <<<<<<<<<<<<<<
@@ -1044,6 +1044,7 @@ struct __pyx_obj_7pyearth_6_basis_Basis {
   struct __pyx_vtabstruct_7pyearth_6_basis_Basis *__pyx_vtab;
   PyObject *order;
   __pyx_t_7pyearth_6_types_INDEX_t num_variables;
+  PyObject *coverage;
 };
 
 
@@ -1378,6 +1379,9 @@ static struct __pyx_vtabstruct_7pyearth_6_basis_LinearBasisFunction *__pyx_vtabp
  */
 
 struct __pyx_vtabstruct_7pyearth_6_basis_Basis {
+  PyObject *(*add_coverage)(struct __pyx_obj_7pyearth_6_basis_Basis *, int, struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *, struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *, int __pyx_skip_dispatch);
+  PyObject *(*get_coverage)(struct __pyx_obj_7pyearth_6_basis_Basis *, int, int __pyx_skip_dispatch);
+  int (*has_coverage)(struct __pyx_obj_7pyearth_6_basis_Basis *, int, int __pyx_skip_dispatch);
   int (*get_num_variables)(struct __pyx_obj_7pyearth_6_basis_Basis *, int __pyx_skip_dispatch);
   PyObject *(*anova_decomp)(struct __pyx_obj_7pyearth_6_basis_Basis *, int __pyx_skip_dispatch);
   PyObject *(*smooth)(struct __pyx_obj_7pyearth_6_basis_Basis *, PyArrayObject *, int __pyx_skip_dispatch);
