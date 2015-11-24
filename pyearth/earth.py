@@ -841,7 +841,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         else:
             return y
 
-    def predict_deriv(self, X, missing=None, variables=None):
+    def predict_deriv(self, X, variables=None, missing=None):
         '''
         Predict the first derivatives of the response based on the input data X.
 
