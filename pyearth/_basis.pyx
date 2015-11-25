@@ -9,6 +9,7 @@ from libc.math cimport log
 from libc.math cimport abs
 cimport cython
 cdef FLOAT_t ZERO_TOL = 1e-16
+from _types import FLOAT
 import numpy as np
 import sys
 import six
@@ -426,7 +427,7 @@ cdef class DataVariableBasisFunction(VariableBasisFunction):
         MissingnessBasisFunction must be added before the variable can 
         be used).
         '''
-        return False or self.parent.eligible(variable)
+        return False or self.parent.covered(variable)
     
     cpdef bint eligible(DataVariableBasisFunction self, INDEX_t variable):
         '''
@@ -449,7 +450,9 @@ cdef class DataVariableBasisFunction(VariableBasisFunction):
         cdef cnp.ndarray[FLOAT_t, ndim=1] val
         if recurse:
             self.parent.apply(X, missing, b, recurse=True)
-        val = self.eval(X[:, self.variable])
+        val = np.zeros(X.shape[0], dtype=FLOAT)
+        here =  missing[:, self.variable] == 0
+        val[here] = self.eval(X[here, self.variable])
         for i in range(m):
             if not missing[i, self.variable]:
                 b[i] *= val[i]
@@ -468,8 +471,11 @@ cdef class DataVariableBasisFunction(VariableBasisFunction):
         cdef INDEX_t m = len(b)  # @DuplicatedSignature
         cdef FLOAT_t x
         self.parent.apply_deriv(X, missing, b, j, var)
-        this_val = self.eval(X[:,this_var])
-        this_deriv = self.eval_deriv(X[:,this_var])
+        here =  missing[:, self.variable] == 0
+        this_val = np.zeros(X.shape[0], dtype=FLOAT)
+        this_deriv = np.zeros(X.shape[0], dtype=FLOAT)
+        this_val[here] = self.eval(X[here,this_var])
+        this_deriv[here] = self.eval_deriv(X[here,this_var])
         for i in range(m):
             if missing[i, this_var]:
                 continue
@@ -498,7 +504,7 @@ cdef class MissingnessBasisFunction(VariableBasisFunction):
         if (not self.complement) and (variable == self.variable):
             return True
         else:
-            return False or self.parent.eligible(variable)
+            return False or self.parent.covered(variable)
     
     cpdef bint eligible(MissingnessBasisFunction self, INDEX_t variable):
         '''
@@ -873,10 +879,12 @@ cdef class Basis:
         return (self.__class__, (self.num_variables,), self._getstate())
 
     def _getstate(Basis self):
-        return {'order': self.order}
+        return {'order': self.order,
+                'coverage': self.coverage}
 
     def __setstate__(Basis self, state):
         self.order = state['order']
+        self.coverage = state['coverage']
 
     def __richcmp__(Basis self, other, method):
         if method == 2:

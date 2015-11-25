@@ -553,10 +553,12 @@ cdef class ForwardPasser:
                 if not already_covered:
                     B_orth[:, k + 2] = B[:, k + 2]
                     if self.orthonormal_update(k + 2) == 1:
-                        bf3.make_unsplittable()
+                        pass
+#                         bf3.make_unsplittable()
                     B_orth[:, k + 3] = B[:, k + 3]
                     if self.orthonormal_update(k + 3) == 1:
-                        bf4.make_unsplittable()
+                        pass
+#                         bf4.make_unsplittable()
         elif not dependent and knot_idx_choice == -1:
             # In this case, only add the linear basis function (in addition to 
             # covering missingness basis functions if needed)
@@ -599,10 +601,12 @@ cdef class ForwardPasser:
                 if not already_covered:
                     B_orth[:, k + 1] = B[:, k + 1]
                     if self.orthonormal_update(k + 1) == 1:
-                        bf2.make_unsplittable()
+                        pass
+#                         bf2.make_unsplittable()
                     B_orth[:, k + 2] = B[:, k + 2]
                     if self.orthonormal_update(k + 2) == 1:
-                        bf3.make_unsplittable()
+                        pass
+#                         bf3.make_unsplittable()
         else:  # dependent and knot_idx_choice == -1
             # In this case there were no acceptable choices remaining, so end
             # the forward pass

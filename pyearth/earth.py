@@ -778,7 +778,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         self.coef_ = []
         resid_ = []
         for i in range(y.shape[1]):
-            coef, resid = np.linalg.lstsq(B, weighted_y[:, i])[0:2]
+            coef, resid = np.linalg.lstsq(B, weighted_y[:, i], rcond=1e-10)[0:2]
             self.coef_.append(coef)
             resid_.append(resid)
         resid_ = np.array(resid_)

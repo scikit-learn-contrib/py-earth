@@ -21,13 +21,14 @@ X[:, 5] = X[:, 6] + numpy.random.normal(0, .1, m)
 y = 100 * \
     (numpy.sin((X[:, 5] + X[:, 6]) / 20) - 4.0) + \
     10 * numpy.random.normal(size=m)
-missing = numpy.random.binomial(1, .05, (m, n)).astype(bool)
+missing = numpy.random.binomial(1, .3, (m, n)).astype(bool)
 X[missing] = None
 idx5 = (1 - missing[:, 5]).astype(bool)
 idx6 = (1 - missing[:, 6]).astype(bool)
 
 # Fit an Earth model
-model = Earth(max_degree=3, minspan_alpha=.5, allow_missing=True)
+model = Earth(max_degree=3, minspan_alpha=.5, allow_missing=True, 
+              enable_pruning=False)
 model.fit(X, y)
 
 # Print the model
