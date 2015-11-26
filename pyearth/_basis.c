@@ -13231,11 +13231,11 @@ static int __pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_covered(struct __
   /* "pyearth/_basis.pyx":504
  *         be used).
  *         '''
- *         if (not self.complement) and (variable == self.variable):             # <<<<<<<<<<<<<<
+ *         if self.complement and (variable == self.variable):             # <<<<<<<<<<<<<<
  *             return True
  *         else:
  */
-  __pyx_t_2 = ((!(__pyx_v_self->complement != 0)) != 0);
+  __pyx_t_2 = (__pyx_v_self->complement != 0);
   if (__pyx_t_2) {
   } else {
     __pyx_t_1 = __pyx_t_2;
@@ -13248,7 +13248,7 @@ static int __pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_covered(struct __
 
     /* "pyearth/_basis.pyx":505
  *         '''
- *         if (not self.complement) and (variable == self.variable):
+ *         if self.complement and (variable == self.variable):
  *             return True             # <<<<<<<<<<<<<<
  *         else:
  *             return False or self.parent.covered(variable)
@@ -13259,7 +13259,7 @@ static int __pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_covered(struct __
     /* "pyearth/_basis.pyx":504
  *         be used).
  *         '''
- *         if (not self.complement) and (variable == self.variable):             # <<<<<<<<<<<<<<
+ *         if self.complement and (variable == self.variable):             # <<<<<<<<<<<<<<
  *             return True
  *         else:
  */
@@ -13411,11 +13411,11 @@ static int __pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_eligible(struct _
   /* "pyearth/_basis.pyx":513
  *         Is this an eligible parent for variable?
  *         '''
- *         if self.complement and (variable == self.variable):             # <<<<<<<<<<<<<<
+ *         if (not self.complement) and (variable == self.variable):             # <<<<<<<<<<<<<<
  *             return False
  *         else:
  */
-  __pyx_t_2 = (__pyx_v_self->complement != 0);
+  __pyx_t_2 = ((!(__pyx_v_self->complement != 0)) != 0);
   if (__pyx_t_2) {
   } else {
     __pyx_t_1 = __pyx_t_2;
@@ -13428,7 +13428,7 @@ static int __pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_eligible(struct _
 
     /* "pyearth/_basis.pyx":514
  *         '''
- *         if self.complement and (variable == self.variable):
+ *         if (not self.complement) and (variable == self.variable):
  *             return False             # <<<<<<<<<<<<<<
  *         else:
  *             return True and self.parent.eligible(variable)
@@ -13439,7 +13439,7 @@ static int __pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_eligible(struct _
     /* "pyearth/_basis.pyx":513
  *         Is this an eligible parent for variable?
  *         '''
- *         if self.complement and (variable == self.variable):             # <<<<<<<<<<<<<<
+ *         if (not self.complement) and (variable == self.variable):             # <<<<<<<<<<<<<<
  *             return False
  *         else:
  */

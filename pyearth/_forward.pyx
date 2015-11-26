@@ -397,6 +397,14 @@ cdef class ForwardPasser:
                 for i in range(self.m):
                     B_orth[i, k] = B[i, k]
                 linear_dependence = self.orthonormal_update(k)
+                if missing_flag and not covered:
+                    for i in range(self.m):
+                        B_orth[i, k + 1] = B[i, parent_idx] * (1 - missing[i, variable])
+                    self.orthonormal_update(k + 1)
+                    for i in range(self.m):
+                        B_orth[i, k + 2] = B[i, parent_idx] * missing[i, variable]
+                    self.orthonormal_update(k + 2)
+                
 
                 # If a new hinge function does not improve the gcv over the
                 # linear term then just the linear term will be retained
@@ -429,8 +437,12 @@ cdef class ForwardPasser:
 
                         # Find the best knot location for this parent and
                         # variable combination
-                        self.best_knot(parent_idx, x, k, candidates_idx,
-                                       sorting, & mse, & knot, & knot_idx)
+                        if missing_flag and not covered:
+                            self.best_knot(parent_idx, x, k + 2, candidates_idx,
+                                           sorting, & mse, & knot, & knot_idx)
+                        else:
+                            self.best_knot(parent_idx, x, k, candidates_idx,
+                                           sorting, & mse, & knot, & knot_idx)
 
                         # If the hinge function does not decrease the gcv then
                         # just keep the linear term (if allow_linear is True)
@@ -442,10 +454,22 @@ cdef class ForwardPasser:
                     else:
                         # Do an orthonormal downdate and skip to the next
                         # iteration
+                        if missing_flag and not covered:
+                            # Order matters here: orthonormal updates
+                            # must be undone in the reverse order in which
+                            # they were added.
+                            self.orthonormal_downdate(k + 2)
+                            self.orthonormal_downdate(k + 1)
                         self.orthonormal_downdate(k)
                         continue
 
                 # Do an orthonormal downdate
+                if missing_flag and not covered:
+                    # Order matters here: orthonormal updates
+                    # must be undone in the reverse order in which
+                    # they were added.
+                    self.orthonormal_downdate(k + 2)
+                    self.orthonormal_downdate(k + 1)
                 self.orthonormal_downdate(k)
 
                 # Update the choices
@@ -465,7 +489,7 @@ cdef class ForwardPasser:
                         choice_needs_coverage = True
                     else:
                         choice_needs_coverage = False
-
+                
                 if self.use_fast is True:
                     if (mse_choice_cur_parent == -1) or (mse < mse_choice_cur_parent):
                         mse_choice_cur_parent = mse
@@ -483,7 +507,7 @@ cdef class ForwardPasser:
         if first:
             self.record[len(self.record) - 1].set_no_candidates(True)
             return
-
+        
         # Add the new basis functions
         label = self.xlabels[variable_choice]
         if choice_needs_coverage:
@@ -523,12 +547,6 @@ cdef class ForwardPasser:
                     bf4.apply(X, missing, B[:, k + 3])
                     apply_weights_slice(B, sample_weight, k + 3)
                     self.basis.add_coverage(variable_choice, bf3, bf4) 
-#                     print bf3
-#                 if not bf4_done:
-#                     bf4.apply(X, missing, B[:, k + 3])
-#                     apply_weights_slice(B, sample_weight, k + 3)
-#                     self.basis.append(bf4)
-#                     print bf4
 
             if self.use_fast is True:
                 bf1_content = FastHeapContent(idx=k)

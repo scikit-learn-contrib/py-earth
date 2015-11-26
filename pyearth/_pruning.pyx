@@ -65,13 +65,14 @@ cdef class PruningPasser:
         self.basis.weighted_transform(X, missing, B, sample_weight)
         mse = 0.
         for p in range(y.shape[1]):
-            beta, mse_ = np.linalg.lstsq(B[:, 0:(basis_size)], weighted_y[:, p], rcond=1e-10)[0:2]
+            beta, mse_ = np.linalg.lstsq(B[:, 0:(basis_size)], weighted_y[:, p])[0:2]
             if mse_:
                 mse_ /= self.m
             else:
                 mse_ = (1.0 / self.m) * np.sum(
                     (np.dot(B[:, 0:basis_size], beta) - weighted_y[:, p]) ** 2)
             mse += mse_ * output_weight[p]
+            
         # Create the record object
         self.record = PruningPassRecord(
             self.m, self.n, self.penalty, self.sst, pruned_basis_size, mse)

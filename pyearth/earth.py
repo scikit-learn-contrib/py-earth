@@ -507,10 +507,10 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                             self.xlabels_, linvars)
         if self.enable_pruning is True:
             self.__pruning_pass(X, y,
-                            sample_weight, output_weight)
+                            sample_weight, output_weight, missing)
         if hasattr(self, 'smooth') and self.smooth:
             self.basis_ = self.basis_.smooth(X)
-        self.__linear_fit(X, y, sample_weight, output_weight)
+        self.__linear_fit(X, y, sample_weight, output_weight, missing)
         return self
 
     def __forward_pass(self, X, y=None,
@@ -778,8 +778,10 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         self.coef_ = []
         resid_ = []
         for i in range(y.shape[1]):
-            coef, resid = np.linalg.lstsq(B, weighted_y[:, i], rcond=1e-10)[0:2]
+            coef, resid = np.linalg.lstsq(B, weighted_y[:, i])[0:2]
             self.coef_.append(coef)
+            if not resid:
+                resid = np.array([np.sum((np.dot(B, coef) - weighted_y[:,i]) ** 2)])
             resid_.append(resid)
         resid_ = np.array(resid_)
         self.coef_ = np.array(self.coef_)

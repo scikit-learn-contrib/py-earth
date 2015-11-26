@@ -121,7 +121,6 @@ def test_output_weight():
     group = numpy.array([1] * 5 + [0] * 5)
     output_weight = numpy.array([1] * 5 + [2] * 5, dtype=float)
     model = Earth().fit(x, y, output_weight=output_weight)
-    print y.shape
 
     # Check that the model fits at least better
     # the more heavily weighted group

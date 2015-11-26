@@ -501,7 +501,7 @@ cdef class MissingnessBasisFunction(VariableBasisFunction):
         MissingnessBasisFunction must be added before the variable can 
         be used).
         '''
-        if (not self.complement) and (variable == self.variable):
+        if self.complement and (variable == self.variable):
             return True
         else:
             return False or self.parent.covered(variable)
@@ -510,7 +510,7 @@ cdef class MissingnessBasisFunction(VariableBasisFunction):
         '''
         Is this an eligible parent for variable?
         '''
-        if self.complement and (variable == self.variable):
+        if (not self.complement) and (variable == self.variable):
             return False
         else:
             return True and self.parent.eligible(variable)
