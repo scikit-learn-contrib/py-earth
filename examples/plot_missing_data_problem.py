@@ -22,7 +22,7 @@ X[:, 5] = X[:, 6] + numpy.random.normal(0, .1, m)
 y = 100 * \
     (numpy.sin((X[:, 5] + X[:, 6]) / 20) - 4.0) + \
     10 * numpy.random.normal(size=m)
-missing = numpy.random.binomial(1, .1, (m, n)).astype(bool)
+missing = numpy.random.binomial(1, .2, (m, n)).astype(bool)
 X_full = X.copy()
 X[missing] = None
 idx5 = (1 - missing[:, 5]).astype(bool)
@@ -44,12 +44,14 @@ fig = plt.figure()
 ax1 = fig.add_subplot(3, 2, 1)
 ax1.plot(X_full[idx5, 5], y[idx5], 'b.')
 ax1.plot(X_full[idx5, 5], y_hat[idx5], 'r.')
+ax1.set_xlim(-40,40)
 ax1.set_title('x5 present')
 ax1.set_xlabel('x5')
 
 ax2 = fig.add_subplot(3, 2, 2)
 ax2.plot(X_full[idx6, 6], y[idx6], 'b.')
 ax2.plot(X_full[idx6, 6], y_hat[idx6], 'r.')
+ax2.set_xlim(-40,40)
 ax2.set_title('x6 present')
 ax2.set_xlabel('x6')
 
