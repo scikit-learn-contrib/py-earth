@@ -11,7 +11,6 @@ import numpy
 import matplotlib.pyplot as plt
 
 from pyearth import Earth
-from statsmodels.regression.linear_model import OLS
 
 # Create some fake data
 numpy.random.seed(2)
