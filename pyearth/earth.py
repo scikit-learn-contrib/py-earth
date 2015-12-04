@@ -343,7 +343,10 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             missing = missing[:, np.newaxis]
         X = np.asarray(X, dtype=np.float64, order='F')
         if not self.allow_missing:
-            assert_all_finite(X)
+            try:
+                assert_all_finite(X)
+            except ValueError:
+                raise ValueError("Input contains NaN, infinity or a value that's too large.  Did you mean to set allow_missing=True?")
         if X.ndim == 1:
             X = X[:, np.newaxis]
 
