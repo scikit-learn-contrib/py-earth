@@ -77,6 +77,7 @@ cdef class ForwardPasser:
         self.use_fast = kwargs.get('use_fast', False)
         self.fast_K = kwargs.get("fast_K", 5)
         self.fast_h = kwargs.get("fast_h", 1)
+        self.zero_tol = kwargs.get('zero_tol', 1e-12)
         self.allow_missing = kwargs.get("allow_missing", False)
         if self.allow_missing:
             self.has_missing = np.any(self.missing, axis=0).astype(BOOL)
@@ -120,7 +121,6 @@ cdef class ForwardPasser:
         self.sort_tracker = np.empty(shape=self.m, dtype=np.int)
         for i in range(self.m):
             self.sort_tracker[i] = i
-        self.zero_tol = 1e-6
 
         self.linear_variables = np.zeros(shape=self.n, dtype=np.int)
         self.init_linear_variables()
