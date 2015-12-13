@@ -92,11 +92,19 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         minspan_alpha is ignored.
 
 
-    thresh : float, optional (defaul=0.001)
+    thresh : float, optional (default=0.001)
         Parameter used when evaluating stopping conditions for the forward
         pass. If either RSQ > 1 - thresh or if RSQ increases by less than
         thresh for a forward pass iteration then the forward pass is terminated.
-
+    
+    
+    zero_tol : float, optional (default=1e-12)
+        Used when determining whether a floating point number is zero during the 
+        forward pass.  This is important in determining linear dependence and in 
+        the fast update procedure.  There should normally be no reason to change 
+        zero_tol from its default.  However, if nans are showing up during the 
+        forward pass or the forward pass seems to be terminating unexpectedly, 
+        consider adjusting zero_tol.
 
     min_search_points : int, optional (default=100)
         Used to calculate check_every (below).  The minimum samples necessary
@@ -223,10 +231,9 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         'max_terms', 'max_degree', 'penalty',
         'endspan_alpha', 'endspan',
         'minspan_alpha', 'minspan',
-        'thresh', 'min_search_points', 'check_every',
-        'allow_linear',
-        'use_fast',
-        'fast_K', 'fast_h'
+        'thresh', 'zero_tol', 'min_search_points', 
+        'check_every', 'allow_linear',
+        'use_fast', 'fast_K', 'fast_h'
     ])
     pruning_pass_arg_names = set([
         'penalty'
@@ -235,7 +242,8 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
     def __init__(self, max_terms=None, max_degree=None, penalty=None,
                  endspan_alpha=None, endspan=None,
                  minspan_alpha=None, minspan=None,
-                 thresh=None, min_search_points=None, check_every=None,
+                 thresh=None, zero_tol=None, min_search_points=None, 
+                 check_every=None,
                  allow_linear=None, use_fast=None, fast_K=None,
                  fast_h=None, smooth=None, enable_pruning=True):
         kwargs = {}
