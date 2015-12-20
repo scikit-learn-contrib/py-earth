@@ -1,33 +1,20 @@
 Earth Model
--------------------------------------------------
-Basis Function              Pruned  Coefficient  
--------------------------------------------------
-(Intercept)                 No      2.84597      
-h(x1-0.949246)*present(x1)  No      2.37396      
-h(0.949246-x1)*present(x1)  No      -0.508452    
-present(x1)                 Yes     None         
-missing(x1)                 Yes     None         
-h(x2-1.03441)*present(x2)   Yes     None         
-h(1.03441-x2)*present(x2)   No      -0.371215    
-present(x2)                 Yes     None         
-missing(x2)                 Yes     None         
-x0*present(x0)*present(x0)  Yes     None         
-present(x0)*present(x0)     No      -1.51585     
-missing(x0)*present(x0)     Yes     None         
-x3*present(x3)*present(x3)  Yes     None         
-present(x3)*present(x3)     Yes     None         
-missing(x3)*present(x3)     Yes     None         
-x6*present(x6)*present(x6)  Yes     None         
-present(x6)*present(x6)     Yes     None         
-missing(x6)*present(x6)     Yes     None         
-x4*present(x4)*present(x4)  Yes     None         
-present(x4)*present(x4)     Yes     None         
-missing(x4)*present(x4)     Yes     None         
-x7*present(x7)*present(x7)  Yes     None         
-present(x7)*present(x7)     Yes     None         
-missing(x7)*present(x7)     Yes     None         
-x8*present(x8)*present(x8)  Yes     None         
-present(x8)*present(x8)     Yes     None         
-missing(x8)*present(x8)     Yes     None         
--------------------------------------------------
-MSE: 0.7295, GCV: 0.8810, RSQ: 0.4687, GRSQ: 0.3712
+------------------------------------------------------------
+Basis Function                         Pruned  Coefficient  
+------------------------------------------------------------
+(Intercept)                            No      1.93066      
+h(x1-0.949246)*present(x1)             No      2.16265      
+h(0.949246-x1)*present(x1)             No      -0.574279    
+present(x1)                            No      0.996308     
+missing(x1)                            Yes     None         
+h(x2-1.03441)*present(x2)*present(x1)  Yes     None         
+h(1.03441-x2)*present(x2)*present(x1)  No      -0.409139    
+present(x2)*present(x1)                Yes     None         
+missing(x2)*present(x1)                Yes     None         
+x0*present(x0)*present(x0)             Yes     None         
+present(x0)*present(x0)                No      -1.43924     
+missing(x0)*present(x0)                Yes     None         
+x0*present(x0)*present(x0)             Yes     None         
+x0*present(x0)*present(x0)             Yes     None         
+------------------------------------------------------------
+MSE: 0.6947, GCV: 0.8770, RSQ: 0.4941, GRSQ: 0.3740
