@@ -138,14 +138,14 @@ def test_missing_data():
     X_ = X.copy()
     X_[missing_] = None
     earth.fit(X_, y)
-    res = str(earth.summary())
+    res = str(earth.score(X_, y))
     filename = os.path.join(os.path.dirname(__file__),
                             'earth_regress_missing_data.txt')
 #     with open(filename, 'w') as fl:
 #         fl.write(res)
     with open(filename, 'r') as fl:
         prev = fl.read()
-    assert_equal(res, prev)
+    assert_almost_equal(float(res), float(prev))
 
 def test_fit():
     earth = Earth(**default_params)
