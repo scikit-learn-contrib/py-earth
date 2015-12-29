@@ -76,10 +76,10 @@ thorough and easy to read vignette (http://www.milbo.org/doc/earth-notes.pdf).
    (2012). earth: Multivariate Adaptive Regression Spline Models. R package
    version 3.2-3. http://CRAN.R-project.org/package=earth
 3. Friedman, J. (1993). Fast MARS. Stanford University Department of Statistics, Technical Report No 110. 
-   http://statistics.stanford.edu/~ckirby/techreports/LCS/LCS%20110.pdf
+   https://statistics.stanford.edu/sites/default/files/LCS%20110.pdf
 4. Friedman, J. (1991). Estimating functions of mixed ordinal and categorical variables using adaptive splines.
    Stanford University Department of Statistics, Technical Report No 108. 
-   http://statistics.stanford.edu/~ckirby/techreports/LCS/LCS%20108.pdf
+   http://media.salford-systems.com/library/MARS_V2_JHF_LCS-108.pdf
 5. Stewart, G.W. Matrix Algorithms, Volume 1: Basic Decompositions. (1998). Society for Industrial and Applied 
    Mathematics.
 6. Bjorck, A. Numerical Methods for Least Squares Problems. (1996). Society for Industrial and Applied 
