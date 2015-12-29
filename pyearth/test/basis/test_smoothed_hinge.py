@@ -4,6 +4,7 @@ import numpy
 from nose.tools import assert_equal
 
 from .base import BaseContainer
+from pyearth._types import BOOL
 from pyearth._basis import SmoothedHingeBasisFunction, ConstantBasisFunction
 
 
@@ -66,9 +67,10 @@ def test_p_r():
 def test_apply():
     cnt = Container()
     m, _ = cnt.X.shape
+    missing = numpy.zeros_like(cnt.X, dtype=BOOL)
     B = numpy.ones(shape=(m, 10))
-    cnt.bf1.apply(cnt.X, B[:, 0])
-    cnt.bf2.apply(cnt.X, B[:, 1])
+    cnt.bf1.apply(cnt.X, missing, B[:, 0])
+    cnt.bf2.apply(cnt.X, missing, B[:, 1])
     pplus = (2 * 3.0 + 0.0 - 3 * 1.0) / ((3.0 - 0.0)**2)
     rplus = (2*1.0 - 3.0 - 0.0) / ((3.0 - 0.0)**3)
     pminus = (3*1.0 - 2*0.0 - 3.0) / ((0.0 - 3.0)**2)
@@ -97,6 +99,7 @@ def test_apply():
 def test_apply_deriv():
     cnt = Container()
     m, _ = cnt.X.shape
+    missing = numpy.zeros_like(cnt.X, dtype=BOOL)
     pplus = (2*3.0 + 0.0 - 3*1.0) / ((3.0 - 0.0)**2)
     rplus = (2*1.0 - 3.0 - 0.0) / ((3.0 - 0.0)**3)
     pminus = (3*1.0 - 2*0.0 - 3.0) / ((0.0 - 3.0)**2)
@@ -139,8 +142,8 @@ def test_apply_deriv():
                     (cnt.X[:, 1] < 3.0), 1] - 3.0)) +
         3.0*rminus*((cnt.X[(cnt.X[:, 1] > 0.0) &
                     (cnt.X[:, 1] < 3.0), 1] - 3.0)**2))
-    cnt.bf1.apply_deriv(cnt.X, b1, j1, 1)
-    cnt.bf2.apply_deriv(cnt.X, b2, j2, 1)
+    cnt.bf1.apply_deriv(cnt.X, missing, b1, j1, 1)
+    cnt.bf2.apply_deriv(cnt.X, missing, b2, j2, 1)
     numpy.testing.assert_almost_equal(b1, c1)
     numpy.testing.assert_almost_equal(b2, c2)
     numpy.testing.assert_almost_equal(j1, cp1)

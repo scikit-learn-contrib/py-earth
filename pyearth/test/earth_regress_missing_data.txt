@@ -1,0 +1,20 @@
+Earth Model
+------------------------------------------------------------
+Basis Function                         Pruned  Coefficient  
+------------------------------------------------------------
+(Intercept)                            No      1.93066      
+h(x1-0.949246)*present(x1)             No      2.16265      
+h(0.949246-x1)*present(x1)             No      -0.574279    
+present(x1)                            No      0.996308     
+missing(x1)                            Yes     None         
+h(x2-1.03441)*present(x2)*present(x1)  Yes     None         
+h(1.03441-x2)*present(x2)*present(x1)  No      -0.409139    
+present(x2)*present(x1)                Yes     None         
+missing(x2)*present(x1)                Yes     None         
+x0*present(x0)*present(x0)             Yes     None         
+present(x0)*present(x0)                No      -1.43924     
+missing(x0)*present(x0)                Yes     None         
+x0*present(x0)*present(x0)             Yes     None         
+x0*present(x0)*present(x0)             Yes     None         
+------------------------------------------------------------
+MSE: 0.6947, GCV: 0.8770, RSQ: 0.4941, GRSQ: 0.3740

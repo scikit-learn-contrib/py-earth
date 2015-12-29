@@ -6,8 +6,10 @@
 
 from ._util cimport gcv_adjust, log2, apply_weights_1d, apply_weights_slice
 from ._basis cimport (Basis, BasisFunction, ConstantBasisFunction,
-                      HingeBasisFunction, LinearBasisFunction)
+                      HingeBasisFunction, LinearBasisFunction, 
+                      MissingnessBasisFunction)
 from ._record cimport ForwardPassIteration
+from ._types import BOOL
 
 from libc.math cimport sqrt, abs, log
 import numpy as np
@@ -47,12 +49,14 @@ stopping_conditions = {
 cdef class ForwardPasser:
 
     def __init__(ForwardPasser self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                 cnp.ndarray[BOOL_t, ndim=2] missing,
                  cnp.ndarray[FLOAT_t, ndim=2] y,
                  cnp.ndarray[FLOAT_t, ndim=1] sample_weight,
                  cnp.ndarray[FLOAT_t, ndim=1] output_weight,
                  **kwargs):
         cdef INDEX_t i
         self.X = X
+        self.missing = missing
         self.y = y * np.sqrt(sample_weight[:, np.newaxis])
         self.sample_weight = sample_weight
         self.output_weight = output_weight
@@ -73,8 +77,11 @@ cdef class ForwardPasser:
         self.use_fast = kwargs.get('use_fast', False)
         self.fast_K = kwargs.get("fast_K", 5)
         self.fast_h = kwargs.get("fast_h", 1)
+        self.zero_tol = kwargs.get('zero_tol', 1e-12)
+        self.allow_missing = kwargs.get("allow_missing", False)
+        if self.allow_missing:
+            self.has_missing = np.any(self.missing, axis=0).astype(BOOL)
 
-        
         self.fast_heap = []
 
         if self.xlabels is None:
@@ -103,7 +110,7 @@ cdef class ForwardPasser:
             shape=self.max_terms, order='F', dtype=np.float)
         self.B = np.ones(
             shape=(self.m, self.max_terms), order='F', dtype=np.float)
-        self.basis.weighted_transform(self.X, self.B[:,0:1], self.sample_weight)
+        self.basis.weighted_transform(self.X, self.missing, self.B[:,0:1], self.sample_weight)
         # An orthogonal matrix with the same column space as B
         self.B_orth = self.B.copy()
         self.u = np.empty(shape=self.max_terms, dtype=np.float)
@@ -114,7 +121,6 @@ cdef class ForwardPasser:
         self.sort_tracker = np.empty(shape=self.m, dtype=np.int)
         for i in range(self.m):
             self.sort_tracker[i] = i
-        self.zero_tol = 1e-6
 
         self.linear_variables = np.zeros(shape=self.n, dtype=np.int)
         self.init_linear_variables()
@@ -177,7 +183,7 @@ cdef class ForwardPasser:
 
     cdef stop_check(ForwardPasser self):
         last = self.record.__len__() - 1
-        if self.record.iterations[last].get_size() + 2 > self.max_terms:
+        if self.record.iterations[last].get_size() + 4 > self.max_terms:
             self.record.stopping_condition = MAXTERMS
             return True
         rsq = self.record.rsq(last)
@@ -268,6 +274,9 @@ cdef class ForwardPasser:
         cdef bint first = True
         cdef BasisFunction bf1
         cdef BasisFunction bf2
+        cdef BasisFunction bf3
+        cdef BasisFunction bf4
+        cdef bint already_covered
         cdef INDEX_t k = len(self.basis)
         cdef INDEX_t endspan
         cdef bint linear_dependence
@@ -279,9 +288,16 @@ cdef class ForwardPasser:
         cdef FLOAT_t gcv_
         cdef FLOAT_t mse_
         cdef INDEX_t i
-
+        cdef bint eligible
+        cdef bint covered
+        cdef bint missing_flag
+        cdef bint choice_needs_coverage
+        cdef int max_variable_degree
+        
         cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
+        cdef cnp.ndarray[BOOL_t, ndim = 2] missing = (
+            <cnp.ndarray[BOOL_t, ndim = 2] > self.missing)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] B = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] B_orth = (
@@ -296,6 +312,9 @@ cdef class ForwardPasser:
             <cnp.ndarray[FLOAT_t, ndim = 1] > self.sample_weight)
         cdef cnp.ndarray[FLOAT_t, ndim = 1] output_weight = (
             <cnp.ndarray[FLOAT_t, ndim = 1] > self.output_weight)
+        cdef cnp.ndarray[BOOL_t, ndim = 1] has_missing = (
+            <cnp.ndarray[BOOL_t, ndim = 1] > self.has_missing)
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] x
 
         if self.endspan < 0:
             endspan = round(3 - log2(self.endspan_alpha / self.n))
@@ -323,14 +342,10 @@ cdef class ForwardPasser:
                 parent_idx = idx
 
             parent = self.basis.get(parent_idx)
-            if self.max_degree >= 0:
-                parent_degree = parent.degree()
-                if parent_degree >= self.max_degree:
-                    continue
+            
             if not parent.is_splittable():
                 continue
 
-            
             if self.use_fast is True:
                 # each "fast_h" iteration, force to pass through all the variables,
                 if self.iteration_number - parent_basis_content.m > self.fast_h:
@@ -342,24 +357,63 @@ cdef class ForwardPasser:
                 variables = range(self.n)
             else:
                 variables = range(self.n)
-
-
+            
+            parent_degree = parent.degree()
             for variable in variables:
+                
+                # Determine whether missingness needs to be accounted for.
+                if self.allow_missing and has_missing[variable]:
+                    missing_flag = True
+                    eligible = parent.eligible(variable)
+                    covered = parent.covered(variable)
+                    max_variable_degree = self.max_degree + 1
+                else:
+                    missing_flag = False
+                    max_variable_degree = self.max_degree
+                
+                # Make sure not to exceed max_degree (but don't count the 
+                # covering missingness basis function if required)
+                if self.max_degree >= 0:
+                    if parent_degree >= max_variable_degree:
+                        continue
+                
+                # If there is missing data and this parent is not 
+                # an eligible parent for this variable with missingness
+                # (because it includes a non-missing factor for the variable)
+                # the skip this variable.
+                if missing_flag and not eligible:
+                    continue
+                
+                # If necessary, protect from missing data
+                if missing_flag and not covered:
+                    x = X[:, variable]
+                    x[missing[:, variable]==1] = 0.0
+                else:
+                    x = X[:, variable]
+
                 # Sort the data
                 # TODO: eliminate Python call / data copy
-                sorting[:] = np.argsort(X[:, variable])[::-1]
+                sorting[:] = np.argsort(x)[::-1]
 
                 linear_dependence = False
 
 
                 # Add the linear term to B
                 for i in range(self.m):
-                    B[i, k] = B[i, parent_idx] * X[i, variable]
+                    B[i, k] = B[i, parent_idx] * x[i]
 
                 # Orthonormalize
                 for i in range(self.m):
                     B_orth[i, k] = B[i, k]
                 linear_dependence = self.orthonormal_update(k)
+                if missing_flag and not covered:
+                    for i in range(self.m):
+                        B_orth[i, k + 1] = B[i, parent_idx] * (1 - missing[i, variable])
+                    self.orthonormal_update(k + 1)
+                    for i in range(self.m):
+                        B_orth[i, k + 2] = B[i, parent_idx] * missing[i, variable]
+                    self.orthonormal_update(k + 2)
+                
 
                 # If a new hinge function does not improve the gcv over the
                 # linear term then just the linear term will be retained
@@ -378,7 +432,7 @@ cdef class ForwardPasser:
 
                     # Find the valid knot candidates
                     candidates_idx = parent.valid_knots(B[sorting, parent_idx],
-                                                        X[sorting, variable],
+                                                        x[sorting],
                                                         variable,
                                                         self.check_every,
                                                         endspan, self.minspan,
@@ -392,8 +446,12 @@ cdef class ForwardPasser:
 
                         # Find the best knot location for this parent and
                         # variable combination
-                        self.best_knot(parent_idx, variable, k, candidates_idx,
-                                       sorting, & mse, & knot, & knot_idx)
+                        if missing_flag and not covered:
+                            self.best_knot(parent_idx, x, k + 2, candidates_idx,
+                                           sorting, & mse, & knot, & knot_idx)
+                        else:
+                            self.best_knot(parent_idx, x, k, candidates_idx,
+                                           sorting, & mse, & knot, & knot_idx)
 
                         # If the hinge function does not decrease the gcv then
                         # just keep the linear term (if allow_linear is True)
@@ -405,25 +463,28 @@ cdef class ForwardPasser:
                     else:
                         # Do an orthonormal downdate and skip to the next
                         # iteration
+                        if missing_flag and not covered:
+                            # Order matters here: orthonormal updates
+                            # must be undone in the reverse order in which
+                            # they were added.
+                            self.orthonormal_downdate(k + 2)
+                            self.orthonormal_downdate(k + 1)
                         self.orthonormal_downdate(k)
                         continue
 
                 # Do an orthonormal downdate
+                if missing_flag and not covered:
+                    # Order matters here: orthonormal updates
+                    # must be undone in the reverse order in which
+                    # they were added.
+                    self.orthonormal_downdate(k + 2)
+                    self.orthonormal_downdate(k + 1)
                 self.orthonormal_downdate(k)
 
                 # Update the choices
-                if first:
-                    knot_choice = knot
-                    mse_choice = mse
-                    knot_idx_choice = knot_idx
-                    parent_idx_choice = parent_idx
-                    parent_choice = parent
-                    if self.use_fast is True:
-                        parent_basis_content_choice = parent_basis_content
-                    variable_choice = variable
-                    first = False
-                    dependent = linear_dependence
-                if mse < mse_choice:
+                if mse < mse_choice or first:
+                    if first:
+                        first = False
                     knot_choice = knot
                     mse_choice = mse
                     knot_idx_choice = knot_idx
@@ -433,7 +494,11 @@ cdef class ForwardPasser:
                         parent_basis_content_choice = parent_basis_content
                     variable_choice = variable
                     dependent = linear_dependence
-
+                    if missing_flag and not covered:
+                        choice_needs_coverage = True
+                    else:
+                        choice_needs_coverage = False
+                
                 if self.use_fast is True:
                     if (mse_choice_cur_parent == -1) or (mse < mse_choice_cur_parent):
                         mse_choice_cur_parent = mse
@@ -451,9 +516,20 @@ cdef class ForwardPasser:
         if first:
             self.record[len(self.record) - 1].set_no_candidates(True)
             return
-
+        
         # Add the new basis functions
         label = self.xlabels[variable_choice]
+        if choice_needs_coverage:
+            bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
+                                           True, label)
+            bf4 = MissingnessBasisFunction(parent_choice, variable_choice,
+                                           False, label)
+            if self.basis.has_coverage(variable_choice):
+                bf3, bf4 = self.basis.get_coverage(variable_choice)
+                already_covered = True
+            else:
+                already_covered = False
+            parent_choice = bf3
         if knot_idx_choice != -1:
             # Add the new basis functions
             bf1 = HingeBasisFunction(parent_choice,
@@ -464,20 +540,35 @@ cdef class ForwardPasser:
                                      knot_choice, knot_idx_choice,
                                      variable_choice,
                                      True, label)
-            bf1.apply(X, B[:, k])
+            
+            bf1.apply(X, missing, B[:, k])
             apply_weights_slice(B, sample_weight, k)
-            bf2.apply(X, B[:, k + 1])
+            bf2.apply(X, missing, B[:, k + 1])
             apply_weights_slice(B, sample_weight, k + 1)
 
             self.basis.append(bf1)        
             self.basis.append(bf2)
+            
+            if choice_needs_coverage:
+                if not already_covered:
+                    bf3.apply(X, missing, B[:, k + 2])
+                    apply_weights_slice(B, sample_weight, k + 2)
+                    bf4.apply(X, missing, B[:, k + 3])
+                    apply_weights_slice(B, sample_weight, k + 3)
+                    self.basis.add_coverage(variable_choice, bf3, bf4) 
 
             if self.use_fast is True:
                 bf1_content = FastHeapContent(idx=k)
                 heappush(self.fast_heap, bf1_content)
                 bf2_content = FastHeapContent(idx=k + 1)
                 heappush(self.fast_heap, bf2_content)
-
+                if choice_needs_coverage:
+                    if not already_covered:
+                        bf3_content = FastHeapContent(idx=k + 2)
+                        heappush(self.fast_heap, FastHeapContent(idx=k + 2))
+                        bf4_content = FastHeapContent(idx=k + 3)
+                        heappush(self.fast_heap, FastHeapContent(idx=k + 3))
+                    
             # Orthogonalize the new basis
             B_orth[:, k] = B[:, k]
             if self.orthonormal_update(k) == 1:
@@ -485,19 +576,64 @@ cdef class ForwardPasser:
             B_orth[:, k + 1] = B[:, k + 1]
             if self.orthonormal_update(k + 1) == 1:
                 bf2.make_unsplittable()
+            if choice_needs_coverage:
+                if not already_covered:
+                    B_orth[:, k + 2] = B[:, k + 2]
+                    if self.orthonormal_update(k + 2) == 1:
+                        pass
+#                         bf3.make_unsplittable()
+                    B_orth[:, k + 3] = B[:, k + 3]
+                    if self.orthonormal_update(k + 3) == 1:
+                        pass
+#                         bf4.make_unsplittable()
         elif not dependent and knot_idx_choice == -1:
-            # In this case, only add the linear basis function
+            # In this case, only add the linear basis function (in addition to 
+            # covering missingness basis functions if needed)
+            if choice_needs_coverage:
+                bf2 = MissingnessBasisFunction(parent_choice, variable_choice,
+                                               True, label)
+                bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
+                                               False, label)
+                if self.basis.has_coverage(variable_choice):
+                    bf2, bf3 = self.basis.get_coverage(variable_choice)
+                    already_covered = True
+                else:
+                    already_covered = False
+                parent_choice = bf2
             bf1 = LinearBasisFunction(parent_choice, variable_choice, label)
-            bf1.apply(X, B[:, k])
+            bf1.apply(X, missing, B[:, k])
             apply_weights_slice(B, sample_weight, k)
             self.basis.append(bf1)
+            if choice_needs_coverage:
+                if not already_covered:
+                    bf2.apply(X, missing, B[:, k + 1])
+                    apply_weights_slice(B, sample_weight, k + 1)
+                    bf3.apply(X, missing, B[:, k + 2])
+                    apply_weights_slice(B, sample_weight, k + 2)
+                    self.basis.add_coverage(variable_choice, bf2, bf3)
             if self.use_fast is True:
                 bf1_content = FastHeapContent(idx=k)
                 heappush(self.fast_heap, bf1_content)
+                if choice_needs_coverage:
+                    if not already_covered:
+                        bf2_content = FastHeapContent(idx=k + 1)
+                        heappush(self.fast_heap, bf2_content)
+                        bf3_content = FastHeapContent(idx=k + 2)
+                        heappush(self.fast_heap, bf3_content)
             # Orthogonalize the new basis
             B_orth[:, k] = B[:, k]
             if self.orthonormal_update(k) == 1:
                 bf1.make_unsplittable()
+            if choice_needs_coverage:
+                if not already_covered:
+                    B_orth[:, k + 1] = B[:, k + 1]
+                    if self.orthonormal_update(k + 1) == 1:
+                        pass
+#                         bf2.make_unsplittable()
+                    B_orth[:, k + 2] = B[:, k + 2]
+                    if self.orthonormal_update(k + 2) == 1:
+                        pass
+#                         bf3.make_unsplittable()
         else:  # dependent and knot_idx_choice == -1
             # In this case there were no acceptable choices remaining, so end
             # the forward pass
@@ -512,7 +648,7 @@ cdef class ForwardPasser:
                                                 knot_idx_choice, mse_choice,
                                                 len(self.basis)))
 
-    cdef best_knot(ForwardPasser self, INDEX_t parent, INDEX_t variable,
+    cdef best_knot(ForwardPasser self, INDEX_t parent, cnp.ndarray[FLOAT_t, ndim=1] x,
                    INDEX_t k, cnp.ndarray[INT_t, ndim=1] candidates,
                    cnp.ndarray[INT_t, ndim=1] order,
                    FLOAT_t * mse, FLOAT_t * knot,
@@ -536,8 +672,8 @@ cdef class ForwardPasser:
             <cnp.ndarray[FLOAT_t, ndim = 1] > self.u)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] B_orth = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B_orth)
-        cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
-            <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
+#         cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
+#             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] y = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.y)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] c = (
@@ -593,12 +729,12 @@ cdef class ForwardPasser:
         # way no additional copy of B or B_orth is needed because they would all
         # be simply scalar multiples of each other.
         candidate_idx = candidates[0]
-        candidate = X[order[candidate_idx], variable]
+        candidate = x[order[candidate_idx]]
         for i in range(self.m):  # TODO: Vectorize?
             b[i] = 0
         for i_ in range(self.m):
             i = order[i_]
-            float_tmp = X[i, variable] - candidate
+            float_tmp = x[i] - candidate
             if float_tmp > 0:
                 b[i] = b_parent[i] * float_tmp
             else:
@@ -661,7 +797,7 @@ cdef class ForwardPasser:
             last_candidate_idx = candidate_idx
             last_candidate = candidate
             candidate_idx = candidates[i_]
-            candidate = X[order[candidate_idx], variable]
+            candidate = x[order[candidate_idx]]
 
             # Update the accumulators and compute delta_b
             diff = last_candidate - candidate
@@ -731,7 +867,7 @@ cdef class ForwardPasser:
                 u[j] += float_tmp
             for j_ in range(last_candidate_idx + 1, candidate_idx):
                 j = order[j_]
-                delta_b_j = (X[j, variable] - candidate) * b_parent[j]
+                delta_b_j = (x[j] - candidate) * b_parent[j]
                 delta_b_squared += delta_b_j ** 2
 
                 for p in range(self.y.shape[1]):

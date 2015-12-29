@@ -11,11 +11,14 @@ import numpy as np
 cdef class PruningPasser:
     '''Implements the generic pruning pass as described by Friedman, 1991.'''
     def __init__(PruningPasser self, Basis basis,
-                 cnp.ndarray[FLOAT_t, ndim=2] X, cnp.ndarray[FLOAT_t, ndim=2] y,
+                 cnp.ndarray[FLOAT_t, ndim=2] X, 
+                 cnp.ndarray[BOOL_t, ndim=2] missing, 
+                 cnp.ndarray[FLOAT_t, ndim=2] y,
                  cnp.ndarray[FLOAT_t, ndim=1] sample_weight,
                  cnp.ndarray[FLOAT_t, ndim=1] output_weight,
                  **kwargs):
         self.X = X
+        self.missing = missing
         self.m = self.X.shape[0]
         self.n = self.X.shape[1]
         self.y = y
@@ -47,6 +50,8 @@ cdef class PruningPasser:
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
+        cdef cnp.ndarray[BOOL_t, ndim = 2] missing = (
+            <cnp.ndarray[BOOL_t, ndim = 2] > self.missing)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] y = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.y)
         cdef cnp.ndarray[FLOAT_t, ndim = 1] sample_weight = (
@@ -57,7 +62,7 @@ cdef class PruningPasser:
 
         # Initial solution
         weighted_y *= np.sqrt(sample_weight[:, np.newaxis])
-        self.basis.weighted_transform(X, B, sample_weight)
+        self.basis.weighted_transform(X, missing, B, sample_weight)
         mse = 0.
         for p in range(y.shape[1]):
             beta, mse_ = np.linalg.lstsq(B[:, 0:(basis_size)], weighted_y[:, p])[0:2]
@@ -67,6 +72,7 @@ cdef class PruningPasser:
                 mse_ = (1.0 / self.m) * np.sum(
                     (np.dot(B[:, 0:basis_size], beta) - weighted_y[:, p]) ** 2)
             mse += mse_ * output_weight[p]
+            
         # Create the record object
         self.record = PruningPassRecord(
             self.m, self.n, self.penalty, self.sst, pruned_basis_size, mse)
@@ -87,7 +93,7 @@ cdef class PruningPasser:
                 if not bf.is_prunable():
                     continue
                 bf.prune()
-                self.basis.weighted_transform(X, B, sample_weight)
+                self.basis.weighted_transform(X, missing, B, sample_weight)
 
                 mse = 0.
                 for p in range(y.shape[1]):

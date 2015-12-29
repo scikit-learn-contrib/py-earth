@@ -16,7 +16,7 @@ m = 10000
 n = 10
 X = 80 * numpy.random.uniform(size=(m, n)) - 40
 y = 100 * \
-    numpy.abs(numpy.sin((X[:, 6]) / 10) - 4.0) + \
+    (numpy.sin((X[:, 6]) / 10) - 4.0) + \
     10 * numpy.random.normal(size=m)
 
 # Fit an Earth model
