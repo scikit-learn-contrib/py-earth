@@ -9,6 +9,7 @@ from libc.math cimport log
 from libc.math cimport abs
 cimport cython
 cdef FLOAT_t ZERO_TOL = 1e-16
+from _types import FLOAT
 import numpy as np
 import sys
 import six
@@ -28,7 +29,7 @@ cdef class BasisFunction:
     def __hash__(BasisFunction self):
         return id(self) % max_int # avoid "OverflowError Python
                                      # int too large to convert to C long"
-
+    
     cpdef smooth(BasisFunction self, dict knot_dict, dict translation):
         '''
         Modifies translation in place.
@@ -38,7 +39,7 @@ cdef class BasisFunction:
                                                    translation)
         for i in range(n):
             self.children[i].smooth(knot_dict, translation)
-
+    
     def __reduce__(BasisFunction self):
         return (self.__class__, (), self._getstate())
 
@@ -155,6 +156,7 @@ cdef class BasisFunction:
         return self.parent.degree() + 1
 
     cpdef apply(BasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                cnp.ndarray[BOOL_t, ndim=2] missing,
                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=True):
         '''
         X - Data matrix
@@ -319,7 +321,21 @@ pickle_place_holder = PicklePlaceHolderBasisFunction()
 cdef class RootBasisFunction(BasisFunction):
     def __init__(RootBasisFunction self):  # @DuplicatedSignature
         self.prunable = False
-
+    
+    cpdef bint covered(RootBasisFunction self, INDEX_t variable):
+        '''
+        Is this an covered parent for variable? (If not, a covering 
+        MissingnessBasisFunction must be added before the variable can 
+        be used).
+        '''
+        return False
+    
+    cpdef bint eligible(RootBasisFunction self, INDEX_t variable):
+        '''
+        Is this an eligible parent for variable?
+        '''
+        return True
+    
     def copy(RootBasisFunction self):
         return self.__class__()
 
@@ -352,9 +368,11 @@ cdef class RootBasisFunction(BasisFunction):
         return None
 
     cpdef apply(RootBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                cnp.ndarray[BOOL_t, ndim=2] missing,
                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=False):
         '''
         X - Data matrix
+        missing - missingness matrix
         b - parent vector
         recurse - The ZeroBasisFunction is an alternative RootBasisFunction used
                   for computing derivatives.
@@ -363,10 +381,12 @@ cdef class RootBasisFunction(BasisFunction):
         b[:] = self.eval()
 
     cpdef apply_deriv(RootBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                      cnp.ndarray[BOOL_t, ndim=2] missing,
                       cnp.ndarray[FLOAT_t, ndim=1] b,
                       cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var):
         '''
         X - Data matrix
+        missing - missingness matrix
         b - holds the value of the basis function
         j - holds the value of the derivative
         '''
@@ -400,7 +420,103 @@ cdef class VariableBasisFunction(BasisFunction):
     cpdef INDEX_t get_variable(VariableBasisFunction self):
         return self.variable
 
-    cpdef apply(VariableBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
+cdef class DataVariableBasisFunction(VariableBasisFunction):
+    cpdef bint covered(DataVariableBasisFunction self, INDEX_t variable):
+        '''
+        Is this an covered parent for variable? (If not, a covering 
+        MissingnessBasisFunction must be added before the variable can 
+        be used).
+        '''
+        return False or self.parent.covered(variable)
+    
+    cpdef bint eligible(DataVariableBasisFunction self, INDEX_t variable):
+        '''
+        Is this an eligible parent for variable?
+        '''
+        return True and self.parent.eligible(variable)
+    
+    cpdef apply(DataVariableBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                cnp.ndarray[BOOL_t, ndim=2] missing,
+                cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=True):
+        '''
+        X - Data matrix
+        missing - missingness matrix
+        b - parent vector
+        recurse - If False, assume b already contains the result of the parent
+                  function.  Otherwise, recurse to compute parent function.
+        '''
+        cdef INDEX_t i # @DuplicatedSignature
+        cdef INDEX_t m = len(b)  # @DuplicatedSignature
+        cdef cnp.ndarray[FLOAT_t, ndim=1] val
+        if recurse:
+            self.parent.apply(X, missing, b, recurse=True)
+        val = np.zeros(X.shape[0], dtype=FLOAT)
+        here =  missing[:, self.variable] == 0
+        val[here] = self.eval(X[here, self.variable])
+        for i in range(m):
+            if not missing[i, self.variable]:
+                b[i] *= val[i]
+    
+    cpdef apply_deriv(DataVariableBasisFunction self,
+                      cnp.ndarray[FLOAT_t, ndim=2] X,
+                      cnp.ndarray[BOOL_t, ndim=2] missing,
+                      cnp.ndarray[FLOAT_t, ndim=1] b,
+                      cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var):
+        '''
+        X - Data matrix
+        missing - missingness matrix
+        j - result vector
+        '''
+        cdef INDEX_t i, this_var = self.get_variable()  # @DuplicatedSignature
+        cdef INDEX_t m = len(b)  # @DuplicatedSignature
+        cdef FLOAT_t x
+        self.parent.apply_deriv(X, missing, b, j, var)
+        here =  missing[:, self.variable] == 0
+        this_val = np.zeros(X.shape[0], dtype=FLOAT)
+        this_deriv = np.zeros(X.shape[0], dtype=FLOAT)
+        this_val[here] = self.eval(X[here,this_var])
+        this_deriv[here] = self.eval_deriv(X[here,this_var])
+        for i in range(m):
+            if missing[i, this_var]:
+                continue
+            x = X[i,this_var]
+            j[i] = j[i]*this_val[i]
+            if this_var == var:
+                j[i] += b[i]*this_deriv[i]
+            b[i] *= this_val[i]
+
+@cython.final
+cdef class MissingnessBasisFunction(VariableBasisFunction):
+    def __init__(MissingnessBasisFunction self, BasisFunction parent,
+                 INDEX_t variable, bint complement,
+                 label=None):
+        self.variable = variable
+        self.complement = complement
+        self.label = label if label is not None else 'x' + str(variable)
+        self._set_parent(parent)
+    
+    cpdef bint covered(MissingnessBasisFunction self, INDEX_t variable):
+        '''
+        Is this an covered parent for variable? (If not, a covering 
+        MissingnessBasisFunction must be added before the variable can 
+        be used).
+        '''
+        if self.complement and (variable == self.variable):
+            return True
+        else:
+            return False or self.parent.covered(variable)
+    
+    cpdef bint eligible(MissingnessBasisFunction self, INDEX_t variable):
+        '''
+        Is this an eligible parent for variable?
+        '''
+        if (not self.complement) and (variable == self.variable):
+            return False
+        else:
+            return True and self.parent.eligible(variable)
+    
+    cpdef apply(MissingnessBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                cnp.ndarray[BOOL_t, ndim=2] missing,
                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=True):
         '''
         X - Data matrix
@@ -409,11 +525,15 @@ cdef class VariableBasisFunction(BasisFunction):
                   function.  Otherwise, recurse to compute parent function.
         '''
         if recurse:
-            self.parent.apply(X, b, recurse=True)
-        b *= self.eval(X[:, self.variable])
+            self.parent.apply(X, missing, b, recurse=True)
+        if self.complement:
+            b *= (1 - missing[:, self.variable])
+        else:
+            b *= missing[:, self.variable]
 
-    cpdef apply_deriv(VariableBasisFunction self,
+    cpdef apply_deriv(MissingnessBasisFunction self,
                       cnp.ndarray[FLOAT_t, ndim=2] X,
+                      cnp.ndarray[BOOL_t, ndim=2] missing,
                       cnp.ndarray[FLOAT_t, ndim=1] b,
                       cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var):
         '''
@@ -423,17 +543,59 @@ cdef class VariableBasisFunction(BasisFunction):
         cdef INDEX_t i, this_var = self.get_variable()  # @DuplicatedSignature
         cdef INDEX_t m = len(b)  # @DuplicatedSignature
         cdef FLOAT_t x
-        self.parent.apply_deriv(X, b, j, var)
-        this_val = self.eval(X[:,this_var])
-        this_deriv = self.eval_deriv(X[:,this_var])
+        self.parent.apply_deriv(X, missing, b, j, var)
+        if self.complement:
+            this_val = 1.0 - missing[:,this_var]
+        else:
+            this_val = 1.0 - missing[:,this_var]
+        this_deriv = 1.0
         for i in range(m):
             x = X[i,this_var]
-            j[i] = j[i]*this_val[i]
-            if this_var == var:
-                j[i] += b[i]*this_deriv[i]
+            j[i] *= this_val[i]
             b[i] *= this_val[i]
+    
+    cpdef _smoothed_version(MissingnessBasisFunction self, BasisFunction parent,
+                            dict knot_dict, dict translation):
+        result = MissingnessBasisFunction(translation[parent], self.variable, 
+                                          self.complement, self.label)
+        if self.is_pruned():
+            result.prune()
+        return result
 
-cdef class HingeBasisFunctionBase(VariableBasisFunction):
+    def __reduce__(MissingnessBasisFunction self):
+        return (self.__class__,
+                (pickle_place_holder, self.variable, self.complement,
+                self.label),
+                self._getstate())
+
+    def __str__(MissingnessBasisFunction self):
+        if self.complement:
+            result = 'present(%s)' % self.label
+        else:
+            result = 'missing(%s)' % self.label
+        parent = (str(self.parent)
+                  if not self.parent.__class__ is ConstantBasisFunction
+                  else '')
+        if parent != '':
+            result += '*%s' % (str(self.parent),)
+        return result
+
+    def func_string_factory(MissingnessBasisFunction self, coef):
+        parent = self.parent.func_string_factory(None)
+        parent = ' * ' + parent if parent else ''
+        if self.complement:
+            result = "(x[{:d}] is not None){:s}".format(
+                self.variable,
+                parent)
+        else:
+            result = "(x[{:d}] is None){:s}".format(
+                self.variable,
+                parent)
+        if coef is not None:
+            result = 'lambda x: {:s} * {:s}'.format(str(coef), result)
+        return result
+
+cdef class HingeBasisFunctionBase(DataVariableBasisFunction):
     cpdef bint has_knot(HingeBasisFunctionBase self):
         return True
 
@@ -644,7 +806,7 @@ cdef class HingeBasisFunction(HingeBasisFunctionBase):
         return result
             
 @cython.final
-cdef class LinearBasisFunction(VariableBasisFunction):
+cdef class LinearBasisFunction(DataVariableBasisFunction):
     #@DuplicatedSignature
     def __init__(LinearBasisFunction self, BasisFunction parent,
                  INDEX_t variable, label=None):
@@ -672,9 +834,6 @@ cdef class LinearBasisFunction(VariableBasisFunction):
             result += '*' + parent
         return result
 
-    cpdef INDEX_t get_variable(LinearBasisFunction self):
-        return self.variable
-
     def eval(LinearBasisFunction self, x):
         return x
 
@@ -699,15 +858,33 @@ cdef class Basis:
     def __init__(Basis self, num_variables):  # @DuplicatedSignature
         self.order = []
         self.num_variables = num_variables
+        self.coverage = dict()
+        
+    cpdef add_coverage(Basis self, int variable, MissingnessBasisFunction b1, \
+                       MissingnessBasisFunction b2):
+        cdef int index = len(self.order)
+        self.coverage[variable] = (index, index + 1)
+        self.append(b1)
+        self.append(b2)
+        
+    cpdef get_coverage(Basis self, int variable):
+        cdef int idx1, idx2
+        idx1, idx2 = self.coverage[variable]
+        return self.order[idx1], self.order[idx2]
+    
+    cpdef bint has_coverage(Basis self, int variable):
+        return variable in self.coverage
 
     def __reduce__(Basis self):
         return (self.__class__, (self.num_variables,), self._getstate())
 
     def _getstate(Basis self):
-        return {'order': self.order}
+        return {'order': self.order,
+                'coverage': self.coverage}
 
     def __setstate__(Basis self, state):
         self.order = state['order']
+        self.coverage = state['coverage']
 
     def __richcmp__(Basis self, other, method):
         if method == 2:
@@ -836,21 +1013,24 @@ cdef class Basis:
         return length
 
     cpdef transform(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                    cnp.ndarray[BOOL_t, ndim=2] missing,
                     cnp.ndarray[FLOAT_t, ndim=2] B):
         cdef BasisFunction bf
         cdef INDEX_t col = 0
         for bf in self.order:
             if not bf.is_pruned():
-                bf.apply(X, B[:, col], recurse=True)
+                bf.apply(X, missing, B[:, col], recurse=True)
                 col += 1
 
     cpdef weighted_transform(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                             cnp.ndarray[BOOL_t, ndim=2] missing,
                              cnp.ndarray[FLOAT_t, ndim=2] B,
                              cnp.ndarray[FLOAT_t, ndim=1] weights):
-        self.transform(X, B)
+        self.transform(X, missing, B)
         apply_weights_2d(B, weights)
 
     cpdef transform_deriv(Basis self, cnp.ndarray[FLOAT_t, ndim=2] X,
+                          cnp.ndarray[BOOL_t, ndim=2] missing,
                           cnp.ndarray[FLOAT_t, ndim=1] b,
                           cnp.ndarray[FLOAT_t, ndim=1] j,
                           cnp.ndarray[FLOAT_t, ndim=2] coef,
@@ -881,7 +1061,7 @@ cdef class Basis:
                     variables = bf.variables()
                     if (variables and var not in variables) or bf.is_pruned():
                         continue
-                    bf.apply_deriv(X, b, j, var)
+                    bf.apply_deriv(X, missing, b, j, var)
                     for i in range(m):
                         J[i, j_, p_] += coef[p_, coef_idx] * j[i]
                     coef_idx += 1

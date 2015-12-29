@@ -5,6 +5,7 @@ from _record cimport PruningPassRecord
 
 cdef class PruningPasser:
     cdef cnp.ndarray X
+    cdef cnp.ndarray missing
     cdef cnp.ndarray B
     cdef cnp.ndarray y
     cdef cnp.ndarray sample_weight

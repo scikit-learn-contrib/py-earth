@@ -2,14 +2,25 @@ py-earth [![Build Status](https://travis-ci.org/jcrudy/py-earth.png?branch=maste
 ========
 
 A Python implementation of Jerome Friedman's Multivariate Adaptive Regression Splines algorithm, 
-in the style of scikit-learn.  I would like to add this code to sklearn in the near future and not maintain 
-this separate package.
-
-##Description
-
-The py-earth package implements Multivariate Adaptive Regression Splines using Cython and provides an interface that 
-is compatible with scikit-learn's Estimator, Predictor, Transformer, and Model interfaces.  For more information about 
+in the style of scikit-learn. The py-earth package implements Multivariate Adaptive Regression Splines using Cython and provides an interface that is compatible with scikit-learn's Estimator, Predictor, Transformer, and Model interfaces.  For more information about 
 Multivariate Adaptive Regression Splines, see the references below.
+
+##Now With Missing Data Support!
+
+The py-earth package now supports missingness in its predictors.  Just set `allow_missing=True` when constructing an `Earth` object.
+
+##Requesting Feedback
+
+If there are other features or improvements you'd like to see in py-earth, please send me an email or open or comment on an issue.  In particular, please let me know if any of the following are important to you:
+
+1. Improved speed
+2. Exporting models to additional formats
+3. Support for shared memory multiprocessing during fitting
+4. Support for cyclic predictors (such at time of day)
+5. Support for arbitrary weights in multicolumn models (currently the weight matrix must be separable)
+6. Better support for categorical predictors
+7. Better support for large data sets
+8. Iterative reweighting during fitting
 
 ##Installation
 
@@ -76,10 +87,10 @@ thorough and easy to read vignette (http://www.milbo.org/doc/earth-notes.pdf).
    (2012). earth: Multivariate Adaptive Regression Spline Models. R package
    version 3.2-3. http://CRAN.R-project.org/package=earth
 3. Friedman, J. (1993). Fast MARS. Stanford University Department of Statistics, Technical Report No 110. 
-   http://statistics.stanford.edu/~ckirby/techreports/LCS/LCS%20110.pdf
+   https://statistics.stanford.edu/sites/default/files/LCS%20110.pdf
 4. Friedman, J. (1991). Estimating functions of mixed ordinal and categorical variables using adaptive splines.
    Stanford University Department of Statistics, Technical Report No 108. 
-   http://statistics.stanford.edu/~ckirby/techreports/LCS/LCS%20108.pdf
+   http://media.salford-systems.com/library/MARS_V2_JHF_LCS-108.pdf
 5. Stewart, G.W. Matrix Algorithms, Volume 1: Basic Decompositions. (1998). Society for Industrial and Applied 
    Mathematics.
 6. Bjorck, A. Numerical Methods for Least Squares Problems. (1996). Society for Industrial and Applied 

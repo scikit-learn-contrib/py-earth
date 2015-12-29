@@ -4,6 +4,7 @@ from nose.tools import assert_almost_equal
 import numpy
 import six
 from pyearth import Earth
+from pyearth._types import BOOL
 
 numpy.random.seed(0)
 
@@ -17,8 +18,9 @@ basis.append(bf1)
 basis.append(bf2)
 basis.append(bf3)
 X = numpy.random.normal(size=(100, 10))
+missing = numpy.zeros_like(X, dtype=BOOL)
 B = numpy.empty(shape=(100, 4), dtype=numpy.float64)
-basis.transform(X, B)
+basis.transform(X, missing, B)
 beta = numpy.random.normal(size=4)
 y = numpy.empty(shape=100, dtype=numpy.float64)
 y[:] = numpy.dot(B, beta) + numpy.random.normal(size=100)
