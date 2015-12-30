@@ -11864,32 +11864,32 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_35;
   Py_ssize_t __pyx_t_36;
   Py_ssize_t __pyx_t_37;
-  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_38;
+  Py_ssize_t __pyx_t_38;
   Py_ssize_t __pyx_t_39;
   Py_ssize_t __pyx_t_40;
-  Py_ssize_t __pyx_t_41;
-  Py_ssize_t __pyx_t_42;
+  int __pyx_t_41;
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_42;
   Py_ssize_t __pyx_t_43;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_44;
+  Py_ssize_t __pyx_t_44;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_45;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_46;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_47;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_48;
-  Py_ssize_t __pyx_t_49;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_49;
   Py_ssize_t __pyx_t_50;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_51;
+  Py_ssize_t __pyx_t_51;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_52;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_53;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_54;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_55;
-  Py_ssize_t __pyx_t_56;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_56;
   Py_ssize_t __pyx_t_57;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_58;
+  Py_ssize_t __pyx_t_58;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_59;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_60;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_61;
-  Py_ssize_t __pyx_t_62;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_63;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_62;
+  Py_ssize_t __pyx_t_63;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_64;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_65;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_66;
@@ -11898,37 +11898,38 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_69;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_70;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_71;
-  Py_ssize_t __pyx_t_72;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_72;
   Py_ssize_t __pyx_t_73;
   Py_ssize_t __pyx_t_74;
   Py_ssize_t __pyx_t_75;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_76;
+  Py_ssize_t __pyx_t_76;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_77;
-  Py_ssize_t __pyx_t_78;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_78;
   Py_ssize_t __pyx_t_79;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_80;
+  Py_ssize_t __pyx_t_80;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_81;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_82;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_83;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_84;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_85;
-  Py_ssize_t __pyx_t_86;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_86;
   Py_ssize_t __pyx_t_87;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_88;
+  Py_ssize_t __pyx_t_88;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_89;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_90;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_91;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_92;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_93;
-  Py_ssize_t __pyx_t_94;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_94;
   Py_ssize_t __pyx_t_95;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_96;
+  Py_ssize_t __pyx_t_96;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_97;
-  Py_ssize_t __pyx_t_98;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_98;
   Py_ssize_t __pyx_t_99;
   Py_ssize_t __pyx_t_100;
   Py_ssize_t __pyx_t_101;
   Py_ssize_t __pyx_t_102;
+  Py_ssize_t __pyx_t_103;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -12795,7 +12796,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *             for p in range(self.y.shape[1]):
  *                 u_dot_c[p] +=  u[i] * c[i, p]             # <<<<<<<<<<<<<<
  *         z_denom = (u_end - u_dot_u)
- *         if z_denom <= self.zero_tol:
+ *         z_end_squared = 0.
  */
       __pyx_t_34 = __pyx_v_i;
       __pyx_t_35 = __pyx_v_i;
@@ -12809,91 +12810,99 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *             for p in range(self.y.shape[1]):
  *                 u_dot_c[p] +=  u[i] * c[i, p]
  *         z_denom = (u_end - u_dot_u)             # <<<<<<<<<<<<<<
- *         if z_denom <= self.zero_tol:
- *             z_end_squared = np.nan
+ *         z_end_squared = 0.
+ *         for p in range(self.y.shape[1]):
  */
   __pyx_v_z_denom = (__pyx_v_u_end - __pyx_v_u_dot_u);
 
   /* "pyearth/_forward.pyx":765
  *                 u_dot_c[p] +=  u[i] * c[i, p]
  *         z_denom = (u_end - u_dot_u)
- *         if z_denom <= self.zero_tol:             # <<<<<<<<<<<<<<
- *             z_end_squared = np.nan
- *         else:
+ *         z_end_squared = 0.             # <<<<<<<<<<<<<<
+ *         for p in range(self.y.shape[1]):
+ *             z_end_squared += ((c_end[p] - u_dot_c[p]) ** 2) * (output_weight[p])
  */
-  __pyx_t_18 = ((__pyx_v_z_denom <= __pyx_v_self->zero_tol) != 0);
-  if (__pyx_t_18) {
+  __pyx_v_z_end_squared = 0.;
 
-    /* "pyearth/_forward.pyx":766
+  /* "pyearth/_forward.pyx":766
  *         z_denom = (u_end - u_dot_u)
- *         if z_denom <= self.zero_tol:
- *             z_end_squared = np.nan             # <<<<<<<<<<<<<<
- *         else:
- *             z_end_squared = 0.
+ *         z_end_squared = 0.
+ *         for p in range(self.y.shape[1]):             # <<<<<<<<<<<<<<
+ *             z_end_squared += ((c_end[p] - u_dot_c[p]) ** 2) * (output_weight[p])
+ *         if (z_denom <= self.zero_tol) and (z_denom <= (self.zero_tol * z_end_squared)) :
  */
-    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 766; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_nan); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 766; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_38 = __pyx_PyFloat_AsDouble(__pyx_t_3); if (unlikely((__pyx_t_38 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 766; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_v_z_end_squared = __pyx_t_38;
+  __pyx_t_22 = (__pyx_v_self->y->dimensions[1]);
+  for (__pyx_t_23 = 0; __pyx_t_23 < __pyx_t_22; __pyx_t_23+=1) {
+    __pyx_v_p = __pyx_t_23;
 
-    /* "pyearth/_forward.pyx":765
- *                 u_dot_c[p] +=  u[i] * c[i, p]
- *         z_denom = (u_end - u_dot_u)
- *         if z_denom <= self.zero_tol:             # <<<<<<<<<<<<<<
+    /* "pyearth/_forward.pyx":767
+ *         z_end_squared = 0.
+ *         for p in range(self.y.shape[1]):
+ *             z_end_squared += ((c_end[p] - u_dot_c[p]) ** 2) * (output_weight[p])             # <<<<<<<<<<<<<<
+ *         if (z_denom <= self.zero_tol) and (z_denom <= (self.zero_tol * z_end_squared)) :
  *             z_end_squared = np.nan
- *         else:
  */
-    goto __pyx_L20;
+    __pyx_t_38 = __pyx_v_p;
+    __pyx_t_39 = __pyx_v_p;
+    __pyx_t_40 = __pyx_v_p;
+    __pyx_v_z_end_squared = (__pyx_v_z_end_squared + (pow(((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_c_end.rcbuffer->pybuffer.buf, __pyx_t_38, __pyx_pybuffernd_c_end.diminfo[0].strides)) - (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_u_dot_c.rcbuffer->pybuffer.buf, __pyx_t_39, __pyx_pybuffernd_u_dot_c.diminfo[0].strides))), 2.0) * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_output_weight.rcbuffer->pybuffer.buf, __pyx_t_40, __pyx_pybuffernd_output_weight.diminfo[0].strides))));
   }
 
   /* "pyearth/_forward.pyx":768
+ *         for p in range(self.y.shape[1]):
+ *             z_end_squared += ((c_end[p] - u_dot_c[p]) ** 2) * (output_weight[p])
+ *         if (z_denom <= self.zero_tol) and (z_denom <= (self.zero_tol * z_end_squared)) :             # <<<<<<<<<<<<<<
  *             z_end_squared = np.nan
  *         else:
- *             z_end_squared = 0.             # <<<<<<<<<<<<<<
- *             for p in range(self.y.shape[1]):
- *                 z_end_squared += ((c_end[p] - u_dot_c[p]) ** 2) * (output_weight[p])
  */
-  /*else*/ {
-    __pyx_v_z_end_squared = 0.;
+  __pyx_t_41 = ((__pyx_v_z_denom <= __pyx_v_self->zero_tol) != 0);
+  if (__pyx_t_41) {
+  } else {
+    __pyx_t_18 = __pyx_t_41;
+    goto __pyx_L23_bool_binop_done;
+  }
+  __pyx_t_41 = ((__pyx_v_z_denom <= (__pyx_v_self->zero_tol * __pyx_v_z_end_squared)) != 0);
+  __pyx_t_18 = __pyx_t_41;
+  __pyx_L23_bool_binop_done:;
+  if (__pyx_t_18) {
 
     /* "pyearth/_forward.pyx":769
+ *             z_end_squared += ((c_end[p] - u_dot_c[p]) ** 2) * (output_weight[p])
+ *         if (z_denom <= self.zero_tol) and (z_denom <= (self.zero_tol * z_end_squared)) :
+ *             z_end_squared = np.nan             # <<<<<<<<<<<<<<
  *         else:
- *             z_end_squared = 0.
- *             for p in range(self.y.shape[1]):             # <<<<<<<<<<<<<<
- *                 z_end_squared += ((c_end[p] - u_dot_c[p]) ** 2) * (output_weight[p])
  *             z_end_squared /= z_denom
  */
-    __pyx_t_22 = (__pyx_v_self->y->dimensions[1]);
-    for (__pyx_t_23 = 0; __pyx_t_23 < __pyx_t_22; __pyx_t_23+=1) {
-      __pyx_v_p = __pyx_t_23;
+    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 769; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_nan); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 769; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_42 = __pyx_PyFloat_AsDouble(__pyx_t_3); if (unlikely((__pyx_t_42 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 769; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_v_z_end_squared = __pyx_t_42;
 
-      /* "pyearth/_forward.pyx":770
- *             z_end_squared = 0.
- *             for p in range(self.y.shape[1]):
- *                 z_end_squared += ((c_end[p] - u_dot_c[p]) ** 2) * (output_weight[p])             # <<<<<<<<<<<<<<
- *             z_end_squared /= z_denom
- * 
+    /* "pyearth/_forward.pyx":768
+ *         for p in range(self.y.shape[1]):
+ *             z_end_squared += ((c_end[p] - u_dot_c[p]) ** 2) * (output_weight[p])
+ *         if (z_denom <= self.zero_tol) and (z_denom <= (self.zero_tol * z_end_squared)) :             # <<<<<<<<<<<<<<
+ *             z_end_squared = np.nan
+ *         else:
  */
-      __pyx_t_39 = __pyx_v_p;
-      __pyx_t_40 = __pyx_v_p;
-      __pyx_t_41 = __pyx_v_p;
-      __pyx_v_z_end_squared = (__pyx_v_z_end_squared + (pow(((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_c_end.rcbuffer->pybuffer.buf, __pyx_t_39, __pyx_pybuffernd_c_end.diminfo[0].strides)) - (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_u_dot_c.rcbuffer->pybuffer.buf, __pyx_t_40, __pyx_pybuffernd_u_dot_c.diminfo[0].strides))), 2.0) * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_output_weight.rcbuffer->pybuffer.buf, __pyx_t_41, __pyx_pybuffernd_output_weight.diminfo[0].strides))));
-    }
+    goto __pyx_L22;
+  }
 
-    /* "pyearth/_forward.pyx":771
- *             for p in range(self.y.shape[1]):
- *                 z_end_squared += ((c_end[p] - u_dot_c[p]) ** 2) * (output_weight[p])
+  /* "pyearth/_forward.pyx":771
+ *             z_end_squared = np.nan
+ *         else:
  *             z_end_squared /= z_denom             # <<<<<<<<<<<<<<
  * 
  *         # Minimizing the norm is actually equivalent to maximizing z_end_squared
  */
+  /*else*/ {
     __pyx_v_z_end_squared = (__pyx_v_z_end_squared / __pyx_v_z_denom);
   }
-  __pyx_L20:;
+  __pyx_L22:;
 
   /* "pyearth/_forward.pyx":775
  *         # Minimizing the norm is actually equivalent to maximizing z_end_squared
@@ -12929,8 +12938,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *         last_candidate_idx = 0
  *         y_cum = y[i, 0]
  */
-  __pyx_t_42 = 0;
-  __pyx_v_i = (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_order.rcbuffer->pybuffer.buf, __pyx_t_42, __pyx_pybuffernd_order.diminfo[0].strides));
+  __pyx_t_43 = 0;
+  __pyx_v_i = (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_order.rcbuffer->pybuffer.buf, __pyx_t_43, __pyx_pybuffernd_order.diminfo[0].strides));
 
   /* "pyearth/_forward.pyx":781
  *         # Initialize the accumulators
@@ -12949,8 +12958,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *         b_times_parent_cum = b[i] * b_parent[i]
  */
   __pyx_t_13 = __pyx_v_i;
-  __pyx_t_43 = 0;
-  __pyx_v_y_cum = (*__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_y.rcbuffer->pybuffer.buf, __pyx_t_13, __pyx_pybuffernd_y.diminfo[0].strides, __pyx_t_43, __pyx_pybuffernd_y.diminfo[1].strides));
+  __pyx_t_44 = 0;
+  __pyx_v_y_cum = (*__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_y.rcbuffer->pybuffer.buf, __pyx_t_13, __pyx_pybuffernd_y.diminfo[0].strides, __pyx_t_44, __pyx_pybuffernd_y.diminfo[1].strides));
 
   /* "pyearth/_forward.pyx":783
  *         last_candidate_idx = 0
@@ -12994,9 +13003,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *         parent_squared_cum = b_parent[i] ** 2
  * 
  */
-  __pyx_t_44 = __pyx_v_i;
   __pyx_t_45 = __pyx_v_i;
-  __pyx_v_b_times_parent_cum = ((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b.rcbuffer->pybuffer.buf, __pyx_t_44, __pyx_pybuffernd_b.diminfo[0].strides)) * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b_parent.rcbuffer->pybuffer.buf, __pyx_t_45, __pyx_pybuffernd_b_parent.diminfo[0].strides)));
+  __pyx_t_46 = __pyx_v_i;
+  __pyx_v_b_times_parent_cum = ((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b.rcbuffer->pybuffer.buf, __pyx_t_45, __pyx_pybuffernd_b.diminfo[0].strides)) * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b_parent.rcbuffer->pybuffer.buf, __pyx_t_46, __pyx_pybuffernd_b_parent.diminfo[0].strides)));
 
   /* "pyearth/_forward.pyx":785
  *         B_orth_times_parent_cum[0:k + 1] = B_orth[i, 0:k + 1] * b_parent[i]
@@ -13005,8 +13014,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  * 
  *         for p in range(self.y.shape[1]):
  */
-  __pyx_t_46 = __pyx_v_i;
-  __pyx_v_parent_squared_cum = pow((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b_parent.rcbuffer->pybuffer.buf, __pyx_t_46, __pyx_pybuffernd_b_parent.diminfo[0].strides)), 2.0);
+  __pyx_t_47 = __pyx_v_i;
+  __pyx_v_parent_squared_cum = pow((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b_parent.rcbuffer->pybuffer.buf, __pyx_t_47, __pyx_pybuffernd_b_parent.diminfo[0].strides)), 2.0);
 
   /* "pyearth/_forward.pyx":787
  *         parent_squared_cum = b_parent[i] ** 2
@@ -13026,11 +13035,11 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  * 
  *         # Now loop over the remaining candidates and update z_end_squared for
  */
-    __pyx_t_47 = __pyx_v_i;
     __pyx_t_48 = __pyx_v_i;
-    __pyx_t_49 = __pyx_v_p;
+    __pyx_t_49 = __pyx_v_i;
     __pyx_t_50 = __pyx_v_p;
-    *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_parent_times_y_cum.rcbuffer->pybuffer.buf, __pyx_t_50, __pyx_pybuffernd_parent_times_y_cum.diminfo[0].strides) += ((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b_parent.rcbuffer->pybuffer.buf, __pyx_t_47, __pyx_pybuffernd_b_parent.diminfo[0].strides)) * (*__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_y.rcbuffer->pybuffer.buf, __pyx_t_48, __pyx_pybuffernd_y.diminfo[0].strides, __pyx_t_49, __pyx_pybuffernd_y.diminfo[1].strides)));
+    __pyx_t_51 = __pyx_v_p;
+    *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_parent_times_y_cum.rcbuffer->pybuffer.buf, __pyx_t_51, __pyx_pybuffernd_parent_times_y_cum.diminfo[0].strides) += ((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b_parent.rcbuffer->pybuffer.buf, __pyx_t_48, __pyx_pybuffernd_b_parent.diminfo[0].strides)) * (*__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_y.rcbuffer->pybuffer.buf, __pyx_t_49, __pyx_pybuffernd_y.diminfo[0].strides, __pyx_t_50, __pyx_pybuffernd_y.diminfo[1].strides)));
   }
 
   /* "pyearth/_forward.pyx":792
@@ -13040,9 +13049,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *             i = order[i_]
  * 
  */
-  __pyx_t_51 = __pyx_v_num_candidates;
-  for (__pyx_t_52 = 1; __pyx_t_52 < __pyx_t_51; __pyx_t_52+=1) {
-    __pyx_v_i_ = __pyx_t_52;
+  __pyx_t_52 = __pyx_v_num_candidates;
+  for (__pyx_t_53 = 1; __pyx_t_53 < __pyx_t_52; __pyx_t_53+=1) {
+    __pyx_v_i_ = __pyx_t_53;
 
     /* "pyearth/_forward.pyx":793
  *         # each, looking for the greatest value
@@ -13051,8 +13060,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  * 
  *             # Update the candidate
  */
-    __pyx_t_53 = __pyx_v_i_;
-    __pyx_v_i = (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_order.rcbuffer->pybuffer.buf, __pyx_t_53, __pyx_pybuffernd_order.diminfo[0].strides));
+    __pyx_t_54 = __pyx_v_i_;
+    __pyx_v_i = (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_order.rcbuffer->pybuffer.buf, __pyx_t_54, __pyx_pybuffernd_order.diminfo[0].strides));
 
     /* "pyearth/_forward.pyx":796
  * 
@@ -13088,8 +13097,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *             candidate = x[order[candidate_idx]]
  * 
  */
-    __pyx_t_54 = __pyx_v_i_;
-    __pyx_v_candidate_idx = (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_candidates.rcbuffer->pybuffer.buf, __pyx_t_54, __pyx_pybuffernd_candidates.diminfo[0].strides));
+    __pyx_t_55 = __pyx_v_i_;
+    __pyx_v_candidate_idx = (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_candidates.rcbuffer->pybuffer.buf, __pyx_t_55, __pyx_pybuffernd_candidates.diminfo[0].strides));
 
     /* "pyearth/_forward.pyx":800
  *             last_candidate = candidate
@@ -13098,9 +13107,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  * 
  *             # Update the accumulators and compute delta_b
  */
-    __pyx_t_55 = __pyx_v_candidate_idx;
-    __pyx_t_56 = (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_order.rcbuffer->pybuffer.buf, __pyx_t_55, __pyx_pybuffernd_order.diminfo[0].strides));
-    __pyx_v_candidate = (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_x.rcbuffer->pybuffer.buf, __pyx_t_56, __pyx_pybuffernd_x.diminfo[0].strides));
+    __pyx_t_56 = __pyx_v_candidate_idx;
+    __pyx_t_57 = (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_order.rcbuffer->pybuffer.buf, __pyx_t_56, __pyx_pybuffernd_order.diminfo[0].strides));
+    __pyx_v_candidate = (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_x.rcbuffer->pybuffer.buf, __pyx_t_57, __pyx_pybuffernd_x.diminfo[0].strides));
 
     /* "pyearth/_forward.pyx":803
  * 
@@ -13138,8 +13147,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *             delta_u_end = 0.0
  * 
  */
-      __pyx_t_57 = __pyx_v_p;
-      *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_delta_c_end.rcbuffer->pybuffer.buf, __pyx_t_57, __pyx_pybuffernd_delta_c_end.diminfo[0].strides) = 0.0;
+      __pyx_t_58 = __pyx_v_p;
+      *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_delta_c_end.rcbuffer->pybuffer.buf, __pyx_t_58, __pyx_pybuffernd_delta_c_end.diminfo[0].strides) = 0.0;
     }
 
     /* "pyearth/_forward.pyx":842
@@ -13158,7 +13167,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                 j = order[j_]
  *                 y_cum += y[j, 0]
  */
-    __pyx_t_58 = (__pyx_v_last_candidate_idx + 1);
+    __pyx_t_59 = (__pyx_v_last_candidate_idx + 1);
 
     /* "pyearth/_forward.pyx":845
  * 
@@ -13167,8 +13176,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                             last_candidate_idx + 1):
  *                 j = order[j_]
  */
-    for (__pyx_t_59 = (__pyx_v_last_last_candidate_idx + 1); __pyx_t_59 < __pyx_t_58; __pyx_t_59+=1) {
-      __pyx_v_j_ = __pyx_t_59;
+    for (__pyx_t_60 = (__pyx_v_last_last_candidate_idx + 1); __pyx_t_60 < __pyx_t_59; __pyx_t_60+=1) {
+      __pyx_v_j_ = __pyx_t_60;
 
       /* "pyearth/_forward.pyx":847
  *             for j_ in range(last_last_candidate_idx + 1,
@@ -13177,8 +13186,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                 y_cum += y[j, 0]
  *                 for h in range(k + 1):  # TODO: BLAS
  */
-      __pyx_t_60 = __pyx_v_j_;
-      __pyx_v_j = (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_order.rcbuffer->pybuffer.buf, __pyx_t_60, __pyx_pybuffernd_order.diminfo[0].strides));
+      __pyx_t_61 = __pyx_v_j_;
+      __pyx_v_j = (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_order.rcbuffer->pybuffer.buf, __pyx_t_61, __pyx_pybuffernd_order.diminfo[0].strides));
 
       /* "pyearth/_forward.pyx":848
  *                             last_candidate_idx + 1):
@@ -13187,9 +13196,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                 for h in range(k + 1):  # TODO: BLAS
  *                     B_orth_times_parent_cum[h] += B_orth[j, h] * b_parent[j]
  */
-      __pyx_t_61 = __pyx_v_j;
-      __pyx_t_62 = 0;
-      __pyx_v_y_cum = (__pyx_v_y_cum + (*__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_y.rcbuffer->pybuffer.buf, __pyx_t_61, __pyx_pybuffernd_y.diminfo[0].strides, __pyx_t_62, __pyx_pybuffernd_y.diminfo[1].strides)));
+      __pyx_t_62 = __pyx_v_j;
+      __pyx_t_63 = 0;
+      __pyx_v_y_cum = (__pyx_v_y_cum + (*__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_y.rcbuffer->pybuffer.buf, __pyx_t_62, __pyx_pybuffernd_y.diminfo[0].strides, __pyx_t_63, __pyx_pybuffernd_y.diminfo[1].strides)));
 
       /* "pyearth/_forward.pyx":849
  *                 j = order[j_]
@@ -13198,9 +13207,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                     B_orth_times_parent_cum[h] += B_orth[j, h] * b_parent[j]
  *                 b_times_parent_cum += b[j] * b_parent[j]
  */
-      __pyx_t_63 = (__pyx_v_k + 1);
-      for (__pyx_t_64 = 0; __pyx_t_64 < __pyx_t_63; __pyx_t_64+=1) {
-        __pyx_v_h = __pyx_t_64;
+      __pyx_t_64 = (__pyx_v_k + 1);
+      for (__pyx_t_65 = 0; __pyx_t_65 < __pyx_t_64; __pyx_t_65+=1) {
+        __pyx_v_h = __pyx_t_65;
 
         /* "pyearth/_forward.pyx":850
  *                 y_cum += y[j, 0]
@@ -13209,11 +13218,11 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                 b_times_parent_cum += b[j] * b_parent[j]
  *                 parent_squared_cum += b_parent[j] ** 2
  */
-        __pyx_t_65 = __pyx_v_j;
-        __pyx_t_66 = __pyx_v_h;
-        __pyx_t_67 = __pyx_v_j;
-        __pyx_t_68 = __pyx_v_h;
-        *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_B_orth_times_parent_cum.rcbuffer->pybuffer.buf, __pyx_t_68, __pyx_pybuffernd_B_orth_times_parent_cum.diminfo[0].strides) += ((*__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_B_orth.rcbuffer->pybuffer.buf, __pyx_t_65, __pyx_pybuffernd_B_orth.diminfo[0].strides, __pyx_t_66, __pyx_pybuffernd_B_orth.diminfo[1].strides)) * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b_parent.rcbuffer->pybuffer.buf, __pyx_t_67, __pyx_pybuffernd_b_parent.diminfo[0].strides)));
+        __pyx_t_66 = __pyx_v_j;
+        __pyx_t_67 = __pyx_v_h;
+        __pyx_t_68 = __pyx_v_j;
+        __pyx_t_69 = __pyx_v_h;
+        *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_B_orth_times_parent_cum.rcbuffer->pybuffer.buf, __pyx_t_69, __pyx_pybuffernd_B_orth_times_parent_cum.diminfo[0].strides) += ((*__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_B_orth.rcbuffer->pybuffer.buf, __pyx_t_66, __pyx_pybuffernd_B_orth.diminfo[0].strides, __pyx_t_67, __pyx_pybuffernd_B_orth.diminfo[1].strides)) * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b_parent.rcbuffer->pybuffer.buf, __pyx_t_68, __pyx_pybuffernd_b_parent.diminfo[0].strides)));
       }
 
       /* "pyearth/_forward.pyx":851
@@ -13223,9 +13232,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                 parent_squared_cum += b_parent[j] ** 2
  *                 for p in range(self.y.shape[1]):
  */
-      __pyx_t_63 = __pyx_v_j;
       __pyx_t_64 = __pyx_v_j;
-      __pyx_v_b_times_parent_cum = (__pyx_v_b_times_parent_cum + ((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b.rcbuffer->pybuffer.buf, __pyx_t_63, __pyx_pybuffernd_b.diminfo[0].strides)) * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b_parent.rcbuffer->pybuffer.buf, __pyx_t_64, __pyx_pybuffernd_b_parent.diminfo[0].strides))));
+      __pyx_t_65 = __pyx_v_j;
+      __pyx_v_b_times_parent_cum = (__pyx_v_b_times_parent_cum + ((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b.rcbuffer->pybuffer.buf, __pyx_t_64, __pyx_pybuffernd_b.diminfo[0].strides)) * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b_parent.rcbuffer->pybuffer.buf, __pyx_t_65, __pyx_pybuffernd_b_parent.diminfo[0].strides))));
 
       /* "pyearth/_forward.pyx":852
  *                     B_orth_times_parent_cum[h] += B_orth[j, h] * b_parent[j]
@@ -13234,8 +13243,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                 for p in range(self.y.shape[1]):
  *                     parent_times_y_cum[p] +=  b_parent[j] * y[j, p]
  */
-      __pyx_t_69 = __pyx_v_j;
-      __pyx_v_parent_squared_cum = (__pyx_v_parent_squared_cum + pow((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b_parent.rcbuffer->pybuffer.buf, __pyx_t_69, __pyx_pybuffernd_b_parent.diminfo[0].strides)), 2.0));
+      __pyx_t_70 = __pyx_v_j;
+      __pyx_v_parent_squared_cum = (__pyx_v_parent_squared_cum + pow((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b_parent.rcbuffer->pybuffer.buf, __pyx_t_70, __pyx_pybuffernd_b_parent.diminfo[0].strides)), 2.0));
 
       /* "pyearth/_forward.pyx":853
  *                 b_times_parent_cum += b[j] * b_parent[j]
@@ -13255,11 +13264,11 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *             for p in range(self.y.shape[1]):
  *                 delta_c_end[p] += diff * parent_times_y_cum[p]
  */
-        __pyx_t_70 = __pyx_v_j;
         __pyx_t_71 = __pyx_v_j;
-        __pyx_t_72 = __pyx_v_p;
+        __pyx_t_72 = __pyx_v_j;
         __pyx_t_73 = __pyx_v_p;
-        *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_parent_times_y_cum.rcbuffer->pybuffer.buf, __pyx_t_73, __pyx_pybuffernd_parent_times_y_cum.diminfo[0].strides) += ((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b_parent.rcbuffer->pybuffer.buf, __pyx_t_70, __pyx_pybuffernd_b_parent.diminfo[0].strides)) * (*__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_y.rcbuffer->pybuffer.buf, __pyx_t_71, __pyx_pybuffernd_y.diminfo[0].strides, __pyx_t_72, __pyx_pybuffernd_y.diminfo[1].strides)));
+        __pyx_t_74 = __pyx_v_p;
+        *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_parent_times_y_cum.rcbuffer->pybuffer.buf, __pyx_t_74, __pyx_pybuffernd_parent_times_y_cum.diminfo[0].strides) += ((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b_parent.rcbuffer->pybuffer.buf, __pyx_t_71, __pyx_pybuffernd_b_parent.diminfo[0].strides)) * (*__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_y.rcbuffer->pybuffer.buf, __pyx_t_72, __pyx_pybuffernd_y.diminfo[0].strides, __pyx_t_73, __pyx_pybuffernd_y.diminfo[1].strides)));
       }
     }
 
@@ -13281,9 +13290,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *             delta_u_end += 2 * diff * b_times_parent_cum
  *             delta_b_squared = (diff ** 2) * parent_squared_cum
  */
-      __pyx_t_74 = __pyx_v_p;
       __pyx_t_75 = __pyx_v_p;
-      *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_delta_c_end.rcbuffer->pybuffer.buf, __pyx_t_75, __pyx_pybuffernd_delta_c_end.diminfo[0].strides) += (__pyx_v_diff * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_parent_times_y_cum.rcbuffer->pybuffer.buf, __pyx_t_74, __pyx_pybuffernd_parent_times_y_cum.diminfo[0].strides)));
+      __pyx_t_76 = __pyx_v_p;
+      *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_delta_c_end.rcbuffer->pybuffer.buf, __pyx_t_76, __pyx_pybuffernd_delta_c_end.diminfo[0].strides) += (__pyx_v_diff * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_parent_times_y_cum.rcbuffer->pybuffer.buf, __pyx_t_75, __pyx_pybuffernd_parent_times_y_cum.diminfo[0].strides)));
     }
 
     /* "pyearth/_forward.pyx":857
@@ -13311,9 +13320,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                 float_tmp = diff * B_orth_times_parent_cum[j]
  * 
  */
-    __pyx_t_58 = (__pyx_v_k + 1);
-    for (__pyx_t_59 = 0; __pyx_t_59 < __pyx_t_58; __pyx_t_59+=1) {
-      __pyx_v_j = __pyx_t_59;
+    __pyx_t_59 = (__pyx_v_k + 1);
+    for (__pyx_t_60 = 0; __pyx_t_60 < __pyx_t_59; __pyx_t_60+=1) {
+      __pyx_v_j = __pyx_t_60;
 
       /* "pyearth/_forward.pyx":862
  *             # Update u and a bunch of other stuff
@@ -13322,8 +13331,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  * 
  *                 for p in range(self.y.shape[1]):
  */
-      __pyx_t_76 = __pyx_v_j;
-      __pyx_v_float_tmp = (__pyx_v_diff * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_B_orth_times_parent_cum.rcbuffer->pybuffer.buf, __pyx_t_76, __pyx_pybuffernd_B_orth_times_parent_cum.diminfo[0].strides)));
+      __pyx_t_77 = __pyx_v_j;
+      __pyx_v_float_tmp = (__pyx_v_diff * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_B_orth_times_parent_cum.rcbuffer->pybuffer.buf, __pyx_t_77, __pyx_pybuffernd_B_orth_times_parent_cum.diminfo[0].strides)));
 
       /* "pyearth/_forward.pyx":864
  *                 float_tmp = diff * B_orth_times_parent_cum[j]
@@ -13343,10 +13352,10 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                 u_dot_u += 2 * u[j] * float_tmp + float_tmp * float_tmp
  *                 u[j] += float_tmp
  */
-        __pyx_t_77 = __pyx_v_j;
-        __pyx_t_78 = __pyx_v_p;
+        __pyx_t_78 = __pyx_v_j;
         __pyx_t_79 = __pyx_v_p;
-        *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_u_dot_c.rcbuffer->pybuffer.buf, __pyx_t_79, __pyx_pybuffernd_u_dot_c.diminfo[0].strides) += (__pyx_v_float_tmp * (*__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_c.rcbuffer->pybuffer.buf, __pyx_t_77, __pyx_pybuffernd_c.diminfo[0].strides, __pyx_t_78, __pyx_pybuffernd_c.diminfo[1].strides)));
+        __pyx_t_80 = __pyx_v_p;
+        *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_u_dot_c.rcbuffer->pybuffer.buf, __pyx_t_80, __pyx_pybuffernd_u_dot_c.diminfo[0].strides) += (__pyx_v_float_tmp * (*__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_c.rcbuffer->pybuffer.buf, __pyx_t_78, __pyx_pybuffernd_c.diminfo[0].strides, __pyx_t_79, __pyx_pybuffernd_c.diminfo[1].strides)));
       }
 
       /* "pyearth/_forward.pyx":866
@@ -13356,8 +13365,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                 u[j] += float_tmp
  *             for j_ in range(last_candidate_idx + 1, candidate_idx):
  */
-      __pyx_t_80 = __pyx_v_j;
-      __pyx_v_u_dot_u = (__pyx_v_u_dot_u + (((2.0 * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_u.rcbuffer->pybuffer.buf, __pyx_t_80, __pyx_pybuffernd_u.diminfo[0].strides))) * __pyx_v_float_tmp) + (__pyx_v_float_tmp * __pyx_v_float_tmp)));
+      __pyx_t_81 = __pyx_v_j;
+      __pyx_v_u_dot_u = (__pyx_v_u_dot_u + (((2.0 * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_u.rcbuffer->pybuffer.buf, __pyx_t_81, __pyx_pybuffernd_u.diminfo[0].strides))) * __pyx_v_float_tmp) + (__pyx_v_float_tmp * __pyx_v_float_tmp)));
 
       /* "pyearth/_forward.pyx":867
  *                     u_dot_c[p] += float_tmp * c[j, p]
@@ -13366,8 +13375,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *             for j_ in range(last_candidate_idx + 1, candidate_idx):
  *                 j = order[j_]
  */
-      __pyx_t_81 = __pyx_v_j;
-      *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_u.rcbuffer->pybuffer.buf, __pyx_t_81, __pyx_pybuffernd_u.diminfo[0].strides) += __pyx_v_float_tmp;
+      __pyx_t_82 = __pyx_v_j;
+      *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_u.rcbuffer->pybuffer.buf, __pyx_t_82, __pyx_pybuffernd_u.diminfo[0].strides) += __pyx_v_float_tmp;
     }
 
     /* "pyearth/_forward.pyx":868
@@ -13377,9 +13386,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                 j = order[j_]
  *                 delta_b_j = (x[j] - candidate) * b_parent[j]
  */
-    __pyx_t_58 = __pyx_v_candidate_idx;
-    for (__pyx_t_59 = (__pyx_v_last_candidate_idx + 1); __pyx_t_59 < __pyx_t_58; __pyx_t_59+=1) {
-      __pyx_v_j_ = __pyx_t_59;
+    __pyx_t_59 = __pyx_v_candidate_idx;
+    for (__pyx_t_60 = (__pyx_v_last_candidate_idx + 1); __pyx_t_60 < __pyx_t_59; __pyx_t_60+=1) {
+      __pyx_v_j_ = __pyx_t_60;
 
       /* "pyearth/_forward.pyx":869
  *                 u[j] += float_tmp
@@ -13388,8 +13397,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                 delta_b_j = (x[j] - candidate) * b_parent[j]
  *                 delta_b_squared += delta_b_j ** 2
  */
-      __pyx_t_82 = __pyx_v_j_;
-      __pyx_v_j = (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_order.rcbuffer->pybuffer.buf, __pyx_t_82, __pyx_pybuffernd_order.diminfo[0].strides));
+      __pyx_t_83 = __pyx_v_j_;
+      __pyx_v_j = (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_order.rcbuffer->pybuffer.buf, __pyx_t_83, __pyx_pybuffernd_order.diminfo[0].strides));
 
       /* "pyearth/_forward.pyx":870
  *             for j_ in range(last_candidate_idx + 1, candidate_idx):
@@ -13398,9 +13407,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                 delta_b_squared += delta_b_j ** 2
  * 
  */
-      __pyx_t_83 = __pyx_v_j;
       __pyx_t_84 = __pyx_v_j;
-      __pyx_v_delta_b_j = (((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_x.rcbuffer->pybuffer.buf, __pyx_t_83, __pyx_pybuffernd_x.diminfo[0].strides)) - __pyx_v_candidate) * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b_parent.rcbuffer->pybuffer.buf, __pyx_t_84, __pyx_pybuffernd_b_parent.diminfo[0].strides)));
+      __pyx_t_85 = __pyx_v_j;
+      __pyx_v_delta_b_j = (((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_x.rcbuffer->pybuffer.buf, __pyx_t_84, __pyx_pybuffernd_x.diminfo[0].strides)) - __pyx_v_candidate) * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b_parent.rcbuffer->pybuffer.buf, __pyx_t_85, __pyx_pybuffernd_b_parent.diminfo[0].strides)));
 
       /* "pyearth/_forward.pyx":871
  *                 j = order[j_]
@@ -13429,10 +13438,10 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                 delta_u_end += 2 * delta_b_j * b[j]
  *                 for h in range(k + 1):
  */
-        __pyx_t_85 = __pyx_v_j;
-        __pyx_t_86 = __pyx_v_p;
+        __pyx_t_86 = __pyx_v_j;
         __pyx_t_87 = __pyx_v_p;
-        *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_delta_c_end.rcbuffer->pybuffer.buf, __pyx_t_87, __pyx_pybuffernd_delta_c_end.diminfo[0].strides) += (__pyx_v_delta_b_j * (*__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_y.rcbuffer->pybuffer.buf, __pyx_t_85, __pyx_pybuffernd_y.diminfo[0].strides, __pyx_t_86, __pyx_pybuffernd_y.diminfo[1].strides)));
+        __pyx_t_88 = __pyx_v_p;
+        *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_delta_c_end.rcbuffer->pybuffer.buf, __pyx_t_88, __pyx_pybuffernd_delta_c_end.diminfo[0].strides) += (__pyx_v_delta_b_j * (*__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_y.rcbuffer->pybuffer.buf, __pyx_t_86, __pyx_pybuffernd_y.diminfo[0].strides, __pyx_t_87, __pyx_pybuffernd_y.diminfo[1].strides)));
       }
 
       /* "pyearth/_forward.pyx":875
@@ -13442,8 +13451,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                 for h in range(k + 1):
  *                     float_tmp = delta_b_j * B_orth[j, h]
  */
-      __pyx_t_88 = __pyx_v_j;
-      __pyx_v_delta_u_end = (__pyx_v_delta_u_end + ((2.0 * __pyx_v_delta_b_j) * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b.rcbuffer->pybuffer.buf, __pyx_t_88, __pyx_pybuffernd_b.diminfo[0].strides))));
+      __pyx_t_89 = __pyx_v_j;
+      __pyx_v_delta_u_end = (__pyx_v_delta_u_end + ((2.0 * __pyx_v_delta_b_j) * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b.rcbuffer->pybuffer.buf, __pyx_t_89, __pyx_pybuffernd_b.diminfo[0].strides))));
 
       /* "pyearth/_forward.pyx":876
  *                     delta_c_end[p] += delta_b_j * y[j, p]
@@ -13452,9 +13461,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                     float_tmp = delta_b_j * B_orth[j, h]
  * 
  */
-      __pyx_t_89 = (__pyx_v_k + 1);
-      for (__pyx_t_90 = 0; __pyx_t_90 < __pyx_t_89; __pyx_t_90+=1) {
-        __pyx_v_h = __pyx_t_90;
+      __pyx_t_90 = (__pyx_v_k + 1);
+      for (__pyx_t_91 = 0; __pyx_t_91 < __pyx_t_90; __pyx_t_91+=1) {
+        __pyx_v_h = __pyx_t_91;
 
         /* "pyearth/_forward.pyx":877
  *                 delta_u_end += 2 * delta_b_j * b[j]
@@ -13463,9 +13472,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  * 
  *                     for p in range(self.y.shape[1]):
  */
-        __pyx_t_91 = __pyx_v_j;
-        __pyx_t_92 = __pyx_v_h;
-        __pyx_v_float_tmp = (__pyx_v_delta_b_j * (*__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_B_orth.rcbuffer->pybuffer.buf, __pyx_t_91, __pyx_pybuffernd_B_orth.diminfo[0].strides, __pyx_t_92, __pyx_pybuffernd_B_orth.diminfo[1].strides)));
+        __pyx_t_92 = __pyx_v_j;
+        __pyx_t_93 = __pyx_v_h;
+        __pyx_v_float_tmp = (__pyx_v_delta_b_j * (*__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_B_orth.rcbuffer->pybuffer.buf, __pyx_t_92, __pyx_pybuffernd_B_orth.diminfo[0].strides, __pyx_t_93, __pyx_pybuffernd_B_orth.diminfo[1].strides)));
 
         /* "pyearth/_forward.pyx":879
  *                     float_tmp = delta_b_j * B_orth[j, h]
@@ -13485,10 +13494,10 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                     u_dot_u += 2 * u[h] * float_tmp + float_tmp * float_tmp
  *                     u[h] += float_tmp
  */
-          __pyx_t_93 = __pyx_v_h;
-          __pyx_t_94 = __pyx_v_p;
+          __pyx_t_94 = __pyx_v_h;
           __pyx_t_95 = __pyx_v_p;
-          *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_u_dot_c.rcbuffer->pybuffer.buf, __pyx_t_95, __pyx_pybuffernd_u_dot_c.diminfo[0].strides) += (__pyx_v_float_tmp * (*__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_c.rcbuffer->pybuffer.buf, __pyx_t_93, __pyx_pybuffernd_c.diminfo[0].strides, __pyx_t_94, __pyx_pybuffernd_c.diminfo[1].strides)));
+          __pyx_t_96 = __pyx_v_p;
+          *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_u_dot_c.rcbuffer->pybuffer.buf, __pyx_t_96, __pyx_pybuffernd_u_dot_c.diminfo[0].strides) += (__pyx_v_float_tmp * (*__Pyx_BufPtrStrided2d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_c.rcbuffer->pybuffer.buf, __pyx_t_94, __pyx_pybuffernd_c.diminfo[0].strides, __pyx_t_95, __pyx_pybuffernd_c.diminfo[1].strides)));
         }
 
         /* "pyearth/_forward.pyx":881
@@ -13498,8 +13507,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                     u[h] += float_tmp
  *                 b[j] += delta_b_j
  */
-        __pyx_t_96 = __pyx_v_h;
-        __pyx_v_u_dot_u = (__pyx_v_u_dot_u + (((2.0 * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_u.rcbuffer->pybuffer.buf, __pyx_t_96, __pyx_pybuffernd_u.diminfo[0].strides))) * __pyx_v_float_tmp) + (__pyx_v_float_tmp * __pyx_v_float_tmp)));
+        __pyx_t_97 = __pyx_v_h;
+        __pyx_v_u_dot_u = (__pyx_v_u_dot_u + (((2.0 * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_u.rcbuffer->pybuffer.buf, __pyx_t_97, __pyx_pybuffernd_u.diminfo[0].strides))) * __pyx_v_float_tmp) + (__pyx_v_float_tmp * __pyx_v_float_tmp)));
 
         /* "pyearth/_forward.pyx":882
  *                         u_dot_c[p] +=  float_tmp * c[h, p]
@@ -13508,8 +13517,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                 b[j] += delta_b_j
  * 
  */
-        __pyx_t_97 = __pyx_v_h;
-        *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_u.rcbuffer->pybuffer.buf, __pyx_t_97, __pyx_pybuffernd_u.diminfo[0].strides) += __pyx_v_float_tmp;
+        __pyx_t_98 = __pyx_v_h;
+        *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_u.rcbuffer->pybuffer.buf, __pyx_t_98, __pyx_pybuffernd_u.diminfo[0].strides) += __pyx_v_float_tmp;
       }
 
       /* "pyearth/_forward.pyx":883
@@ -13519,8 +13528,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  * 
  *             # Update u_end
  */
-      __pyx_t_89 = __pyx_v_j;
-      *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b.rcbuffer->pybuffer.buf, __pyx_t_89, __pyx_pybuffernd_b.diminfo[0].strides) += __pyx_v_delta_b_j;
+      __pyx_t_90 = __pyx_v_j;
+      *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_b.rcbuffer->pybuffer.buf, __pyx_t_90, __pyx_pybuffernd_b.diminfo[0].strides) += __pyx_v_delta_b_j;
     }
 
     /* "pyearth/_forward.pyx":886
@@ -13559,9 +13568,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  * 
  *             # Update b_times_parent_cum
  */
-      __pyx_t_98 = __pyx_v_p;
       __pyx_t_99 = __pyx_v_p;
-      *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_c_end.rcbuffer->pybuffer.buf, __pyx_t_99, __pyx_pybuffernd_c_end.diminfo[0].strides) += (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_delta_c_end.rcbuffer->pybuffer.buf, __pyx_t_98, __pyx_pybuffernd_delta_c_end.diminfo[0].strides));
+      __pyx_t_100 = __pyx_v_p;
+      *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_c_end.rcbuffer->pybuffer.buf, __pyx_t_100, __pyx_pybuffernd_c_end.diminfo[0].strides) += (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_delta_c_end.rcbuffer->pybuffer.buf, __pyx_t_99, __pyx_pybuffernd_delta_c_end.diminfo[0].strides));
     }
 
     /* "pyearth/_forward.pyx":895
@@ -13590,7 +13599,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *             z_end_squared = 0.
  * 
  */
-      goto __pyx_L25_continue;
+      goto __pyx_L27_continue;
 
       /* "pyearth/_forward.pyx":899
  *             # Compute the new z_end_squared (this is the quantity we're
@@ -13628,10 +13637,10 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *             z_end_squared /= (u_end - u_dot_u)
  *             # END HYPER-OPTIMIZED
  */
-      __pyx_t_100 = __pyx_v_p;
       __pyx_t_101 = __pyx_v_p;
       __pyx_t_102 = __pyx_v_p;
-      __pyx_v_z_end_squared = (__pyx_v_z_end_squared + (pow(((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_c_end.rcbuffer->pybuffer.buf, __pyx_t_100, __pyx_pybuffernd_c_end.diminfo[0].strides)) - (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_u_dot_c.rcbuffer->pybuffer.buf, __pyx_t_101, __pyx_pybuffernd_u_dot_c.diminfo[0].strides))), 2.0) * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_output_weight.rcbuffer->pybuffer.buf, __pyx_t_102, __pyx_pybuffernd_output_weight.diminfo[0].strides))));
+      __pyx_t_103 = __pyx_v_p;
+      __pyx_v_z_end_squared = (__pyx_v_z_end_squared + (pow(((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_c_end.rcbuffer->pybuffer.buf, __pyx_t_101, __pyx_pybuffernd_c_end.diminfo[0].strides)) - (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_u_dot_c.rcbuffer->pybuffer.buf, __pyx_t_102, __pyx_pybuffernd_u_dot_c.diminfo[0].strides))), 2.0) * (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_output_weight.rcbuffer->pybuffer.buf, __pyx_t_103, __pyx_pybuffernd_output_weight.diminfo[0].strides))));
     }
 
     /* "pyearth/_forward.pyx":905
@@ -13688,7 +13697,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_best_knot(struct __p
  *                 best_candidate_idx = candidate_idx
  */
     }
-    __pyx_L25_continue:;
+    __pyx_L27_continue:;
   }
 
   /* "pyearth/_forward.pyx":915

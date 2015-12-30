@@ -762,12 +762,12 @@ cdef class ForwardPasser:
             for p in range(self.y.shape[1]):
                 u_dot_c[p] +=  u[i] * c[i, p]
         z_denom = (u_end - u_dot_u)
-        if z_denom <= self.zero_tol:
+        z_end_squared = 0.
+        for p in range(self.y.shape[1]):
+            z_end_squared += ((c_end[p] - u_dot_c[p]) ** 2) * (output_weight[p])
+        if (z_denom <= self.zero_tol) and (z_denom <= (self.zero_tol * z_end_squared)) :
             z_end_squared = np.nan
         else:
-            z_end_squared = 0.
-            for p in range(self.y.shape[1]):
-                z_end_squared += ((c_end[p] - u_dot_c[p]) ** 2) * (output_weight[p])
             z_end_squared /= z_denom
 
         # Minimizing the norm is actually equivalent to maximizing z_end_squared
