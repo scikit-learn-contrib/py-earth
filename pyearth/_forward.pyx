@@ -385,7 +385,7 @@ cdef class ForwardPasser:
                     continue
                 
                 # If necessary, protect from missing data
-                if missing_flag and not covered:
+                if missing_flag:
                     x = X[:, variable].copy()
                     x[missing[:, variable]==1] = 0.0
                 else:
@@ -480,7 +480,7 @@ cdef class ForwardPasser:
                     self.orthonormal_downdate(k + 2)
                     self.orthonormal_downdate(k + 1)
                 self.orthonormal_downdate(k)
-
+                
                 # Update the choices
                 if mse < mse_choice or first:
                     if first:

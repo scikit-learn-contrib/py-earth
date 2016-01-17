@@ -8198,24 +8198,16 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       /* "pyearth/_forward.pyx":388
  * 
  *                 # If necessary, protect from missing data
- *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
+ *                 if missing_flag:             # <<<<<<<<<<<<<<
  *                     x = X[:, variable].copy()
  *                     x[missing[:, variable]==1] = 0.0
  */
-      __pyx_t_14 = (__pyx_v_missing_flag != 0);
-      if (__pyx_t_14) {
-      } else {
-        __pyx_t_3 = __pyx_t_14;
-        goto __pyx_L22_bool_binop_done;
-      }
-      __pyx_t_14 = ((!(__pyx_v_covered != 0)) != 0);
-      __pyx_t_3 = __pyx_t_14;
-      __pyx_L22_bool_binop_done:;
+      __pyx_t_3 = (__pyx_v_missing_flag != 0);
       if (__pyx_t_3) {
 
         /* "pyearth/_forward.pyx":389
  *                 # If necessary, protect from missing data
- *                 if missing_flag and not covered:
+ *                 if missing_flag:
  *                     x = X[:, variable].copy()             # <<<<<<<<<<<<<<
  *                     x[missing[:, variable]==1] = 0.0
  *                 else:
@@ -8277,7 +8269,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         __pyx_t_1 = 0;
 
         /* "pyearth/_forward.pyx":390
- *                 if missing_flag and not covered:
+ *                 if missing_flag:
  *                     x = X[:, variable].copy()
  *                     x[missing[:, variable]==1] = 0.0             # <<<<<<<<<<<<<<
  *                 else:
@@ -8305,7 +8297,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         /* "pyearth/_forward.pyx":388
  * 
  *                 # If necessary, protect from missing data
- *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
+ *                 if missing_flag:             # <<<<<<<<<<<<<<
  *                     x = X[:, variable].copy()
  *                     x[missing[:, variable]==1] = 0.0
  */
@@ -8480,11 +8472,11 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       if (__pyx_t_14) {
       } else {
         __pyx_t_3 = __pyx_t_14;
-        goto __pyx_L29_bool_binop_done;
+        goto __pyx_L27_bool_binop_done;
       }
       __pyx_t_14 = ((!(__pyx_v_covered != 0)) != 0);
       __pyx_t_3 = __pyx_t_14;
-      __pyx_L29_bool_binop_done:;
+      __pyx_L27_bool_binop_done:;
       if (__pyx_t_3) {
 
         /* "pyearth/_forward.pyx":410
@@ -8622,7 +8614,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  *                     mse = mse_
  *                     knot_idx = -1
  */
-        goto __pyx_L35;
+        goto __pyx_L33;
       }
 
       /* "pyearth/_forward.pyx":434
@@ -8722,11 +8714,11 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           if (__pyx_t_14) {
           } else {
             __pyx_t_3 = __pyx_t_14;
-            goto __pyx_L38_bool_binop_done;
+            goto __pyx_L36_bool_binop_done;
           }
           __pyx_t_14 = ((!(__pyx_v_covered != 0)) != 0);
           __pyx_t_3 = __pyx_t_14;
-          __pyx_L38_bool_binop_done:;
+          __pyx_L36_bool_binop_done:;
           if (__pyx_t_3) {
 
             /* "pyearth/_forward.pyx":450
@@ -8747,7 +8739,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  *                             self.best_knot(parent_idx, x, k + 2, candidates_idx,
  *                                            sorting, & mse, & knot, & knot_idx)
  */
-            goto __pyx_L37;
+            goto __pyx_L35;
           }
 
           /* "pyearth/_forward.pyx":453
@@ -8770,7 +8762,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             __Pyx_GOTREF(__pyx_t_1);
             __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           }
-          __pyx_L37:;
+          __pyx_L35:;
 
           /* "pyearth/_forward.pyx":458
  *                         # If the hinge function does not decrease the gcv then
@@ -8783,7 +8775,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           if (__pyx_t_14) {
           } else {
             __pyx_t_3 = __pyx_t_14;
-            goto __pyx_L41_bool_binop_done;
+            goto __pyx_L39_bool_binop_done;
           }
 
           /* "pyearth/_forward.pyx":459
@@ -8795,7 +8787,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
           __pyx_t_14 = (((__pyx_v_gcv_factor_k_plus_2 * __pyx_v_mse) >= __pyx_v_gcv_) != 0);
           __pyx_t_3 = __pyx_t_14;
-          __pyx_L41_bool_binop_done:;
+          __pyx_L39_bool_binop_done:;
 
           /* "pyearth/_forward.pyx":458
  *                         # If the hinge function does not decrease the gcv then
@@ -8840,7 +8832,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  *                     # Choose the best candidate (if no candidate is an
  *                     # improvement on the linear term in terms of gcv, knot_idx
  */
-          goto __pyx_L36;
+          goto __pyx_L34;
         }
 
         /* "pyearth/_forward.pyx":466
@@ -8855,11 +8847,11 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           if (__pyx_t_14) {
           } else {
             __pyx_t_3 = __pyx_t_14;
-            goto __pyx_L44_bool_binop_done;
+            goto __pyx_L42_bool_binop_done;
           }
           __pyx_t_14 = ((!(__pyx_v_covered != 0)) != 0);
           __pyx_t_3 = __pyx_t_14;
-          __pyx_L44_bool_binop_done:;
+          __pyx_L42_bool_binop_done:;
           if (__pyx_t_3) {
 
             /* "pyearth/_forward.pyx":470
@@ -8913,9 +8905,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
           goto __pyx_L11_continue;
         }
-        __pyx_L36:;
+        __pyx_L34:;
       }
-      __pyx_L35:;
+      __pyx_L33:;
 
       /* "pyearth/_forward.pyx":476
  * 
@@ -8928,11 +8920,11 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       if (__pyx_t_14) {
       } else {
         __pyx_t_3 = __pyx_t_14;
-        goto __pyx_L47_bool_binop_done;
+        goto __pyx_L45_bool_binop_done;
       }
       __pyx_t_14 = ((!(__pyx_v_covered != 0)) != 0);
       __pyx_t_3 = __pyx_t_14;
-      __pyx_L47_bool_binop_done:;
+      __pyx_L45_bool_binop_done:;
       if (__pyx_t_3) {
 
         /* "pyearth/_forward.pyx":480
@@ -8988,11 +8980,11 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       if (!__pyx_t_14) {
       } else {
         __pyx_t_3 = __pyx_t_14;
-        goto __pyx_L50_bool_binop_done;
+        goto __pyx_L48_bool_binop_done;
       }
       __pyx_t_14 = (__pyx_v_first != 0);
       __pyx_t_3 = __pyx_t_14;
-      __pyx_L50_bool_binop_done:;
+      __pyx_L48_bool_binop_done:;
       if (__pyx_t_3) {
 
         /* "pyearth/_forward.pyx":486
@@ -9127,11 +9119,11 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         if (__pyx_t_14) {
         } else {
           __pyx_t_3 = __pyx_t_14;
-          goto __pyx_L55_bool_binop_done;
+          goto __pyx_L53_bool_binop_done;
         }
         __pyx_t_14 = ((!(__pyx_v_covered != 0)) != 0);
         __pyx_t_3 = __pyx_t_14;
-        __pyx_L55_bool_binop_done:;
+        __pyx_L53_bool_binop_done:;
         if (__pyx_t_3) {
 
           /* "pyearth/_forward.pyx":498
@@ -9150,7 +9142,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  *                         choice_needs_coverage = True
  *                     else:
  */
-          goto __pyx_L54;
+          goto __pyx_L52;
         }
 
         /* "pyearth/_forward.pyx":500
@@ -9163,7 +9155,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         /*else*/ {
           __pyx_v_choice_needs_coverage = 0;
         }
-        __pyx_L54:;
+        __pyx_L52:;
 
         /* "pyearth/_forward.pyx":485
  * 
@@ -9195,11 +9187,11 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         if (!__pyx_t_14) {
         } else {
           __pyx_t_3 = __pyx_t_14;
-          goto __pyx_L59_bool_binop_done;
+          goto __pyx_L57_bool_binop_done;
         }
         __pyx_t_14 = ((__pyx_v_mse < __pyx_v_mse_choice_cur_parent) != 0);
         __pyx_t_3 = __pyx_t_14;
-        __pyx_L59_bool_binop_done:;
+        __pyx_L57_bool_binop_done:;
         if (__pyx_t_3) {
 
           /* "pyearth/_forward.pyx":504
@@ -9623,20 +9615,20 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __pyx_t_45 = Py_TYPE(__pyx_t_10)->tp_iternext;
-        index = 0; __pyx_t_1 = __pyx_t_45(__pyx_t_10); if (unlikely(!__pyx_t_1)) goto __pyx_L69_unpacking_failed;
+        index = 0; __pyx_t_1 = __pyx_t_45(__pyx_t_10); if (unlikely(!__pyx_t_1)) goto __pyx_L67_unpacking_failed;
         __Pyx_GOTREF(__pyx_t_1);
-        index = 1; __pyx_t_16 = __pyx_t_45(__pyx_t_10); if (unlikely(!__pyx_t_16)) goto __pyx_L69_unpacking_failed;
+        index = 1; __pyx_t_16 = __pyx_t_45(__pyx_t_10); if (unlikely(!__pyx_t_16)) goto __pyx_L67_unpacking_failed;
         __Pyx_GOTREF(__pyx_t_16);
         if (__Pyx_IternextUnpackEndCheck(__pyx_t_45(__pyx_t_10), 2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 528; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __pyx_t_45 = NULL;
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        goto __pyx_L70_unpacking_done;
-        __pyx_L69_unpacking_failed:;
+        goto __pyx_L68_unpacking_done;
+        __pyx_L67_unpacking_failed:;
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
         __pyx_t_45 = NULL;
         if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
         {__pyx_filename = __pyx_f[0]; __pyx_lineno = 528; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __pyx_L70_unpacking_done:;
+        __pyx_L68_unpacking_done:;
       }
       if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_7pyearth_6_basis_BasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 528; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       if (!(likely(((__pyx_t_16) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_16, __pyx_ptype_7pyearth_6_basis_BasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 528; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -9661,7 +9653,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  *                 bf3, bf4 = self.basis.get_coverage(variable_choice)
  *                 already_covered = True
  */
-      goto __pyx_L68;
+      goto __pyx_L66;
     }
 
     /* "pyearth/_forward.pyx":531
@@ -9674,7 +9666,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     /*else*/ {
       __pyx_v_already_covered = 0;
     }
-    __pyx_L68:;
+    __pyx_L66:;
 
     /* "pyearth/_forward.pyx":532
  *             else:
@@ -10638,7 +10630,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  *             # Add the new basis functions
  *             bf1 = HingeBasisFunction(parent_choice,
  */
-    goto __pyx_L71;
+    goto __pyx_L69;
   }
 
   /* "pyearth/_forward.pyx":589
@@ -10652,11 +10644,11 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   if (__pyx_t_14) {
   } else {
     __pyx_t_3 = __pyx_t_14;
-    goto __pyx_L83_bool_binop_done;
+    goto __pyx_L81_bool_binop_done;
   }
   __pyx_t_14 = ((__pyx_v_knot_idx_choice == -1L) != 0);
   __pyx_t_3 = __pyx_t_14;
-  __pyx_L83_bool_binop_done:;
+  __pyx_L81_bool_binop_done:;
   if (__pyx_t_3) {
 
     /* "pyearth/_forward.pyx":592
@@ -10815,20 +10807,20 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           __Pyx_GOTREF(__pyx_t_10);
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           __pyx_t_45 = Py_TYPE(__pyx_t_10)->tp_iternext;
-          index = 0; __pyx_t_4 = __pyx_t_45(__pyx_t_10); if (unlikely(!__pyx_t_4)) goto __pyx_L87_unpacking_failed;
+          index = 0; __pyx_t_4 = __pyx_t_45(__pyx_t_10); if (unlikely(!__pyx_t_4)) goto __pyx_L85_unpacking_failed;
           __Pyx_GOTREF(__pyx_t_4);
-          index = 1; __pyx_t_16 = __pyx_t_45(__pyx_t_10); if (unlikely(!__pyx_t_16)) goto __pyx_L87_unpacking_failed;
+          index = 1; __pyx_t_16 = __pyx_t_45(__pyx_t_10); if (unlikely(!__pyx_t_16)) goto __pyx_L85_unpacking_failed;
           __Pyx_GOTREF(__pyx_t_16);
           if (__Pyx_IternextUnpackEndCheck(__pyx_t_45(__pyx_t_10), 2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 598; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           __pyx_t_45 = NULL;
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          goto __pyx_L88_unpacking_done;
-          __pyx_L87_unpacking_failed:;
+          goto __pyx_L86_unpacking_done;
+          __pyx_L85_unpacking_failed:;
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
           __pyx_t_45 = NULL;
           if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
           {__pyx_filename = __pyx_f[0]; __pyx_lineno = 598; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __pyx_L88_unpacking_done:;
+          __pyx_L86_unpacking_done:;
         }
         if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_7pyearth_6_basis_BasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 598; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         if (!(likely(((__pyx_t_16) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_16, __pyx_ptype_7pyearth_6_basis_BasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 598; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -10853,7 +10845,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  *                     bf2, bf3 = self.basis.get_coverage(variable_choice)
  *                     already_covered = True
  */
-        goto __pyx_L86;
+        goto __pyx_L84;
       }
 
       /* "pyearth/_forward.pyx":601
@@ -10866,7 +10858,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       /*else*/ {
         __pyx_v_already_covered = 0;
       }
-      __pyx_L86:;
+      __pyx_L84:;
 
       /* "pyearth/_forward.pyx":602
  *                 else:
@@ -11525,7 +11517,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  *             # In this case, only add the linear basis function (in addition to
  *             # covering missingness basis functions if needed)
  */
-    goto __pyx_L71;
+    goto __pyx_L69;
   }
 
   /* "pyearth/_forward.pyx":640
@@ -11562,7 +11554,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __pyx_r = Py_None; __Pyx_INCREF(Py_None);
     goto __pyx_L0;
   }
-  __pyx_L71:;
+  __pyx_L69:;
 
   /* "pyearth/_forward.pyx":642
  *             self.record[len(self.record) - 1].set_no_candidates(True)
@@ -16552,7 +16544,7 @@ static int __Pyx_InitCachedConstants(void) {
 
   /* "pyearth/_forward.pyx":389
  *                 # If necessary, protect from missing data
- *                 if missing_flag and not covered:
+ *                 if missing_flag:
  *                     x = X[:, variable].copy()             # <<<<<<<<<<<<<<
  *                     x[missing[:, variable]==1] = 0.0
  *                 else:
@@ -16562,7 +16554,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_slice__21);
 
   /* "pyearth/_forward.pyx":390
- *                 if missing_flag and not covered:
+ *                 if missing_flag:
  *                     x = X[:, variable].copy()
  *                     x[missing[:, variable]==1] = 0.0             # <<<<<<<<<<<<<<
  *                 else:
