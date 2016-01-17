@@ -327,7 +327,7 @@ cdef class ForwardPasser:
             nb_basis = min(self.fast_K, k)
         else:
             nb_basis = k
-
+        
         content_to_be_repushed = []
         for idx in range(nb_basis):
             # Iterate over parents
@@ -386,7 +386,7 @@ cdef class ForwardPasser:
                 
                 # If necessary, protect from missing data
                 if missing_flag and not covered:
-                    x = X[:, variable]
+                    x = X[:, variable].copy()
                     x[missing[:, variable]==1] = 0.0
                 else:
                     x = X[:, variable]
