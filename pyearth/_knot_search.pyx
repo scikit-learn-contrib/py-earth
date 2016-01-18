@@ -211,19 +211,24 @@ cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData out
     cdef FLOAT_t delta_upsilon = 0.
     while predictor.x[working.state.idx] > working.state.phi_next:
         idx = working.state.idx
-        nu += (outcome.w[idx] ** 2) * (p[idx] ** 2)
-        xi += (outcome.w[idx] ** 2) * (p[idx] ** 2) * predictor.x[idx]
-        rho += (outcome.w[idx] ** 2) * (p[idx] ** 2) * (predictor.x[idx] ** 2)
-        sigma += (outcome.w[idx] ** 2) * outcome.y[idx] * p[idx] * predictor.x[idx]
-        tau += (outcome.w[idx] ** 2) * outcome.y[idx] * p[idx]
-        delta_lambda += (outcome.w[idx] ** 2) * (p[idx] ** 2) * predictor.x[idx]
-        delta_mu += (outcome.w[idx] ** 2) * (p[idx] ** 2)
-        delta_upsilon += (outcome.w[idx] ** 2) * outcome.y[idx] * p[idx]
-        for j in range(q):
-            working.chi[j] += outcome.Q_t[j,idx] * outcome.w[idx] * p[idx] * predictor.x[idx]
-            working.psi[j] += outcome.Q_t[j,idx] * outcome.w[idx] * p[idx]
-            working.delta_kappa[j] += outcome.Q_t[j,idx] * outcome.w[idx] * p[idx]
         
+        # In predictor.x[idx] is missing, p[idx] will be zeroed out for protection
+        # (because there will be a present(x[idx]) factor in it)..
+        # Skipping such indices prevents problems if x[idx] is a nan of some kind.
+        if p[idx] != 0.:
+            nu += (outcome.w[idx] ** 2) * (p[idx] ** 2)
+            xi += (outcome.w[idx] ** 2) * (p[idx] ** 2) * predictor.x[idx]
+            rho += (outcome.w[idx] ** 2) * (p[idx] ** 2) * (predictor.x[idx] ** 2)
+            sigma += (outcome.w[idx] ** 2) * outcome.y[idx] * p[idx] * predictor.x[idx]
+            tau += (outcome.w[idx] ** 2) * outcome.y[idx] * p[idx]
+            delta_lambda += (outcome.w[idx] ** 2) * (p[idx] ** 2) * predictor.x[idx]
+            delta_mu += (outcome.w[idx] ** 2) * (p[idx] ** 2)
+            delta_upsilon += (outcome.w[idx] ** 2) * outcome.y[idx] * p[idx]
+            for j in range(q):
+                working.chi[j] += outcome.Q_t[j,idx] * outcome.w[idx] * p[idx] * predictor.x[idx]
+                working.psi[j] += outcome.Q_t[j,idx] * outcome.w[idx] * p[idx]
+                working.delta_kappa[j] += outcome.Q_t[j,idx] * outcome.w[idx] * p[idx]
+            
         # Update idx for next iteration
         working.state.ord_idx += 1
         if working.state.ord_idx >= m:
