@@ -1,6 +1,8 @@
 cimport cython
 import numpy as np
 from libc.math cimport sqrt
+from _types import INDEX
+import sys
 
 @cython.final
 cdef class OutcomeDependentData:
@@ -19,12 +21,12 @@ cdef class OutcomeDependentData:
     def alloc(cls, FLOAT_t[:] y, FLOAT_t[:] w, INDEX_t m, INDEX_t max_terms):
         cdef FLOAT_t[:,:] Q_t = np.empty(shape=(max_terms, m), dtype=np.float)
         cdef FLOAT_t[:] theta
-#         cdef FLOAT_t[:] wy = np.empty(shape=m, dtype=np.float)
+        cdef FLOAT_t[:] wy = np.empty(shape=m, dtype=np.float)
         cdef int i
-#         for i in range(m):
-#             wy[i] = w[i] * y[i]
-        cdef FLOAT_t omega = np.dot(y, y)
-        theta = np.dot(Q_t, y)
+        for i in range(m):
+            wy[i] = w[i] * y[i]
+        cdef FLOAT_t omega = np.dot(wy, wy)
+        theta = np.dot(Q_t, wy)
         return cls(Q_t, y, w, theta, omega, m, 0, max_terms)
     
     cpdef int update(OutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *:
@@ -53,17 +55,16 @@ cdef class OutcomeDependentData:
         for i in range(self.m):
             self.Q_t[self.k, i] /= nrm
          
-        self.theta[self.k] = dot(self.Q_t[self.k, :], self.y, self.m)
+        self.theta[self.k] = np.dot(self.Q_t[self.k, :], np.array(self.y) * np.array(self.w))
         self.k += 1
         return 0
         
     cpdef downdate(OutcomeDependentData self):
         self.k -= 1
     
-    cpdef reweight(OutcomeDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, FLOAT_t zero_tol):
+    cpdef reweight(OutcomeDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k, FLOAT_t zero_tol):
         cdef INDEX_t i
         self.w = w
-        k = self.k
         self.k = 0
         for i in range(k):
             self.update(B[:, i], zero_tol)
@@ -72,14 +73,14 @@ cdef class OutcomeDependentData:
 @cython.final
 cdef class PredictorDependentData:
     def __init__(PredictorDependentData self, FLOAT_t[:] x,
-                INDEX_t[:] order):
+                INT_t[:] order):
         self.x = x
         self.order = order
     
     @classmethod
     def alloc(cls, FLOAT_t[:] x):
-        cdef INDEX_t[:] order
-        order = np.argsort(x)
+        cdef INT_t[:] order
+        order = np.argsort(x)[::-1]
         return cls(x, order)
 
 @cython.final
@@ -185,7 +186,7 @@ cdef wdot(FLOAT_t[:] w, FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q):
     return result
 
 cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData outcome, 
-                        KnotSearchWorkingData working, FLOAT_t[:] p, INDEX_t q, INDEX_t m, INDEX_t r):
+                        KnotSearchWorkingData working, FLOAT_t[:] p, INDEX_t q, INDEX_t m, INDEX_t r) except *:
     cdef FLOAT_t epsilon_squared
     cdef INDEX_t idx, j
     cdef FLOAT_t nu = 0.
@@ -199,7 +200,7 @@ cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData out
     cdef FLOAT_t delta_lambda = 0.
     cdef FLOAT_t delta_mu = 0.
     cdef FLOAT_t delta_upsilon = 0.
-    while working.state.idx > working.state.phi_next:
+    while predictor.x[working.state.idx] > working.state.phi_next:
         idx = working.state.idx
         nu += (outcome.w[idx] ** 2) * (p[idx] ** 2)
         xi += (outcome.w[idx] ** 2) * (p[idx] ** 2) * predictor.x[idx]
@@ -213,12 +214,15 @@ cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData out
             working.chi[j] += outcome.Q_t[j,idx] * outcome.w[idx] * p[idx] * predictor.x[idx]
             working.psi[j] += outcome.Q_t[j,idx] * outcome.w[idx] * p[idx]
             working.delta_kappa[j] += outcome.Q_t[j,idx] * outcome.w[idx] * p[idx]
+        # Update idx for next iteration
         working.state.ord_idx += 1
-        working.state.idx = predictor.order[working.state.ord_idx]
-        if working.state.ord_idx > m:
+        if working.state.ord_idx >= m:
             break
+        working.state.idx = predictor.order[working.state.ord_idx]
         
-    working.state.alpha += sigma - working.state.phi_next * tau + (working.state.phi - working.state.phi_next) * working.state.upsilon
+        
+    working.state.alpha += sigma - working.state.phi_next * tau + \
+        (working.state.phi - working.state.phi_next) * working.state.upsilon
     working.state.beta += rho + (working.state.phi_next ** 2) * nu - 2 * working.state.phi_next * xi + \
         2 * (working.state.phi - working.state.phi_next) * working.state.lambda_ + \
         (working.state.phi_next ** 2 - working.state.phi ** 2) * working.state.mu
@@ -228,7 +232,8 @@ cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData out
     epsilon_squared = working.state.beta 
     for j in range(q):
         epsilon_squared -= working.gamma[j] ** 2
-    working.state.zeta_squared = ((working.state.alpha - dot(working.gamma, outcome.theta, q)) ** 2) / epsilon_squared
+    working.state.zeta_squared = (working.state.alpha - dot(working.gamma, outcome.theta, q)) ** 2
+    working.state.zeta_squared /= epsilon_squared
     
     for j in range(q):
         working.kappa[j] += working.delta_kappa[j]
@@ -236,13 +241,24 @@ cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData out
     working.state.mu += delta_mu
     working.state.upsilon += delta_upsilon
     
-cdef knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p, INDEX_t q, INDEX_t m, 
+cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p, INDEX_t q, INDEX_t m, 
                  INDEX_t r, INDEX_t n_outcomes):
     cdef KnotSearchReadOnlyData constant = data.constant
     cdef PredictorDependentData predictor = constant.predictor
     cdef list outcomes = constant.outcomes
     cdef list workings = data.workings
     
+    # TODO: Remove these assertions
+    assert len(outcomes) == n_outcomes
+    assert len(workings) == len(outcomes)
+    assert len(candidates) == r
+    assert outcomes[0].k == q
+    
+    # Initialize variables to their pre-loop values.  These are the values
+    # they would have for a hypothetical knot candidate, phi, such that
+    # phi > max(x).  This only matters for values that will be tracked and
+    # updated across iterations.  Values that are calculated from scratch at
+    # each iteration are not initialized.
     cdef FLOAT_t best_knot = 0.
     cdef INDEX_t best_knot_index = 0
     cdef FLOAT_t phi_next = candidates[0]
@@ -261,11 +277,19 @@ cdef knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p, INDEX
         working.state.lambda_ = 0.
         working.state.mu = 0.
         working.state.upsilon = 0.
-        working.state.ord_idx = 1
+        working.state.ord_idx = 0
         working.state.idx = predictor.order[working.state.ord_idx]
-        
+    
+    # A lower bound for zeta_squared is 0 (it is the square of a real number),
+    # so initialize best_zeta_squared to 0.
     best_zeta_squared = 0.
     
+    # Iterate over candidates.
+    # Loop invariant: At the start (and end) of each iteration, alpha, beta,
+    # and gamma are correct for the knot phi_next.  Kappa, lambda, mu, and
+    # upsilon are correct for the update from (not to) phi_next.  That is,
+    # alpha, beta, and gamma should be updated before kappa, lambda, mu,
+    # and upsilon are updated.
     cdef OutcomeDependentData outcome
     cdef FLOAT_t zeta_squared
     cdef INDEX_t k
@@ -286,19 +310,19 @@ cdef knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p, INDEX
             
             # Add up objectives
             zeta_squared += working.state.zeta_squared
-            
+
         # Compare against best result so far
         if zeta_squared > best_zeta_squared:
             best_knot_index = k
             best_knot = phi_next
             best_zeta_squared = zeta_squared
-        
+
     # Calculate value of overall objective function
     # (this is the sqrt of the sum of squared residuals)
     cdef FLOAT_t loss = -best_zeta_squared
     for i in range(n_outcomes):
         outcome = outcomes[i]
-        loss += outcome.omega - dot(outcome.theta, outcome.theta, q)
+        loss += outcome.omega - np.dot(outcome.theta[:q], outcome.theta[:q])
     loss = sqrt(loss)
     
     # Return

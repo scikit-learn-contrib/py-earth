@@ -13,14 +13,14 @@ cdef class OutcomeDependentData:
     cdef public INDEX_t max_terms
     cpdef int update(OutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *
     cpdef downdate(OutcomeDependentData self)
-    cpdef reweight(OutcomeDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, FLOAT_t zero_tol)
+    cpdef reweight(OutcomeDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k, FLOAT_t zero_tol)
     
 @cython.final
 cdef class PredictorDependentData:
     cdef readonly FLOAT_t[:] p
     cdef readonly FLOAT_t[:] x
     cdef readonly FLOAT_t[:] candidates
-    cdef readonly INDEX_t[:] order
+    cdef readonly INT_t[:] order
 
 @cython.final
 cdef class KnotSearchReadOnlyData:
@@ -59,6 +59,6 @@ cdef dot(FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q)
 cdef w2dot(FLOAT_t[:] w, FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q)
 cdef wdot(FLOAT_t[:] w, FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q)
 cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData outcome, 
-                        KnotSearchWorkingData working, FLOAT_t[:] p, INDEX_t q, INDEX_t m ,INDEX_t r)
-cdef knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p, INDEX_t q, INDEX_t m, INDEX_t r, INDEX_t n_outcomes)
+                        KnotSearchWorkingData working, FLOAT_t[:] p, INDEX_t q, INDEX_t m ,INDEX_t r) except *
+cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p, INDEX_t q, INDEX_t m, INDEX_t r, INDEX_t n_outcomes)
 
