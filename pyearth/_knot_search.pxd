@@ -11,7 +11,7 @@ cdef class OutcomeDependentData:
     cdef public INDEX_t m
     cdef public INDEX_t k
     cdef public INDEX_t max_terms
-    cpdef int update(OutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol)
+    cpdef int update(OutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *
     cpdef downdate(OutcomeDependentData self)
     cpdef reweight(OutcomeDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, FLOAT_t zero_tol)
     

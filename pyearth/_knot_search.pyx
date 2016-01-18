@@ -27,7 +27,7 @@ cdef class OutcomeDependentData:
         theta = np.dot(Q_t, y)
         return cls(Q_t, y, w, theta, omega, m, 0, max_terms)
     
-    cpdef int update(OutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol):
+    cpdef int update(OutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *:
         if self.k >= self.max_terms:
             return -1
          
@@ -53,7 +53,7 @@ cdef class OutcomeDependentData:
         for i in range(self.m):
             self.Q_t[self.k, i] /= nrm
          
-        self.theta[self.k] = dot(self.Q_t[:,self.k], self.y, self.m)
+        self.theta[self.k] = dot(self.Q_t[self.k, :], self.y, self.m)
         self.k += 1
         return 0
         
@@ -63,7 +63,9 @@ cdef class OutcomeDependentData:
     cpdef reweight(OutcomeDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, FLOAT_t zero_tol):
         cdef INDEX_t i
         self.w = w
-        for i in range(self.k):
+        k = self.k
+        self.k = 0
+        for i in range(k):
             self.update(B[:, i], zero_tol)
         
 
