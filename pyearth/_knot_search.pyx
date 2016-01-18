@@ -187,6 +187,15 @@ cdef wdot(FLOAT_t[:] w, FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q):
 
 cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData outcome, 
                         KnotSearchWorkingData working, FLOAT_t[:] p, INDEX_t q, INDEX_t m, INDEX_t r) except *:
+    
+    # Calculate all quantities depending on the rows such that
+    # phi >= x > phi_next.
+    # Before this while loop, x[idx] is the greatest x such that x <= phi.
+    # This while loop computes the quantities nu, xi, rho, sigma, tau,
+    # chi, and psi.  It also computes the updates to kappa, lambda, mu,
+    # and upsilon.  The latter updates should not be applied until after
+    # alpha, beta, and gamma have been updated, as they apply to the
+    # next iteration.
     cdef FLOAT_t epsilon_squared
     cdef INDEX_t idx, j
     cdef FLOAT_t nu = 0.
@@ -214,13 +223,14 @@ cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData out
             working.chi[j] += outcome.Q_t[j,idx] * outcome.w[idx] * p[idx] * predictor.x[idx]
             working.psi[j] += outcome.Q_t[j,idx] * outcome.w[idx] * p[idx]
             working.delta_kappa[j] += outcome.Q_t[j,idx] * outcome.w[idx] * p[idx]
+        
         # Update idx for next iteration
         working.state.ord_idx += 1
         if working.state.ord_idx >= m:
             break
         working.state.idx = predictor.order[working.state.ord_idx]
         
-        
+    # Update alpha, beta, and gamma
     working.state.alpha += sigma - working.state.phi_next * tau + \
         (working.state.phi - working.state.phi_next) * working.state.upsilon
     working.state.beta += rho + (working.state.phi_next ** 2) * nu - 2 * working.state.phi_next * xi + \
@@ -229,12 +239,15 @@ cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData out
     for j in range(q):
         working.gamma[j] += (working.state.phi - working.state.phi_next) * working.kappa[j] + working.chi[j] - working.state.phi_next * working.psi[j]
     
+    # Compute epsilon_squared and zeta_squared
     epsilon_squared = working.state.beta 
     for j in range(q):
         epsilon_squared -= working.gamma[j] ** 2
     working.state.zeta_squared = (working.state.alpha - dot(working.gamma, outcome.theta, q)) ** 2
     working.state.zeta_squared /= epsilon_squared
+    # Now zeta_squared is correct for phi_next.
     
+    # Update kappa, lambda, mu, and upsilon
     for j in range(q):
         working.kappa[j] += working.delta_kappa[j]
     working.state.lambda_ += delta_lambda

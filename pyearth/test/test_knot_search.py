@@ -176,7 +176,7 @@ def test_knot_search():
                                                            p, q, m, r, 
                                                            len(outcomes))
     assert_almost_equal(fast_best_knot, best_knot)
-    assert_equal(fast_best_k, best_k)
+    assert_equal(candidates[fast_best_k], candidates[best_k])
     assert_almost_equal(fast_best_e, best_e)
     
     
