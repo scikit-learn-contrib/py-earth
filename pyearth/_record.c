@@ -1421,10 +1421,9 @@ struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser {
   PyObject *(*init_linear_variables)(struct __pyx_obj_7pyearth_8_forward_ForwardPasser *, int __pyx_skip_dispatch);
   PyObject *(*run)(struct __pyx_obj_7pyearth_8_forward_ForwardPasser *, int __pyx_skip_dispatch);
   PyObject *(*stop_check)(struct __pyx_obj_7pyearth_8_forward_ForwardPasser *);
-  int (*orthonormal_update)(struct __pyx_obj_7pyearth_8_forward_ForwardPasser *, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch);
-  PyObject *(*orthonormal_downdate)(struct __pyx_obj_7pyearth_8_forward_ForwardPasser *, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch);
+  PyObject *(*orthonormal_update)(struct __pyx_obj_7pyearth_8_forward_ForwardPasser *, PyObject *, int __pyx_skip_dispatch);
+  PyObject *(*orthonormal_downdate)(struct __pyx_obj_7pyearth_8_forward_ForwardPasser *, int __pyx_skip_dispatch);
   PyObject *(*next_pair)(struct __pyx_obj_7pyearth_8_forward_ForwardPasser *);
-  PyObject *(*best_knot)(struct __pyx_obj_7pyearth_8_forward_ForwardPasser *, __pyx_t_7pyearth_6_types_INDEX_t, PyArrayObject *, __pyx_t_7pyearth_6_types_INDEX_t, PyArrayObject *, PyArrayObject *, __pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_t_7pyearth_6_types_INDEX_t *);
 };
 static struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *__pyx_vtabptr_7pyearth_8_forward_ForwardPasser;
 

@@ -78,14 +78,14 @@ cdef class ForwardPasser:
 
     cdef stop_check(ForwardPasser self)
 
-    cpdef int orthonormal_update(ForwardPasser self, INDEX_t k)
+    cpdef orthonormal_update(ForwardPasser self, b)
 
-    cpdef orthonormal_downdate(ForwardPasser self, INDEX_t k)
+    cpdef orthonormal_downdate(ForwardPasser self)
 
     cdef next_pair(ForwardPasser self)
 
-    cdef best_knot(ForwardPasser self, INDEX_t parent, cnp.ndarray[FLOAT_t, ndim=1] x,
-                   INDEX_t k, cnp.ndarray[INT_t, ndim=1] candidates,
-                   cnp.ndarray[INT_t, ndim=1] order,
-                   FLOAT_t * mse, FLOAT_t * knot,
-                   INDEX_t * knot_idx)
+#     cdef best_knot(ForwardPasser self, INDEX_t parent, cnp.ndarray[FLOAT_t, ndim=1] x,
+#                    INDEX_t k, cnp.ndarray[INT_t, ndim=1] candidates,
+#                    cnp.ndarray[INT_t, ndim=1] order,
+#                    FLOAT_t * mse, FLOAT_t * knot,
+#                    INDEX_t * knot_idx)

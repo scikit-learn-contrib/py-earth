@@ -29,6 +29,13 @@ cdef class OutcomeDependentData:
         theta = np.dot(Q_t, wy)
         return cls(Q_t, y, w, theta, omega, m, 0, max_terms)
     
+    cpdef FLOAT_t mse(OutcomeDependentData self):
+        '''
+        Return the weighted mean squared error for the linear least squares problem
+        represented by Q_t, y, and w.
+        '''
+        return ((self.omega - np.dot(self.theta, self.theta)) ** 2) / self.m
+    
     cpdef int update(OutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *:
         if self.k >= self.max_terms:
             return -1
@@ -76,6 +83,9 @@ cdef class PredictorDependentData:
                 INT_t[:] order):
         self.x = x
         self.order = order
+    
+    def ordered(self):
+        return np.array(self.x)[self.order]
     
     @classmethod
     def alloc(cls, FLOAT_t[:] x):
