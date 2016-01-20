@@ -1067,6 +1067,10 @@ struct __pyx_obj_7pyearth_8_forward_ForwardPasser {
   __pyx_t_7pyearth_6_types_INDEX_t n;
   __pyx_t_7pyearth_6_types_FLOAT_t sst;
   __pyx_t_7pyearth_6_types_FLOAT_t y_squared;
+  PyObject *outcomes;
+  PyObject *predictors;
+  PyObject *workings;
+  __pyx_t_7pyearth_6_types_INDEX_t n_outcomes;
   PyArrayObject *B;
   PyArrayObject *B_orth;
   PyArrayObject *c;

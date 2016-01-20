@@ -1399,6 +1399,10 @@ struct __pyx_obj_7pyearth_8_forward_ForwardPasser {
   __pyx_t_7pyearth_6_types_INDEX_t n;
   __pyx_t_7pyearth_6_types_FLOAT_t sst;
   __pyx_t_7pyearth_6_types_FLOAT_t y_squared;
+  PyObject *outcomes;
+  PyObject *predictors;
+  PyObject *workings;
+  __pyx_t_7pyearth_6_types_INDEX_t n_outcomes;
   PyArrayObject *B;
   PyArrayObject *B_orth;
   PyArrayObject *c;
@@ -2054,6 +2058,12 @@ static CYTHON_INLINE void __Pyx_ErrFetch(PyObject **type, PyObject **value, PyOb
 static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause);
 
 #if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func);
+#else
+#define __Pyx_PyObject_CallNoArg(func) __Pyx_PyObject_Call(func, __pyx_empty_tuple, NULL)
+#endif
+
+#if CYTHON_COMPILING_IN_CPYTHON
 static CYTHON_INLINE int __Pyx_PyList_Append(PyObject* list, PyObject* x) {
     PyListObject* L = (PyListObject*) list;
     Py_ssize_t len = Py_SIZE(list);
@@ -2067,16 +2077,6 @@ static CYTHON_INLINE int __Pyx_PyList_Append(PyObject* list, PyObject* x) {
 }
 #else
 #define __Pyx_PyList_Append(L,x) PyList_Append(L,x)
-#endif
-
-static PyObject* __Pyx_PyObject_CallMethod1(PyObject* obj, PyObject* method_name, PyObject* arg);
-
-static CYTHON_INLINE int __Pyx_PyObject_Append(PyObject* L, PyObject* x);
-
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func);
-#else
-#define __Pyx_PyObject_CallNoArg(func) __Pyx_PyObject_Call(func, __pyx_empty_tuple, NULL)
 #endif
 
 #define __Pyx_GetItemInt(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
@@ -2131,6 +2131,14 @@ static PyObject* __Pyx_PyInt_SubtractCObj(PyObject *op1, PyObject *op2, long int
     (inplace ? PyNumber_InPlaceSubtract(op1, op2) : PyNumber_Subtract(op1, op2))
 #endif
 
+static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected);
+
+static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index);
+
+static CYTHON_INLINE int __Pyx_IterFinish(void);
+
+static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected);
+
 #define __Pyx_BUF_MAX_NDIMS %(BUF_MAX_NDIMS)d
 #define __Pyx_MEMVIEW_DIRECT   1
 #define __Pyx_MEMVIEW_PTR      2
@@ -2156,15 +2164,14 @@ static CYTHON_INLINE int __pyx_sub_acquisition_count_locked(
 static CYTHON_INLINE void __Pyx_INC_MEMVIEW(__Pyx_memviewslice *, int, int);
 static CYTHON_INLINE void __Pyx_XDEC_MEMVIEW(__Pyx_memviewslice *, int, int);
 
+static CYTHON_INLINE void __Pyx_RaiseNoneNotIterableError(void);
+
+static CYTHON_INLINE void __Pyx_ExceptionSave(PyObject **type, PyObject **value, PyObject **tb);
+static void __Pyx_ExceptionReset(PyObject *type, PyObject *value, PyObject *tb);
+
+static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb);
+
 static CYTHON_INLINE void __Pyx_RaiseUnboundLocalError(const char *varname);
-
-static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected);
-
-static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index);
-
-static CYTHON_INLINE int __Pyx_IterFinish(void);
-
-static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected);
 
 #if PY_MAJOR_VERSION >= 3 && !CYTHON_COMPILING_IN_PYPY
 static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key) {
@@ -2185,8 +2192,6 @@ static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key) {
 #else
     #define __Pyx_PyDict_GetItem(d, key) PyObject_GetItem(d, key)
 #endif
-
-static CYTHON_INLINE void __Pyx_RaiseNoneNotIterableError(void);
 
 #include <string.h>
 
@@ -2211,11 +2216,6 @@ static CYTHON_INLINE PyObject* __Pyx_decode_c_string(
          const char* cstring, Py_ssize_t start, Py_ssize_t stop,
          const char* encoding, const char* errors,
          PyObject* (*decode_func)(const char *s, Py_ssize_t size, const char *errors));
-
-static CYTHON_INLINE void __Pyx_ExceptionSave(PyObject **type, PyObject **value, PyObject **tb);
-static void __Pyx_ExceptionReset(PyObject *type, PyObject *value, PyObject *tb);
-
-static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb);
 
 static CYTHON_INLINE void __Pyx_ExceptionSwap(PyObject **type, PyObject **value, PyObject **tb);
 
@@ -2379,6 +2379,14 @@ static CYTHON_INLINE PyObject* __Pyx_PyInt_From_Py_intptr_t(Py_intptr_t value);
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
 
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_npy_uint8(npy_uint8 value);
+
+static int __Pyx_Print(PyObject*, PyObject *, int);
+#if CYTHON_COMPILING_IN_PYPY || PY_MAJOR_VERSION >= 3
+static PyObject* __pyx_print = 0;
+static PyObject* __pyx_print_kwargs = 0;
+#endif
+
+static int __Pyx_PrintOne(PyObject* stream, PyObject *o);
 
 #if CYTHON_CCOMPLEX
   #ifdef __cplusplus
@@ -2741,8 +2749,8 @@ int __pyx_module_is_main_pyearth___forward = 0;
 
 /* Implementation of 'pyearth._forward' */
 static PyObject *__pyx_builtin_range;
-static PyObject *__pyx_builtin_IndexError;
 static PyObject *__pyx_builtin_round;
+static PyObject *__pyx_builtin_IndexError;
 static PyObject *__pyx_builtin_ValueError;
 static PyObject *__pyx_builtin_all;
 static PyObject *__pyx_builtin_sum;
@@ -2767,6 +2775,7 @@ static char __pyx_k_f[] = "f";
 static char __pyx_k_g[] = "g";
 static char __pyx_k_h[] = "h";
 static char __pyx_k_i[] = "i";
+static char __pyx_k_k[] = "k";
 static char __pyx_k_l[] = "l";
 static char __pyx_k_m[] = "m";
 static char __pyx_k_q[] = "q";
@@ -2782,18 +2791,23 @@ static char __pyx_k_np[] = "np";
 static char __pyx_k_all[] = "all";
 static char __pyx_k_any[] = "any";
 static char __pyx_k_doc[] = "__doc__";
+static char __pyx_k_end[] = "end";
 static char __pyx_k_get[] = "get";
 static char __pyx_k_idx[] = "idx";
 static char __pyx_k_inf[] = "inf";
 static char __pyx_k_int[] = "int";
 static char __pyx_k_len[] = "__len__";
+static char __pyx_k_max[] = "max";
+static char __pyx_k_min[] = "min";
 static char __pyx_k_mse[] = "mse";
 static char __pyx_k_obj[] = "obj";
 static char __pyx_k_run[] = "run";
 static char __pyx_k_sum[] = "sum";
+static char __pyx_k_sys[] = "sys";
 static char __pyx_k_BOOL[] = "BOOL";
 static char __pyx_k_axis[] = "axis";
 static char __pyx_k_base[] = "base";
+static char __pyx_k_file[] = "file";
 static char __pyx_k_init[] = "__init__";
 static char __pyx_k_main[] = "__main__";
 static char __pyx_k_mean[] = "mean";
@@ -2816,18 +2830,19 @@ static char __pyx_k_empty[] = "empty";
 static char __pyx_k_error[] = "error";
 static char __pyx_k_flags[] = "flags";
 static char __pyx_k_float[] = "float";
+static char __pyx_k_flush[] = "flush";
 static char __pyx_k_heapq[] = "heapq";
 static char __pyx_k_index[] = "index";
 static char __pyx_k_numpy[] = "numpy";
 static char __pyx_k_order[] = "order";
 static char __pyx_k_other[] = "other";
+static char __pyx_k_print[] = "print";
 static char __pyx_k_range[] = "range";
 static char __pyx_k_round[] = "round";
 static char __pyx_k_shape[] = "shape";
 static char __pyx_k_start[] = "start";
 static char __pyx_k_types[] = "_types";
 static char __pyx_k_zeros[] = "zeros";
-static char __pyx_k_append[] = "append";
 static char __pyx_k_astype[] = "astype";
 static char __pyx_k_encode[] = "encode";
 static char __pyx_k_fast_K[] = "fast_K";
@@ -2836,6 +2851,7 @@ static char __pyx_k_format[] = "format";
 static char __pyx_k_import[] = "__import__";
 static char __pyx_k_module[] = "__module__";
 static char __pyx_k_name_2[] = "__name__";
+static char __pyx_k_stdout[] = "stdout";
 static char __pyx_k_struct[] = "struct";
 static char __pyx_k_thresh[] = "thresh";
 static char __pyx_k_unpack[] = "unpack";
@@ -2843,6 +2859,7 @@ static char __pyx_k_update[] = "update";
 static char __pyx_k_argsort[] = "argsort";
 static char __pyx_k_covered[] = "covered";
 static char __pyx_k_endspan[] = "endspan";
+static char __pyx_k_flatten[] = "flatten";
 static char __pyx_k_fortran[] = "fortran";
 static char __pyx_k_heappop[] = "heappop";
 static char __pyx_k_linvars[] = "linvars";
@@ -2858,11 +2875,9 @@ static char __pyx_k_eligible[] = "eligible";
 static char __pyx_k_get_size[] = "get_size";
 static char __pyx_k_heappush[] = "heappush";
 static char __pyx_k_itemsize[] = "itemsize";
-static char __pyx_k_outcomes[] = "outcomes";
 static char __pyx_k_pyx_capi[] = "__pyx_capi__";
 static char __pyx_k_qualname[] = "__qualname__";
 static char __pyx_k_use_fast[] = "use_fast";
-static char __pyx_k_workings[] = "workings";
 static char __pyx_k_zero_tol[] = "zero_tol";
 static char __pyx_k_TypeError[] = "TypeError";
 static char __pyx_k_enumerate[] = "enumerate";
@@ -2871,9 +2886,8 @@ static char __pyx_k_max_terms[] = "max_terms";
 static char __pyx_k_metaclass[] = "__metaclass__";
 static char __pyx_k_IndexError[] = "IndexError";
 static char __pyx_k_ValueError[] = "ValueError";
+static char __pyx_k_candidates[] = "candidates:";
 static char __pyx_k_max_degree[] = "max_degree";
-static char __pyx_k_n_outcomes[] = "n_outcomes";
-static char __pyx_k_predictors[] = "predictors";
 static char __pyx_k_pyx_vtable[] = "__pyx_vtable__";
 static char __pyx_k_MemoryError[] = "MemoryError";
 static char __pyx_k_check_every[] = "check_every";
@@ -2888,6 +2902,7 @@ static char __pyx_k_sample_weight[] = "sample_weight";
 static char __pyx_k_FastHeapContent[] = "FastHeapContent";
 static char __pyx_k_allocate_buffer[] = "allocate_buffer";
 static char __pyx_k_dtype_is_object[] = "dtype_is_object";
+static char __pyx_k_knot_candidates[] = "knot_candidates";
 static char __pyx_k_pyearth__forward[] = "pyearth._forward";
 static char __pyx_k_min_search_points[] = "min_search_points";
 static char __pyx_k_set_no_candidates[] = "set_no_candidates";
@@ -2979,13 +2994,13 @@ static PyObject *__pyx_n_s_allocate_buffer;
 static PyObject *__pyx_n_s_allow_linear;
 static PyObject *__pyx_n_s_allow_missing;
 static PyObject *__pyx_n_s_any;
-static PyObject *__pyx_n_s_append;
 static PyObject *__pyx_n_s_argsort;
 static PyObject *__pyx_n_s_astype;
 static PyObject *__pyx_n_s_axis;
 static PyObject *__pyx_n_s_base;
 static PyObject *__pyx_n_s_c;
 static PyObject *__pyx_n_u_c;
+static PyObject *__pyx_kp_s_candidates;
 static PyObject *__pyx_n_s_check_every;
 static PyObject *__pyx_n_s_class;
 static PyObject *__pyx_kp_s_contiguous_and_direct;
@@ -2998,14 +3013,18 @@ static PyObject *__pyx_n_s_dtype_is_object;
 static PyObject *__pyx_n_s_eligible;
 static PyObject *__pyx_n_s_empty;
 static PyObject *__pyx_n_s_encode;
+static PyObject *__pyx_n_s_end;
 static PyObject *__pyx_n_s_endspan;
 static PyObject *__pyx_n_s_endspan_alpha;
 static PyObject *__pyx_n_s_enumerate;
 static PyObject *__pyx_n_s_error;
 static PyObject *__pyx_n_s_fast_K;
 static PyObject *__pyx_n_s_fast_h;
+static PyObject *__pyx_n_s_file;
 static PyObject *__pyx_n_s_flags;
+static PyObject *__pyx_n_s_flatten;
 static PyObject *__pyx_n_s_float;
+static PyObject *__pyx_n_s_flush;
 static PyObject *__pyx_n_s_format;
 static PyObject *__pyx_n_s_fortran;
 static PyObject *__pyx_n_u_fortran;
@@ -3026,16 +3045,20 @@ static PyObject *__pyx_n_s_init_linear_variables;
 static PyObject *__pyx_n_s_int;
 static PyObject *__pyx_n_s_itemsize;
 static PyObject *__pyx_kp_s_itemsize_0_for_cython_array;
+static PyObject *__pyx_n_s_k;
+static PyObject *__pyx_n_s_knot_candidates;
 static PyObject *__pyx_n_s_len;
 static PyObject *__pyx_n_s_linvars;
 static PyObject *__pyx_n_s_lt;
 static PyObject *__pyx_n_s_m;
 static PyObject *__pyx_n_s_main;
+static PyObject *__pyx_n_s_max;
 static PyObject *__pyx_n_s_max_degree;
 static PyObject *__pyx_n_s_max_terms;
 static PyObject *__pyx_n_s_mean;
 static PyObject *__pyx_n_s_memview;
 static PyObject *__pyx_n_s_metaclass;
+static PyObject *__pyx_n_s_min;
 static PyObject *__pyx_n_s_min_search_points;
 static PyObject *__pyx_n_s_minspan;
 static PyObject *__pyx_n_s_minspan_alpha;
@@ -3043,7 +3066,6 @@ static PyObject *__pyx_n_s_missing;
 static PyObject *__pyx_n_s_mode;
 static PyObject *__pyx_n_s_module;
 static PyObject *__pyx_n_s_mse;
-static PyObject *__pyx_n_s_n_outcomes;
 static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_n_s_name_2;
 static PyObject *__pyx_kp_u_ndarray_is_not_C_contiguous;
@@ -3058,11 +3080,10 @@ static PyObject *__pyx_n_s_order;
 static PyObject *__pyx_n_s_orthonormal_downdate;
 static PyObject *__pyx_n_s_orthonormal_update;
 static PyObject *__pyx_n_s_other;
-static PyObject *__pyx_n_s_outcomes;
 static PyObject *__pyx_n_s_pack;
 static PyObject *__pyx_n_s_penalty;
-static PyObject *__pyx_n_s_predictors;
 static PyObject *__pyx_n_s_prepare;
+static PyObject *__pyx_n_s_print;
 static PyObject *__pyx_n_s_pyearth__forward;
 static PyObject *__pyx_n_s_pyx_capi;
 static PyObject *__pyx_n_s_pyx_getbuffer;
@@ -3078,6 +3099,7 @@ static PyObject *__pyx_n_s_shape;
 static PyObject *__pyx_n_s_size;
 static PyObject *__pyx_n_s_sqrt;
 static PyObject *__pyx_n_s_start;
+static PyObject *__pyx_n_s_stdout;
 static PyObject *__pyx_n_s_step;
 static PyObject *__pyx_n_s_stop;
 static PyObject *__pyx_n_s_stopping_conditions;
@@ -3086,6 +3108,7 @@ static PyObject *__pyx_kp_s_strided_and_direct_or_indirect;
 static PyObject *__pyx_kp_s_strided_and_indirect;
 static PyObject *__pyx_n_s_struct;
 static PyObject *__pyx_n_s_sum;
+static PyObject *__pyx_n_s_sys;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_thresh;
 static PyObject *__pyx_n_s_types;
@@ -3096,7 +3119,6 @@ static PyObject *__pyx_n_s_unpack;
 static PyObject *__pyx_n_s_update;
 static PyObject *__pyx_n_s_use_fast;
 static PyObject *__pyx_n_s_v;
-static PyObject *__pyx_n_s_workings;
 static PyObject *__pyx_n_s_x;
 static PyObject *__pyx_n_s_xlabels;
 static PyObject *__pyx_n_s_y;
@@ -3668,7 +3690,6 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_i;
   PyObject *__pyx_v_weighted_mean = NULL;
   PyObject *__pyx_v_linvar = NULL;
-  npy_intp __pyx_v_n_outcomes;
   npy_intp __pyx_v_n_predictors;
   npy_intp __pyx_v_n_weights;
   PyObject *__pyx_v_y_col = NULL;
@@ -3700,9 +3721,9 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_12;
   Py_ssize_t __pyx_t_13;
   PyObject *(*__pyx_t_14)(PyObject *);
-  npy_intp __pyx_t_15;
-  PyObject *__pyx_t_16 = NULL;
-  int __pyx_t_17;
+  PyObject *__pyx_t_15 = NULL;
+  int __pyx_t_16;
+  npy_intp __pyx_t_17;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -4264,21 +4285,21 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
  */
   }
 
-  /* "pyearth/_forward.pyx":101
- * #         stuff_per_example = ((((np.sqrt(self.sample_weight[:, np.newaxis]) * y)).sum(axis=0) ** 2) / self.sample_weight.sum())
- * #         stuff = (stuff_per_example * self.output_weight).sum()
+  /* "pyearth/_forward.pyx":97
+ *                                 else 1)
+ * 
  *         weighted_mean = np.mean((self.sample_weight ** 2) * self.y)             # <<<<<<<<<<<<<<
  *         self.sst = np.sum((self.sample_weight * (self.y - weighted_mean)) ** 2)
- * #         self.sst = (self.y_squared - stuff) / (self.m)
+ * 
  */
-  __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_mean); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_mean); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = PyNumber_Power(((PyObject *)__pyx_v_self->sample_weight), __pyx_int_2, Py_None); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = PyNumber_Power(((PyObject *)__pyx_v_self->sample_weight), __pyx_int_2, Py_None); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_9 = PyNumber_Multiply(__pyx_t_4, ((PyObject *)__pyx_v_self->y)); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_9 = PyNumber_Multiply(__pyx_t_4, ((PyObject *)__pyx_v_self->y)); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_t_4 = NULL;
@@ -4292,17 +4313,17 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
     }
   }
   if (!__pyx_t_4) {
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_9); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_9); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __Pyx_GOTREF(__pyx_t_3);
   } else {
-    __pyx_t_1 = PyTuple_New(1+1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = PyTuple_New(1+1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_4); __pyx_t_4 = NULL;
     __Pyx_GIVEREF(__pyx_t_9);
     PyTuple_SET_ITEM(__pyx_t_1, 0+1, __pyx_t_9);
     __pyx_t_9 = 0;
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
@@ -4310,24 +4331,24 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
   __pyx_v_weighted_mean = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "pyearth/_forward.pyx":102
- * #         stuff = (stuff_per_example * self.output_weight).sum()
+  /* "pyearth/_forward.pyx":98
+ * 
  *         weighted_mean = np.mean((self.sample_weight ** 2) * self.y)
  *         self.sst = np.sum((self.sample_weight * (self.y - weighted_mean)) ** 2)             # <<<<<<<<<<<<<<
- * #         self.sst = (self.y_squared - stuff) / (self.m)
  * 
+ *         self.record = ForwardPassRecord(
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_sum); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_sum); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyNumber_Subtract(((PyObject *)__pyx_v_self->y), __pyx_v_weighted_mean); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = PyNumber_Subtract(((PyObject *)__pyx_v_self->y), __pyx_v_weighted_mean); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_9 = PyNumber_Multiply(((PyObject *)__pyx_v_self->sample_weight), __pyx_t_2); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_9 = PyNumber_Multiply(((PyObject *)__pyx_v_self->sample_weight), __pyx_t_2); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyNumber_Power(__pyx_t_9, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = PyNumber_Power(__pyx_t_9, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
   __pyx_t_9 = NULL;
@@ -4341,49 +4362,49 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
     }
   }
   if (!__pyx_t_9) {
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_GOTREF(__pyx_t_3);
   } else {
-    __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_GIVEREF(__pyx_t_9); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_9); __pyx_t_9 = NULL;
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_6 = __pyx_PyFloat_AsDouble(__pyx_t_3); if (unlikely((__pyx_t_6 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = __pyx_PyFloat_AsDouble(__pyx_t_3); if (unlikely((__pyx_t_6 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_self->sst = __pyx_t_6;
 
-  /* "pyearth/_forward.pyx":106
+  /* "pyearth/_forward.pyx":101
  * 
  *         self.record = ForwardPassRecord(
  *             self.m, self.n, self.penalty, self.sst, self.xlabels)             # <<<<<<<<<<<<<<
  *         self.basis = Basis(self.n)
  *         self.basis.append(ConstantBasisFunction())
  */
-  __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->m); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 106; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->m); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 106; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->penalty); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 106; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->penalty); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->sst); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 106; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->sst); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
 
-  /* "pyearth/_forward.pyx":105
- * #         self.sst = (self.y_squared - stuff) / (self.m)
+  /* "pyearth/_forward.pyx":100
+ *         self.sst = np.sum((self.sample_weight * (self.y - weighted_mean)) ** 2)
  * 
  *         self.record = ForwardPassRecord(             # <<<<<<<<<<<<<<
  *             self.m, self.n, self.penalty, self.sst, self.xlabels)
  *         self.basis = Basis(self.n)
  */
-  __pyx_t_9 = PyTuple_New(5); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 105; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_9 = PyTuple_New(5); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 100; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_GIVEREF(__pyx_t_3);
   PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_3);
@@ -4400,7 +4421,7 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
   __pyx_t_1 = 0;
   __pyx_t_4 = 0;
   __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_7_record_ForwardPassRecord), __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 105; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_7_record_ForwardPassRecord), __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 100; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
   __Pyx_GIVEREF(__pyx_t_2);
@@ -4409,21 +4430,21 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
   __pyx_v_self->record = ((struct __pyx_obj_7pyearth_7_record_ForwardPassRecord *)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "pyearth/_forward.pyx":107
+  /* "pyearth/_forward.pyx":102
  *         self.record = ForwardPassRecord(
  *             self.m, self.n, self.penalty, self.sst, self.xlabels)
  *         self.basis = Basis(self.n)             # <<<<<<<<<<<<<<
  *         self.basis.append(ConstantBasisFunction())
  *         if self.use_fast is True:
  */
-  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_9 = PyTuple_New(1); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_9 = PyTuple_New(1); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_GIVEREF(__pyx_t_2);
   PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_2);
   __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_Basis), __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_Basis), __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
   __Pyx_GIVEREF(__pyx_t_2);
@@ -4432,21 +4453,21 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
   __pyx_v_self->basis = ((struct __pyx_obj_7pyearth_6_basis_Basis *)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "pyearth/_forward.pyx":108
+  /* "pyearth/_forward.pyx":103
  *             self.m, self.n, self.penalty, self.sst, self.xlabels)
  *         self.basis = Basis(self.n)
  *         self.basis.append(ConstantBasisFunction())             # <<<<<<<<<<<<<<
  *         if self.use_fast is True:
  *             heappush(self.fast_heap, FastHeapContent(idx=0))
  */
-  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_ConstantBasisFunction), __pyx_empty_tuple, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 108; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_ConstantBasisFunction), __pyx_empty_tuple, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 103; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_9 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->append(__pyx_v_self->basis, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_2), 0); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 108; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_9 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->append(__pyx_v_self->basis, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_2), 0); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 103; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-  /* "pyearth/_forward.pyx":109
+  /* "pyearth/_forward.pyx":104
  *         self.basis = Basis(self.n)
  *         self.basis.append(ConstantBasisFunction())
  *         if self.use_fast is True:             # <<<<<<<<<<<<<<
@@ -4456,21 +4477,21 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
   __pyx_t_10 = ((__pyx_v_self->use_fast == 1) != 0);
   if (__pyx_t_10) {
 
-    /* "pyearth/_forward.pyx":110
+    /* "pyearth/_forward.pyx":105
  *         self.basis.append(ConstantBasisFunction())
  *         if self.use_fast is True:
  *             heappush(self.fast_heap, FastHeapContent(idx=0))             # <<<<<<<<<<<<<<
  * 
  *         self.mwork = np.empty(shape=self.m, dtype=np.int)
  */
-    __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 105; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 105; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 105; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
-    if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_idx, __pyx_int_0) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_idx, __pyx_int_0) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 105; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 105; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -4486,7 +4507,7 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
         __pyx_t_13 = 1;
       }
     }
-    __pyx_t_4 = PyTuple_New(2+__pyx_t_13); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = PyTuple_New(2+__pyx_t_13); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 105; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     if (__pyx_t_1) {
       __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_1); __pyx_t_1 = NULL;
@@ -4497,13 +4518,13 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
     __Pyx_GIVEREF(__pyx_t_3);
     PyTuple_SET_ITEM(__pyx_t_4, 1+__pyx_t_13, __pyx_t_3);
     __pyx_t_3 = 0;
-    __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_4, NULL); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_4, NULL); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 105; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-    /* "pyearth/_forward.pyx":109
+    /* "pyearth/_forward.pyx":104
  *         self.basis = Basis(self.n)
  *         self.basis.append(ConstantBasisFunction())
  *         if self.use_fast is True:             # <<<<<<<<<<<<<<
@@ -4512,69 +4533,69 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
  */
   }
 
-  /* "pyearth/_forward.pyx":112
+  /* "pyearth/_forward.pyx":107
  *             heappush(self.fast_heap, FastHeapContent(idx=0))
  * 
  *         self.mwork = np.empty(shape=self.m, dtype=np.int)             # <<<<<<<<<<<<<<
  * 
- *         # Removed in favor of new knot search code
+ *         self.B = np.ones(
  */
-  __pyx_t_9 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_9 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_9);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_empty); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_empty); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  __pyx_t_9 = PyDict_New(); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_9 = PyDict_New(); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_9);
-  __pyx_t_4 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->m); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->m); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_9, __pyx_n_s_shape, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_9, __pyx_n_s_shape, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_int); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_int); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (PyDict_SetItem(__pyx_t_9, __pyx_n_s_dtype, __pyx_t_3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_9, __pyx_n_s_dtype, __pyx_t_3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_9); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_9); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GIVEREF(__pyx_t_3);
   __Pyx_GOTREF(__pyx_v_self->mwork);
   __Pyx_DECREF(((PyObject *)__pyx_v_self->mwork));
   __pyx_v_self->mwork = ((PyArrayObject *)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "pyearth/_forward.pyx":120
- * #             shape=self.max_terms, order='F', dtype=np.float)
+  /* "pyearth/_forward.pyx":109
+ *         self.mwork = np.empty(shape=self.m, dtype=np.int)
  * 
  *         self.B = np.ones(             # <<<<<<<<<<<<<<
  *             shape=(self.m, self.max_terms), order='F', dtype=np.float)
  *         self.basis.transform(self.X, self.missing, self.B[:,0:1])
  */
-  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 120; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 109; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_ones); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 120; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_ones); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 109; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "pyearth/_forward.pyx":121
+  /* "pyearth/_forward.pyx":110
  * 
  *         self.B = np.ones(
  *             shape=(self.m, self.max_terms), order='F', dtype=np.float)             # <<<<<<<<<<<<<<
  *         self.basis.transform(self.X, self.missing, self.B[:,0:1])
  * 
  */
-  __pyx_t_3 = PyDict_New(); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = PyDict_New(); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->m); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->m); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_self->max_terms); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_self->max_terms); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_2);
   PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_2);
@@ -4582,122 +4603,171 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
   PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_4);
   __pyx_t_2 = 0;
   __pyx_t_4 = 0;
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_shape, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_shape, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_order, __pyx_n_s_F) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_order, __pyx_n_s_F) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_float); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_float); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "pyearth/_forward.pyx":120
- * #             shape=self.max_terms, order='F', dtype=np.float)
+  /* "pyearth/_forward.pyx":109
+ *         self.mwork = np.empty(shape=self.m, dtype=np.int)
  * 
  *         self.B = np.ones(             # <<<<<<<<<<<<<<
  *             shape=(self.m, self.max_terms), order='F', dtype=np.float)
  *         self.basis.transform(self.X, self.missing, self.B[:,0:1])
  */
-  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_empty_tuple, __pyx_t_3); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 120; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_empty_tuple, __pyx_t_3); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 109; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 120; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 109; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GIVEREF(__pyx_t_4);
   __Pyx_GOTREF(__pyx_v_self->B);
   __Pyx_DECREF(((PyObject *)__pyx_v_self->B));
   __pyx_v_self->B = ((PyArrayObject *)__pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "pyearth/_forward.pyx":122
+  /* "pyearth/_forward.pyx":111
  *         self.B = np.ones(
  *             shape=(self.m, self.max_terms), order='F', dtype=np.float)
  *         self.basis.transform(self.X, self.missing, self.B[:,0:1])             # <<<<<<<<<<<<<<
  * 
- *         # Removed in favor of new knot search code
+ *         if self.endspan < 0:
  */
   __pyx_t_4 = ((PyObject *)__pyx_v_self->X);
   __Pyx_INCREF(__pyx_t_4);
   __pyx_t_3 = ((PyObject *)__pyx_v_self->missing);
   __Pyx_INCREF(__pyx_t_3);
-  __pyx_t_9 = PyObject_GetItem(((PyObject *)__pyx_v_self->B), __pyx_tuple__3); if (unlikely(__pyx_t_9 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+  __pyx_t_9 = PyObject_GetItem(((PyObject *)__pyx_v_self->B), __pyx_tuple__3); if (unlikely(__pyx_t_9 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_GOTREF(__pyx_t_9);
-  if (!(likely(((__pyx_t_9) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_9, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->transform(__pyx_v_self->basis, ((PyArrayObject *)__pyx_t_4), ((PyArrayObject *)__pyx_t_3), ((PyArrayObject *)__pyx_t_9), 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (!(likely(((__pyx_t_9) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_9, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->transform(__pyx_v_self->basis, ((PyArrayObject *)__pyx_t_4), ((PyArrayObject *)__pyx_t_3), ((PyArrayObject *)__pyx_t_9), 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":138
- * #             self.sort_tracker[i] = i
+  /* "pyearth/_forward.pyx":113
+ *         self.basis.transform(self.X, self.missing, self.B[:,0:1])
+ * 
+ *         if self.endspan < 0:             # <<<<<<<<<<<<<<
+ *             self.endspan = round(3 - log2(self.endspan_alpha / self.n))
+ * 
+ */
+  __pyx_t_10 = ((__pyx_v_self->endspan < 0) != 0);
+  if (__pyx_t_10) {
+
+    /* "pyearth/_forward.pyx":114
+ * 
+ *         if self.endspan < 0:
+ *             self.endspan = round(3 - log2(self.endspan_alpha / self.n))             # <<<<<<<<<<<<<<
+ * 
+ *         self.linear_variables = np.zeros(shape=self.n, dtype=np.int)
+ */
+    __pyx_t_1 = PyFloat_FromDouble((3.0 - __pyx_f_7pyearth_5_util_log2((__pyx_v_self->endspan_alpha / __pyx_v_self->n)))); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_9 = PyTuple_New(1); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_9);
+    __Pyx_GIVEREF(__pyx_t_1);
+    PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_1);
+    __pyx_t_1 = 0;
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_round, __pyx_t_9, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+    __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_v_self->endspan = __pyx_t_5;
+
+    /* "pyearth/_forward.pyx":113
+ *         self.basis.transform(self.X, self.missing, self.B[:,0:1])
+ * 
+ *         if self.endspan < 0:             # <<<<<<<<<<<<<<
+ *             self.endspan = round(3 - log2(self.endspan_alpha / self.n))
+ * 
+ */
+  }
+
+  /* "pyearth/_forward.pyx":116
+ *             self.endspan = round(3 - log2(self.endspan_alpha / self.n))
  * 
  *         self.linear_variables = np.zeros(shape=self.n, dtype=np.int)             # <<<<<<<<<<<<<<
  *         self.init_linear_variables()
  * 
  */
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 116; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_zeros); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_zeros); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 116; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 116; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 116; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_shape, __pyx_t_3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_shape, __pyx_t_3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 116; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 116; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_int); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_int); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 116; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_dtype, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_dtype, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 116; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 116; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 116; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GIVEREF(__pyx_t_4);
   __Pyx_GOTREF(__pyx_v_self->linear_variables);
   __Pyx_DECREF(((PyObject *)__pyx_v_self->linear_variables));
   __pyx_v_self->linear_variables = ((PyArrayObject *)__pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "pyearth/_forward.pyx":139
+  /* "pyearth/_forward.pyx":117
  * 
  *         self.linear_variables = np.zeros(shape=self.n, dtype=np.int)
  *         self.init_linear_variables()             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_4 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->init_linear_variables(__pyx_v_self, 0); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->init_linear_variables(__pyx_v_self, 0); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 117; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "pyearth/_forward.pyx":147
+  /* "pyearth/_forward.pyx":122
+ * 
+ *         # Removed in favor of new knot search code
+ *         self.iteration_number = 0             # <<<<<<<<<<<<<<
+ * 
+ *         # Add in user selected linear variables
+ */
+  __pyx_v_self->iteration_number = 0;
+
+  /* "pyearth/_forward.pyx":125
  * 
  *         # Add in user selected linear variables
  *         for linvar in kwargs.get('linvars',[]):             # <<<<<<<<<<<<<<
  *             if linvar in self.xlabels:
  *                 self.linear_variables[self.xlabels.index(linvar)] = 1
  */
-  __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_1 = __Pyx_PyDict_GetItemDefault(__pyx_v_kwargs, __pyx_n_s_linvars, __pyx_t_4); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyDict_GetItemDefault(__pyx_v_kwargs, __pyx_n_s_linvars, __pyx_t_4); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   if (likely(PyList_CheckExact(__pyx_t_1)) || PyTuple_CheckExact(__pyx_t_1)) {
     __pyx_t_4 = __pyx_t_1; __Pyx_INCREF(__pyx_t_4); __pyx_t_13 = 0;
     __pyx_t_14 = NULL;
   } else {
-    __pyx_t_13 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_13 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_14 = Py_TYPE(__pyx_t_4)->tp_iternext; if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_14 = Py_TYPE(__pyx_t_4)->tp_iternext; if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   for (;;) {
@@ -4705,17 +4775,17 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
       if (likely(PyList_CheckExact(__pyx_t_4))) {
         if (__pyx_t_13 >= PyList_GET_SIZE(__pyx_t_4)) break;
         #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_13); __Pyx_INCREF(__pyx_t_1); __pyx_t_13++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_13); __Pyx_INCREF(__pyx_t_1); __pyx_t_13++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         #else
-        __pyx_t_1 = PySequence_ITEM(__pyx_t_4, __pyx_t_13); __pyx_t_13++; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_1 = PySequence_ITEM(__pyx_t_4, __pyx_t_13); __pyx_t_13++; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
         #endif
       } else {
         if (__pyx_t_13 >= PyTuple_GET_SIZE(__pyx_t_4)) break;
         #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_13); __Pyx_INCREF(__pyx_t_1); __pyx_t_13++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_13); __Pyx_INCREF(__pyx_t_1); __pyx_t_13++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         #else
-        __pyx_t_1 = PySequence_ITEM(__pyx_t_4, __pyx_t_13); __pyx_t_13++; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_1 = PySequence_ITEM(__pyx_t_4, __pyx_t_13); __pyx_t_13++; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
         #endif
       }
@@ -4725,7 +4795,7 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          else {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         }
         break;
       }
@@ -4734,25 +4804,25 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
     __Pyx_XDECREF_SET(__pyx_v_linvar, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "pyearth/_forward.pyx":148
+    /* "pyearth/_forward.pyx":126
  *         # Add in user selected linear variables
  *         for linvar in kwargs.get('linvars',[]):
  *             if linvar in self.xlabels:             # <<<<<<<<<<<<<<
  *                 self.linear_variables[self.xlabels.index(linvar)] = 1
  *             elif linvar in range(self.n):
  */
-    __pyx_t_10 = (__Pyx_PySequence_ContainsTF(__pyx_v_linvar, __pyx_v_self->xlabels, Py_EQ)); if (unlikely(__pyx_t_10 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_10 = (__Pyx_PySequence_ContainsTF(__pyx_v_linvar, __pyx_v_self->xlabels, Py_EQ)); if (unlikely(__pyx_t_10 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 126; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __pyx_t_7 = (__pyx_t_10 != 0);
     if (__pyx_t_7) {
 
-      /* "pyearth/_forward.pyx":149
+      /* "pyearth/_forward.pyx":127
  *         for linvar in kwargs.get('linvars',[]):
  *             if linvar in self.xlabels:
  *                 self.linear_variables[self.xlabels.index(linvar)] = 1             # <<<<<<<<<<<<<<
  *             elif linvar in range(self.n):
  *                 self.linear_variables[linvar] = 1
  */
-      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->xlabels, __pyx_n_s_index); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->xlabels, __pyx_n_s_index); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_9);
       __pyx_t_3 = NULL;
       if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_9))) {
@@ -4765,75 +4835,75 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
         }
       }
       if (!__pyx_t_3) {
-        __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_9, __pyx_v_linvar); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_9, __pyx_v_linvar); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
       } else {
-        __pyx_t_2 = PyTuple_New(1+1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_2 = PyTuple_New(1+1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_3); __pyx_t_3 = NULL;
         __Pyx_INCREF(__pyx_v_linvar);
         __Pyx_GIVEREF(__pyx_v_linvar);
         PyTuple_SET_ITEM(__pyx_t_2, 0+1, __pyx_v_linvar);
-        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       }
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      if (unlikely(PyObject_SetItem(((PyObject *)__pyx_v_self->linear_variables), __pyx_t_1, __pyx_int_1) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      if (unlikely(PyObject_SetItem(((PyObject *)__pyx_v_self->linear_variables), __pyx_t_1, __pyx_int_1) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "pyearth/_forward.pyx":148
+      /* "pyearth/_forward.pyx":126
  *         # Add in user selected linear variables
  *         for linvar in kwargs.get('linvars',[]):
  *             if linvar in self.xlabels:             # <<<<<<<<<<<<<<
  *                 self.linear_variables[self.xlabels.index(linvar)] = 1
  *             elif linvar in range(self.n):
  */
-      goto __pyx_L11;
+      goto __pyx_L12;
     }
 
-    /* "pyearth/_forward.pyx":150
+    /* "pyearth/_forward.pyx":128
  *             if linvar in self.xlabels:
  *                 self.linear_variables[self.xlabels.index(linvar)] = 1
  *             elif linvar in range(self.n):             # <<<<<<<<<<<<<<
  *                 self.linear_variables[linvar] = 1
  *             else:
  */
-    __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 128; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_9 = PyTuple_New(1); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_9 = PyTuple_New(1); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 128; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_1);
     __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_9, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_9, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 128; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_v_linvar, __pyx_t_1, Py_EQ)); if (unlikely(__pyx_t_7 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_v_linvar, __pyx_t_1, Py_EQ)); if (unlikely(__pyx_t_7 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 128; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_10 = (__pyx_t_7 != 0);
     if (__pyx_t_10) {
 
-      /* "pyearth/_forward.pyx":151
+      /* "pyearth/_forward.pyx":129
  *                 self.linear_variables[self.xlabels.index(linvar)] = 1
  *             elif linvar in range(self.n):
  *                 self.linear_variables[linvar] = 1             # <<<<<<<<<<<<<<
  *             else:
  *                 raise IndexError(
  */
-      if (unlikely(PyObject_SetItem(((PyObject *)__pyx_v_self->linear_variables), __pyx_v_linvar, __pyx_int_1) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 151; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      if (unlikely(PyObject_SetItem(((PyObject *)__pyx_v_self->linear_variables), __pyx_v_linvar, __pyx_int_1) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-      /* "pyearth/_forward.pyx":150
+      /* "pyearth/_forward.pyx":128
  *             if linvar in self.xlabels:
  *                 self.linear_variables[self.xlabels.index(linvar)] = 1
  *             elif linvar in range(self.n):             # <<<<<<<<<<<<<<
  *                 self.linear_variables[linvar] = 1
  *             else:
  */
-      goto __pyx_L11;
+      goto __pyx_L12;
     }
 
-    /* "pyearth/_forward.pyx":153
+    /* "pyearth/_forward.pyx":131
  *                 self.linear_variables[linvar] = 1
  *             else:
  *                 raise IndexError(             # <<<<<<<<<<<<<<
@@ -4841,15 +4911,15 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
  * 
  */
     /*else*/ {
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_IndexError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_IndexError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_Raise(__pyx_t_1, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
-    __pyx_L11:;
+    __pyx_L12:;
 
-    /* "pyearth/_forward.pyx":147
+    /* "pyearth/_forward.pyx":125
  * 
  *         # Add in user selected linear variables
  *         for linvar in kwargs.get('linvars',[]):             # <<<<<<<<<<<<<<
@@ -4859,26 +4929,26 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
   }
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "pyearth/_forward.pyx":157
+  /* "pyearth/_forward.pyx":135
  * 
  *         # Initialize the data structures for knot search
- *         n_outcomes = self.y.shape[1]             # <<<<<<<<<<<<<<
+ *         self.n_outcomes = self.y.shape[1]             # <<<<<<<<<<<<<<
  *         n_predictors = self.X.shape[1]
  *         n_weights = self.sample_weight.shape[1]
  */
-  __pyx_v_n_outcomes = (__pyx_v_self->y->dimensions[1]);
+  __pyx_v_self->n_outcomes = (__pyx_v_self->y->dimensions[1]);
 
-  /* "pyearth/_forward.pyx":158
+  /* "pyearth/_forward.pyx":136
  *         # Initialize the data structures for knot search
- *         n_outcomes = self.y.shape[1]
+ *         self.n_outcomes = self.y.shape[1]
  *         n_predictors = self.X.shape[1]             # <<<<<<<<<<<<<<
  *         n_weights = self.sample_weight.shape[1]
  *         self.outcomes = []
  */
   __pyx_v_n_predictors = (__pyx_v_self->X->dimensions[1]);
 
-  /* "pyearth/_forward.pyx":159
- *         n_outcomes = self.y.shape[1]
+  /* "pyearth/_forward.pyx":137
+ *         self.n_outcomes = self.y.shape[1]
  *         n_predictors = self.X.shape[1]
  *         n_weights = self.sample_weight.shape[1]             # <<<<<<<<<<<<<<
  *         self.outcomes = []
@@ -4886,51 +4956,57 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
  */
   __pyx_v_n_weights = (__pyx_v_self->sample_weight->dimensions[1]);
 
-  /* "pyearth/_forward.pyx":160
+  /* "pyearth/_forward.pyx":138
  *         n_predictors = self.X.shape[1]
  *         n_weights = self.sample_weight.shape[1]
  *         self.outcomes = []             # <<<<<<<<<<<<<<
  *         self.workings = []
- *         for i in range(n_outcomes):
+ *         for i in range(self.n_outcomes):
  */
-  __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
-  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_outcomes, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __Pyx_GIVEREF(__pyx_t_4);
+  __Pyx_GOTREF(__pyx_v_self->outcomes);
+  __Pyx_DECREF(__pyx_v_self->outcomes);
+  __pyx_v_self->outcomes = ((PyObject*)__pyx_t_4);
+  __pyx_t_4 = 0;
 
-  /* "pyearth/_forward.pyx":161
+  /* "pyearth/_forward.pyx":139
  *         n_weights = self.sample_weight.shape[1]
  *         self.outcomes = []
  *         self.workings = []             # <<<<<<<<<<<<<<
- *         for i in range(n_outcomes):
+ *         for i in range(self.n_outcomes):
  *             y_col = self.y[:, i]
  */
-  __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 161; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
-  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_workings, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 161; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __Pyx_GIVEREF(__pyx_t_4);
+  __Pyx_GOTREF(__pyx_v_self->workings);
+  __Pyx_DECREF(__pyx_v_self->workings);
+  __pyx_v_self->workings = ((PyObject*)__pyx_t_4);
+  __pyx_t_4 = 0;
 
-  /* "pyearth/_forward.pyx":162
+  /* "pyearth/_forward.pyx":140
  *         self.outcomes = []
  *         self.workings = []
- *         for i in range(n_outcomes):             # <<<<<<<<<<<<<<
+ *         for i in range(self.n_outcomes):             # <<<<<<<<<<<<<<
  *             y_col = self.y[:, i]
  *             if n_weights == 1:
  */
-  __pyx_t_15 = __pyx_v_n_outcomes;
-  for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_15; __pyx_t_11+=1) {
-    __pyx_v_i = __pyx_t_11;
+  __pyx_t_11 = __pyx_v_self->n_outcomes;
+  for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
+    __pyx_v_i = __pyx_t_12;
 
-    /* "pyearth/_forward.pyx":163
+    /* "pyearth/_forward.pyx":141
  *         self.workings = []
- *         for i in range(n_outcomes):
+ *         for i in range(self.n_outcomes):
  *             y_col = self.y[:, i]             # <<<<<<<<<<<<<<
  *             if n_weights == 1:
- *                 w_col = self.sample_weight
+ *                 w_col = self.sample_weight.flatten()
  */
-    __pyx_t_4 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_i); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_i); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 141; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 141; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_INCREF(__pyx_slice__5);
     __Pyx_GIVEREF(__pyx_slice__5);
@@ -4938,311 +5014,356 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
     __Pyx_GIVEREF(__pyx_t_4);
     PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_4);
     __pyx_t_4 = 0;
-    __pyx_t_4 = PyObject_GetItem(((PyObject *)__pyx_v_self->y), __pyx_t_1); if (unlikely(__pyx_t_4 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __pyx_t_4 = PyObject_GetItem(((PyObject *)__pyx_v_self->y), __pyx_t_1); if (unlikely(__pyx_t_4 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 141; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_XDECREF_SET(__pyx_v_y_col, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "pyearth/_forward.pyx":164
- *         for i in range(n_outcomes):
+    /* "pyearth/_forward.pyx":142
+ *         for i in range(self.n_outcomes):
  *             y_col = self.y[:, i]
  *             if n_weights == 1:             # <<<<<<<<<<<<<<
- *                 w_col = self.sample_weight
+ *                 w_col = self.sample_weight.flatten()
  *             else:
  */
     __pyx_t_10 = ((__pyx_v_n_weights == 1) != 0);
     if (__pyx_t_10) {
 
-      /* "pyearth/_forward.pyx":165
+      /* "pyearth/_forward.pyx":143
  *             y_col = self.y[:, i]
  *             if n_weights == 1:
- *                 w_col = self.sample_weight             # <<<<<<<<<<<<<<
+ *                 w_col = self.sample_weight.flatten()             # <<<<<<<<<<<<<<
  *             else:
- *                 w_col = self.sample_weight[:, i]
+ *                 w_col = self.sample_weight[:, i].flatten()
  */
-      __pyx_t_4 = ((PyObject *)__pyx_v_self->sample_weight);
-      __Pyx_INCREF(__pyx_t_4);
-      __Pyx_XDECREF_SET(__pyx_v_w_col, __pyx_t_4);
-      __pyx_t_4 = 0;
-
-      /* "pyearth/_forward.pyx":164
- *         for i in range(n_outcomes):
- *             y_col = self.y[:, i]
- *             if n_weights == 1:             # <<<<<<<<<<<<<<
- *                 w_col = self.sample_weight
- *             else:
- */
-      goto __pyx_L14;
-    }
-
-    /* "pyearth/_forward.pyx":167
- *                 w_col = self.sample_weight
- *             else:
- *                 w_col = self.sample_weight[:, i]             # <<<<<<<<<<<<<<
- *             working = KnotSearchWorkingData.alloc(self.max_terms)
- *             outcome = OutcomeDependentData.alloc(y_col, w_col, self.m, self.max_terms)
- */
-    /*else*/ {
-      __pyx_t_4 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_i); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self->sample_weight), __pyx_n_s_flatten); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_INCREF(__pyx_slice__6);
-      __Pyx_GIVEREF(__pyx_slice__6);
-      PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__6);
-      __Pyx_GIVEREF(__pyx_t_4);
-      PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_4);
-      __pyx_t_4 = 0;
-      __pyx_t_4 = PyObject_GetItem(((PyObject *)__pyx_v_self->sample_weight), __pyx_t_1); if (unlikely(__pyx_t_4 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+      __pyx_t_9 = NULL;
+      if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_1))) {
+        __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_1);
+        if (likely(__pyx_t_9)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+          __Pyx_INCREF(__pyx_t_9);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_1, function);
+        }
+      }
+      if (__pyx_t_9) {
+        __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_9); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      } else {
+        __pyx_t_4 = __Pyx_PyObject_CallNoArg(__pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      }
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_XDECREF_SET(__pyx_v_w_col, __pyx_t_4);
       __pyx_t_4 = 0;
-    }
-    __pyx_L14:;
 
-    /* "pyearth/_forward.pyx":168
+      /* "pyearth/_forward.pyx":142
+ *         for i in range(self.n_outcomes):
+ *             y_col = self.y[:, i]
+ *             if n_weights == 1:             # <<<<<<<<<<<<<<
+ *                 w_col = self.sample_weight.flatten()
  *             else:
- *                 w_col = self.sample_weight[:, i]
+ */
+      goto __pyx_L15;
+    }
+
+    /* "pyearth/_forward.pyx":145
+ *                 w_col = self.sample_weight.flatten()
+ *             else:
+ *                 w_col = self.sample_weight[:, i].flatten()             # <<<<<<<<<<<<<<
+ *             working = KnotSearchWorkingData.alloc(self.max_terms)
+ *             outcome = OutcomeDependentData.alloc(y_col, w_col, self.m, self.max_terms)
+ */
+    /*else*/ {
+      __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_i); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_9);
+      __Pyx_INCREF(__pyx_slice__6);
+      __Pyx_GIVEREF(__pyx_slice__6);
+      PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_slice__6);
+      __Pyx_GIVEREF(__pyx_t_1);
+      PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_1);
+      __pyx_t_1 = 0;
+      __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_self->sample_weight), __pyx_t_9); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_flatten); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_9);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __pyx_t_1 = NULL;
+      if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_9))) {
+        __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_9);
+        if (likely(__pyx_t_1)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
+          __Pyx_INCREF(__pyx_t_1);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_9, function);
+        }
+      }
+      if (__pyx_t_1) {
+        __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_9, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      } else {
+        __pyx_t_4 = __Pyx_PyObject_CallNoArg(__pyx_t_9); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      }
+      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      __Pyx_XDECREF_SET(__pyx_v_w_col, __pyx_t_4);
+      __pyx_t_4 = 0;
+    }
+    __pyx_L15:;
+
+    /* "pyearth/_forward.pyx":146
+ *             else:
+ *                 w_col = self.sample_weight[:, i].flatten()
  *             working = KnotSearchWorkingData.alloc(self.max_terms)             # <<<<<<<<<<<<<<
  *             outcome = OutcomeDependentData.alloc(y_col, w_col, self.m, self.max_terms)
  *             outcome.update(self.B[:,0], self.zero_tol)
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchWorkingData), __pyx_n_s_alloc); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_self->max_terms); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchWorkingData), __pyx_n_s_alloc); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_9);
+    __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->max_terms); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_1);
     __pyx_t_2 = NULL;
-    if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_1))) {
-      __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_1);
+    if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_9))) {
+      __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_9);
       if (likely(__pyx_t_2)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
         __Pyx_INCREF(__pyx_t_2);
         __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_1, function);
+        __Pyx_DECREF_SET(__pyx_t_9, function);
       }
     }
     if (!__pyx_t_2) {
-      __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_9); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_9, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_GOTREF(__pyx_t_4);
     } else {
-      __pyx_t_3 = PyTuple_New(1+1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = PyTuple_New(1+1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2); __pyx_t_2 = NULL;
-      __Pyx_GIVEREF(__pyx_t_9);
-      PyTuple_SET_ITEM(__pyx_t_3, 0+1, __pyx_t_9);
-      __pyx_t_9 = 0;
-      __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GIVEREF(__pyx_t_1);
+      PyTuple_SET_ITEM(__pyx_t_3, 0+1, __pyx_t_1);
+      __pyx_t_1 = 0;
+      __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     }
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __Pyx_XDECREF_SET(__pyx_v_working, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "pyearth/_forward.pyx":169
- *                 w_col = self.sample_weight[:, i]
+    /* "pyearth/_forward.pyx":147
+ *                 w_col = self.sample_weight[:, i].flatten()
  *             working = KnotSearchWorkingData.alloc(self.max_terms)
  *             outcome = OutcomeDependentData.alloc(y_col, w_col, self.m, self.max_terms)             # <<<<<<<<<<<<<<
  *             outcome.update(self.B[:,0], self.zero_tol)
  *             self.workings.append(working)
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_OutcomeDependentData), __pyx_n_s_alloc); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 169; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->m); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 169; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_self->max_terms); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 169; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_OutcomeDependentData), __pyx_n_s_alloc); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_9);
+    __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->m); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->max_terms); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_1);
     __pyx_t_2 = NULL;
     __pyx_t_13 = 0;
-    if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_1))) {
-      __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_1);
+    if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_9))) {
+      __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_9);
       if (likely(__pyx_t_2)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
         __Pyx_INCREF(__pyx_t_2);
         __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_1, function);
+        __Pyx_DECREF_SET(__pyx_t_9, function);
         __pyx_t_13 = 1;
       }
     }
-    __pyx_t_16 = PyTuple_New(4+__pyx_t_13); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 169; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_16);
+    __pyx_t_15 = PyTuple_New(4+__pyx_t_13); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_15);
     if (__pyx_t_2) {
-      __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_16, 0, __pyx_t_2); __pyx_t_2 = NULL;
+      __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_2); __pyx_t_2 = NULL;
     }
     __Pyx_INCREF(__pyx_v_y_col);
     __Pyx_GIVEREF(__pyx_v_y_col);
-    PyTuple_SET_ITEM(__pyx_t_16, 0+__pyx_t_13, __pyx_v_y_col);
+    PyTuple_SET_ITEM(__pyx_t_15, 0+__pyx_t_13, __pyx_v_y_col);
     __Pyx_INCREF(__pyx_v_w_col);
     __Pyx_GIVEREF(__pyx_v_w_col);
-    PyTuple_SET_ITEM(__pyx_t_16, 1+__pyx_t_13, __pyx_v_w_col);
+    PyTuple_SET_ITEM(__pyx_t_15, 1+__pyx_t_13, __pyx_v_w_col);
     __Pyx_GIVEREF(__pyx_t_3);
-    PyTuple_SET_ITEM(__pyx_t_16, 2+__pyx_t_13, __pyx_t_3);
-    __Pyx_GIVEREF(__pyx_t_9);
-    PyTuple_SET_ITEM(__pyx_t_16, 3+__pyx_t_13, __pyx_t_9);
+    PyTuple_SET_ITEM(__pyx_t_15, 2+__pyx_t_13, __pyx_t_3);
+    __Pyx_GIVEREF(__pyx_t_1);
+    PyTuple_SET_ITEM(__pyx_t_15, 3+__pyx_t_13, __pyx_t_1);
     __pyx_t_3 = 0;
-    __pyx_t_9 = 0;
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_16, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 169; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = 0;
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_15, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __Pyx_XDECREF_SET(__pyx_v_outcome, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "pyearth/_forward.pyx":170
+    /* "pyearth/_forward.pyx":148
  *             working = KnotSearchWorkingData.alloc(self.max_terms)
  *             outcome = OutcomeDependentData.alloc(y_col, w_col, self.m, self.max_terms)
  *             outcome.update(self.B[:,0], self.zero_tol)             # <<<<<<<<<<<<<<
  *             self.workings.append(working)
  *             self.outcomes.append(outcome)
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_outcome, __pyx_n_s_update); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_16 = PyObject_GetItem(((PyObject *)__pyx_v_self->B), __pyx_tuple__8); if (unlikely(__pyx_t_16 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-    __Pyx_GOTREF(__pyx_t_16);
-    __pyx_t_9 = PyFloat_FromDouble(__pyx_v_self->zero_tol); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_outcome, __pyx_n_s_update); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_9);
+    __pyx_t_15 = PyObject_GetItem(((PyObject *)__pyx_v_self->B), __pyx_tuple__8); if (unlikely(__pyx_t_15 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __Pyx_GOTREF(__pyx_t_15);
+    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->zero_tol); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_1);
     __pyx_t_3 = NULL;
     __pyx_t_13 = 0;
-    if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_1))) {
-      __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_1);
+    if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_9))) {
+      __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_9);
       if (likely(__pyx_t_3)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
         __Pyx_INCREF(__pyx_t_3);
         __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_1, function);
+        __Pyx_DECREF_SET(__pyx_t_9, function);
         __pyx_t_13 = 1;
       }
     }
-    __pyx_t_2 = PyTuple_New(2+__pyx_t_13); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyTuple_New(2+__pyx_t_13); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     if (__pyx_t_3) {
       __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_3); __pyx_t_3 = NULL;
     }
-    __Pyx_GIVEREF(__pyx_t_16);
-    PyTuple_SET_ITEM(__pyx_t_2, 0+__pyx_t_13, __pyx_t_16);
-    __Pyx_GIVEREF(__pyx_t_9);
-    PyTuple_SET_ITEM(__pyx_t_2, 1+__pyx_t_13, __pyx_t_9);
-    __pyx_t_16 = 0;
-    __pyx_t_9 = 0;
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_2, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GIVEREF(__pyx_t_15);
+    PyTuple_SET_ITEM(__pyx_t_2, 0+__pyx_t_13, __pyx_t_15);
+    __Pyx_GIVEREF(__pyx_t_1);
+    PyTuple_SET_ITEM(__pyx_t_2, 1+__pyx_t_13, __pyx_t_1);
+    __pyx_t_15 = 0;
+    __pyx_t_1 = 0;
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_2, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "pyearth/_forward.pyx":171
+    /* "pyearth/_forward.pyx":149
  *             outcome = OutcomeDependentData.alloc(y_col, w_col, self.m, self.max_terms)
  *             outcome.update(self.B[:,0], self.zero_tol)
  *             self.workings.append(working)             # <<<<<<<<<<<<<<
  *             self.outcomes.append(outcome)
  *         self.predictors = []
  */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_workings); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 171; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_17 = __Pyx_PyObject_Append(__pyx_t_4, __pyx_v_working); if (unlikely(__pyx_t_17 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 171; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    if (unlikely(__pyx_v_self->workings == Py_None)) {
+      PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%s'", "append");
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    }
+    __pyx_t_16 = __Pyx_PyList_Append(__pyx_v_self->workings, __pyx_v_working); if (unlikely(__pyx_t_16 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-    /* "pyearth/_forward.pyx":172
+    /* "pyearth/_forward.pyx":150
  *             outcome.update(self.B[:,0], self.zero_tol)
  *             self.workings.append(working)
  *             self.outcomes.append(outcome)             # <<<<<<<<<<<<<<
  *         self.predictors = []
  *         for i in range(n_predictors):
  */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_outcomes); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 172; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_17 = __Pyx_PyObject_Append(__pyx_t_4, __pyx_v_outcome); if (unlikely(__pyx_t_17 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 172; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    if (unlikely(__pyx_v_self->outcomes == Py_None)) {
+      PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%s'", "append");
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    }
+    __pyx_t_16 = __Pyx_PyList_Append(__pyx_v_self->outcomes, __pyx_v_outcome); if (unlikely(__pyx_t_16 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
 
-  /* "pyearth/_forward.pyx":173
+  /* "pyearth/_forward.pyx":151
  *             self.workings.append(working)
  *             self.outcomes.append(outcome)
  *         self.predictors = []             # <<<<<<<<<<<<<<
  *         for i in range(n_predictors):
  *             predictor = PredictorDependentData.alloc(self.X[:, i])
  */
-  __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 173; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 151; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
-  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_predictors, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 173; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __Pyx_GIVEREF(__pyx_t_4);
+  __Pyx_GOTREF(__pyx_v_self->predictors);
+  __Pyx_DECREF(__pyx_v_self->predictors);
+  __pyx_v_self->predictors = ((PyObject*)__pyx_t_4);
+  __pyx_t_4 = 0;
 
-  /* "pyearth/_forward.pyx":174
+  /* "pyearth/_forward.pyx":152
  *             self.outcomes.append(outcome)
  *         self.predictors = []
  *         for i in range(n_predictors):             # <<<<<<<<<<<<<<
  *             predictor = PredictorDependentData.alloc(self.X[:, i])
  *             self.predictors.append(predictor)
  */
-  __pyx_t_15 = __pyx_v_n_predictors;
-  for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_15; __pyx_t_11+=1) {
+  __pyx_t_17 = __pyx_v_n_predictors;
+  for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_17; __pyx_t_11+=1) {
     __pyx_v_i = __pyx_t_11;
 
-    /* "pyearth/_forward.pyx":175
+    /* "pyearth/_forward.pyx":153
  *         self.predictors = []
  *         for i in range(n_predictors):
  *             predictor = PredictorDependentData.alloc(self.X[:, i])             # <<<<<<<<<<<<<<
  *             self.predictors.append(predictor)
  * 
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_PredictorDependentData), __pyx_n_s_alloc); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_i); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_PredictorDependentData), __pyx_n_s_alloc); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_9);
+    __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_i); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_1);
     __Pyx_INCREF(__pyx_slice__9);
     __Pyx_GIVEREF(__pyx_slice__9);
-    PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_slice__9);
+    PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__9);
     __Pyx_GIVEREF(__pyx_t_2);
-    PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_2);
+    PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_2 = PyObject_GetItem(((PyObject *)__pyx_v_self->X), __pyx_t_9); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __pyx_t_2 = PyObject_GetItem(((PyObject *)__pyx_v_self->X), __pyx_t_1); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
     __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __pyx_t_9 = NULL;
-    if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_1))) {
-      __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_1);
-      if (likely(__pyx_t_9)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
-        __Pyx_INCREF(__pyx_t_9);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_1 = NULL;
+    if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_9))) {
+      __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_9);
+      if (likely(__pyx_t_1)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
+        __Pyx_INCREF(__pyx_t_1);
         __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_1, function);
+        __Pyx_DECREF_SET(__pyx_t_9, function);
       }
     }
-    if (!__pyx_t_9) {
-      __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (!__pyx_t_1) {
+      __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_9, __pyx_t_2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_GOTREF(__pyx_t_4);
     } else {
-      __pyx_t_16 = PyTuple_New(1+1); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_16);
-      __Pyx_GIVEREF(__pyx_t_9); PyTuple_SET_ITEM(__pyx_t_16, 0, __pyx_t_9); __pyx_t_9 = NULL;
+      __pyx_t_15 = PyTuple_New(1+1); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_15);
+      __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_1); __pyx_t_1 = NULL;
       __Pyx_GIVEREF(__pyx_t_2);
-      PyTuple_SET_ITEM(__pyx_t_16, 0+1, __pyx_t_2);
+      PyTuple_SET_ITEM(__pyx_t_15, 0+1, __pyx_t_2);
       __pyx_t_2 = 0;
-      __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_16, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_15, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+      __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
     }
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __Pyx_XDECREF_SET(__pyx_v_predictor, __pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "pyearth/_forward.pyx":176
+    /* "pyearth/_forward.pyx":154
  *         for i in range(n_predictors):
  *             predictor = PredictorDependentData.alloc(self.X[:, i])
  *             self.predictors.append(predictor)             # <<<<<<<<<<<<<<
  * 
- * 
+ *     cpdef Basis get_basis(ForwardPasser self):
  */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_predictors); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 176; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_17 = __Pyx_PyObject_Append(__pyx_t_4, __pyx_v_predictor); if (unlikely(__pyx_t_17 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 176; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    if (unlikely(__pyx_v_self->predictors == Py_None)) {
+      PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%s'", "append");
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 154; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    }
+    __pyx_t_16 = __Pyx_PyList_Append(__pyx_v_self->predictors, __pyx_v_predictor); if (unlikely(__pyx_t_16 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 154; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
 
   /* "pyearth/_forward.pyx":53
@@ -5262,7 +5383,7 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_XDECREF(__pyx_t_16);
+  __Pyx_XDECREF(__pyx_t_15);
   { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
     __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_X.rcbuffer->pybuffer);
@@ -5290,8 +5411,8 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
   return __pyx_r;
 }
 
-/* "pyearth/_forward.pyx":189
- * #         self.orthonormal_update(0)
+/* "pyearth/_forward.pyx":156
+ *             self.predictors.append(predictor)
  * 
  *     cpdef Basis get_basis(ForwardPasser self):             # <<<<<<<<<<<<<<
  *         return self.basis
@@ -5314,7 +5435,7 @@ static struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_f_7pyearth_8_forward_13For
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_basis); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 189; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_basis); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 156; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_8_forward_13ForwardPasser_3get_basis)) {
       __Pyx_XDECREF(((PyObject *)__pyx_r));
@@ -5330,14 +5451,14 @@ static struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_f_7pyearth_8_forward_13For
         }
       }
       if (__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 189; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 156; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 189; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 156; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       }
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_7pyearth_6_basis_Basis))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 189; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_7pyearth_6_basis_Basis))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 156; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __pyx_r = ((struct __pyx_obj_7pyearth_6_basis_Basis *)__pyx_t_2);
       __pyx_t_2 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -5346,7 +5467,7 @@ static struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_f_7pyearth_8_forward_13For
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_forward.pyx":190
+  /* "pyearth/_forward.pyx":157
  * 
  *     cpdef Basis get_basis(ForwardPasser self):
  *         return self.basis             # <<<<<<<<<<<<<<
@@ -5358,8 +5479,8 @@ static struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_f_7pyearth_8_forward_13For
   __pyx_r = __pyx_v_self->basis;
   goto __pyx_L0;
 
-  /* "pyearth/_forward.pyx":189
- * #         self.orthonormal_update(0)
+  /* "pyearth/_forward.pyx":156
+ *             self.predictors.append(predictor)
  * 
  *     cpdef Basis get_basis(ForwardPasser self):             # <<<<<<<<<<<<<<
  *         return self.basis
@@ -5402,7 +5523,7 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_2get_basis(struct _
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_basis", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = ((PyObject *)__pyx_f_7pyearth_8_forward_13ForwardPasser_get_basis(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 189; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = ((PyObject *)__pyx_f_7pyearth_8_forward_13ForwardPasser_get_basis(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 156; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -5419,18 +5540,17 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_2get_basis(struct _
   return __pyx_r;
 }
 
-/* "pyearth/_forward.pyx":192
+/* "pyearth/_forward.pyx":159
  *         return self.basis
  * 
  *     cpdef init_linear_variables(ForwardPasser self):             # <<<<<<<<<<<<<<
  *         cdef INDEX_t variable
- *         cdef INDEX_t endspan
+ *         cdef cnp.ndarray[INT_t, ndim = 1] order
  */
 
 static PyObject *__pyx_pw_7pyearth_8_forward_13ForwardPasser_5init_linear_variables(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_init_linear_variables(struct __pyx_obj_7pyearth_8_forward_ForwardPasser *__pyx_v_self, int __pyx_skip_dispatch) {
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_endspan;
   PyArrayObject *__pyx_v_order = 0;
   PyArrayObject *__pyx_v_linear_variables = 0;
   PyArrayObject *__pyx_v_B = 0;
@@ -5450,16 +5570,16 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_init_linear_variable
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
   PyObject *__pyx_t_4 = NULL;
-  int __pyx_t_5;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_5;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_6;
-  int __pyx_t_7;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_8;
-  PyObject *__pyx_t_9 = NULL;
-  PyObject *__pyx_t_10 = NULL;
-  PyArrayObject *__pyx_t_11 = NULL;
+  PyObject *__pyx_t_7 = NULL;
+  PyObject *__pyx_t_8 = NULL;
+  PyArrayObject *__pyx_t_9 = NULL;
+  int __pyx_t_10;
+  PyObject *__pyx_t_11 = NULL;
   PyObject *__pyx_t_12 = NULL;
   PyObject *__pyx_t_13 = NULL;
-  PyObject *__pyx_t_14 = NULL;
+  int __pyx_t_14;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_15;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_16;
   int __pyx_lineno = 0;
@@ -5486,7 +5606,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_init_linear_variable
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_init_linear_variables); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 192; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_init_linear_variables); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_8_forward_13ForwardPasser_5init_linear_variables)) {
       __Pyx_XDECREF(__pyx_r);
@@ -5502,10 +5622,10 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_init_linear_variable
         }
       }
       if (__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 192; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 192; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       }
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -5517,7 +5637,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_init_linear_variable
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_forward.pyx":197
+  /* "pyearth/_forward.pyx":163
  *         cdef cnp.ndarray[INT_t, ndim = 1] order
  *         cdef cnp.ndarray[INT_t, ndim = 1] linear_variables = (
  *             <cnp.ndarray[INT_t, ndim = 1] > self.linear_variables)             # <<<<<<<<<<<<<<
@@ -5530,14 +5650,14 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_init_linear_variable
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_linear_variables.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_INT_t, PyBUF_FORMAT| PyBUF_STRIDES| PyBUF_WRITABLE, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_linear_variables = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_linear_variables.rcbuffer->pybuffer.buf = NULL;
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 162; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     } else {__pyx_pybuffernd_linear_variables.diminfo[0].strides = __pyx_pybuffernd_linear_variables.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_linear_variables.diminfo[0].shape = __pyx_pybuffernd_linear_variables.rcbuffer->pybuffer.shape[0];
     }
   }
   __pyx_v_linear_variables = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":199
+  /* "pyearth/_forward.pyx":165
  *             <cnp.ndarray[INT_t, ndim = 1] > self.linear_variables)
  *         cdef cnp.ndarray[FLOAT_t, ndim = 2] B = (
  *             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)             # <<<<<<<<<<<<<<
@@ -5550,19 +5670,19 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_init_linear_variable
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_B.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_B = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_B.rcbuffer->pybuffer.buf = NULL;
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 198; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     } else {__pyx_pybuffernd_B.diminfo[0].strides = __pyx_pybuffernd_B.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_B.diminfo[0].shape = __pyx_pybuffernd_B.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_B.diminfo[1].strides = __pyx_pybuffernd_B.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_B.diminfo[1].shape = __pyx_pybuffernd_B.rcbuffer->pybuffer.shape[1];
     }
   }
   __pyx_v_B = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":201
+  /* "pyearth/_forward.pyx":167
  *             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)
  *         cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
  *             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)             # <<<<<<<<<<<<<<
- *         if self.endspan < 0:
- *             endspan = round(3 - log2(self.endspan_alpha / self.n))
+ *         cdef ConstantBasisFunction root_basis_function = self.basis[0]
+ *         for variable in range(self.n):
  */
   __pyx_t_1 = ((PyObject *)__pyx_v_self->X);
   __Pyx_INCREF(__pyx_t_1);
@@ -5570,152 +5690,98 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_init_linear_variable
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_X.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_X = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_X.rcbuffer->pybuffer.buf = NULL;
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 200; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 166; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     } else {__pyx_pybuffernd_X.diminfo[0].strides = __pyx_pybuffernd_X.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_X.diminfo[0].shape = __pyx_pybuffernd_X.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_X.diminfo[1].strides = __pyx_pybuffernd_X.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_X.diminfo[1].shape = __pyx_pybuffernd_X.rcbuffer->pybuffer.shape[1];
     }
   }
   __pyx_v_X = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":202
+  /* "pyearth/_forward.pyx":168
  *         cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
  *             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
- *         if self.endspan < 0:             # <<<<<<<<<<<<<<
- *             endspan = round(3 - log2(self.endspan_alpha / self.n))
- *         else:
- */
-  __pyx_t_5 = ((__pyx_v_self->endspan < 0) != 0);
-  if (__pyx_t_5) {
-
-    /* "pyearth/_forward.pyx":203
- *             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
- *         if self.endspan < 0:
- *             endspan = round(3 - log2(self.endspan_alpha / self.n))             # <<<<<<<<<<<<<<
- *         else:
- *             endspan = self.endspan
- */
-    __pyx_t_1 = PyFloat_FromDouble((3.0 - __pyx_f_7pyearth_5_util_log2((__pyx_v_self->endspan_alpha / __pyx_v_self->n)))); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_GIVEREF(__pyx_t_1);
-    PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
-    __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_round, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_6 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_6 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_v_endspan = __pyx_t_6;
-
-    /* "pyearth/_forward.pyx":202
- *         cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
- *             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
- *         if self.endspan < 0:             # <<<<<<<<<<<<<<
- *             endspan = round(3 - log2(self.endspan_alpha / self.n))
- *         else:
- */
-    goto __pyx_L3;
-  }
-
-  /* "pyearth/_forward.pyx":205
- *             endspan = round(3 - log2(self.endspan_alpha / self.n))
- *         else:
- *             endspan = self.endspan             # <<<<<<<<<<<<<<
- *         cdef ConstantBasisFunction root_basis_function = self.basis[0]
- *         for variable in range(self.n):
- */
-  /*else*/ {
-    __pyx_t_7 = __pyx_v_self->endspan;
-    __pyx_v_endspan = __pyx_t_7;
-  }
-  __pyx_L3:;
-
-  /* "pyearth/_forward.pyx":206
- *         else:
- *             endspan = self.endspan
  *         cdef ConstantBasisFunction root_basis_function = self.basis[0]             # <<<<<<<<<<<<<<
  *         for variable in range(self.n):
  *             order = np.argsort(X[:, variable])[::-1].astype(np.int)
  */
-  __pyx_t_1 = __Pyx_GetItemInt(((PyObject *)__pyx_v_self->basis), 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 206; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+  __pyx_t_1 = __Pyx_GetItemInt(((PyObject *)__pyx_v_self->basis), 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_GOTREF(__pyx_t_1);
-  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_7pyearth_6_basis_ConstantBasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 206; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_7pyearth_6_basis_ConstantBasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_root_basis_function = ((struct __pyx_obj_7pyearth_6_basis_ConstantBasisFunction *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":207
- *             endspan = self.endspan
+  /* "pyearth/_forward.pyx":169
+ *             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
  *         cdef ConstantBasisFunction root_basis_function = self.basis[0]
  *         for variable in range(self.n):             # <<<<<<<<<<<<<<
  *             order = np.argsort(X[:, variable])[::-1].astype(np.int)
  *             if root_basis_function.valid_knots(B[order, 0], X[order, variable],
  */
-  __pyx_t_6 = __pyx_v_self->n;
-  for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_6; __pyx_t_8+=1) {
-    __pyx_v_variable = __pyx_t_8;
+  __pyx_t_5 = __pyx_v_self->n;
+  for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
+    __pyx_v_variable = __pyx_t_6;
 
-    /* "pyearth/_forward.pyx":208
+    /* "pyearth/_forward.pyx":170
  *         cdef ConstantBasisFunction root_basis_function = self.basis[0]
  *         for variable in range(self.n):
  *             order = np.argsort(X[:, variable])[::-1].astype(np.int)             # <<<<<<<<<<<<<<
  *             if root_basis_function.valid_knots(B[order, 0], X[order, variable],
  *                                                variable, self.check_every,
  */
-    __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_argsort); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_argsort); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_9);
+    __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_7);
     __Pyx_INCREF(__pyx_slice__10);
     __Pyx_GIVEREF(__pyx_slice__10);
-    PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_slice__10);
+    PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_slice__10);
     __Pyx_GIVEREF(__pyx_t_3);
-    PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_3);
+    PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_3);
     __pyx_t_3 = 0;
-    __pyx_t_3 = PyObject_GetItem(((PyObject *)__pyx_v_X), __pyx_t_9); if (unlikely(__pyx_t_3 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __pyx_t_3 = PyObject_GetItem(((PyObject *)__pyx_v_X), __pyx_t_7); if (unlikely(__pyx_t_3 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
     __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __pyx_t_9 = NULL;
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __pyx_t_7 = NULL;
     if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_4))) {
-      __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_4);
-      if (likely(__pyx_t_9)) {
+      __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_4);
+      if (likely(__pyx_t_7)) {
         PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-        __Pyx_INCREF(__pyx_t_9);
+        __Pyx_INCREF(__pyx_t_7);
         __Pyx_INCREF(function);
         __Pyx_DECREF_SET(__pyx_t_4, function);
       }
     }
-    if (!__pyx_t_9) {
-      __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (!__pyx_t_7) {
+      __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_GOTREF(__pyx_t_2);
     } else {
-      __pyx_t_10 = PyTuple_New(1+1); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_10);
-      __Pyx_GIVEREF(__pyx_t_9); PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_9); __pyx_t_9 = NULL;
+      __pyx_t_8 = PyTuple_New(1+1); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_8);
+      __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_7); __pyx_t_7 = NULL;
       __Pyx_GIVEREF(__pyx_t_3);
-      PyTuple_SET_ITEM(__pyx_t_10, 0+1, __pyx_t_3);
+      PyTuple_SET_ITEM(__pyx_t_8, 0+1, __pyx_t_3);
       __pyx_t_3 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_10, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
-      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     }
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = PyObject_GetItem(__pyx_t_2, __pyx_slice__11); if (unlikely(__pyx_t_4 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __pyx_t_4 = PyObject_GetItem(__pyx_t_2, __pyx_slice__11); if (unlikely(__pyx_t_4 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_astype); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_astype); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_int); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_10);
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_int); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_t_4 = NULL;
     if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
@@ -5728,51 +5794,51 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_init_linear_variable
       }
     }
     if (!__pyx_t_4) {
-      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_10); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_8); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_GOTREF(__pyx_t_1);
     } else {
-      __pyx_t_3 = PyTuple_New(1+1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = PyTuple_New(1+1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_4); __pyx_t_4 = NULL;
-      __Pyx_GIVEREF(__pyx_t_10);
-      PyTuple_SET_ITEM(__pyx_t_3, 0+1, __pyx_t_10);
-      __pyx_t_10 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_3, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GIVEREF(__pyx_t_8);
+      PyTuple_SET_ITEM(__pyx_t_3, 0+1, __pyx_t_8);
+      __pyx_t_8 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_3, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     }
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __pyx_t_11 = ((PyArrayObject *)__pyx_t_1);
+    if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_9 = ((PyArrayObject *)__pyx_t_1);
     {
       __Pyx_BufFmt_StackElem __pyx_stack[1];
       __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_order.rcbuffer->pybuffer);
-      __pyx_t_7 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_order.rcbuffer->pybuffer, (PyObject*)__pyx_t_11, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
-      if (unlikely(__pyx_t_7 < 0)) {
-        PyErr_Fetch(&__pyx_t_12, &__pyx_t_13, &__pyx_t_14);
+      __pyx_t_10 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_order.rcbuffer->pybuffer, (PyObject*)__pyx_t_9, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
+      if (unlikely(__pyx_t_10 < 0)) {
+        PyErr_Fetch(&__pyx_t_11, &__pyx_t_12, &__pyx_t_13);
         if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_order.rcbuffer->pybuffer, (PyObject*)__pyx_v_order, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
-          Py_XDECREF(__pyx_t_12); Py_XDECREF(__pyx_t_13); Py_XDECREF(__pyx_t_14);
+          Py_XDECREF(__pyx_t_11); Py_XDECREF(__pyx_t_12); Py_XDECREF(__pyx_t_13);
           __Pyx_RaiseBufferFallbackError();
         } else {
-          PyErr_Restore(__pyx_t_12, __pyx_t_13, __pyx_t_14);
+          PyErr_Restore(__pyx_t_11, __pyx_t_12, __pyx_t_13);
         }
       }
       __pyx_pybuffernd_order.diminfo[0].strides = __pyx_pybuffernd_order.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_order.diminfo[0].shape = __pyx_pybuffernd_order.rcbuffer->pybuffer.shape[0];
-      if (unlikely(__pyx_t_7 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      if (unlikely(__pyx_t_10 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
-    __pyx_t_11 = 0;
+    __pyx_t_9 = 0;
     __Pyx_XDECREF_SET(__pyx_v_order, ((PyArrayObject *)__pyx_t_1));
     __pyx_t_1 = 0;
 
-    /* "pyearth/_forward.pyx":209
+    /* "pyearth/_forward.pyx":171
  *         for variable in range(self.n):
  *             order = np.argsort(X[:, variable])[::-1].astype(np.int)
  *             if root_basis_function.valid_knots(B[order, 0], X[order, variable],             # <<<<<<<<<<<<<<
  *                                                variable, self.check_every,
- *                                                endspan, self.minspan,
+ *                                                self.endspan, self.minspan,
  */
-    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 171; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_INCREF(((PyObject *)__pyx_v_order));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_order));
@@ -5780,13 +5846,13 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_init_linear_variable
     __Pyx_INCREF(__pyx_int_0);
     __Pyx_GIVEREF(__pyx_int_0);
     PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_int_0);
-    __pyx_t_2 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_1); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __pyx_t_2 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_1); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 171; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 171; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 171; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 171; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(((PyObject *)__pyx_v_order));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_order));
@@ -5794,13 +5860,13 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_init_linear_variable
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_1);
     __pyx_t_1 = 0;
-    __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_X), __pyx_t_3); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_X), __pyx_t_3); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 171; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 171; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-    /* "pyearth/_forward.pyx":213
- *                                                endspan, self.minspan,
+    /* "pyearth/_forward.pyx":175
+ *                                                self.endspan, self.minspan,
  *                                                self.minspan_alpha, self.n,
  *                                                self.mwork).shape[0] == 0:             # <<<<<<<<<<<<<<
  *                 linear_variables[variable] = 1
@@ -5809,39 +5875,39 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_init_linear_variable
     __pyx_t_3 = ((PyObject *)__pyx_v_self->mwork);
     __Pyx_INCREF(__pyx_t_3);
 
-    /* "pyearth/_forward.pyx":209
+    /* "pyearth/_forward.pyx":171
  *         for variable in range(self.n):
  *             order = np.argsort(X[:, variable])[::-1].astype(np.int)
  *             if root_basis_function.valid_knots(B[order, 0], X[order, variable],             # <<<<<<<<<<<<<<
  *                                                variable, self.check_every,
- *                                                endspan, self.minspan,
+ *                                                self.endspan, self.minspan,
  */
-    __pyx_t_10 = ((PyObject *)((struct __pyx_vtabstruct_7pyearth_6_basis_ConstantBasisFunction *)__pyx_v_root_basis_function->__pyx_base.__pyx_base.__pyx_vtab)->__pyx_base.__pyx_base.valid_knots(((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_v_root_basis_function), ((PyArrayObject *)__pyx_t_2), ((PyArrayObject *)__pyx_t_1), __pyx_v_variable, __pyx_v_self->check_every, __pyx_v_endspan, __pyx_v_self->minspan, __pyx_v_self->minspan_alpha, __pyx_v_self->n, ((PyArrayObject *)__pyx_t_3), 0)); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_10);
+    __pyx_t_8 = ((PyObject *)((struct __pyx_vtabstruct_7pyearth_6_basis_ConstantBasisFunction *)__pyx_v_root_basis_function->__pyx_base.__pyx_base.__pyx_vtab)->__pyx_base.__pyx_base.valid_knots(((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_v_root_basis_function), ((PyArrayObject *)__pyx_t_2), ((PyArrayObject *)__pyx_t_1), __pyx_v_variable, __pyx_v_self->check_every, __pyx_v_self->endspan, __pyx_v_self->minspan, __pyx_v_self->minspan_alpha, __pyx_v_self->n, ((PyArrayObject *)__pyx_t_3), 0)); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 171; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-    /* "pyearth/_forward.pyx":213
- *                                                endspan, self.minspan,
+    /* "pyearth/_forward.pyx":175
+ *                                                self.endspan, self.minspan,
  *                                                self.minspan_alpha, self.n,
  *                                                self.mwork).shape[0] == 0:             # <<<<<<<<<<<<<<
  *                 linear_variables[variable] = 1
  *             else:
  */
-    __pyx_t_5 = (((((PyArrayObject *)__pyx_t_10)->dimensions[0]) == 0) != 0);
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    __pyx_t_14 = (((((PyArrayObject *)__pyx_t_8)->dimensions[0]) == 0) != 0);
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-    /* "pyearth/_forward.pyx":209
+    /* "pyearth/_forward.pyx":171
  *         for variable in range(self.n):
  *             order = np.argsort(X[:, variable])[::-1].astype(np.int)
  *             if root_basis_function.valid_knots(B[order, 0], X[order, variable],             # <<<<<<<<<<<<<<
  *                                                variable, self.check_every,
- *                                                endspan, self.minspan,
+ *                                                self.endspan, self.minspan,
  */
-    if (__pyx_t_5) {
+    if (__pyx_t_14) {
 
-      /* "pyearth/_forward.pyx":214
+      /* "pyearth/_forward.pyx":176
  *                                                self.minspan_alpha, self.n,
  *                                                self.mwork).shape[0] == 0:
  *                 linear_variables[variable] = 1             # <<<<<<<<<<<<<<
@@ -5851,36 +5917,36 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_init_linear_variable
       __pyx_t_15 = __pyx_v_variable;
       *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_linear_variables.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_linear_variables.diminfo[0].strides) = 1;
 
-      /* "pyearth/_forward.pyx":209
+      /* "pyearth/_forward.pyx":171
  *         for variable in range(self.n):
  *             order = np.argsort(X[:, variable])[::-1].astype(np.int)
  *             if root_basis_function.valid_knots(B[order, 0], X[order, variable],             # <<<<<<<<<<<<<<
  *                                                variable, self.check_every,
- *                                                endspan, self.minspan,
+ *                                                self.endspan, self.minspan,
  */
-      goto __pyx_L6;
+      goto __pyx_L5;
     }
 
-    /* "pyearth/_forward.pyx":216
+    /* "pyearth/_forward.pyx":178
  *                 linear_variables[variable] = 1
  *             else:
  *                 linear_variables[variable] = 0             # <<<<<<<<<<<<<<
  * 
- *     # Removed in favor of new knot search code
+ *     cpdef run(ForwardPasser self):
  */
     /*else*/ {
       __pyx_t_16 = __pyx_v_variable;
       *__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_linear_variables.rcbuffer->pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_linear_variables.diminfo[0].strides) = 0;
     }
-    __pyx_L6:;
+    __pyx_L5:;
   }
 
-  /* "pyearth/_forward.pyx":192
+  /* "pyearth/_forward.pyx":159
  *         return self.basis
  * 
  *     cpdef init_linear_variables(ForwardPasser self):             # <<<<<<<<<<<<<<
  *         cdef INDEX_t variable
- *         cdef INDEX_t endspan
+ *         cdef cnp.ndarray[INT_t, ndim = 1] order
  */
 
   /* function exit code */
@@ -5891,8 +5957,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_init_linear_variable
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_XDECREF(__pyx_t_10);
+  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_8);
   { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
     __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_B.rcbuffer->pybuffer);
@@ -5941,7 +6007,7 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_4init_linear_variab
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("init_linear_variables", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_7pyearth_8_forward_13ForwardPasser_init_linear_variables(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 192; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_f_7pyearth_8_forward_13ForwardPasser_init_linear_variables(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -5958,8 +6024,8 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_4init_linear_variab
   return __pyx_r;
 }
 
-/* "pyearth/_forward.pyx":222
- * #         return self.B_orth
+/* "pyearth/_forward.pyx":180
+ *                 linear_variables[variable] = 0
  * 
  *     cpdef run(ForwardPasser self):             # <<<<<<<<<<<<<<
  *         if self.max_terms > 1:
@@ -5983,7 +6049,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_run); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_run); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 180; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_8_forward_13ForwardPasser_7run)) {
       __Pyx_XDECREF(__pyx_r);
@@ -5999,10 +6065,10 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
         }
       }
       if (__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 180; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 180; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       }
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -6014,7 +6080,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_forward.pyx":223
+  /* "pyearth/_forward.pyx":181
  * 
  *     cpdef run(ForwardPasser self):
  *         if self.max_terms > 1:             # <<<<<<<<<<<<<<
@@ -6024,7 +6090,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
   __pyx_t_5 = ((__pyx_v_self->max_terms > 1) != 0);
   if (__pyx_t_5) {
 
-    /* "pyearth/_forward.pyx":224
+    /* "pyearth/_forward.pyx":182
  *     cpdef run(ForwardPasser self):
  *         if self.max_terms > 1:
  *             while True:             # <<<<<<<<<<<<<<
@@ -6033,31 +6099,31 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
  */
     while (1) {
 
-      /* "pyearth/_forward.pyx":225
+      /* "pyearth/_forward.pyx":183
  *         if self.max_terms > 1:
  *             while True:
  *                 self.next_pair()             # <<<<<<<<<<<<<<
  *                 if self.stop_check():
  *                     break
  */
-      __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->next_pair(__pyx_v_self); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 225; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->next_pair(__pyx_v_self); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "pyearth/_forward.pyx":226
+      /* "pyearth/_forward.pyx":184
  *             while True:
  *                 self.next_pair()
  *                 if self.stop_check():             # <<<<<<<<<<<<<<
  *                     break
  *                 self.iteration_number += 1
  */
-      __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->stop_check(__pyx_v_self); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 226; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->stop_check(__pyx_v_self); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 184; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_5 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 226; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_5 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 184; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       if (__pyx_t_5) {
 
-        /* "pyearth/_forward.pyx":227
+        /* "pyearth/_forward.pyx":185
  *                 self.next_pair()
  *                 if self.stop_check():
  *                     break             # <<<<<<<<<<<<<<
@@ -6066,7 +6132,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
  */
         goto __pyx_L5_break;
 
-        /* "pyearth/_forward.pyx":226
+        /* "pyearth/_forward.pyx":184
  *             while True:
  *                 self.next_pair()
  *                 if self.stop_check():             # <<<<<<<<<<<<<<
@@ -6075,7 +6141,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
  */
       }
 
-      /* "pyearth/_forward.pyx":228
+      /* "pyearth/_forward.pyx":186
  *                 if self.stop_check():
  *                     break
  *                 self.iteration_number += 1             # <<<<<<<<<<<<<<
@@ -6086,7 +6152,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
     }
     __pyx_L5_break:;
 
-    /* "pyearth/_forward.pyx":223
+    /* "pyearth/_forward.pyx":181
  * 
  *     cpdef run(ForwardPasser self):
  *         if self.max_terms > 1:             # <<<<<<<<<<<<<<
@@ -6095,8 +6161,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
  */
   }
 
-  /* "pyearth/_forward.pyx":222
- * #         return self.B_orth
+  /* "pyearth/_forward.pyx":180
+ *                 linear_variables[variable] = 0
  * 
  *     cpdef run(ForwardPasser self):             # <<<<<<<<<<<<<<
  *         if self.max_terms > 1:
@@ -6141,7 +6207,7 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_6run(struct __pyx_o
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("run", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_7pyearth_8_forward_13ForwardPasser_run(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_f_7pyearth_8_forward_13ForwardPasser_run(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 180; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -6158,7 +6224,7 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_6run(struct __pyx_o
   return __pyx_r;
 }
 
-/* "pyearth/_forward.pyx":230
+/* "pyearth/_forward.pyx":188
  *                 self.iteration_number += 1
  * 
  *     cdef stop_check(ForwardPasser self):             # <<<<<<<<<<<<<<
@@ -6182,14 +6248,14 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("stop_check", 0);
 
-  /* "pyearth/_forward.pyx":231
+  /* "pyearth/_forward.pyx":189
  * 
  *     cdef stop_check(ForwardPasser self):
  *         last = self.record.__len__() - 1             # <<<<<<<<<<<<<<
  *         if self.record.iterations[last].get_size() + 4 > self.max_terms:
  *             self.record.stopping_condition = MAXTERMS
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self->record), __pyx_n_s_len); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 231; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self->record), __pyx_n_s_len); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 189; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
@@ -6202,20 +6268,20 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
     }
   }
   if (__pyx_t_3) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 231; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 189; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   } else {
-    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 231; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 189; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyInt_SubtractObjC(__pyx_t_1, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 231; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_SubtractObjC(__pyx_t_1, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 189; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_last = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "pyearth/_forward.pyx":232
+  /* "pyearth/_forward.pyx":190
  *     cdef stop_check(ForwardPasser self):
  *         last = self.record.__len__() - 1
  *         if self.record.iterations[last].get_size() + 4 > self.max_terms:             # <<<<<<<<<<<<<<
@@ -6224,11 +6290,11 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
   if (unlikely(__pyx_v_self->record->__pyx_base.iterations == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 232; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 190; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
-  __pyx_t_1 = PyObject_GetItem(__pyx_v_self->record->__pyx_base.iterations, __pyx_v_last); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 232; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+  __pyx_t_1 = PyObject_GetItem(__pyx_v_self->record->__pyx_base.iterations, __pyx_v_last); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 190; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_get_size); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 232; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_get_size); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 190; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = NULL;
@@ -6242,26 +6308,26 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
     }
   }
   if (__pyx_t_1) {
-    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 232; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 190; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   } else {
-    __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 232; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 190; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyInt_AddObjC(__pyx_t_2, __pyx_int_4, 4, 0); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 232; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_AddObjC(__pyx_t_2, __pyx_int_4, 4, 0); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 190; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->max_terms); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 232; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->max_terms); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 190; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = PyObject_RichCompare(__pyx_t_3, __pyx_t_2, Py_GT); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 232; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyObject_RichCompare(__pyx_t_3, __pyx_t_2, Py_GT); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 190; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 232; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 190; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_4) {
 
-    /* "pyearth/_forward.pyx":233
+    /* "pyearth/_forward.pyx":191
  *         last = self.record.__len__() - 1
  *         if self.record.iterations[last].get_size() + 4 > self.max_terms:
  *             self.record.stopping_condition = MAXTERMS             # <<<<<<<<<<<<<<
@@ -6270,7 +6336,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
     __pyx_v_self->record->stopping_condition = __pyx_e_7pyearth_8_forward_MAXTERMS;
 
-    /* "pyearth/_forward.pyx":234
+    /* "pyearth/_forward.pyx":192
  *         if self.record.iterations[last].get_size() + 4 > self.max_terms:
  *             self.record.stopping_condition = MAXTERMS
  *             return True             # <<<<<<<<<<<<<<
@@ -6282,7 +6348,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
     __pyx_r = Py_True;
     goto __pyx_L0;
 
-    /* "pyearth/_forward.pyx":232
+    /* "pyearth/_forward.pyx":190
  *     cdef stop_check(ForwardPasser self):
  *         last = self.record.__len__() - 1
  *         if self.record.iterations[last].get_size() + 4 > self.max_terms:             # <<<<<<<<<<<<<<
@@ -6291,35 +6357,35 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
   }
 
-  /* "pyearth/_forward.pyx":235
+  /* "pyearth/_forward.pyx":193
  *             self.record.stopping_condition = MAXTERMS
  *             return True
  *         rsq = self.record.rsq(last)             # <<<<<<<<<<<<<<
  *         if rsq > 1 - self.thresh:
  *             self.record.stopping_condition = MAXRSQ
  */
-  __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_last); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 235; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_1 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->record->__pyx_base.__pyx_vtab)->__pyx_base.rsq(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self->record), __pyx_t_5, 0)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 235; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_last); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 193; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->record->__pyx_base.__pyx_vtab)->__pyx_base.rsq(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self->record), __pyx_t_5, 0)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 193; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_rsq = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":236
+  /* "pyearth/_forward.pyx":194
  *             return True
  *         rsq = self.record.rsq(last)
  *         if rsq > 1 - self.thresh:             # <<<<<<<<<<<<<<
  *             self.record.stopping_condition = MAXRSQ
  *             return True
  */
-  __pyx_t_1 = PyFloat_FromDouble((1.0 - __pyx_v_self->thresh)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 236; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble((1.0 - __pyx_v_self->thresh)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 194; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyObject_RichCompare(__pyx_v_rsq, __pyx_t_1, Py_GT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 236; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = PyObject_RichCompare(__pyx_v_rsq, __pyx_t_1, Py_GT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 194; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_4 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 236; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_4 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 194; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (__pyx_t_4) {
 
-    /* "pyearth/_forward.pyx":237
+    /* "pyearth/_forward.pyx":195
  *         rsq = self.record.rsq(last)
  *         if rsq > 1 - self.thresh:
  *             self.record.stopping_condition = MAXRSQ             # <<<<<<<<<<<<<<
@@ -6328,7 +6394,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
     __pyx_v_self->record->stopping_condition = __pyx_e_7pyearth_8_forward_MAXRSQ;
 
-    /* "pyearth/_forward.pyx":238
+    /* "pyearth/_forward.pyx":196
  *         if rsq > 1 - self.thresh:
  *             self.record.stopping_condition = MAXRSQ
  *             return True             # <<<<<<<<<<<<<<
@@ -6340,7 +6406,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
     __pyx_r = Py_True;
     goto __pyx_L0;
 
-    /* "pyearth/_forward.pyx":236
+    /* "pyearth/_forward.pyx":194
  *             return True
  *         rsq = self.record.rsq(last)
  *         if rsq > 1 - self.thresh:             # <<<<<<<<<<<<<<
@@ -6349,41 +6415,41 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
   }
 
-  /* "pyearth/_forward.pyx":239
+  /* "pyearth/_forward.pyx":197
  *             self.record.stopping_condition = MAXRSQ
  *             return True
  *         previous_rsq = self.record.rsq(last - 1)             # <<<<<<<<<<<<<<
  *         if rsq - previous_rsq < self.thresh:
  *             self.record.stopping_condition = NOIMPRV
  */
-  __pyx_t_2 = __Pyx_PyInt_SubtractObjC(__pyx_v_last, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 239; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_SubtractObjC(__pyx_v_last, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 197; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_2); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 239; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_2); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 197; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->record->__pyx_base.__pyx_vtab)->__pyx_base.rsq(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self->record), __pyx_t_5, 0)); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 239; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->record->__pyx_base.__pyx_vtab)->__pyx_base.rsq(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self->record), __pyx_t_5, 0)); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 197; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_previous_rsq = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "pyearth/_forward.pyx":240
+  /* "pyearth/_forward.pyx":198
  *             return True
  *         previous_rsq = self.record.rsq(last - 1)
  *         if rsq - previous_rsq < self.thresh:             # <<<<<<<<<<<<<<
  *             self.record.stopping_condition = NOIMPRV
  *             return True
  */
-  __pyx_t_2 = PyNumber_Subtract(__pyx_v_rsq, __pyx_v_previous_rsq); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 240; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = PyNumber_Subtract(__pyx_v_rsq, __pyx_v_previous_rsq); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 198; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->thresh); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 240; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->thresh); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 198; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = PyObject_RichCompare(__pyx_t_2, __pyx_t_1, Py_LT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 240; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = PyObject_RichCompare(__pyx_t_2, __pyx_t_1, Py_LT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 198; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 240; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 198; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   if (__pyx_t_4) {
 
-    /* "pyearth/_forward.pyx":241
+    /* "pyearth/_forward.pyx":199
  *         previous_rsq = self.record.rsq(last - 1)
  *         if rsq - previous_rsq < self.thresh:
  *             self.record.stopping_condition = NOIMPRV             # <<<<<<<<<<<<<<
@@ -6392,7 +6458,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
     __pyx_v_self->record->stopping_condition = __pyx_e_7pyearth_8_forward_NOIMPRV;
 
-    /* "pyearth/_forward.pyx":242
+    /* "pyearth/_forward.pyx":200
  *         if rsq - previous_rsq < self.thresh:
  *             self.record.stopping_condition = NOIMPRV
  *             return True             # <<<<<<<<<<<<<<
@@ -6404,7 +6470,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
     __pyx_r = Py_True;
     goto __pyx_L0;
 
-    /* "pyearth/_forward.pyx":240
+    /* "pyearth/_forward.pyx":198
  *             return True
  *         previous_rsq = self.record.rsq(last - 1)
  *         if rsq - previous_rsq < self.thresh:             # <<<<<<<<<<<<<<
@@ -6413,18 +6479,18 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
   }
 
-  /* "pyearth/_forward.pyx":243
+  /* "pyearth/_forward.pyx":201
  *             self.record.stopping_condition = NOIMPRV
  *             return True
  *         if self.record.grsq(last) < -10:             # <<<<<<<<<<<<<<
  *             self.record.stopping_condition = LOWGRSQ
  *             return True
  */
-  __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_last); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 243; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_last); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 201; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_t_4 = ((((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->record->__pyx_base.__pyx_vtab)->__pyx_base.grsq(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self->record), __pyx_t_5, 0) < -10.0) != 0);
   if (__pyx_t_4) {
 
-    /* "pyearth/_forward.pyx":244
+    /* "pyearth/_forward.pyx":202
  *             return True
  *         if self.record.grsq(last) < -10:
  *             self.record.stopping_condition = LOWGRSQ             # <<<<<<<<<<<<<<
@@ -6433,7 +6499,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
     __pyx_v_self->record->stopping_condition = __pyx_e_7pyearth_8_forward_LOWGRSQ;
 
-    /* "pyearth/_forward.pyx":245
+    /* "pyearth/_forward.pyx":203
  *         if self.record.grsq(last) < -10:
  *             self.record.stopping_condition = LOWGRSQ
  *             return True             # <<<<<<<<<<<<<<
@@ -6445,7 +6511,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
     __pyx_r = Py_True;
     goto __pyx_L0;
 
-    /* "pyearth/_forward.pyx":243
+    /* "pyearth/_forward.pyx":201
  *             self.record.stopping_condition = NOIMPRV
  *             return True
  *         if self.record.grsq(last) < -10:             # <<<<<<<<<<<<<<
@@ -6454,7 +6520,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
   }
 
-  /* "pyearth/_forward.pyx":246
+  /* "pyearth/_forward.pyx":204
  *             self.record.stopping_condition = LOWGRSQ
  *             return True
  *         if self.record.iterations[last].no_further_candidates():             # <<<<<<<<<<<<<<
@@ -6463,11 +6529,11 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
   if (unlikely(__pyx_v_self->record->__pyx_base.iterations == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 246; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 204; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
-  __pyx_t_1 = PyObject_GetItem(__pyx_v_self->record->__pyx_base.iterations, __pyx_v_last); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 246; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+  __pyx_t_1 = PyObject_GetItem(__pyx_v_self->record->__pyx_base.iterations, __pyx_v_last); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 204; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_no_further_candidates); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 246; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_no_further_candidates); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 204; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = NULL;
@@ -6481,18 +6547,18 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
     }
   }
   if (__pyx_t_1) {
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 246; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 204; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   } else {
-    __pyx_t_3 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 246; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 204; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 246; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 204; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   if (__pyx_t_4) {
 
-    /* "pyearth/_forward.pyx":247
+    /* "pyearth/_forward.pyx":205
  *             return True
  *         if self.record.iterations[last].no_further_candidates():
  *             self.record.stopping_condition = NOCAND             # <<<<<<<<<<<<<<
@@ -6501,7 +6567,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
     __pyx_v_self->record->stopping_condition = __pyx_e_7pyearth_8_forward_NOCAND;
 
-    /* "pyearth/_forward.pyx":248
+    /* "pyearth/_forward.pyx":206
  *         if self.record.iterations[last].no_further_candidates():
  *             self.record.stopping_condition = NOCAND
  *             return True             # <<<<<<<<<<<<<<
@@ -6513,7 +6579,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
     __pyx_r = Py_True;
     goto __pyx_L0;
 
-    /* "pyearth/_forward.pyx":246
+    /* "pyearth/_forward.pyx":204
  *             self.record.stopping_condition = LOWGRSQ
  *             return True
  *         if self.record.iterations[last].no_further_candidates():             # <<<<<<<<<<<<<<
@@ -6522,7 +6588,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
   }
 
-  /* "pyearth/_forward.pyx":249
+  /* "pyearth/_forward.pyx":207
  *             self.record.stopping_condition = NOCAND
  *             return True
  *         return False             # <<<<<<<<<<<<<<
@@ -6534,7 +6600,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
   __pyx_r = Py_False;
   goto __pyx_L0;
 
-  /* "pyearth/_forward.pyx":230
+  /* "pyearth/_forward.pyx":188
  *                 self.iteration_number += 1
  * 
  *     cdef stop_check(ForwardPasser self):             # <<<<<<<<<<<<<<
@@ -6558,7 +6624,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
   return __pyx_r;
 }
 
-/* "pyearth/_forward.pyx":251
+/* "pyearth/_forward.pyx":209
  *         return False
  * 
  *     cpdef orthonormal_update(ForwardPasser self, b):             # <<<<<<<<<<<<<<
@@ -6580,11 +6646,10 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
   PyObject *__pyx_t_4 = NULL;
   PyObject *__pyx_t_5 = NULL;
   Py_ssize_t __pyx_t_6;
-  PyObject *(*__pyx_t_7)(PyObject *);
-  Py_ssize_t __pyx_t_8;
-  PyObject *__pyx_t_9 = NULL;
+  Py_ssize_t __pyx_t_7;
+  PyObject *__pyx_t_8 = NULL;
+  int __pyx_t_9;
   int __pyx_t_10;
-  int __pyx_t_11;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -6593,7 +6658,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_orthonormal_update); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 251; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_orthonormal_update); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_8_forward_13ForwardPasser_9orthonormal_update)) {
       __Pyx_XDECREF(__pyx_r);
@@ -6609,16 +6674,16 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
         }
       }
       if (!__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_b); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 251; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_b); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_2);
       } else {
-        __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 251; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_5);
         __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
         __Pyx_INCREF(__pyx_v_b);
         __Pyx_GIVEREF(__pyx_v_b);
         PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_v_b);
-        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 251; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       }
@@ -6631,7 +6696,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_forward.pyx":253
+  /* "pyearth/_forward.pyx":211
  *     cpdef orthonormal_update(ForwardPasser self, b):
  *         # Update the outcome data
  *         linear_dependence = False             # <<<<<<<<<<<<<<
@@ -6640,83 +6705,54 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
  */
   __pyx_v_linear_dependence = 0;
 
-  /* "pyearth/_forward.pyx":254
+  /* "pyearth/_forward.pyx":212
  *         # Update the outcome data
  *         linear_dependence = False
  *         return_codes = []             # <<<<<<<<<<<<<<
  *         for outcome in self.outcomes:
  *             return_code = outcome.update(b, self.zero_tol)
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 254; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 212; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_return_codes = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":255
+  /* "pyearth/_forward.pyx":213
  *         linear_dependence = False
  *         return_codes = []
  *         for outcome in self.outcomes:             # <<<<<<<<<<<<<<
  *             return_code = outcome.update(b, self.zero_tol)
  *             if return_code == -1:
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_outcomes); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_1);
-  if (likely(PyList_CheckExact(__pyx_t_1)) || PyTuple_CheckExact(__pyx_t_1)) {
-    __pyx_t_2 = __pyx_t_1; __Pyx_INCREF(__pyx_t_2); __pyx_t_6 = 0;
-    __pyx_t_7 = NULL;
-  } else {
-    __pyx_t_6 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_7 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(__pyx_v_self->outcomes == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 213; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = __pyx_v_self->outcomes; __Pyx_INCREF(__pyx_t_1); __pyx_t_6 = 0;
   for (;;) {
-    if (likely(!__pyx_t_7)) {
-      if (likely(PyList_CheckExact(__pyx_t_2))) {
-        if (__pyx_t_6 >= PyList_GET_SIZE(__pyx_t_2)) break;
-        #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_6); __Pyx_INCREF(__pyx_t_1); __pyx_t_6++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        #else
-        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        #endif
-      } else {
-        if (__pyx_t_6 >= PyTuple_GET_SIZE(__pyx_t_2)) break;
-        #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_6); __Pyx_INCREF(__pyx_t_1); __pyx_t_6++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        #else
-        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        #endif
-      }
-    } else {
-      __pyx_t_1 = __pyx_t_7(__pyx_t_2);
-      if (unlikely(!__pyx_t_1)) {
-        PyObject* exc_type = PyErr_Occurred();
-        if (exc_type) {
-          if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        }
-        break;
-      }
-      __Pyx_GOTREF(__pyx_t_1);
-    }
-    __Pyx_XDECREF_SET(__pyx_v_outcome, __pyx_t_1);
-    __pyx_t_1 = 0;
+    if (__pyx_t_6 >= PyList_GET_SIZE(__pyx_t_1)) break;
+    #if CYTHON_COMPILING_IN_CPYTHON
+    __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_6); __Pyx_INCREF(__pyx_t_2); __pyx_t_6++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 213; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    #else
+    __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 213; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_2);
+    #endif
+    __Pyx_XDECREF_SET(__pyx_v_outcome, __pyx_t_2);
+    __pyx_t_2 = 0;
 
-    /* "pyearth/_forward.pyx":256
+    /* "pyearth/_forward.pyx":214
  *         return_codes = []
  *         for outcome in self.outcomes:
  *             return_code = outcome.update(b, self.zero_tol)             # <<<<<<<<<<<<<<
  *             if return_code == -1:
  *                 raise ValueError('This should not have happened.')
  */
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_outcome, __pyx_n_s_update); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 256; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_outcome, __pyx_n_s_update); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 214; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = PyFloat_FromDouble(__pyx_v_self->zero_tol); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 256; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_5 = PyFloat_FromDouble(__pyx_v_self->zero_tol); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 214; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_5);
     __pyx_t_4 = NULL;
-    __pyx_t_8 = 0;
+    __pyx_t_7 = 0;
     if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_3))) {
       __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
       if (likely(__pyx_t_4)) {
@@ -6724,54 +6760,54 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
         __Pyx_INCREF(__pyx_t_4);
         __Pyx_INCREF(function);
         __Pyx_DECREF_SET(__pyx_t_3, function);
-        __pyx_t_8 = 1;
+        __pyx_t_7 = 1;
       }
     }
-    __pyx_t_9 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 256; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_9);
+    __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 214; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_8);
     if (__pyx_t_4) {
-      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_4); __pyx_t_4 = NULL;
+      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_4); __pyx_t_4 = NULL;
     }
     __Pyx_INCREF(__pyx_v_b);
     __Pyx_GIVEREF(__pyx_v_b);
-    PyTuple_SET_ITEM(__pyx_t_9, 0+__pyx_t_8, __pyx_v_b);
+    PyTuple_SET_ITEM(__pyx_t_8, 0+__pyx_t_7, __pyx_v_b);
     __Pyx_GIVEREF(__pyx_t_5);
-    PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_8, __pyx_t_5);
+    PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_5);
     __pyx_t_5 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_9, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 256; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 214; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __Pyx_XDECREF_SET(__pyx_v_return_code, __pyx_t_1);
-    __pyx_t_1 = 0;
+    __Pyx_XDECREF_SET(__pyx_v_return_code, __pyx_t_2);
+    __pyx_t_2 = 0;
 
-    /* "pyearth/_forward.pyx":257
+    /* "pyearth/_forward.pyx":215
  *         for outcome in self.outcomes:
  *             return_code = outcome.update(b, self.zero_tol)
  *             if return_code == -1:             # <<<<<<<<<<<<<<
  *                 raise ValueError('This should not have happened.')
  *             return_codes.append(return_code != 0)
  */
-    __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_v_return_code, __pyx_int_neg_1, -1L, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 257; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_10 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_10 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 257; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (__pyx_t_10) {
+    __pyx_t_2 = __Pyx_PyInt_EqObjC(__pyx_v_return_code, __pyx_int_neg_1, -1L, 0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 215; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_9 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 215; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    if (__pyx_t_9) {
 
-      /* "pyearth/_forward.pyx":258
+      /* "pyearth/_forward.pyx":216
  *             return_code = outcome.update(b, self.zero_tol)
  *             if return_code == -1:
  *                 raise ValueError('This should not have happened.')             # <<<<<<<<<<<<<<
  *             return_codes.append(return_code != 0)
  *         # TODO: Change to any?
  */
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__12, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 258; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_Raise(__pyx_t_1, 0, 0, 0);
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 258; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__12, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 216; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_Raise(__pyx_t_2, 0, 0, 0);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 216; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-      /* "pyearth/_forward.pyx":257
+      /* "pyearth/_forward.pyx":215
  *         for outcome in self.outcomes:
  *             return_code = outcome.update(b, self.zero_tol)
  *             if return_code == -1:             # <<<<<<<<<<<<<<
@@ -6780,18 +6816,18 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
  */
     }
 
-    /* "pyearth/_forward.pyx":259
+    /* "pyearth/_forward.pyx":217
  *             if return_code == -1:
  *                 raise ValueError('This should not have happened.')
  *             return_codes.append(return_code != 0)             # <<<<<<<<<<<<<<
  *         # TODO: Change to any?
  *         if all(return_codes):
  */
-    __pyx_t_1 = PyObject_RichCompare(__pyx_v_return_code, __pyx_int_0, Py_NE); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 259; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_return_codes, __pyx_t_1); if (unlikely(__pyx_t_11 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 259; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_2 = PyObject_RichCompare(__pyx_v_return_code, __pyx_int_0, Py_NE); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 217; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_10 = __Pyx_PyList_Append(__pyx_v_return_codes, __pyx_t_2); if (unlikely(__pyx_t_10 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 217; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "pyearth/_forward.pyx":255
+    /* "pyearth/_forward.pyx":213
  *         linear_dependence = False
  *         return_codes = []
  *         for outcome in self.outcomes:             # <<<<<<<<<<<<<<
@@ -6799,28 +6835,28 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
  *             if return_code == -1:
  */
   }
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":261
+  /* "pyearth/_forward.pyx":219
  *             return_codes.append(return_code != 0)
  *         # TODO: Change to any?
  *         if all(return_codes):             # <<<<<<<<<<<<<<
  *             linear_dependence = True
  *         return linear_dependence
  */
-  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 261; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 219; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__pyx_v_return_codes);
   __Pyx_GIVEREF(__pyx_v_return_codes);
-  PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_return_codes);
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_all, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 261; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_10 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_10 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 261; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_return_codes);
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_all, __pyx_t_1, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 219; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (__pyx_t_10) {
+  __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_9 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 219; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (__pyx_t_9) {
 
-    /* "pyearth/_forward.pyx":262
+    /* "pyearth/_forward.pyx":220
  *         # TODO: Change to any?
  *         if all(return_codes):
  *             linear_dependence = True             # <<<<<<<<<<<<<<
@@ -6829,7 +6865,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
  */
     __pyx_v_linear_dependence = 1;
 
-    /* "pyearth/_forward.pyx":261
+    /* "pyearth/_forward.pyx":219
  *             return_codes.append(return_code != 0)
  *         # TODO: Change to any?
  *         if all(return_codes):             # <<<<<<<<<<<<<<
@@ -6838,7 +6874,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
  */
   }
 
-  /* "pyearth/_forward.pyx":263
+  /* "pyearth/_forward.pyx":221
  *         if all(return_codes):
  *             linear_dependence = True
  *         return linear_dependence             # <<<<<<<<<<<<<<
@@ -6846,13 +6882,13 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
  *     cpdef orthonormal_downdate(ForwardPasser self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_v_linear_dependence); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 263; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_v_linear_dependence); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 221; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_r = __pyx_t_2;
+  __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_forward.pyx":251
+  /* "pyearth/_forward.pyx":209
  *         return False
  * 
  *     cpdef orthonormal_update(ForwardPasser self, b):             # <<<<<<<<<<<<<<
@@ -6867,7 +6903,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_XDECREF(__pyx_t_8);
   __Pyx_AddTraceback("pyearth._forward.ForwardPasser.orthonormal_update", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
@@ -6901,7 +6937,7 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_8orthonormal_update
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("orthonormal_update", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(__pyx_v_self, __pyx_v_b, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 251; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(__pyx_v_self, __pyx_v_b, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -6918,7 +6954,7 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_8orthonormal_update
   return __pyx_r;
 }
 
-/* "pyearth/_forward.pyx":265
+/* "pyearth/_forward.pyx":223
  *         return linear_dependence
  * 
  *     cpdef orthonormal_downdate(ForwardPasser self):             # <<<<<<<<<<<<<<
@@ -6936,7 +6972,6 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_downdate
   PyObject *__pyx_t_3 = NULL;
   PyObject *__pyx_t_4 = NULL;
   Py_ssize_t __pyx_t_5;
-  PyObject *(*__pyx_t_6)(PyObject *);
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -6945,7 +6980,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_downdate
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_orthonormal_downdate); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 265; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_orthonormal_downdate); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 223; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_8_forward_13ForwardPasser_11orthonormal_downdate)) {
       __Pyx_XDECREF(__pyx_r);
@@ -6961,10 +6996,10 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_downdate
         }
       }
       if (__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 265; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 223; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 265; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 223; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       }
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -6976,66 +7011,37 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_downdate
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_forward.pyx":266
+  /* "pyearth/_forward.pyx":224
  * 
  *     cpdef orthonormal_downdate(ForwardPasser self):
  *         for outcome in self.outcomes:             # <<<<<<<<<<<<<<
  *             outcome.downdate()
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_outcomes); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 266; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_1);
-  if (likely(PyList_CheckExact(__pyx_t_1)) || PyTuple_CheckExact(__pyx_t_1)) {
-    __pyx_t_2 = __pyx_t_1; __Pyx_INCREF(__pyx_t_2); __pyx_t_5 = 0;
-    __pyx_t_6 = NULL;
-  } else {
-    __pyx_t_5 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 266; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_6 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 266; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(__pyx_v_self->outcomes == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 224; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = __pyx_v_self->outcomes; __Pyx_INCREF(__pyx_t_1); __pyx_t_5 = 0;
   for (;;) {
-    if (likely(!__pyx_t_6)) {
-      if (likely(PyList_CheckExact(__pyx_t_2))) {
-        if (__pyx_t_5 >= PyList_GET_SIZE(__pyx_t_2)) break;
-        #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_5); __Pyx_INCREF(__pyx_t_1); __pyx_t_5++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 266; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        #else
-        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 266; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        #endif
-      } else {
-        if (__pyx_t_5 >= PyTuple_GET_SIZE(__pyx_t_2)) break;
-        #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_5); __Pyx_INCREF(__pyx_t_1); __pyx_t_5++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 266; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        #else
-        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 266; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        #endif
-      }
-    } else {
-      __pyx_t_1 = __pyx_t_6(__pyx_t_2);
-      if (unlikely(!__pyx_t_1)) {
-        PyObject* exc_type = PyErr_Occurred();
-        if (exc_type) {
-          if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else {__pyx_filename = __pyx_f[0]; __pyx_lineno = 266; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        }
-        break;
-      }
-      __Pyx_GOTREF(__pyx_t_1);
-    }
-    __Pyx_XDECREF_SET(__pyx_v_outcome, __pyx_t_1);
-    __pyx_t_1 = 0;
+    if (__pyx_t_5 >= PyList_GET_SIZE(__pyx_t_1)) break;
+    #if CYTHON_COMPILING_IN_CPYTHON
+    __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_5); __Pyx_INCREF(__pyx_t_2); __pyx_t_5++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 224; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    #else
+    __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_5); __pyx_t_5++; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 224; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_2);
+    #endif
+    __Pyx_XDECREF_SET(__pyx_v_outcome, __pyx_t_2);
+    __pyx_t_2 = 0;
 
-    /* "pyearth/_forward.pyx":267
+    /* "pyearth/_forward.pyx":225
  *     cpdef orthonormal_downdate(ForwardPasser self):
  *         for outcome in self.outcomes:
  *             outcome.downdate()             # <<<<<<<<<<<<<<
  * 
- *     # Removed in favor of new knot search code
+ *     def trace(self):
  */
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_outcome, __pyx_n_s_downdate); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 267; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_outcome, __pyx_n_s_downdate); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 225; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_4 = NULL;
     if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_3))) {
@@ -7048,16 +7054,16 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_downdate
       }
     }
     if (__pyx_t_4) {
-      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 267; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 225; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     } else {
-      __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 267; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 225; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
-    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "pyearth/_forward.pyx":266
+    /* "pyearth/_forward.pyx":224
  * 
  *     cpdef orthonormal_downdate(ForwardPasser self):
  *         for outcome in self.outcomes:             # <<<<<<<<<<<<<<
@@ -7065,9 +7071,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_downdate
  * 
  */
   }
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":265
+  /* "pyearth/_forward.pyx":223
  *         return linear_dependence
  * 
  *     cpdef orthonormal_downdate(ForwardPasser self):             # <<<<<<<<<<<<<<
@@ -7114,7 +7120,7 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_10orthonormal_downd
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("orthonormal_downdate", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_downdate(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 265; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_downdate(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 223; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -7131,8 +7137,8 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_10orthonormal_downd
   return __pyx_r;
 }
 
-/* "pyearth/_forward.pyx":316
- * #         self.c_squared -= ( (self.c[k]**2) * self.output_weight).sum()
+/* "pyearth/_forward.pyx":227
+ *             outcome.downdate()
  * 
  *     def trace(self):             # <<<<<<<<<<<<<<
  *         return self.record
@@ -7157,7 +7163,7 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_12trace(struct __py
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("trace", 0);
 
-  /* "pyearth/_forward.pyx":317
+  /* "pyearth/_forward.pyx":228
  * 
  *     def trace(self):
  *         return self.record             # <<<<<<<<<<<<<<
@@ -7169,8 +7175,8 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_12trace(struct __py
   __pyx_r = ((PyObject *)__pyx_v_self->record);
   goto __pyx_L0;
 
-  /* "pyearth/_forward.pyx":316
- * #         self.c_squared -= ( (self.c[k]**2) * self.output_weight).sum()
+  /* "pyearth/_forward.pyx":227
+ *             outcome.downdate()
  * 
  *     def trace(self):             # <<<<<<<<<<<<<<
  *         return self.record
@@ -7184,7 +7190,7 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_12trace(struct __py
   return __pyx_r;
 }
 
-/* "pyearth/_forward.pyx":319
+/* "pyearth/_forward.pyx":230
  *         return self.record
  * 
  *     cdef next_pair(ForwardPasser self):             # <<<<<<<<<<<<<<
@@ -7218,7 +7224,6 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_bf4 = 0;
   int __pyx_v_already_covered;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_k;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_endspan;
   int __pyx_v_linear_dependence;
   int __pyx_v_dependent;
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_gcv_factor_k_plus_1;
@@ -7276,32 +7281,38 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   PyObject *__pyx_t_1 = NULL;
   Py_ssize_t __pyx_t_2;
   int __pyx_t_3;
-  PyObject *__pyx_t_4 = NULL;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_5;
-  int __pyx_t_6;
-  long __pyx_t_7;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_8;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_4;
+  long __pyx_t_5;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_6;
+  PyObject *__pyx_t_7 = NULL;
+  PyObject *__pyx_t_8 = NULL;
   PyObject *__pyx_t_9 = NULL;
-  PyObject *__pyx_t_10 = NULL;
-  int __pyx_t_11;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_12;
-  PyObject *(*__pyx_t_13)(PyObject *);
-  int __pyx_t_14;
+  int __pyx_t_10;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_11;
+  PyObject *(*__pyx_t_12)(PyObject *);
+  int __pyx_t_13;
+  PyObject *__pyx_t_14 = NULL;
   PyObject *__pyx_t_15 = NULL;
-  PyObject *__pyx_t_16 = NULL;
+  int __pyx_t_16;
   PyArrayObject *__pyx_t_17 = NULL;
   PyObject *__pyx_t_18 = NULL;
   PyObject *__pyx_t_19 = NULL;
   PyObject *__pyx_t_20 = NULL;
   PyArrayObject *__pyx_t_21 = NULL;
   Py_ssize_t __pyx_t_22;
-  PyObject *(*__pyx_t_23)(PyObject *);
-  double __pyx_t_24;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_25;
-  __Pyx_memviewslice __pyx_t_26 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_t_27 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_28;
-  PyObject *(*__pyx_t_29)(PyObject *);
+  double __pyx_t_23;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_24;
+  PyObject *__pyx_t_25 = NULL;
+  PyObject *__pyx_t_26 = NULL;
+  PyObject *__pyx_t_27 = NULL;
+  PyObject *(*__pyx_t_28)(PyObject *);
+  PyArrayObject *__pyx_t_29 = NULL;
+  __Pyx_memviewslice __pyx_t_30 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_31 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_32;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_33;
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_34;
+  PyObject *__pyx_t_35 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -7339,7 +7350,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   __pyx_pybuffernd_p.data = NULL;
   __pyx_pybuffernd_p.rcbuffer = &__pyx_pybuffer_p;
 
-  /* "pyearth/_forward.pyx":336
+  /* "pyearth/_forward.pyx":247
  *         cdef INDEX_t parent_idx_choice
  *         cdef BasisFunction parent_choice
  *         parent_basis_content_choice = None             # <<<<<<<<<<<<<<
@@ -7349,7 +7360,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   __Pyx_INCREF(Py_None);
   __pyx_v_parent_basis_content_choice = Py_None;
 
-  /* "pyearth/_forward.pyx":337
+  /* "pyearth/_forward.pyx":248
  *         cdef BasisFunction parent_choice
  *         parent_basis_content_choice = None
  *         parent_basis_content = None             # <<<<<<<<<<<<<<
@@ -7359,7 +7370,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   __Pyx_INCREF(Py_None);
   __pyx_v_parent_basis_content = Py_None;
 
-  /* "pyearth/_forward.pyx":339
+  /* "pyearth/_forward.pyx":250
  *         parent_basis_content = None
  *         cdef INDEX_t variable_choice
  *         cdef bint first = True             # <<<<<<<<<<<<<<
@@ -7368,7 +7379,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
   __pyx_v_first = 1;
 
-  /* "pyearth/_forward.pyx":345
+  /* "pyearth/_forward.pyx":256
  *         cdef BasisFunction bf4
  *         cdef bint already_covered
  *         cdef INDEX_t k = len(self.basis)             # <<<<<<<<<<<<<<
@@ -7377,11 +7388,11 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
   __pyx_t_1 = ((PyObject *)__pyx_v_self->basis);
   __Pyx_INCREF(__pyx_t_1);
-  __pyx_t_2 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_2 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 345; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_2 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 256; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_k = __pyx_t_2;
 
-  /* "pyearth/_forward.pyx":350
+  /* "pyearth/_forward.pyx":261
  *         cdef bint dependent
  *         # TODO: Shouldn't there be weights here?
  *         cdef FLOAT_t gcv_factor_k_plus_1 = gcv_adjust(k + 1, self.m,             # <<<<<<<<<<<<<<
@@ -7390,7 +7401,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
   __pyx_v_gcv_factor_k_plus_1 = __pyx_f_7pyearth_5_util_gcv_adjust((__pyx_v_k + 1), __pyx_v_self->m, __pyx_v_self->penalty, 0);
 
-  /* "pyearth/_forward.pyx":352
+  /* "pyearth/_forward.pyx":263
  *         cdef FLOAT_t gcv_factor_k_plus_1 = gcv_adjust(k + 1, self.m,
  *                                                       self.penalty)
  *         cdef FLOAT_t gcv_factor_k_plus_2 = gcv_adjust(k + 2, self.m,             # <<<<<<<<<<<<<<
@@ -7399,7 +7410,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
   __pyx_v_gcv_factor_k_plus_2 = __pyx_f_7pyearth_5_util_gcv_adjust((__pyx_v_k + 2), __pyx_v_self->m, __pyx_v_self->penalty, 0);
 
-  /* "pyearth/_forward.pyx":354
+  /* "pyearth/_forward.pyx":265
  *         cdef FLOAT_t gcv_factor_k_plus_2 = gcv_adjust(k + 2, self.m,
  *                                                       self.penalty)
  *         cdef FLOAT_t gcv_factor_k_plus_3 = gcv_adjust(k + 3, self.m,             # <<<<<<<<<<<<<<
@@ -7408,7 +7419,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
   __pyx_v_gcv_factor_k_plus_3 = __pyx_f_7pyearth_5_util_gcv_adjust((__pyx_v_k + 3), __pyx_v_self->m, __pyx_v_self->penalty, 0);
 
-  /* "pyearth/_forward.pyx":356
+  /* "pyearth/_forward.pyx":267
  *         cdef FLOAT_t gcv_factor_k_plus_3 = gcv_adjust(k + 3, self.m,
  *                                                       self.penalty)
  *         cdef FLOAT_t gcv_factor_k_plus_4 = gcv_adjust(k + 4, self.m,             # <<<<<<<<<<<<<<
@@ -7417,7 +7428,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
   __pyx_v_gcv_factor_k_plus_4 = __pyx_f_7pyearth_5_util_gcv_adjust((__pyx_v_k + 4), __pyx_v_self->m, __pyx_v_self->penalty, 0);
 
-  /* "pyearth/_forward.pyx":368
+  /* "pyearth/_forward.pyx":279
  * 
  *         cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
  *             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)             # <<<<<<<<<<<<<<
@@ -7430,14 +7441,14 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_X.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_X = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_X.rcbuffer->pybuffer.buf = NULL;
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 367; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 278; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     } else {__pyx_pybuffernd_X.diminfo[0].strides = __pyx_pybuffernd_X.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_X.diminfo[0].shape = __pyx_pybuffernd_X.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_X.diminfo[1].strides = __pyx_pybuffernd_X.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_X.diminfo[1].shape = __pyx_pybuffernd_X.rcbuffer->pybuffer.shape[1];
     }
   }
   __pyx_v_X = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":370
+  /* "pyearth/_forward.pyx":281
  *             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
  *         cdef cnp.ndarray[BOOL_t, ndim = 2] missing = (
  *             <cnp.ndarray[BOOL_t, ndim = 2] > self.missing)             # <<<<<<<<<<<<<<
@@ -7450,19 +7461,19 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_missing.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_BOOL_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_missing = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_missing.rcbuffer->pybuffer.buf = NULL;
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 369; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 280; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     } else {__pyx_pybuffernd_missing.diminfo[0].strides = __pyx_pybuffernd_missing.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_missing.diminfo[0].shape = __pyx_pybuffernd_missing.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_missing.diminfo[1].strides = __pyx_pybuffernd_missing.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_missing.diminfo[1].shape = __pyx_pybuffernd_missing.rcbuffer->pybuffer.shape[1];
     }
   }
   __pyx_v_missing = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":372
+  /* "pyearth/_forward.pyx":283
  *             <cnp.ndarray[BOOL_t, ndim = 2] > self.missing)
  *         cdef cnp.ndarray[FLOAT_t, ndim = 2] B = (
  *             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)             # <<<<<<<<<<<<<<
- * #         cdef cnp.ndarray[FLOAT_t, ndim = 2] B_orth = (
- * #             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B_orth)
+ *         cdef cnp.ndarray[INT_t, ndim = 1] linear_variables = (
+ *             <cnp.ndarray[INT_t, ndim = 1] > self.linear_variables)
  */
   __pyx_t_1 = ((PyObject *)__pyx_v_self->B);
   __Pyx_INCREF(__pyx_t_1);
@@ -7470,19 +7481,19 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_B.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_B = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_B.rcbuffer->pybuffer.buf = NULL;
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 371; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 282; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     } else {__pyx_pybuffernd_B.diminfo[0].strides = __pyx_pybuffernd_B.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_B.diminfo[0].shape = __pyx_pybuffernd_B.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_B.diminfo[1].strides = __pyx_pybuffernd_B.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_B.diminfo[1].shape = __pyx_pybuffernd_B.rcbuffer->pybuffer.shape[1];
     }
   }
   __pyx_v_B = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":378
- * #             <cnp.ndarray[FLOAT_t, ndim = 2] > self.y)
+  /* "pyearth/_forward.pyx":285
+ *             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)
  *         cdef cnp.ndarray[INT_t, ndim = 1] linear_variables = (
  *             <cnp.ndarray[INT_t, ndim = 1] > self.linear_variables)             # <<<<<<<<<<<<<<
- * #         cdef cnp.ndarray[INT_t, ndim = 1] sorting = (
- * #             <cnp.ndarray[INT_t, ndim = 1] > self.sorting)
+ *         cdef cnp.ndarray[BOOL_t, ndim = 1] has_missing = (
+ *             <cnp.ndarray[BOOL_t, ndim = 1] > self.has_missing)
  */
   __pyx_t_1 = ((PyObject *)__pyx_v_self->linear_variables);
   __Pyx_INCREF(__pyx_t_1);
@@ -7490,15 +7501,15 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_linear_variables.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_linear_variables = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_linear_variables.rcbuffer->pybuffer.buf = NULL;
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 377; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 284; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     } else {__pyx_pybuffernd_linear_variables.diminfo[0].strides = __pyx_pybuffernd_linear_variables.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_linear_variables.diminfo[0].shape = __pyx_pybuffernd_linear_variables.rcbuffer->pybuffer.shape[0];
     }
   }
   __pyx_v_linear_variables = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":386
- * #             <cnp.ndarray[FLOAT_t, ndim = 1] > self.output_weight)
+  /* "pyearth/_forward.pyx":287
+ *             <cnp.ndarray[INT_t, ndim = 1] > self.linear_variables)
  *         cdef cnp.ndarray[BOOL_t, ndim = 1] has_missing = (
  *             <cnp.ndarray[BOOL_t, ndim = 1] > self.has_missing)             # <<<<<<<<<<<<<<
  *         cdef cnp.ndarray[FLOAT_t, ndim = 1] b
@@ -7510,69 +7521,15 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_has_missing.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_BOOL_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_has_missing = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_has_missing.rcbuffer->pybuffer.buf = NULL;
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 286; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     } else {__pyx_pybuffernd_has_missing.diminfo[0].strides = __pyx_pybuffernd_has_missing.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_has_missing.diminfo[0].shape = __pyx_pybuffernd_has_missing.rcbuffer->pybuffer.shape[0];
     }
   }
   __pyx_v_has_missing = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":390
+  /* "pyearth/_forward.pyx":291
  *         cdef cnp.ndarray[FLOAT_t, ndim = 1] p
- * 
- *         if self.endspan < 0:             # <<<<<<<<<<<<<<
- *             endspan = round(3 - log2(self.endspan_alpha / self.n))
- *         else:
- */
-  __pyx_t_3 = ((__pyx_v_self->endspan < 0) != 0);
-  if (__pyx_t_3) {
-
-    /* "pyearth/_forward.pyx":391
- * 
- *         if self.endspan < 0:
- *             endspan = round(3 - log2(self.endspan_alpha / self.n))             # <<<<<<<<<<<<<<
- *         else:
- *             endspan = self.endspan
- */
-    __pyx_t_1 = PyFloat_FromDouble((3.0 - __pyx_f_7pyearth_5_util_log2((__pyx_v_self->endspan_alpha / __pyx_v_self->n)))); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 391; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 391; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_GIVEREF(__pyx_t_1);
-    PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_1);
-    __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_round, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 391; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 391; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_v_endspan = __pyx_t_5;
-
-    /* "pyearth/_forward.pyx":390
- *         cdef cnp.ndarray[FLOAT_t, ndim = 1] p
- * 
- *         if self.endspan < 0:             # <<<<<<<<<<<<<<
- *             endspan = round(3 - log2(self.endspan_alpha / self.n))
- *         else:
- */
-    goto __pyx_L3;
-  }
-
-  /* "pyearth/_forward.pyx":393
- *             endspan = round(3 - log2(self.endspan_alpha / self.n))
- *         else:
- *             endspan = self.endspan             # <<<<<<<<<<<<<<
- * 
- *         if self.use_fast is True:
- */
-  /*else*/ {
-    __pyx_t_6 = __pyx_v_self->endspan;
-    __pyx_v_endspan = __pyx_t_6;
-  }
-  __pyx_L3:;
-
-  /* "pyearth/_forward.pyx":395
- *             endspan = self.endspan
  * 
  *         if self.use_fast is True:             # <<<<<<<<<<<<<<
  *             # choose only among the top "fast_K" basis functions
@@ -7581,33 +7538,33 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
   if (__pyx_t_3) {
 
-    /* "pyearth/_forward.pyx":398
+    /* "pyearth/_forward.pyx":294
  *             # choose only among the top "fast_K" basis functions
  *             # as parents
  *             nb_basis = min(self.fast_K, k)             # <<<<<<<<<<<<<<
  *         else:
  *             nb_basis = k
  */
-    __pyx_t_5 = __pyx_v_k;
-    __pyx_t_7 = __pyx_v_self->fast_K;
-    if (((__pyx_t_5 < __pyx_t_7) != 0)) {
-      __pyx_t_8 = __pyx_t_5;
+    __pyx_t_4 = __pyx_v_k;
+    __pyx_t_5 = __pyx_v_self->fast_K;
+    if (((__pyx_t_4 < __pyx_t_5) != 0)) {
+      __pyx_t_6 = __pyx_t_4;
     } else {
-      __pyx_t_8 = __pyx_t_7;
+      __pyx_t_6 = __pyx_t_5;
     }
-    __pyx_v_nb_basis = __pyx_t_8;
+    __pyx_v_nb_basis = __pyx_t_6;
 
-    /* "pyearth/_forward.pyx":395
- *             endspan = self.endspan
+    /* "pyearth/_forward.pyx":291
+ *         cdef cnp.ndarray[FLOAT_t, ndim = 1] p
  * 
  *         if self.use_fast is True:             # <<<<<<<<<<<<<<
  *             # choose only among the top "fast_K" basis functions
  *             # as parents
  */
-    goto __pyx_L4;
+    goto __pyx_L3;
   }
 
-  /* "pyearth/_forward.pyx":400
+  /* "pyearth/_forward.pyx":296
  *             nb_basis = min(self.fast_K, k)
  *         else:
  *             nb_basis = k             # <<<<<<<<<<<<<<
@@ -7617,32 +7574,32 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   /*else*/ {
     __pyx_v_nb_basis = __pyx_v_k;
   }
-  __pyx_L4:;
+  __pyx_L3:;
 
-  /* "pyearth/_forward.pyx":402
+  /* "pyearth/_forward.pyx":298
  *             nb_basis = k
  * 
  *         content_to_be_repushed = []             # <<<<<<<<<<<<<<
  *         for idx in range(nb_basis):
  *             # Iterate over parents
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 402; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 298; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_content_to_be_repushed = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":403
+  /* "pyearth/_forward.pyx":299
  * 
  *         content_to_be_repushed = []
  *         for idx in range(nb_basis):             # <<<<<<<<<<<<<<
  *             # Iterate over parents
  *             if self.use_fast is True:
  */
-  __pyx_t_8 = __pyx_v_nb_basis;
-  for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_8; __pyx_t_5+=1) {
-    __pyx_v_idx = __pyx_t_5;
+  __pyx_t_6 = __pyx_v_nb_basis;
+  for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_6; __pyx_t_4+=1) {
+    __pyx_v_idx = __pyx_t_4;
 
-    /* "pyearth/_forward.pyx":405
+    /* "pyearth/_forward.pyx":301
  *         for idx in range(nb_basis):
  *             # Iterate over parents
  *             if self.use_fast is True:             # <<<<<<<<<<<<<<
@@ -7652,66 +7609,66 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
     if (__pyx_t_3) {
 
-      /* "pyearth/_forward.pyx":407
+      /* "pyearth/_forward.pyx":303
  *             if self.use_fast is True:
  *                 # retrieve the next basis function to try as parent
  *                 parent_basis_content = heappop(self.fast_heap)             # <<<<<<<<<<<<<<
  *                 content_to_be_repushed.append(parent_basis_content)
  *                 parent_idx = parent_basis_content.idx
  */
-      __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappop); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 407; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_9 = NULL;
-      if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_4))) {
-        __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_4);
-        if (likely(__pyx_t_9)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-          __Pyx_INCREF(__pyx_t_9);
+      __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappop); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 303; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
+      __pyx_t_8 = NULL;
+      if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_7))) {
+        __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_7);
+        if (likely(__pyx_t_8)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
+          __Pyx_INCREF(__pyx_t_8);
           __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_4, function);
+          __Pyx_DECREF_SET(__pyx_t_7, function);
         }
       }
-      if (!__pyx_t_9) {
-        __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_v_self->fast_heap); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 407; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      if (!__pyx_t_8) {
+        __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_v_self->fast_heap); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 303; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
       } else {
-        __pyx_t_10 = PyTuple_New(1+1); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 407; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_GIVEREF(__pyx_t_9); PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_9); __pyx_t_9 = NULL;
+        __pyx_t_9 = PyTuple_New(1+1); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 303; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_9);
+        __Pyx_GIVEREF(__pyx_t_8); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_8); __pyx_t_8 = NULL;
         __Pyx_INCREF(__pyx_v_self->fast_heap);
         __Pyx_GIVEREF(__pyx_v_self->fast_heap);
-        PyTuple_SET_ITEM(__pyx_t_10, 0+1, __pyx_v_self->fast_heap);
-        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_10, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 407; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        PyTuple_SET_ITEM(__pyx_t_9, 0+1, __pyx_v_self->fast_heap);
+        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_9, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 303; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       }
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       __Pyx_DECREF_SET(__pyx_v_parent_basis_content, __pyx_t_1);
       __pyx_t_1 = 0;
 
-      /* "pyearth/_forward.pyx":408
+      /* "pyearth/_forward.pyx":304
  *                 # retrieve the next basis function to try as parent
  *                 parent_basis_content = heappop(self.fast_heap)
  *                 content_to_be_repushed.append(parent_basis_content)             # <<<<<<<<<<<<<<
  *                 parent_idx = parent_basis_content.idx
  *                 mse_choice_cur_parent = -1
  */
-      __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_content_to_be_repushed, __pyx_v_parent_basis_content); if (unlikely(__pyx_t_11 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 408; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_10 = __Pyx_PyList_Append(__pyx_v_content_to_be_repushed, __pyx_v_parent_basis_content); if (unlikely(__pyx_t_10 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 304; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-      /* "pyearth/_forward.pyx":409
+      /* "pyearth/_forward.pyx":305
  *                 parent_basis_content = heappop(self.fast_heap)
  *                 content_to_be_repushed.append(parent_basis_content)
  *                 parent_idx = parent_basis_content.idx             # <<<<<<<<<<<<<<
  *                 mse_choice_cur_parent = -1
  *                 variable_choice_cur_parent = -1
  */
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_idx); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 409; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_idx); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 305; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_12 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_12 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 409; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_11 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_11 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 305; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_v_parent_idx = __pyx_t_12;
+      __pyx_v_parent_idx = __pyx_t_11;
 
-      /* "pyearth/_forward.pyx":410
+      /* "pyearth/_forward.pyx":306
  *                 content_to_be_repushed.append(parent_basis_content)
  *                 parent_idx = parent_basis_content.idx
  *                 mse_choice_cur_parent = -1             # <<<<<<<<<<<<<<
@@ -7720,7 +7677,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       __pyx_v_mse_choice_cur_parent = -1.0;
 
-      /* "pyearth/_forward.pyx":411
+      /* "pyearth/_forward.pyx":307
  *                 parent_idx = parent_basis_content.idx
  *                 mse_choice_cur_parent = -1
  *                 variable_choice_cur_parent = -1             # <<<<<<<<<<<<<<
@@ -7729,17 +7686,17 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       __pyx_v_variable_choice_cur_parent = -1;
 
-      /* "pyearth/_forward.pyx":405
+      /* "pyearth/_forward.pyx":301
  *         for idx in range(nb_basis):
  *             # Iterate over parents
  *             if self.use_fast is True:             # <<<<<<<<<<<<<<
  *                 # retrieve the next basis function to try as parent
  *                 parent_basis_content = heappop(self.fast_heap)
  */
-      goto __pyx_L7;
+      goto __pyx_L6;
     }
 
-    /* "pyearth/_forward.pyx":413
+    /* "pyearth/_forward.pyx":309
  *                 variable_choice_cur_parent = -1
  *             else:
  *                 parent_idx = idx             # <<<<<<<<<<<<<<
@@ -7749,23 +7706,23 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     /*else*/ {
       __pyx_v_parent_idx = __pyx_v_idx;
     }
-    __pyx_L7:;
+    __pyx_L6:;
 
-    /* "pyearth/_forward.pyx":415
+    /* "pyearth/_forward.pyx":311
  *                 parent_idx = idx
  * 
  *             parent = self.basis.get(parent_idx)             # <<<<<<<<<<<<<<
- * 
  *             if not parent.is_splittable():
+ *                 continue
  */
-    __pyx_t_1 = ((PyObject *)((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->get(__pyx_v_self->basis, __pyx_v_parent_idx, 0)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 415; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = ((PyObject *)((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->get(__pyx_v_self->basis, __pyx_v_parent_idx, 0)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 311; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_XDECREF_SET(__pyx_v_parent, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_1));
     __pyx_t_1 = 0;
 
-    /* "pyearth/_forward.pyx":417
- *             parent = self.basis.get(parent_idx)
+    /* "pyearth/_forward.pyx":312
  * 
+ *             parent = self.basis.get(parent_idx)
  *             if not parent.is_splittable():             # <<<<<<<<<<<<<<
  *                 continue
  * 
@@ -7773,25 +7730,25 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __pyx_t_3 = ((!(((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_parent->__pyx_vtab)->is_splittable(__pyx_v_parent, 0) != 0)) != 0);
     if (__pyx_t_3) {
 
-      /* "pyearth/_forward.pyx":418
- * 
+      /* "pyearth/_forward.pyx":313
+ *             parent = self.basis.get(parent_idx)
  *             if not parent.is_splittable():
  *                 continue             # <<<<<<<<<<<<<<
  * 
  *             if self.use_fast is True:
  */
-      goto __pyx_L5_continue;
+      goto __pyx_L4_continue;
 
-      /* "pyearth/_forward.pyx":417
- *             parent = self.basis.get(parent_idx)
+      /* "pyearth/_forward.pyx":312
  * 
+ *             parent = self.basis.get(parent_idx)
  *             if not parent.is_splittable():             # <<<<<<<<<<<<<<
  *                 continue
  * 
  */
     }
 
-    /* "pyearth/_forward.pyx":420
+    /* "pyearth/_forward.pyx":315
  *                 continue
  * 
  *             if self.use_fast is True:             # <<<<<<<<<<<<<<
@@ -7801,73 +7758,73 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
     if (__pyx_t_3) {
 
-      /* "pyearth/_forward.pyx":422
+      /* "pyearth/_forward.pyx":317
  *             if self.use_fast is True:
  *                 # each "fast_h" iteration, force to pass through all the variables,
  *                 if self.iteration_number - parent_basis_content.m > self.fast_h:             # <<<<<<<<<<<<<<
  *                     variables = range(self.n)
  *                     parent_basis_content.m = self.iteration_number
  */
-      __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->iteration_number); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 422; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->iteration_number); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 317; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_m); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 422; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_10 = PyNumber_Subtract(__pyx_t_1, __pyx_t_4); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 422; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_10);
+      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_m); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 317; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
+      __pyx_t_9 = PyNumber_Subtract(__pyx_t_1, __pyx_t_7); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 317; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_9);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_4 = __Pyx_PyInt_From_long(__pyx_v_self->fast_h); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 422; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_1 = PyObject_RichCompare(__pyx_t_10, __pyx_t_4, Py_GT); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 422; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_3 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 422; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __pyx_t_7 = __Pyx_PyInt_From_long(__pyx_v_self->fast_h); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 317; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
+      __pyx_t_1 = PyObject_RichCompare(__pyx_t_9, __pyx_t_7, Py_GT); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 317; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_3 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 317; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":423
+        /* "pyearth/_forward.pyx":318
  *                 # each "fast_h" iteration, force to pass through all the variables,
  *                 if self.iteration_number - parent_basis_content.m > self.fast_h:
  *                     variables = range(self.n)             # <<<<<<<<<<<<<<
  *                     parent_basis_content.m = self.iteration_number
  *                 # in the opposite case, just use the last chosen variable
  */
-        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 423; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 423; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_4);
+        __pyx_t_7 = PyTuple_New(1); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_7);
         __Pyx_GIVEREF(__pyx_t_1);
-        PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_1);
+        PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_1);
         __pyx_t_1 = 0;
-        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 423; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_7, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_XDECREF_SET(__pyx_v_variables, __pyx_t_1);
         __pyx_t_1 = 0;
 
-        /* "pyearth/_forward.pyx":424
+        /* "pyearth/_forward.pyx":319
  *                 if self.iteration_number - parent_basis_content.m > self.fast_h:
  *                     variables = range(self.n)
  *                     parent_basis_content.m = self.iteration_number             # <<<<<<<<<<<<<<
  *                 # in the opposite case, just use the last chosen variable
  *                 else:
  */
-        __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->iteration_number); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 424; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->iteration_number); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 319; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
-        if (__Pyx_PyObject_SetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_m, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 424; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        if (__Pyx_PyObject_SetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_m, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 319; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-        /* "pyearth/_forward.pyx":422
+        /* "pyearth/_forward.pyx":317
  *             if self.use_fast is True:
  *                 # each "fast_h" iteration, force to pass through all the variables,
  *                 if self.iteration_number - parent_basis_content.m > self.fast_h:             # <<<<<<<<<<<<<<
  *                     variables = range(self.n)
  *                     parent_basis_content.m = self.iteration_number
  */
-        goto __pyx_L10;
+        goto __pyx_L9;
       }
 
-      /* "pyearth/_forward.pyx":427
+      /* "pyearth/_forward.pyx":322
  *                 # in the opposite case, just use the last chosen variable
  *                 else:
  *                     variables = [parent_basis_content.v]             # <<<<<<<<<<<<<<
@@ -7875,49 +7832,49 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  *             else:
  */
       /*else*/ {
-        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_v); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 427; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_v); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 322; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 427; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_4);
+        __pyx_t_7 = PyList_New(1); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 322; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_7);
         __Pyx_GIVEREF(__pyx_t_1);
-        PyList_SET_ITEM(__pyx_t_4, 0, __pyx_t_1);
+        PyList_SET_ITEM(__pyx_t_7, 0, __pyx_t_1);
         __pyx_t_1 = 0;
-        __Pyx_XDECREF_SET(__pyx_v_variables, __pyx_t_4);
-        __pyx_t_4 = 0;
+        __Pyx_XDECREF_SET(__pyx_v_variables, __pyx_t_7);
+        __pyx_t_7 = 0;
       }
-      __pyx_L10:;
+      __pyx_L9:;
 
-      /* "pyearth/_forward.pyx":428
+      /* "pyearth/_forward.pyx":323
  *                 else:
  *                     variables = [parent_basis_content.v]
  *                 variables = range(self.n)             # <<<<<<<<<<<<<<
  *             else:
  *                 variables = range(self.n)
  */
-      __pyx_t_4 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 428; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 428; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_7 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 323; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
+      __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 323; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_GIVEREF(__pyx_t_4);
-      PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_4);
-      __pyx_t_4 = 0;
-      __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_1, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 428; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_GIVEREF(__pyx_t_7);
+      PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_7);
+      __pyx_t_7 = 0;
+      __pyx_t_7 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_1, NULL); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 323; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_DECREF_SET(__pyx_v_variables, __pyx_t_4);
-      __pyx_t_4 = 0;
+      __Pyx_DECREF_SET(__pyx_v_variables, __pyx_t_7);
+      __pyx_t_7 = 0;
 
-      /* "pyearth/_forward.pyx":420
+      /* "pyearth/_forward.pyx":315
  *                 continue
  * 
  *             if self.use_fast is True:             # <<<<<<<<<<<<<<
  *                 # each "fast_h" iteration, force to pass through all the variables,
  *                 if self.iteration_number - parent_basis_content.m > self.fast_h:
  */
-      goto __pyx_L9;
+      goto __pyx_L8;
     }
 
-    /* "pyearth/_forward.pyx":430
+    /* "pyearth/_forward.pyx":325
  *                 variables = range(self.n)
  *             else:
  *                 variables = range(self.n)             # <<<<<<<<<<<<<<
@@ -7925,22 +7882,22 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  *             parent_degree = parent.degree()
  */
     /*else*/ {
-      __pyx_t_4 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 430; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 430; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_7 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 325; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
+      __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 325; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_GIVEREF(__pyx_t_4);
-      PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_4);
-      __pyx_t_4 = 0;
-      __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_1, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 430; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_GIVEREF(__pyx_t_7);
+      PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_7);
+      __pyx_t_7 = 0;
+      __pyx_t_7 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_1, NULL); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 325; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_XDECREF_SET(__pyx_v_variables, __pyx_t_4);
-      __pyx_t_4 = 0;
+      __Pyx_XDECREF_SET(__pyx_v_variables, __pyx_t_7);
+      __pyx_t_7 = 0;
     }
-    __pyx_L9:;
+    __pyx_L8:;
 
-    /* "pyearth/_forward.pyx":432
+    /* "pyearth/_forward.pyx":327
  *                 variables = range(self.n)
  * 
  *             parent_degree = parent.degree()             # <<<<<<<<<<<<<<
@@ -7949,76 +7906,76 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
     __pyx_v_parent_degree = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_parent->__pyx_vtab)->degree(__pyx_v_parent, 0);
 
-    /* "pyearth/_forward.pyx":434
+    /* "pyearth/_forward.pyx":329
  *             parent_degree = parent.degree()
  * 
  *             for variable in variables:             # <<<<<<<<<<<<<<
- * 
  *                 # Determine whether missingness needs to be accounted for.
+ *                 if self.allow_missing and has_missing[variable]:
  */
     if (likely(PyList_CheckExact(__pyx_v_variables)) || PyTuple_CheckExact(__pyx_v_variables)) {
-      __pyx_t_4 = __pyx_v_variables; __Pyx_INCREF(__pyx_t_4); __pyx_t_2 = 0;
-      __pyx_t_13 = NULL;
+      __pyx_t_7 = __pyx_v_variables; __Pyx_INCREF(__pyx_t_7); __pyx_t_2 = 0;
+      __pyx_t_12 = NULL;
     } else {
-      __pyx_t_2 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_v_variables); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_13 = Py_TYPE(__pyx_t_4)->tp_iternext; if (unlikely(!__pyx_t_13)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = -1; __pyx_t_7 = PyObject_GetIter(__pyx_v_variables); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 329; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
+      __pyx_t_12 = Py_TYPE(__pyx_t_7)->tp_iternext; if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 329; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
     for (;;) {
-      if (likely(!__pyx_t_13)) {
-        if (likely(PyList_CheckExact(__pyx_t_4))) {
-          if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_4)) break;
+      if (likely(!__pyx_t_12)) {
+        if (likely(PyList_CheckExact(__pyx_t_7))) {
+          if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_7)) break;
           #if CYTHON_COMPILING_IN_CPYTHON
-          __pyx_t_1 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_2); __Pyx_INCREF(__pyx_t_1); __pyx_t_2++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_1 = PyList_GET_ITEM(__pyx_t_7, __pyx_t_2); __Pyx_INCREF(__pyx_t_1); __pyx_t_2++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 329; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           #else
-          __pyx_t_1 = PySequence_ITEM(__pyx_t_4, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_1 = PySequence_ITEM(__pyx_t_7, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 329; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           __Pyx_GOTREF(__pyx_t_1);
           #endif
         } else {
-          if (__pyx_t_2 >= PyTuple_GET_SIZE(__pyx_t_4)) break;
+          if (__pyx_t_2 >= PyTuple_GET_SIZE(__pyx_t_7)) break;
           #if CYTHON_COMPILING_IN_CPYTHON
-          __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_2); __Pyx_INCREF(__pyx_t_1); __pyx_t_2++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_7, __pyx_t_2); __Pyx_INCREF(__pyx_t_1); __pyx_t_2++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 329; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           #else
-          __pyx_t_1 = PySequence_ITEM(__pyx_t_4, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_1 = PySequence_ITEM(__pyx_t_7, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 329; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           __Pyx_GOTREF(__pyx_t_1);
           #endif
         }
       } else {
-        __pyx_t_1 = __pyx_t_13(__pyx_t_4);
+        __pyx_t_1 = __pyx_t_12(__pyx_t_7);
         if (unlikely(!__pyx_t_1)) {
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            else {__pyx_filename = __pyx_f[0]; __pyx_lineno = 329; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           }
           break;
         }
         __Pyx_GOTREF(__pyx_t_1);
       }
-      __pyx_t_12 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_12 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_11 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_11 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 329; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_v_variable = __pyx_t_12;
+      __pyx_v_variable = __pyx_t_11;
 
-      /* "pyearth/_forward.pyx":437
- * 
+      /* "pyearth/_forward.pyx":331
+ *             for variable in variables:
  *                 # Determine whether missingness needs to be accounted for.
  *                 if self.allow_missing and has_missing[variable]:             # <<<<<<<<<<<<<<
  *                     missing_flag = True
  *                     eligible = parent.eligible(variable)
  */
-      __pyx_t_14 = (__pyx_v_self->allow_missing != 0);
-      if (__pyx_t_14) {
+      __pyx_t_13 = (__pyx_v_self->allow_missing != 0);
+      if (__pyx_t_13) {
       } else {
-        __pyx_t_3 = __pyx_t_14;
-        goto __pyx_L14_bool_binop_done;
+        __pyx_t_3 = __pyx_t_13;
+        goto __pyx_L13_bool_binop_done;
       }
-      __pyx_t_12 = __pyx_v_variable;
-      __pyx_t_14 = ((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_BOOL_t *, __pyx_pybuffernd_has_missing.rcbuffer->pybuffer.buf, __pyx_t_12, __pyx_pybuffernd_has_missing.diminfo[0].strides)) != 0);
-      __pyx_t_3 = __pyx_t_14;
-      __pyx_L14_bool_binop_done:;
+      __pyx_t_11 = __pyx_v_variable;
+      __pyx_t_13 = ((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_BOOL_t *, __pyx_pybuffernd_has_missing.rcbuffer->pybuffer.buf, __pyx_t_11, __pyx_pybuffernd_has_missing.diminfo[0].strides)) != 0);
+      __pyx_t_3 = __pyx_t_13;
+      __pyx_L13_bool_binop_done:;
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":438
+        /* "pyearth/_forward.pyx":332
  *                 # Determine whether missingness needs to be accounted for.
  *                 if self.allow_missing and has_missing[variable]:
  *                     missing_flag = True             # <<<<<<<<<<<<<<
@@ -8027,89 +7984,89 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         __pyx_v_missing_flag = 1;
 
-        /* "pyearth/_forward.pyx":439
+        /* "pyearth/_forward.pyx":333
  *                 if self.allow_missing and has_missing[variable]:
  *                     missing_flag = True
  *                     eligible = parent.eligible(variable)             # <<<<<<<<<<<<<<
  *                     covered = parent.covered(variable)
  *                     max_variable_degree = self.max_degree + 1
  */
-        __pyx_t_10 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_parent), __pyx_n_s_eligible); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 439; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_9 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 439; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_9 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_parent), __pyx_n_s_eligible); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_9);
-        __pyx_t_15 = NULL;
-        if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_10))) {
-          __pyx_t_15 = PyMethod_GET_SELF(__pyx_t_10);
-          if (likely(__pyx_t_15)) {
-            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
-            __Pyx_INCREF(__pyx_t_15);
+        __pyx_t_8 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_8);
+        __pyx_t_14 = NULL;
+        if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_9))) {
+          __pyx_t_14 = PyMethod_GET_SELF(__pyx_t_9);
+          if (likely(__pyx_t_14)) {
+            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
+            __Pyx_INCREF(__pyx_t_14);
             __Pyx_INCREF(function);
-            __Pyx_DECREF_SET(__pyx_t_10, function);
+            __Pyx_DECREF_SET(__pyx_t_9, function);
           }
         }
-        if (!__pyx_t_15) {
-          __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_t_9); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 439; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        if (!__pyx_t_14) {
+          __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_9, __pyx_t_8); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
           __Pyx_GOTREF(__pyx_t_1);
         } else {
-          __pyx_t_16 = PyTuple_New(1+1); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 439; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_16);
-          __Pyx_GIVEREF(__pyx_t_15); PyTuple_SET_ITEM(__pyx_t_16, 0, __pyx_t_15); __pyx_t_15 = NULL;
-          __Pyx_GIVEREF(__pyx_t_9);
-          PyTuple_SET_ITEM(__pyx_t_16, 0+1, __pyx_t_9);
-          __pyx_t_9 = 0;
-          __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_16, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 439; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_15 = PyTuple_New(1+1); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_15);
+          __Pyx_GIVEREF(__pyx_t_14); PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_14); __pyx_t_14 = NULL;
+          __Pyx_GIVEREF(__pyx_t_8);
+          PyTuple_SET_ITEM(__pyx_t_15, 0+1, __pyx_t_8);
+          __pyx_t_8 = 0;
+          __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_15, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           __Pyx_GOTREF(__pyx_t_1);
-          __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+          __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
         }
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 439; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         __pyx_v_eligible = __pyx_t_3;
 
-        /* "pyearth/_forward.pyx":440
+        /* "pyearth/_forward.pyx":334
  *                     missing_flag = True
  *                     eligible = parent.eligible(variable)
  *                     covered = parent.covered(variable)             # <<<<<<<<<<<<<<
  *                     max_variable_degree = self.max_degree + 1
  *                 else:
  */
-        __pyx_t_10 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_parent), __pyx_n_s_covered); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 440; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_16 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 440; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_16);
-        __pyx_t_9 = NULL;
-        if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_10))) {
-          __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_10);
-          if (likely(__pyx_t_9)) {
-            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
-            __Pyx_INCREF(__pyx_t_9);
+        __pyx_t_9 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_parent), __pyx_n_s_covered); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_9);
+        __pyx_t_15 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_15);
+        __pyx_t_8 = NULL;
+        if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_9))) {
+          __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_9);
+          if (likely(__pyx_t_8)) {
+            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
+            __Pyx_INCREF(__pyx_t_8);
             __Pyx_INCREF(function);
-            __Pyx_DECREF_SET(__pyx_t_10, function);
+            __Pyx_DECREF_SET(__pyx_t_9, function);
           }
         }
-        if (!__pyx_t_9) {
-          __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_t_16); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 440; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+        if (!__pyx_t_8) {
+          __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_9, __pyx_t_15); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
           __Pyx_GOTREF(__pyx_t_1);
         } else {
-          __pyx_t_15 = PyTuple_New(1+1); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 440; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_15);
-          __Pyx_GIVEREF(__pyx_t_9); PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_9); __pyx_t_9 = NULL;
-          __Pyx_GIVEREF(__pyx_t_16);
-          PyTuple_SET_ITEM(__pyx_t_15, 0+1, __pyx_t_16);
-          __pyx_t_16 = 0;
-          __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_15, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 440; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_14 = PyTuple_New(1+1); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_14);
+          __Pyx_GIVEREF(__pyx_t_8); PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_8); __pyx_t_8 = NULL;
+          __Pyx_GIVEREF(__pyx_t_15);
+          PyTuple_SET_ITEM(__pyx_t_14, 0+1, __pyx_t_15);
+          __pyx_t_15 = 0;
+          __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_14, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           __Pyx_GOTREF(__pyx_t_1);
-          __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
         }
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 440; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         __pyx_v_covered = __pyx_t_3;
 
-        /* "pyearth/_forward.pyx":441
+        /* "pyearth/_forward.pyx":335
  *                     eligible = parent.eligible(variable)
  *                     covered = parent.covered(variable)
  *                     max_variable_degree = self.max_degree + 1             # <<<<<<<<<<<<<<
@@ -8118,17 +8075,17 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         __pyx_v_max_variable_degree = (__pyx_v_self->max_degree + 1);
 
-        /* "pyearth/_forward.pyx":437
- * 
+        /* "pyearth/_forward.pyx":331
+ *             for variable in variables:
  *                 # Determine whether missingness needs to be accounted for.
  *                 if self.allow_missing and has_missing[variable]:             # <<<<<<<<<<<<<<
  *                     missing_flag = True
  *                     eligible = parent.eligible(variable)
  */
-        goto __pyx_L13;
+        goto __pyx_L12;
       }
 
-      /* "pyearth/_forward.pyx":443
+      /* "pyearth/_forward.pyx":337
  *                     max_variable_degree = self.max_degree + 1
  *                 else:
  *                     missing_flag = False             # <<<<<<<<<<<<<<
@@ -8138,19 +8095,19 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       /*else*/ {
         __pyx_v_missing_flag = 0;
 
-        /* "pyearth/_forward.pyx":444
+        /* "pyearth/_forward.pyx":338
  *                 else:
  *                     missing_flag = False
  *                     max_variable_degree = self.max_degree             # <<<<<<<<<<<<<<
  * 
  *                 # Make sure not to exceed max_degree (but don't count the
  */
-        __pyx_t_6 = __pyx_v_self->max_degree;
-        __pyx_v_max_variable_degree = __pyx_t_6;
+        __pyx_t_16 = __pyx_v_self->max_degree;
+        __pyx_v_max_variable_degree = __pyx_t_16;
       }
-      __pyx_L13:;
+      __pyx_L12:;
 
-      /* "pyearth/_forward.pyx":448
+      /* "pyearth/_forward.pyx":342
  *                 # Make sure not to exceed max_degree (but don't count the
  *                 # covering missingness basis function if required)
  *                 if self.max_degree >= 0:             # <<<<<<<<<<<<<<
@@ -8160,7 +8117,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __pyx_t_3 = ((__pyx_v_self->max_degree >= 0) != 0);
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":449
+        /* "pyearth/_forward.pyx":343
  *                 # covering missingness basis function if required)
  *                 if self.max_degree >= 0:
  *                     if parent_degree >= max_variable_degree:             # <<<<<<<<<<<<<<
@@ -8170,16 +8127,16 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         __pyx_t_3 = ((__pyx_v_parent_degree >= __pyx_v_max_variable_degree) != 0);
         if (__pyx_t_3) {
 
-          /* "pyearth/_forward.pyx":450
+          /* "pyearth/_forward.pyx":344
  *                 if self.max_degree >= 0:
  *                     if parent_degree >= max_variable_degree:
  *                         continue             # <<<<<<<<<<<<<<
  * 
  *                 # If there is missing data and this parent is not
  */
-          goto __pyx_L11_continue;
+          goto __pyx_L10_continue;
 
-          /* "pyearth/_forward.pyx":449
+          /* "pyearth/_forward.pyx":343
  *                 # covering missingness basis function if required)
  *                 if self.max_degree >= 0:
  *                     if parent_degree >= max_variable_degree:             # <<<<<<<<<<<<<<
@@ -8188,7 +8145,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         }
 
-        /* "pyearth/_forward.pyx":448
+        /* "pyearth/_forward.pyx":342
  *                 # Make sure not to exceed max_degree (but don't count the
  *                 # covering missingness basis function if required)
  *                 if self.max_degree >= 0:             # <<<<<<<<<<<<<<
@@ -8197,85 +8154,60 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       }
 
-      /* "pyearth/_forward.pyx":456
+      /* "pyearth/_forward.pyx":350
  *                 # (because it includes a non-missing factor for the variable)
- *                 # the skip this variable.
+ *                 # then skip this variable.
  *                 if missing_flag and not eligible:             # <<<<<<<<<<<<<<
  *                     continue
  * 
  */
-      __pyx_t_14 = (__pyx_v_missing_flag != 0);
-      if (__pyx_t_14) {
+      __pyx_t_13 = (__pyx_v_missing_flag != 0);
+      if (__pyx_t_13) {
       } else {
-        __pyx_t_3 = __pyx_t_14;
-        goto __pyx_L19_bool_binop_done;
+        __pyx_t_3 = __pyx_t_13;
+        goto __pyx_L18_bool_binop_done;
       }
-      __pyx_t_14 = ((!(__pyx_v_eligible != 0)) != 0);
-      __pyx_t_3 = __pyx_t_14;
-      __pyx_L19_bool_binop_done:;
+      __pyx_t_13 = ((!(__pyx_v_eligible != 0)) != 0);
+      __pyx_t_3 = __pyx_t_13;
+      __pyx_L18_bool_binop_done:;
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":457
- *                 # the skip this variable.
+        /* "pyearth/_forward.pyx":351
+ *                 # then skip this variable.
  *                 if missing_flag and not eligible:
  *                     continue             # <<<<<<<<<<<<<<
  * 
  *                 # Add the linear term to B
  */
-        goto __pyx_L11_continue;
+        goto __pyx_L10_continue;
 
-        /* "pyearth/_forward.pyx":456
+        /* "pyearth/_forward.pyx":350
  *                 # (because it includes a non-missing factor for the variable)
- *                 # the skip this variable.
+ *                 # then skip this variable.
  *                 if missing_flag and not eligible:             # <<<<<<<<<<<<<<
  *                     continue
  * 
  */
       }
 
-      /* "pyearth/_forward.pyx":460
+      /* "pyearth/_forward.pyx":354
  * 
  *                 # Add the linear term to B
  *                 predictor = self.predictors[variable]             # <<<<<<<<<<<<<<
- *                 B[:, k] = p * predictor.x
+ * 
  *                 # If necessary, protect from missing data
  */
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_predictors); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 460; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_10 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_variable, __pyx_t_7pyearth_6_types_INDEX_t, 0, __Pyx_PyInt_From_npy_ulonglong, 0, 0, 0); if (unlikely(__pyx_t_10 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 460; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-      __Pyx_GOTREF(__pyx_t_10);
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_XDECREF_SET(__pyx_v_predictor, __pyx_t_10);
-      __pyx_t_10 = 0;
+      if (unlikely(__pyx_v_self->predictors == Py_None)) {
+        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 354; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      }
+      __pyx_t_1 = PyList_GET_ITEM(__pyx_v_self->predictors, __pyx_v_variable);
+      __Pyx_INCREF(__pyx_t_1);
+      __Pyx_XDECREF_SET(__pyx_v_predictor, __pyx_t_1);
+      __pyx_t_1 = 0;
 
-      /* "pyearth/_forward.pyx":461
- *                 # Add the linear term to B
- *                 predictor = self.predictors[variable]
- *                 B[:, k] = p * predictor.x             # <<<<<<<<<<<<<<
- *                 # If necessary, protect from missing data
- *                 if missing_flag:
- */
-      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_v_predictor, __pyx_n_s_x); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 461; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_1 = PyNumber_Multiply(((PyObject *)__pyx_v_p), __pyx_t_10); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 461; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_k); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 461; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_15 = PyTuple_New(2); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 461; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_15);
-      __Pyx_INCREF(__pyx_slice__13);
-      __Pyx_GIVEREF(__pyx_slice__13);
-      PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_slice__13);
-      __Pyx_GIVEREF(__pyx_t_10);
-      PyTuple_SET_ITEM(__pyx_t_15, 1, __pyx_t_10);
-      __pyx_t_10 = 0;
-      if (unlikely(PyObject_SetItem(((PyObject *)__pyx_v_B), __pyx_t_15, __pyx_t_1) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 461; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-      /* "pyearth/_forward.pyx":463
- *                 B[:, k] = p * predictor.x
+      /* "pyearth/_forward.pyx":357
+ * 
  *                 # If necessary, protect from missing data
  *                 if missing_flag:             # <<<<<<<<<<<<<<
  *                     B[missing[:, variable]==1, k] = 0.
@@ -8284,69 +8216,69 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __pyx_t_3 = (__pyx_v_missing_flag != 0);
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":464
+        /* "pyearth/_forward.pyx":358
  *                 # If necessary, protect from missing data
  *                 if missing_flag:
  *                     B[missing[:, variable]==1, k] = 0.             # <<<<<<<<<<<<<<
  *                     b = B[:, k]
  *                     # Update the outcome data
  */
-        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 464; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 358; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_15 = PyTuple_New(2); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 464; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_15);
-        __Pyx_INCREF(__pyx_slice__14);
-        __Pyx_GIVEREF(__pyx_slice__14);
-        PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_slice__14);
+        __pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 358; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_9);
+        __Pyx_INCREF(__pyx_slice__13);
+        __Pyx_GIVEREF(__pyx_slice__13);
+        PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_slice__13);
         __Pyx_GIVEREF(__pyx_t_1);
-        PyTuple_SET_ITEM(__pyx_t_15, 1, __pyx_t_1);
+        PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_1);
         __pyx_t_1 = 0;
-        __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_missing), __pyx_t_15); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 464; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_missing), __pyx_t_9); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 358; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
         __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-        __pyx_t_15 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 464; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_15);
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        __pyx_t_9 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 358; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_9);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_k); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 464; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_k); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 358; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 464; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_GIVEREF(__pyx_t_15);
-        PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_15);
+        __pyx_t_14 = PyTuple_New(2); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 358; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __Pyx_GIVEREF(__pyx_t_9);
+        PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_9);
         __Pyx_GIVEREF(__pyx_t_1);
-        PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_1);
-        __pyx_t_15 = 0;
+        PyTuple_SET_ITEM(__pyx_t_14, 1, __pyx_t_1);
+        __pyx_t_9 = 0;
         __pyx_t_1 = 0;
-        if (unlikely(PyObject_SetItem(((PyObject *)__pyx_v_B), __pyx_t_10, __pyx_float_0_) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 464; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+        if (unlikely(PyObject_SetItem(((PyObject *)__pyx_v_B), __pyx_t_14, __pyx_float_0_) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 358; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
 
-        /* "pyearth/_forward.pyx":465
+        /* "pyearth/_forward.pyx":359
  *                 if missing_flag:
  *                     B[missing[:, variable]==1, k] = 0.
  *                     b = B[:, k]             # <<<<<<<<<<<<<<
  *                     # Update the outcome data
  *                     linear_dependence = self.orthonormal_update(b)
  */
-        __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_k); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 465; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 465; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_k); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 359; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 359; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_INCREF(__pyx_slice__15);
-        __Pyx_GIVEREF(__pyx_slice__15);
-        PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__15);
-        __Pyx_GIVEREF(__pyx_t_10);
-        PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_10);
-        __pyx_t_10 = 0;
-        __pyx_t_10 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_1); if (unlikely(__pyx_t_10 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 465; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-        __Pyx_GOTREF(__pyx_t_10);
+        __Pyx_INCREF(__pyx_slice__14);
+        __Pyx_GIVEREF(__pyx_slice__14);
+        PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__14);
+        __Pyx_GIVEREF(__pyx_t_14);
+        PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_14);
+        __pyx_t_14 = 0;
+        __pyx_t_14 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_1); if (unlikely(__pyx_t_14 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 359; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __Pyx_GOTREF(__pyx_t_14);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        if (!(likely(((__pyx_t_10) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_10, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 465; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __pyx_t_17 = ((PyArrayObject *)__pyx_t_10);
+        if (!(likely(((__pyx_t_14) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_14, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 359; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_17 = ((PyArrayObject *)__pyx_t_14);
         {
           __Pyx_BufFmt_StackElem __pyx_stack[1];
           __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_b.rcbuffer->pybuffer);
-          __pyx_t_6 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_b.rcbuffer->pybuffer, (PyObject*)__pyx_t_17, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
-          if (unlikely(__pyx_t_6 < 0)) {
+          __pyx_t_16 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_b.rcbuffer->pybuffer, (PyObject*)__pyx_t_17, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
+          if (unlikely(__pyx_t_16 < 0)) {
             PyErr_Fetch(&__pyx_t_18, &__pyx_t_19, &__pyx_t_20);
             if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_b.rcbuffer->pybuffer, (PyObject*)__pyx_v_b, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
               Py_XDECREF(__pyx_t_18); Py_XDECREF(__pyx_t_19); Py_XDECREF(__pyx_t_20);
@@ -8356,27 +8288,27 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             }
           }
           __pyx_pybuffernd_b.diminfo[0].strides = __pyx_pybuffernd_b.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_b.diminfo[0].shape = __pyx_pybuffernd_b.rcbuffer->pybuffer.shape[0];
-          if (unlikely(__pyx_t_6 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 465; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          if (unlikely(__pyx_t_16 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 359; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         }
         __pyx_t_17 = 0;
-        __Pyx_XDECREF_SET(__pyx_v_b, ((PyArrayObject *)__pyx_t_10));
-        __pyx_t_10 = 0;
+        __Pyx_XDECREF_SET(__pyx_v_b, ((PyArrayObject *)__pyx_t_14));
+        __pyx_t_14 = 0;
 
-        /* "pyearth/_forward.pyx":467
+        /* "pyearth/_forward.pyx":361
  *                     b = B[:, k]
  *                     # Update the outcome data
  *                     linear_dependence = self.orthonormal_update(b)             # <<<<<<<<<<<<<<
  * 
- * 
+ *                 if missing_flag and not covered:
  */
-        __pyx_t_10 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, ((PyObject *)__pyx_v_b), 0); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 467; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_10); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 467; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __pyx_t_14 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, ((PyObject *)__pyx_v_b), 0); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 361; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_14); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 361; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
         __pyx_v_linear_dependence = __pyx_t_3;
 
-        /* "pyearth/_forward.pyx":463
- *                 B[:, k] = p * predictor.x
+        /* "pyearth/_forward.pyx":357
+ * 
  *                 # If necessary, protect from missing data
  *                 if missing_flag:             # <<<<<<<<<<<<<<
  *                     B[missing[:, variable]==1, k] = 0.
@@ -8384,71 +8316,71 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       }
 
-      /* "pyearth/_forward.pyx":500
- * #                     B_orth[i, k] = B[i, k]
- * #                 linear_dependence = self.orthonormal_update(k)
+      /* "pyearth/_forward.pyx":363
+ *                     linear_dependence = self.orthonormal_update(b)
+ * 
  *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
- *                     p = self.B[:, parent_idx] * (1 - missing[:, variable])
+ *                     p = B[:, parent_idx] * (1 - missing[:, variable])
  *                     b = B[:, parent_idx] * (1 - missing[:, variable])
  */
-      __pyx_t_14 = (__pyx_v_missing_flag != 0);
-      if (__pyx_t_14) {
+      __pyx_t_13 = (__pyx_v_missing_flag != 0);
+      if (__pyx_t_13) {
       } else {
-        __pyx_t_3 = __pyx_t_14;
-        goto __pyx_L23_bool_binop_done;
+        __pyx_t_3 = __pyx_t_13;
+        goto __pyx_L22_bool_binop_done;
       }
-      __pyx_t_14 = ((!(__pyx_v_covered != 0)) != 0);
-      __pyx_t_3 = __pyx_t_14;
-      __pyx_L23_bool_binop_done:;
+      __pyx_t_13 = ((!(__pyx_v_covered != 0)) != 0);
+      __pyx_t_3 = __pyx_t_13;
+      __pyx_L22_bool_binop_done:;
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":501
- * #                 linear_dependence = self.orthonormal_update(k)
+        /* "pyearth/_forward.pyx":364
+ * 
  *                 if missing_flag and not covered:
- *                     p = self.B[:, parent_idx] * (1 - missing[:, variable])             # <<<<<<<<<<<<<<
+ *                     p = B[:, parent_idx] * (1 - missing[:, variable])             # <<<<<<<<<<<<<<
  *                     b = B[:, parent_idx] * (1 - missing[:, variable])
- * #                     for i in range(self.m):
+ *                     self.orthonormal_update(b)
  */
-        __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 501; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 501; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 364; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 364; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
+        __Pyx_INCREF(__pyx_slice__15);
+        __Pyx_GIVEREF(__pyx_slice__15);
+        PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__15);
+        __Pyx_GIVEREF(__pyx_t_14);
+        PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_14);
+        __pyx_t_14 = 0;
+        __pyx_t_14 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_1); if (unlikely(__pyx_t_14 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 364; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __Pyx_GOTREF(__pyx_t_14);
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 364; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_1);
+        __pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 364; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_9);
         __Pyx_INCREF(__pyx_slice__16);
         __Pyx_GIVEREF(__pyx_slice__16);
-        PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__16);
-        __Pyx_GIVEREF(__pyx_t_10);
-        PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_10);
-        __pyx_t_10 = 0;
-        __pyx_t_10 = PyObject_GetItem(((PyObject *)__pyx_v_self->B), __pyx_t_1); if (unlikely(__pyx_t_10 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 501; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 501; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_15 = PyTuple_New(2); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 501; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_15);
-        __Pyx_INCREF(__pyx_slice__17);
-        __Pyx_GIVEREF(__pyx_slice__17);
-        PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_slice__17);
+        PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_slice__16);
         __Pyx_GIVEREF(__pyx_t_1);
-        PyTuple_SET_ITEM(__pyx_t_15, 1, __pyx_t_1);
+        PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_1);
         __pyx_t_1 = 0;
-        __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_missing), __pyx_t_15); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 501; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_missing), __pyx_t_9); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 364; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
         __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-        __pyx_t_15 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_1, 1, 0); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 501; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_15);
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        __pyx_t_9 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_1, 1, 0); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 364; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_9);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = PyNumber_Multiply(__pyx_t_10, __pyx_t_15); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 501; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_1 = PyNumber_Multiply(__pyx_t_14, __pyx_t_9); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 364; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-        if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 501; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 364; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __pyx_t_21 = ((PyArrayObject *)__pyx_t_1);
         {
           __Pyx_BufFmt_StackElem __pyx_stack[1];
           __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_p.rcbuffer->pybuffer);
-          __pyx_t_6 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_p.rcbuffer->pybuffer, (PyObject*)__pyx_t_21, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
-          if (unlikely(__pyx_t_6 < 0)) {
+          __pyx_t_16 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_p.rcbuffer->pybuffer, (PyObject*)__pyx_t_21, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
+          if (unlikely(__pyx_t_16 < 0)) {
             PyErr_Fetch(&__pyx_t_20, &__pyx_t_19, &__pyx_t_18);
             if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_p.rcbuffer->pybuffer, (PyObject*)__pyx_v_p, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
               Py_XDECREF(__pyx_t_20); Py_XDECREF(__pyx_t_19); Py_XDECREF(__pyx_t_18);
@@ -8458,59 +8390,59 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             }
           }
           __pyx_pybuffernd_p.diminfo[0].strides = __pyx_pybuffernd_p.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_p.diminfo[0].shape = __pyx_pybuffernd_p.rcbuffer->pybuffer.shape[0];
-          if (unlikely(__pyx_t_6 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 501; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          if (unlikely(__pyx_t_16 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 364; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         }
         __pyx_t_21 = 0;
         __Pyx_XDECREF_SET(__pyx_v_p, ((PyArrayObject *)__pyx_t_1));
         __pyx_t_1 = 0;
 
-        /* "pyearth/_forward.pyx":502
+        /* "pyearth/_forward.pyx":365
  *                 if missing_flag and not covered:
- *                     p = self.B[:, parent_idx] * (1 - missing[:, variable])
+ *                     p = B[:, parent_idx] * (1 - missing[:, variable])
  *                     b = B[:, parent_idx] * (1 - missing[:, variable])             # <<<<<<<<<<<<<<
- * #                     for i in range(self.m):
- * #                         B_orth[i, k + 1] = B[i, parent_idx] * (1 - missing[i, variable])
+ *                     self.orthonormal_update(b)
+ *                     b = B[:, parent_idx] * missing[:, variable]
  */
-        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 502; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 365; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_15 = PyTuple_New(2); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 502; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_15);
+        __pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 365; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_9);
+        __Pyx_INCREF(__pyx_slice__17);
+        __Pyx_GIVEREF(__pyx_slice__17);
+        PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_slice__17);
+        __Pyx_GIVEREF(__pyx_t_1);
+        PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_1);
+        __pyx_t_1 = 0;
+        __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_9); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 365; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __Pyx_GOTREF(__pyx_t_1);
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        __pyx_t_9 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 365; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_9);
+        __pyx_t_14 = PyTuple_New(2); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 365; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
         __Pyx_INCREF(__pyx_slice__18);
         __Pyx_GIVEREF(__pyx_slice__18);
-        PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_slice__18);
-        __Pyx_GIVEREF(__pyx_t_1);
-        PyTuple_SET_ITEM(__pyx_t_15, 1, __pyx_t_1);
-        __pyx_t_1 = 0;
-        __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_15); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 502; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-        __pyx_t_15 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 502; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_15);
-        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 502; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_INCREF(__pyx_slice__19);
-        __Pyx_GIVEREF(__pyx_slice__19);
-        PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_slice__19);
-        __Pyx_GIVEREF(__pyx_t_15);
-        PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_15);
-        __pyx_t_15 = 0;
-        __pyx_t_15 = PyObject_GetItem(((PyObject *)__pyx_v_missing), __pyx_t_10); if (unlikely(__pyx_t_15 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 502; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-        __Pyx_GOTREF(__pyx_t_15);
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_10 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_15, 1, 0); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 502; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-        __pyx_t_15 = PyNumber_Multiply(__pyx_t_1, __pyx_t_10); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 502; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_15);
+        PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_slice__18);
+        __Pyx_GIVEREF(__pyx_t_9);
+        PyTuple_SET_ITEM(__pyx_t_14, 1, __pyx_t_9);
+        __pyx_t_9 = 0;
+        __pyx_t_9 = PyObject_GetItem(((PyObject *)__pyx_v_missing), __pyx_t_14); if (unlikely(__pyx_t_9 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 365; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __Pyx_GOTREF(__pyx_t_9);
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        __pyx_t_14 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_9, 1, 0); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 365; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        __pyx_t_9 = PyNumber_Multiply(__pyx_t_1, __pyx_t_14); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 365; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_9);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        if (!(likely(((__pyx_t_15) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_15, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 502; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __pyx_t_17 = ((PyArrayObject *)__pyx_t_15);
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        if (!(likely(((__pyx_t_9) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_9, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 365; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_17 = ((PyArrayObject *)__pyx_t_9);
         {
           __Pyx_BufFmt_StackElem __pyx_stack[1];
           __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_b.rcbuffer->pybuffer);
-          __pyx_t_6 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_b.rcbuffer->pybuffer, (PyObject*)__pyx_t_17, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
-          if (unlikely(__pyx_t_6 < 0)) {
+          __pyx_t_16 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_b.rcbuffer->pybuffer, (PyObject*)__pyx_t_17, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
+          if (unlikely(__pyx_t_16 < 0)) {
             PyErr_Fetch(&__pyx_t_18, &__pyx_t_19, &__pyx_t_20);
             if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_b.rcbuffer->pybuffer, (PyObject*)__pyx_v_b, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
               Py_XDECREF(__pyx_t_18); Py_XDECREF(__pyx_t_19); Py_XDECREF(__pyx_t_20);
@@ -8520,67 +8452,67 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             }
           }
           __pyx_pybuffernd_b.diminfo[0].strides = __pyx_pybuffernd_b.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_b.diminfo[0].shape = __pyx_pybuffernd_b.rcbuffer->pybuffer.shape[0];
-          if (unlikely(__pyx_t_6 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 502; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          if (unlikely(__pyx_t_16 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 365; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         }
         __pyx_t_17 = 0;
-        __Pyx_XDECREF_SET(__pyx_v_b, ((PyArrayObject *)__pyx_t_15));
-        __pyx_t_15 = 0;
+        __Pyx_XDECREF_SET(__pyx_v_b, ((PyArrayObject *)__pyx_t_9));
+        __pyx_t_9 = 0;
 
-        /* "pyearth/_forward.pyx":505
- * #                     for i in range(self.m):
- * #                         B_orth[i, k + 1] = B[i, parent_idx] * (1 - missing[i, variable])
+        /* "pyearth/_forward.pyx":366
+ *                     p = B[:, parent_idx] * (1 - missing[:, variable])
+ *                     b = B[:, parent_idx] * (1 - missing[:, variable])
  *                     self.orthonormal_update(b)             # <<<<<<<<<<<<<<
  *                     b = B[:, parent_idx] * missing[:, variable]
  *                     self.orthonormal_update(b)
  */
-        __pyx_t_15 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, ((PyObject *)__pyx_v_b), 0); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 505; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_15);
-        __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
+        __pyx_t_9 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, ((PyObject *)__pyx_v_b), 0); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 366; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_9);
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-        /* "pyearth/_forward.pyx":506
- * #                         B_orth[i, k + 1] = B[i, parent_idx] * (1 - missing[i, variable])
+        /* "pyearth/_forward.pyx":367
+ *                     b = B[:, parent_idx] * (1 - missing[:, variable])
  *                     self.orthonormal_update(b)
  *                     b = B[:, parent_idx] * missing[:, variable]             # <<<<<<<<<<<<<<
  *                     self.orthonormal_update(b)
  *                     q = k + 3
  */
-        __pyx_t_15 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 506; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_15);
-        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 506; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
+        __pyx_t_9 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 367; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_9);
+        __pyx_t_14 = PyTuple_New(2); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 367; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __Pyx_INCREF(__pyx_slice__19);
+        __Pyx_GIVEREF(__pyx_slice__19);
+        PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_slice__19);
+        __Pyx_GIVEREF(__pyx_t_9);
+        PyTuple_SET_ITEM(__pyx_t_14, 1, __pyx_t_9);
+        __pyx_t_9 = 0;
+        __pyx_t_9 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_14); if (unlikely(__pyx_t_9 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 367; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __Pyx_GOTREF(__pyx_t_9);
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 367; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 367; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_1);
         __Pyx_INCREF(__pyx_slice__20);
         __Pyx_GIVEREF(__pyx_slice__20);
-        PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_slice__20);
-        __Pyx_GIVEREF(__pyx_t_15);
-        PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_15);
-        __pyx_t_15 = 0;
-        __pyx_t_15 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_10); if (unlikely(__pyx_t_15 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 506; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-        __Pyx_GOTREF(__pyx_t_15);
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 506; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 506; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_INCREF(__pyx_slice__21);
-        __Pyx_GIVEREF(__pyx_slice__21);
-        PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__21);
-        __Pyx_GIVEREF(__pyx_t_10);
-        PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_10);
-        __pyx_t_10 = 0;
-        __pyx_t_10 = PyObject_GetItem(((PyObject *)__pyx_v_missing), __pyx_t_1); if (unlikely(__pyx_t_10 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 506; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-        __Pyx_GOTREF(__pyx_t_10);
+        PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__20);
+        __Pyx_GIVEREF(__pyx_t_14);
+        PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_14);
+        __pyx_t_14 = 0;
+        __pyx_t_14 = PyObject_GetItem(((PyObject *)__pyx_v_missing), __pyx_t_1); if (unlikely(__pyx_t_14 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 367; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __Pyx_GOTREF(__pyx_t_14);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = PyNumber_Multiply(__pyx_t_15, __pyx_t_10); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 506; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_1 = PyNumber_Multiply(__pyx_t_9, __pyx_t_14); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 367; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 506; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 367; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __pyx_t_17 = ((PyArrayObject *)__pyx_t_1);
         {
           __Pyx_BufFmt_StackElem __pyx_stack[1];
           __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_b.rcbuffer->pybuffer);
-          __pyx_t_6 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_b.rcbuffer->pybuffer, (PyObject*)__pyx_t_17, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
-          if (unlikely(__pyx_t_6 < 0)) {
+          __pyx_t_16 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_b.rcbuffer->pybuffer, (PyObject*)__pyx_t_17, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
+          if (unlikely(__pyx_t_16 < 0)) {
             PyErr_Fetch(&__pyx_t_20, &__pyx_t_19, &__pyx_t_18);
             if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_b.rcbuffer->pybuffer, (PyObject*)__pyx_v_b, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
               Py_XDECREF(__pyx_t_20); Py_XDECREF(__pyx_t_19); Py_XDECREF(__pyx_t_18);
@@ -8590,24 +8522,24 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             }
           }
           __pyx_pybuffernd_b.diminfo[0].strides = __pyx_pybuffernd_b.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_b.diminfo[0].shape = __pyx_pybuffernd_b.rcbuffer->pybuffer.shape[0];
-          if (unlikely(__pyx_t_6 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 506; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          if (unlikely(__pyx_t_16 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 367; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         }
         __pyx_t_17 = 0;
         __Pyx_DECREF_SET(__pyx_v_b, ((PyArrayObject *)__pyx_t_1));
         __pyx_t_1 = 0;
 
-        /* "pyearth/_forward.pyx":507
+        /* "pyearth/_forward.pyx":368
  *                     self.orthonormal_update(b)
  *                     b = B[:, parent_idx] * missing[:, variable]
  *                     self.orthonormal_update(b)             # <<<<<<<<<<<<<<
  *                     q = k + 3
  *                 else:
  */
-        __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, ((PyObject *)__pyx_v_b), 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 507; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, ((PyObject *)__pyx_v_b), 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 368; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-        /* "pyearth/_forward.pyx":508
+        /* "pyearth/_forward.pyx":369
  *                     b = B[:, parent_idx] * missing[:, variable]
  *                     self.orthonormal_update(b)
  *                     q = k + 3             # <<<<<<<<<<<<<<
@@ -8616,17 +8548,17 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         __pyx_v_q = (__pyx_v_k + 3);
 
-        /* "pyearth/_forward.pyx":500
- * #                     B_orth[i, k] = B[i, k]
- * #                 linear_dependence = self.orthonormal_update(k)
+        /* "pyearth/_forward.pyx":363
+ *                     linear_dependence = self.orthonormal_update(b)
+ * 
  *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
- *                     p = self.B[:, parent_idx] * (1 - missing[:, variable])
+ *                     p = B[:, parent_idx] * (1 - missing[:, variable])
  *                     b = B[:, parent_idx] * (1 - missing[:, variable])
  */
-        goto __pyx_L22;
+        goto __pyx_L21;
       }
 
-      /* "pyearth/_forward.pyx":510
+      /* "pyearth/_forward.pyx":371
  *                     q = k + 3
  *                 else:
  *                     p = self.B[:, parent_idx]             # <<<<<<<<<<<<<<
@@ -8634,26 +8566,26 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  * 
  */
       /*else*/ {
-        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 510; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 371; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 510; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_INCREF(__pyx_slice__22);
-        __Pyx_GIVEREF(__pyx_slice__22);
-        PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_slice__22);
+        __pyx_t_14 = PyTuple_New(2); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 371; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __Pyx_INCREF(__pyx_slice__21);
+        __Pyx_GIVEREF(__pyx_slice__21);
+        PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_slice__21);
         __Pyx_GIVEREF(__pyx_t_1);
-        PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_1);
+        PyTuple_SET_ITEM(__pyx_t_14, 1, __pyx_t_1);
         __pyx_t_1 = 0;
-        __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_self->B), __pyx_t_10); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 510; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_self->B), __pyx_t_14); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 371; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
         __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 510; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 371; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __pyx_t_21 = ((PyArrayObject *)__pyx_t_1);
         {
           __Pyx_BufFmt_StackElem __pyx_stack[1];
           __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_p.rcbuffer->pybuffer);
-          __pyx_t_6 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_p.rcbuffer->pybuffer, (PyObject*)__pyx_t_21, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
-          if (unlikely(__pyx_t_6 < 0)) {
+          __pyx_t_16 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_p.rcbuffer->pybuffer, (PyObject*)__pyx_t_21, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
+          if (unlikely(__pyx_t_16 < 0)) {
             PyErr_Fetch(&__pyx_t_18, &__pyx_t_19, &__pyx_t_20);
             if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_p.rcbuffer->pybuffer, (PyObject*)__pyx_v_p, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
               Py_XDECREF(__pyx_t_18); Py_XDECREF(__pyx_t_19); Py_XDECREF(__pyx_t_20);
@@ -8663,153 +8595,224 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             }
           }
           __pyx_pybuffernd_p.diminfo[0].strides = __pyx_pybuffernd_p.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_p.diminfo[0].shape = __pyx_pybuffernd_p.rcbuffer->pybuffer.shape[0];
-          if (unlikely(__pyx_t_6 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 510; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          if (unlikely(__pyx_t_16 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 371; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         }
         __pyx_t_21 = 0;
         __Pyx_XDECREF_SET(__pyx_v_p, ((PyArrayObject *)__pyx_t_1));
         __pyx_t_1 = 0;
 
-        /* "pyearth/_forward.pyx":511
+        /* "pyearth/_forward.pyx":372
  *                 else:
  *                     p = self.B[:, parent_idx]
  *                     q = k + 1             # <<<<<<<<<<<<<<
  * 
- * #                     for i in range(self.m):
+ *                 b = p * predictor.x
  */
         __pyx_v_q = (__pyx_v_k + 1);
       }
-      __pyx_L22:;
+      __pyx_L21:;
 
-      /* "pyearth/_forward.pyx":524
+      /* "pyearth/_forward.pyx":374
+ *                     q = k + 1
+ * 
+ *                 b = p * predictor.x             # <<<<<<<<<<<<<<
+ *                 if missing_flag and not covered:
+ *                     b[missing[:, variable] == 1] = 0
+ */
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_predictor, __pyx_n_s_x); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 374; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_14 = PyNumber_Multiply(((PyObject *)__pyx_v_p), __pyx_t_1); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 374; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_14);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      if (!(likely(((__pyx_t_14) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_14, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 374; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_17 = ((PyArrayObject *)__pyx_t_14);
+      {
+        __Pyx_BufFmt_StackElem __pyx_stack[1];
+        __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_b.rcbuffer->pybuffer);
+        __pyx_t_16 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_b.rcbuffer->pybuffer, (PyObject*)__pyx_t_17, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
+        if (unlikely(__pyx_t_16 < 0)) {
+          PyErr_Fetch(&__pyx_t_20, &__pyx_t_19, &__pyx_t_18);
+          if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_b.rcbuffer->pybuffer, (PyObject*)__pyx_v_b, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
+            Py_XDECREF(__pyx_t_20); Py_XDECREF(__pyx_t_19); Py_XDECREF(__pyx_t_18);
+            __Pyx_RaiseBufferFallbackError();
+          } else {
+            PyErr_Restore(__pyx_t_20, __pyx_t_19, __pyx_t_18);
+          }
+        }
+        __pyx_pybuffernd_b.diminfo[0].strides = __pyx_pybuffernd_b.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_b.diminfo[0].shape = __pyx_pybuffernd_b.rcbuffer->pybuffer.shape[0];
+        if (unlikely(__pyx_t_16 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 374; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      }
+      __pyx_t_17 = 0;
+      __Pyx_XDECREF_SET(__pyx_v_b, ((PyArrayObject *)__pyx_t_14));
+      __pyx_t_14 = 0;
+
+      /* "pyearth/_forward.pyx":375
+ * 
+ *                 b = p * predictor.x
+ *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
+ *                     b[missing[:, variable] == 1] = 0
+ *                 linear_dependence = self.orthonormal_update(b)
+ */
+      __pyx_t_13 = (__pyx_v_missing_flag != 0);
+      if (__pyx_t_13) {
+      } else {
+        __pyx_t_3 = __pyx_t_13;
+        goto __pyx_L25_bool_binop_done;
+      }
+      __pyx_t_13 = ((!(__pyx_v_covered != 0)) != 0);
+      __pyx_t_3 = __pyx_t_13;
+      __pyx_L25_bool_binop_done:;
+      if (__pyx_t_3) {
+
+        /* "pyearth/_forward.pyx":376
+ *                 b = p * predictor.x
+ *                 if missing_flag and not covered:
+ *                     b[missing[:, variable] == 1] = 0             # <<<<<<<<<<<<<<
+ *                 linear_dependence = self.orthonormal_update(b)
+ * 
+ */
+        __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 376; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 376; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_1);
+        __Pyx_INCREF(__pyx_slice__22);
+        __Pyx_GIVEREF(__pyx_slice__22);
+        PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__22);
+        __Pyx_GIVEREF(__pyx_t_14);
+        PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_14);
+        __pyx_t_14 = 0;
+        __pyx_t_14 = PyObject_GetItem(((PyObject *)__pyx_v_missing), __pyx_t_1); if (unlikely(__pyx_t_14 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 376; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __Pyx_GOTREF(__pyx_t_14);
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_t_14, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 376; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_1);
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        if (unlikely(PyObject_SetItem(((PyObject *)__pyx_v_b), __pyx_t_1, __pyx_int_0) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 376; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+        /* "pyearth/_forward.pyx":375
+ * 
+ *                 b = p * predictor.x
+ *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
+ *                     b[missing[:, variable] == 1] = 0
+ *                 linear_dependence = self.orthonormal_update(b)
+ */
+      }
+
+      /* "pyearth/_forward.pyx":377
+ *                 if missing_flag and not covered:
+ *                     b[missing[:, variable] == 1] = 0
+ *                 linear_dependence = self.orthonormal_update(b)             # <<<<<<<<<<<<<<
+ * 
+ *                 # If a new hinge function does not improve the gcv over the
+ */
+      __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, ((PyObject *)__pyx_v_b), 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 377; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 377; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __pyx_v_linear_dependence = __pyx_t_3;
+
+      /* "pyearth/_forward.pyx":385
  *                 # another term never increases, but the gcv may because it
  *                 # penalizes additional terms.
  *                 mse_ = sqrt(sum([outcome.mse() ** 2 for outcome in self.outcomes]))             # <<<<<<<<<<<<<<
- *                 if missing and not covered:
+ *                 if missing_flag and not covered:
  *                     gcv_ = gcv_factor_k_plus_3 * mse_
  */
-      __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_outcomes); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_10);
-      if (likely(PyList_CheckExact(__pyx_t_10)) || PyTuple_CheckExact(__pyx_t_10)) {
-        __pyx_t_15 = __pyx_t_10; __Pyx_INCREF(__pyx_t_15); __pyx_t_22 = 0;
-        __pyx_t_23 = NULL;
-      } else {
-        __pyx_t_22 = -1; __pyx_t_15 = PyObject_GetIter(__pyx_t_10); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_15);
-        __pyx_t_23 = Py_TYPE(__pyx_t_15)->tp_iternext; if (unlikely(!__pyx_t_23)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      if (unlikely(__pyx_v_self->outcomes == Py_None)) {
+        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
+        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       }
-      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+      __pyx_t_14 = __pyx_v_self->outcomes; __Pyx_INCREF(__pyx_t_14); __pyx_t_22 = 0;
       for (;;) {
-        if (likely(!__pyx_t_23)) {
-          if (likely(PyList_CheckExact(__pyx_t_15))) {
-            if (__pyx_t_22 >= PyList_GET_SIZE(__pyx_t_15)) break;
-            #if CYTHON_COMPILING_IN_CPYTHON
-            __pyx_t_10 = PyList_GET_ITEM(__pyx_t_15, __pyx_t_22); __Pyx_INCREF(__pyx_t_10); __pyx_t_22++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-            #else
-            __pyx_t_10 = PySequence_ITEM(__pyx_t_15, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-            __Pyx_GOTREF(__pyx_t_10);
-            #endif
-          } else {
-            if (__pyx_t_22 >= PyTuple_GET_SIZE(__pyx_t_15)) break;
-            #if CYTHON_COMPILING_IN_CPYTHON
-            __pyx_t_10 = PyTuple_GET_ITEM(__pyx_t_15, __pyx_t_22); __Pyx_INCREF(__pyx_t_10); __pyx_t_22++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-            #else
-            __pyx_t_10 = PySequence_ITEM(__pyx_t_15, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-            __Pyx_GOTREF(__pyx_t_10);
-            #endif
-          }
-        } else {
-          __pyx_t_10 = __pyx_t_23(__pyx_t_15);
-          if (unlikely(!__pyx_t_10)) {
-            PyObject* exc_type = PyErr_Occurred();
-            if (exc_type) {
-              if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-              else {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-            }
-            break;
-          }
-          __Pyx_GOTREF(__pyx_t_10);
-        }
-        __Pyx_XDECREF_SET(__pyx_v_outcome, __pyx_t_10);
-        __pyx_t_10 = 0;
-        __pyx_t_16 = __Pyx_PyObject_GetAttrStr(__pyx_v_outcome, __pyx_n_s_mse); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_16);
-        __pyx_t_9 = NULL;
-        if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_16))) {
-          __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_16);
-          if (likely(__pyx_t_9)) {
-            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_16);
-            __Pyx_INCREF(__pyx_t_9);
+        if (__pyx_t_22 >= PyList_GET_SIZE(__pyx_t_14)) break;
+        #if CYTHON_COMPILING_IN_CPYTHON
+        __pyx_t_9 = PyList_GET_ITEM(__pyx_t_14, __pyx_t_22); __Pyx_INCREF(__pyx_t_9); __pyx_t_22++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        #else
+        __pyx_t_9 = PySequence_ITEM(__pyx_t_14, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_9);
+        #endif
+        __Pyx_XDECREF_SET(__pyx_v_outcome, __pyx_t_9);
+        __pyx_t_9 = 0;
+        __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_outcome, __pyx_n_s_mse); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_15);
+        __pyx_t_8 = NULL;
+        if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_15))) {
+          __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_15);
+          if (likely(__pyx_t_8)) {
+            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_15);
+            __Pyx_INCREF(__pyx_t_8);
             __Pyx_INCREF(function);
-            __Pyx_DECREF_SET(__pyx_t_16, function);
+            __Pyx_DECREF_SET(__pyx_t_15, function);
           }
         }
-        if (__pyx_t_9) {
-          __pyx_t_10 = __Pyx_PyObject_CallOneArg(__pyx_t_16, __pyx_t_9); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        if (__pyx_t_8) {
+          __pyx_t_9 = __Pyx_PyObject_CallOneArg(__pyx_t_15, __pyx_t_8); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
         } else {
-          __pyx_t_10 = __Pyx_PyObject_CallNoArg(__pyx_t_16); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_9 = __Pyx_PyObject_CallNoArg(__pyx_t_15); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         }
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
-        __pyx_t_16 = PyNumber_Power(__pyx_t_10, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_16);
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_16))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+        __Pyx_GOTREF(__pyx_t_9);
+        __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
+        __pyx_t_15 = PyNumber_Power(__pyx_t_9, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_15);
+        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_15))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
       }
-      __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-      __pyx_t_15 = PyTuple_New(1); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_15);
+      __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+      __pyx_t_14 = PyTuple_New(1); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_14);
       __Pyx_GIVEREF(__pyx_t_1);
-      PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_1);
+      PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_1);
       __pyx_t_1 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_sum, __pyx_t_15, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_sum, __pyx_t_14, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-      __pyx_t_24 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_24 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+      __pyx_t_23 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_23 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_v_mse_ = sqrt(__pyx_t_24);
+      __pyx_v_mse_ = sqrt(__pyx_t_23);
 
-      /* "pyearth/_forward.pyx":525
+      /* "pyearth/_forward.pyx":386
  *                 # penalizes additional terms.
  *                 mse_ = sqrt(sum([outcome.mse() ** 2 for outcome in self.outcomes]))
- *                 if missing and not covered:             # <<<<<<<<<<<<<<
+ *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
  *                     gcv_ = gcv_factor_k_plus_3 * mse_
  *                 else:
  */
-      __pyx_t_14 = __Pyx_PyObject_IsTrue(((PyObject *)__pyx_v_missing)); if (unlikely(__pyx_t_14 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 525; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      if (__pyx_t_14) {
+      __pyx_t_13 = (__pyx_v_missing_flag != 0);
+      if (__pyx_t_13) {
       } else {
-        __pyx_t_3 = __pyx_t_14;
-        goto __pyx_L28_bool_binop_done;
+        __pyx_t_3 = __pyx_t_13;
+        goto __pyx_L30_bool_binop_done;
       }
-      __pyx_t_14 = ((!(__pyx_v_covered != 0)) != 0);
-      __pyx_t_3 = __pyx_t_14;
-      __pyx_L28_bool_binop_done:;
+      __pyx_t_13 = ((!(__pyx_v_covered != 0)) != 0);
+      __pyx_t_3 = __pyx_t_13;
+      __pyx_L30_bool_binop_done:;
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":526
+        /* "pyearth/_forward.pyx":387
  *                 mse_ = sqrt(sum([outcome.mse() ** 2 for outcome in self.outcomes]))
- *                 if missing and not covered:
+ *                 if missing_flag and not covered:
  *                     gcv_ = gcv_factor_k_plus_3 * mse_             # <<<<<<<<<<<<<<
  *                 else:
  *                     gcv_ = gcv_factor_k_plus_1 * mse_
  */
         __pyx_v_gcv_ = (__pyx_v_gcv_factor_k_plus_3 * __pyx_v_mse_);
 
-        /* "pyearth/_forward.pyx":525
+        /* "pyearth/_forward.pyx":386
  *                 # penalizes additional terms.
  *                 mse_ = sqrt(sum([outcome.mse() ** 2 for outcome in self.outcomes]))
- *                 if missing and not covered:             # <<<<<<<<<<<<<<
+ *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
  *                     gcv_ = gcv_factor_k_plus_3 * mse_
  *                 else:
  */
-        goto __pyx_L27;
+        goto __pyx_L29;
       }
 
-      /* "pyearth/_forward.pyx":528
+      /* "pyearth/_forward.pyx":389
  *                     gcv_ = gcv_factor_k_plus_3 * mse_
  *                 else:
  *                     gcv_ = gcv_factor_k_plus_1 * mse_             # <<<<<<<<<<<<<<
@@ -8819,20 +8822,20 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       /*else*/ {
         __pyx_v_gcv_ = (__pyx_v_gcv_factor_k_plus_1 * __pyx_v_mse_);
       }
-      __pyx_L27:;
+      __pyx_L29:;
 
-      /* "pyearth/_forward.pyx":530
+      /* "pyearth/_forward.pyx":391
  *                     gcv_ = gcv_factor_k_plus_1 * mse_
  * 
  *                 if linear_variables[variable]:             # <<<<<<<<<<<<<<
  *                     mse = mse_
  *                     knot_idx = -1
  */
-      __pyx_t_25 = __pyx_v_variable;
-      __pyx_t_3 = ((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_linear_variables.rcbuffer->pybuffer.buf, __pyx_t_25, __pyx_pybuffernd_linear_variables.diminfo[0].strides)) != 0);
+      __pyx_t_24 = __pyx_v_variable;
+      __pyx_t_3 = ((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_linear_variables.rcbuffer->pybuffer.buf, __pyx_t_24, __pyx_pybuffernd_linear_variables.diminfo[0].strides)) != 0);
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":531
+        /* "pyearth/_forward.pyx":392
  * 
  *                 if linear_variables[variable]:
  *                     mse = mse_             # <<<<<<<<<<<<<<
@@ -8841,7 +8844,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         __pyx_v_mse = __pyx_v_mse_;
 
-        /* "pyearth/_forward.pyx":532
+        /* "pyearth/_forward.pyx":393
  *                 if linear_variables[variable]:
  *                     mse = mse_
  *                     knot_idx = -1             # <<<<<<<<<<<<<<
@@ -8850,2175 +8853,94 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         __pyx_v_knot_idx = -1LL;
 
-        /* "pyearth/_forward.pyx":530
+        /* "pyearth/_forward.pyx":391
  *                     gcv_ = gcv_factor_k_plus_1 * mse_
  * 
  *                 if linear_variables[variable]:             # <<<<<<<<<<<<<<
  *                     mse = mse_
  *                     knot_idx = -1
  */
-        goto __pyx_L30;
+        goto __pyx_L32;
       }
 
-      /* "pyearth/_forward.pyx":535
- *                 else:
- *                     # Find the valid knot candidates
- *                     candidates_idx = parent.valid_knots(b[predictor.order],             # <<<<<<<<<<<<<<
- *                                                         predictor.x[predictor.order],
- *                                                         variable,
+      /* "pyearth/_forward.pyx":405
+ * #                                                         self.minspan_alpha,
+ * #                                                         self.n, self.mwork)
+ *                     candidates, candidates_idx = predictor.knot_candidates(p, self.endspan,             # <<<<<<<<<<<<<<
+ *                                                                            self.minspan,
+ *                                                                            self.minspan_alpha,
  */
       /*else*/ {
-        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_predictor, __pyx_n_s_order); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 535; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_15 = PyObject_GetItem(((PyObject *)__pyx_v_b), __pyx_t_1); if (unlikely(__pyx_t_15 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 535; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __pyx_t_14 = __Pyx_PyObject_GetAttrStr(__pyx_v_predictor, __pyx_n_s_knot_candidates); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 405; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __pyx_t_15 = __Pyx_PyInt_From_int(__pyx_v_self->endspan); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 405; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_15);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        if (!(likely(((__pyx_t_15) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_15, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 535; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-        /* "pyearth/_forward.pyx":536
- *                     # Find the valid knot candidates
- *                     candidates_idx = parent.valid_knots(b[predictor.order],
- *                                                         predictor.x[predictor.order],             # <<<<<<<<<<<<<<
- *                                                         variable,
- *                                                         self.check_every,
+        /* "pyearth/_forward.pyx":406
+ * #                                                         self.n, self.mwork)
+ *                     candidates, candidates_idx = predictor.knot_candidates(p, self.endspan,
+ *                                                                            self.minspan,             # <<<<<<<<<<<<<<
+ *                                                                            self.minspan_alpha,
+ *                                                                            self.n)
  */
-        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_predictor, __pyx_n_s_x); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 536; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_16 = __Pyx_PyObject_GetAttrStr(__pyx_v_predictor, __pyx_n_s_order); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 536; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_16);
-        __pyx_t_10 = PyObject_GetItem(__pyx_t_1, __pyx_t_16); if (unlikely(__pyx_t_10 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 536; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
-        if (!(likely(((__pyx_t_10) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_10, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 536; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_self->minspan); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 406; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_9);
 
-        /* "pyearth/_forward.pyx":541
- *                                                         endspan, self.minspan,
- *                                                         self.minspan_alpha,
- *                                                         self.n, self.mwork)             # <<<<<<<<<<<<<<
- *                     candidates = predictor.x[candidates_idx]
- *                     if len(candidates_idx) > 0:
- */
-        __pyx_t_16 = ((PyObject *)__pyx_v_self->mwork);
-        __Pyx_INCREF(__pyx_t_16);
-
-        /* "pyearth/_forward.pyx":535
- *                 else:
- *                     # Find the valid knot candidates
- *                     candidates_idx = parent.valid_knots(b[predictor.order],             # <<<<<<<<<<<<<<
- *                                                         predictor.x[predictor.order],
- *                                                         variable,
- */
-        __pyx_t_1 = ((PyObject *)((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_parent->__pyx_vtab)->valid_knots(__pyx_v_parent, ((PyArrayObject *)__pyx_t_15), ((PyArrayObject *)__pyx_t_10), __pyx_v_variable, __pyx_v_self->check_every, __pyx_v_endspan, __pyx_v_self->minspan, __pyx_v_self->minspan_alpha, __pyx_v_self->n, ((PyArrayObject *)__pyx_t_16), 0)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 535; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
-        {
-          __Pyx_BufFmt_StackElem __pyx_stack[1];
-          __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer);
-          __pyx_t_6 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
-          if (unlikely(__pyx_t_6 < 0)) {
-            PyErr_Fetch(&__pyx_t_20, &__pyx_t_19, &__pyx_t_18);
-            if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer, (PyObject*)__pyx_v_candidates_idx, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
-              Py_XDECREF(__pyx_t_20); Py_XDECREF(__pyx_t_19); Py_XDECREF(__pyx_t_18);
-              __Pyx_RaiseBufferFallbackError();
-            } else {
-              PyErr_Restore(__pyx_t_20, __pyx_t_19, __pyx_t_18);
-            }
-          }
-          __pyx_pybuffernd_candidates_idx.diminfo[0].strides = __pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_candidates_idx.diminfo[0].shape = __pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer.shape[0];
-          if (unlikely(__pyx_t_6 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 535; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        }
-        __Pyx_XDECREF_SET(__pyx_v_candidates_idx, ((PyArrayObject *)__pyx_t_1));
-        __pyx_t_1 = 0;
-
-        /* "pyearth/_forward.pyx":542
- *                                                         self.minspan_alpha,
- *                                                         self.n, self.mwork)
- *                     candidates = predictor.x[candidates_idx]             # <<<<<<<<<<<<<<
- *                     if len(candidates_idx) > 0:
+        /* "pyearth/_forward.pyx":407
+ *                     candidates, candidates_idx = predictor.knot_candidates(p, self.endspan,
+ *                                                                            self.minspan,
+ *                                                                            self.minspan_alpha,             # <<<<<<<<<<<<<<
+ *                                                                            self.n)
  *                     # Choose the best candidate (if no candidate is an
  */
-        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_predictor, __pyx_n_s_x); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 542; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_16 = PyObject_GetItem(__pyx_t_1, ((PyObject *)__pyx_v_candidates_idx)); if (unlikely(__pyx_t_16 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 542; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-        __Pyx_GOTREF(__pyx_t_16);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_XDECREF_SET(__pyx_v_candidates, __pyx_t_16);
-        __pyx_t_16 = 0;
+        __pyx_t_8 = PyFloat_FromDouble(__pyx_v_self->minspan_alpha); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 407; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_8);
 
-        /* "pyearth/_forward.pyx":543
- *                                                         self.n, self.mwork)
- *                     candidates = predictor.x[candidates_idx]
- *                     if len(candidates_idx) > 0:             # <<<<<<<<<<<<<<
+        /* "pyearth/_forward.pyx":408
+ *                                                                            self.minspan,
+ *                                                                            self.minspan_alpha,
+ *                                                                            self.n)             # <<<<<<<<<<<<<<
  *                     # Choose the best candidate (if no candidate is an
  *                     # improvement on the linear term in terms of gcv, knot_idx
  */
-        __pyx_t_22 = PyObject_Length(((PyObject *)__pyx_v_candidates_idx)); if (unlikely(__pyx_t_22 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 543; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __pyx_t_3 = ((__pyx_t_22 > 0) != 0);
-        if (__pyx_t_3) {
-
-          /* "pyearth/_forward.pyx":551
- *                         # variable combination
- *                         # Assemble the knot search data structure
- *                         constant = KnotSearchReadOnlyData(predictor, self.outcomes)             # <<<<<<<<<<<<<<
- *                         search_data = KnotSearchData(constant, self.workings, q)
- * 
- */
-          __pyx_t_16 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_outcomes); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 551; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_16);
-          __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 551; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_1);
-          __Pyx_INCREF(__pyx_v_predictor);
-          __Pyx_GIVEREF(__pyx_v_predictor);
-          PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_predictor);
-          __Pyx_GIVEREF(__pyx_t_16);
-          PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_16);
-          __pyx_t_16 = 0;
-          __pyx_t_16 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchReadOnlyData), __pyx_t_1, NULL); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 551; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_16);
-          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __Pyx_XDECREF_SET(__pyx_v_constant, ((struct __pyx_obj_7pyearth_12_knot_search_KnotSearchReadOnlyData *)__pyx_t_16));
-          __pyx_t_16 = 0;
-
-          /* "pyearth/_forward.pyx":552
- *                         # Assemble the knot search data structure
- *                         constant = KnotSearchReadOnlyData(predictor, self.outcomes)
- *                         search_data = KnotSearchData(constant, self.workings, q)             # <<<<<<<<<<<<<<
- * 
- *                         # Run knot search
- */
-          __pyx_t_16 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_workings); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 552; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_16);
-          __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_q); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 552; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_10 = PyTuple_New(3); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 552; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_10);
-          __Pyx_INCREF(((PyObject *)__pyx_v_constant));
-          __Pyx_GIVEREF(((PyObject *)__pyx_v_constant));
-          PyTuple_SET_ITEM(__pyx_t_10, 0, ((PyObject *)__pyx_v_constant));
-          __Pyx_GIVEREF(__pyx_t_16);
-          PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_16);
-          __Pyx_GIVEREF(__pyx_t_1);
-          PyTuple_SET_ITEM(__pyx_t_10, 2, __pyx_t_1);
-          __pyx_t_16 = 0;
-          __pyx_t_1 = 0;
-          __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchData), __pyx_t_10, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 552; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_1);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __Pyx_XDECREF_SET(__pyx_v_search_data, ((struct __pyx_obj_7pyearth_12_knot_search_KnotSearchData *)__pyx_t_1));
-          __pyx_t_1 = 0;
-
-          /* "pyearth/_forward.pyx":555
- * 
- *                         # Run knot search
- *                         knot_search(search_data, candidates_idx, p, q, self.m, len(candidates), self.n_outcomes)             # <<<<<<<<<<<<<<
- * 
- * #                         if missing_flag and not covered:
- */
-          __pyx_t_26 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(((PyObject *)__pyx_v_candidates_idx));
-          if (unlikely(!__pyx_t_26.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 555; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __pyx_t_27 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(((PyObject *)__pyx_v_p));
-          if (unlikely(!__pyx_t_27.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 555; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __pyx_t_22 = PyObject_Length(__pyx_v_candidates); if (unlikely(__pyx_t_22 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 555; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_n_outcomes); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 555; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_28 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_28 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 555; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_knot_search(__pyx_v_search_data, __pyx_t_26, __pyx_t_27, __pyx_v_q, __pyx_v_self->m, __pyx_t_22, __pyx_t_28, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 555; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_1);
-          __PYX_XDEC_MEMVIEW(&__pyx_t_26, 1);
-          __PYX_XDEC_MEMVIEW(&__pyx_t_27, 1);
-          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-          /* "pyearth/_forward.pyx":566
- *                         # If the hinge function does not decrease the gcv then
- *                         # just keep the linear term (if allow_linear is True)
- *                         if self.allow_linear:             # <<<<<<<<<<<<<<
- *                             if missing_flag and not covered:
- *                                 if gcv_factor_k_plus_4 * mse >= gcv_:
- */
-          __pyx_t_3 = (__pyx_v_self->allow_linear != 0);
-          if (__pyx_t_3) {
-
-            /* "pyearth/_forward.pyx":567
- *                         # just keep the linear term (if allow_linear is True)
- *                         if self.allow_linear:
- *                             if missing_flag and not covered:             # <<<<<<<<<<<<<<
- *                                 if gcv_factor_k_plus_4 * mse >= gcv_:
- *                                     mse = mse_
- */
-            __pyx_t_14 = (__pyx_v_missing_flag != 0);
-            if (__pyx_t_14) {
-            } else {
-              __pyx_t_3 = __pyx_t_14;
-              goto __pyx_L34_bool_binop_done;
-            }
-            __pyx_t_14 = ((!(__pyx_v_covered != 0)) != 0);
-            __pyx_t_3 = __pyx_t_14;
-            __pyx_L34_bool_binop_done:;
-            if (__pyx_t_3) {
-
-              /* "pyearth/_forward.pyx":568
- *                         if self.allow_linear:
- *                             if missing_flag and not covered:
- *                                 if gcv_factor_k_plus_4 * mse >= gcv_:             # <<<<<<<<<<<<<<
- *                                     mse = mse_
- *                                     knot_idx = -1
- */
-              __pyx_t_3 = (((__pyx_v_gcv_factor_k_plus_4 * __pyx_v_mse) >= __pyx_v_gcv_) != 0);
-              if (__pyx_t_3) {
-
-                /* "pyearth/_forward.pyx":569
- *                             if missing_flag and not covered:
- *                                 if gcv_factor_k_plus_4 * mse >= gcv_:
- *                                     mse = mse_             # <<<<<<<<<<<<<<
- *                                     knot_idx = -1
- *                             else:
- */
-                __pyx_v_mse = __pyx_v_mse_;
-
-                /* "pyearth/_forward.pyx":570
- *                                 if gcv_factor_k_plus_4 * mse >= gcv_:
- *                                     mse = mse_
- *                                     knot_idx = -1             # <<<<<<<<<<<<<<
- *                             else:
- *                                 if gcv_factor_k_plus_2 * mse >= gcv_:
- */
-                __pyx_v_knot_idx = -1LL;
-
-                /* "pyearth/_forward.pyx":568
- *                         if self.allow_linear:
- *                             if missing_flag and not covered:
- *                                 if gcv_factor_k_plus_4 * mse >= gcv_:             # <<<<<<<<<<<<<<
- *                                     mse = mse_
- *                                     knot_idx = -1
- */
-              }
-
-              /* "pyearth/_forward.pyx":567
- *                         # just keep the linear term (if allow_linear is True)
- *                         if self.allow_linear:
- *                             if missing_flag and not covered:             # <<<<<<<<<<<<<<
- *                                 if gcv_factor_k_plus_4 * mse >= gcv_:
- *                                     mse = mse_
- */
-              goto __pyx_L33;
-            }
-
-            /* "pyearth/_forward.pyx":572
- *                                     knot_idx = -1
- *                             else:
- *                                 if gcv_factor_k_plus_2 * mse >= gcv_:             # <<<<<<<<<<<<<<
- *                                     mse = mse_
- *                                     knot_idx = -1
- */
-            /*else*/ {
-              __pyx_t_3 = (((__pyx_v_gcv_factor_k_plus_2 * __pyx_v_mse) >= __pyx_v_gcv_) != 0);
-              if (__pyx_t_3) {
-
-                /* "pyearth/_forward.pyx":573
- *                             else:
- *                                 if gcv_factor_k_plus_2 * mse >= gcv_:
- *                                     mse = mse_             # <<<<<<<<<<<<<<
- *                                     knot_idx = -1
- *                     else:
- */
-                __pyx_v_mse = __pyx_v_mse_;
-
-                /* "pyearth/_forward.pyx":574
- *                                 if gcv_factor_k_plus_2 * mse >= gcv_:
- *                                     mse = mse_
- *                                     knot_idx = -1             # <<<<<<<<<<<<<<
- *                     else:
- *                         # Do an orthonormal downdate and skip to the next
- */
-                __pyx_v_knot_idx = -1LL;
-
-                /* "pyearth/_forward.pyx":572
- *                                     knot_idx = -1
- *                             else:
- *                                 if gcv_factor_k_plus_2 * mse >= gcv_:             # <<<<<<<<<<<<<<
- *                                     mse = mse_
- *                                     knot_idx = -1
- */
-              }
-            }
-            __pyx_L33:;
-
-            /* "pyearth/_forward.pyx":566
- *                         # If the hinge function does not decrease the gcv then
- *                         # just keep the linear term (if allow_linear is True)
- *                         if self.allow_linear:             # <<<<<<<<<<<<<<
- *                             if missing_flag and not covered:
- *                                 if gcv_factor_k_plus_4 * mse >= gcv_:
- */
+        __pyx_t_25 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_25)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 408; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_25);
+        __pyx_t_26 = NULL;
+        __pyx_t_22 = 0;
+        if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_14))) {
+          __pyx_t_26 = PyMethod_GET_SELF(__pyx_t_14);
+          if (likely(__pyx_t_26)) {
+            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_14);
+            __Pyx_INCREF(__pyx_t_26);
+            __Pyx_INCREF(function);
+            __Pyx_DECREF_SET(__pyx_t_14, function);
+            __pyx_t_22 = 1;
           }
-
-          /* "pyearth/_forward.pyx":543
- *                                                         self.n, self.mwork)
- *                     candidates = predictor.x[candidates_idx]
- *                     if len(candidates_idx) > 0:             # <<<<<<<<<<<<<<
- *                     # Choose the best candidate (if no candidate is an
- *                     # improvement on the linear term in terms of gcv, knot_idx
- */
-          goto __pyx_L31;
         }
-
-        /* "pyearth/_forward.pyx":578
- *                         # Do an orthonormal downdate and skip to the next
- *                         # iteration
- *                         if missing_flag and not covered:             # <<<<<<<<<<<<<<
- *                             self.orthonormal_downdate()
- *                             self.orthonormal_downdate()
- */
-        /*else*/ {
-          __pyx_t_14 = (__pyx_v_missing_flag != 0);
-          if (__pyx_t_14) {
-          } else {
-            __pyx_t_3 = __pyx_t_14;
-            goto __pyx_L39_bool_binop_done;
-          }
-          __pyx_t_14 = ((!(__pyx_v_covered != 0)) != 0);
-          __pyx_t_3 = __pyx_t_14;
-          __pyx_L39_bool_binop_done:;
-          if (__pyx_t_3) {
-
-            /* "pyearth/_forward.pyx":579
- *                         # iteration
- *                         if missing_flag and not covered:
- *                             self.orthonormal_downdate()             # <<<<<<<<<<<<<<
- *                             self.orthonormal_downdate()
- *                         self.orthonormal_downdate()
- */
-            __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 579; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-            __Pyx_GOTREF(__pyx_t_1);
-            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-            /* "pyearth/_forward.pyx":580
- *                         if missing_flag and not covered:
- *                             self.orthonormal_downdate()
- *                             self.orthonormal_downdate()             # <<<<<<<<<<<<<<
- *                         self.orthonormal_downdate()
- *                         continue
- */
-            __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 580; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-            __Pyx_GOTREF(__pyx_t_1);
-            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-            /* "pyearth/_forward.pyx":578
- *                         # Do an orthonormal downdate and skip to the next
- *                         # iteration
- *                         if missing_flag and not covered:             # <<<<<<<<<<<<<<
- *                             self.orthonormal_downdate()
- *                             self.orthonormal_downdate()
- */
-          }
-
-          /* "pyearth/_forward.pyx":581
- *                             self.orthonormal_downdate()
- *                             self.orthonormal_downdate()
- *                         self.orthonormal_downdate()             # <<<<<<<<<<<<<<
- *                         continue
- *                         # TODO: Should that continue be there?
- */
-          __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 581; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_1);
-          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-          /* "pyearth/_forward.pyx":582
- *                             self.orthonormal_downdate()
- *                         self.orthonormal_downdate()
- *                         continue             # <<<<<<<<<<<<<<
- *                         # TODO: Should that continue be there?
- * 
- */
-          goto __pyx_L11_continue;
+        __pyx_t_27 = PyTuple_New(5+__pyx_t_22); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 405; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_27);
+        if (__pyx_t_26) {
+          __Pyx_GIVEREF(__pyx_t_26); PyTuple_SET_ITEM(__pyx_t_27, 0, __pyx_t_26); __pyx_t_26 = NULL;
         }
-        __pyx_L31:;
-      }
-      __pyx_L30:;
-
-      /* "pyearth/_forward.pyx":586
- * 
- *                 # Do an orthonormal downdate
- *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
- *                     # Order matters here: orthonormal updates
- *                     # must be undone in the reverse order in which
- */
-      __pyx_t_14 = (__pyx_v_missing_flag != 0);
-      if (__pyx_t_14) {
-      } else {
-        __pyx_t_3 = __pyx_t_14;
-        goto __pyx_L42_bool_binop_done;
-      }
-      __pyx_t_14 = ((!(__pyx_v_covered != 0)) != 0);
-      __pyx_t_3 = __pyx_t_14;
-      __pyx_L42_bool_binop_done:;
-      if (__pyx_t_3) {
-
-        /* "pyearth/_forward.pyx":590
- *                     # must be undone in the reverse order in which
- *                     # they were added.
- *                     self.orthonormal_downdate()             # <<<<<<<<<<<<<<
- *                     self.orthonormal_downdate()
- *                 self.orthonormal_downdate()
- */
-        __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 590; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_INCREF(((PyObject *)__pyx_v_p));
+        __Pyx_GIVEREF(((PyObject *)__pyx_v_p));
+        PyTuple_SET_ITEM(__pyx_t_27, 0+__pyx_t_22, ((PyObject *)__pyx_v_p));
+        __Pyx_GIVEREF(__pyx_t_15);
+        PyTuple_SET_ITEM(__pyx_t_27, 1+__pyx_t_22, __pyx_t_15);
+        __Pyx_GIVEREF(__pyx_t_9);
+        PyTuple_SET_ITEM(__pyx_t_27, 2+__pyx_t_22, __pyx_t_9);
+        __Pyx_GIVEREF(__pyx_t_8);
+        PyTuple_SET_ITEM(__pyx_t_27, 3+__pyx_t_22, __pyx_t_8);
+        __Pyx_GIVEREF(__pyx_t_25);
+        PyTuple_SET_ITEM(__pyx_t_27, 4+__pyx_t_22, __pyx_t_25);
+        __pyx_t_15 = 0;
+        __pyx_t_9 = 0;
+        __pyx_t_8 = 0;
+        __pyx_t_25 = 0;
+        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_14, __pyx_t_27, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 405; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-        /* "pyearth/_forward.pyx":591
- *                     # they were added.
- *                     self.orthonormal_downdate()
- *                     self.orthonormal_downdate()             # <<<<<<<<<<<<<<
- *                 self.orthonormal_downdate()
- * 
- */
-        __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 591; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-        /* "pyearth/_forward.pyx":586
- * 
- *                 # Do an orthonormal downdate
- *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
- *                     # Order matters here: orthonormal updates
- *                     # must be undone in the reverse order in which
- */
-      }
-
-      /* "pyearth/_forward.pyx":592
- *                     self.orthonormal_downdate()
- *                     self.orthonormal_downdate()
- *                 self.orthonormal_downdate()             # <<<<<<<<<<<<<<
- * 
- *                 # Update the choices
- */
-      __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 592; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-      /* "pyearth/_forward.pyx":595
- * 
- *                 # Update the choices
- *                 if mse < mse_choice or first:             # <<<<<<<<<<<<<<
- *                     if first:
- *                         first = False
- */
-      __pyx_t_14 = ((__pyx_v_mse < __pyx_v_mse_choice) != 0);
-      if (!__pyx_t_14) {
-      } else {
-        __pyx_t_3 = __pyx_t_14;
-        goto __pyx_L45_bool_binop_done;
-      }
-      __pyx_t_14 = (__pyx_v_first != 0);
-      __pyx_t_3 = __pyx_t_14;
-      __pyx_L45_bool_binop_done:;
-      if (__pyx_t_3) {
-
-        /* "pyearth/_forward.pyx":596
- *                 # Update the choices
- *                 if mse < mse_choice or first:
- *                     if first:             # <<<<<<<<<<<<<<
- *                         first = False
- *                     knot_choice = knot
- */
-        __pyx_t_3 = (__pyx_v_first != 0);
-        if (__pyx_t_3) {
-
-          /* "pyearth/_forward.pyx":597
- *                 if mse < mse_choice or first:
- *                     if first:
- *                         first = False             # <<<<<<<<<<<<<<
- *                     knot_choice = knot
- *                     mse_choice = mse
- */
-          __pyx_v_first = 0;
-
-          /* "pyearth/_forward.pyx":596
- *                 # Update the choices
- *                 if mse < mse_choice or first:
- *                     if first:             # <<<<<<<<<<<<<<
- *                         first = False
- *                     knot_choice = knot
- */
-        }
-
-        /* "pyearth/_forward.pyx":598
- *                     if first:
- *                         first = False
- *                     knot_choice = knot             # <<<<<<<<<<<<<<
- *                     mse_choice = mse
- *                     knot_idx_choice = knot_idx
- */
-        __pyx_v_knot_choice = __pyx_v_knot;
-
-        /* "pyearth/_forward.pyx":599
- *                         first = False
- *                     knot_choice = knot
- *                     mse_choice = mse             # <<<<<<<<<<<<<<
- *                     knot_idx_choice = knot_idx
- *                     parent_idx_choice = parent_idx
- */
-        __pyx_v_mse_choice = __pyx_v_mse;
-
-        /* "pyearth/_forward.pyx":600
- *                     knot_choice = knot
- *                     mse_choice = mse
- *                     knot_idx_choice = knot_idx             # <<<<<<<<<<<<<<
- *                     parent_idx_choice = parent_idx
- *                     parent_choice = parent
- */
-        __pyx_v_knot_idx_choice = __pyx_v_knot_idx;
-
-        /* "pyearth/_forward.pyx":601
- *                     mse_choice = mse
- *                     knot_idx_choice = knot_idx
- *                     parent_idx_choice = parent_idx             # <<<<<<<<<<<<<<
- *                     parent_choice = parent
- *                     if self.use_fast is True:
- */
-        __pyx_v_parent_idx_choice = __pyx_v_parent_idx;
-
-        /* "pyearth/_forward.pyx":602
- *                     knot_idx_choice = knot_idx
- *                     parent_idx_choice = parent_idx
- *                     parent_choice = parent             # <<<<<<<<<<<<<<
- *                     if self.use_fast is True:
- *                         parent_basis_content_choice = parent_basis_content
- */
-        __Pyx_INCREF(((PyObject *)__pyx_v_parent));
-        __Pyx_XDECREF_SET(__pyx_v_parent_choice, __pyx_v_parent);
-
-        /* "pyearth/_forward.pyx":603
- *                     parent_idx_choice = parent_idx
- *                     parent_choice = parent
- *                     if self.use_fast is True:             # <<<<<<<<<<<<<<
- *                         parent_basis_content_choice = parent_basis_content
- *                     variable_choice = variable
- */
-        __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
-        if (__pyx_t_3) {
-
-          /* "pyearth/_forward.pyx":604
- *                     parent_choice = parent
- *                     if self.use_fast is True:
- *                         parent_basis_content_choice = parent_basis_content             # <<<<<<<<<<<<<<
- *                     variable_choice = variable
- *                     dependent = linear_dependence
- */
-          __Pyx_INCREF(__pyx_v_parent_basis_content);
-          __Pyx_DECREF_SET(__pyx_v_parent_basis_content_choice, __pyx_v_parent_basis_content);
-
-          /* "pyearth/_forward.pyx":603
- *                     parent_idx_choice = parent_idx
- *                     parent_choice = parent
- *                     if self.use_fast is True:             # <<<<<<<<<<<<<<
- *                         parent_basis_content_choice = parent_basis_content
- *                     variable_choice = variable
- */
-        }
-
-        /* "pyearth/_forward.pyx":605
- *                     if self.use_fast is True:
- *                         parent_basis_content_choice = parent_basis_content
- *                     variable_choice = variable             # <<<<<<<<<<<<<<
- *                     dependent = linear_dependence
- *                     if missing_flag and not covered:
- */
-        __pyx_v_variable_choice = __pyx_v_variable;
-
-        /* "pyearth/_forward.pyx":606
- *                         parent_basis_content_choice = parent_basis_content
- *                     variable_choice = variable
- *                     dependent = linear_dependence             # <<<<<<<<<<<<<<
- *                     if missing_flag and not covered:
- *                         choice_needs_coverage = True
- */
-        __pyx_v_dependent = __pyx_v_linear_dependence;
-
-        /* "pyearth/_forward.pyx":607
- *                     variable_choice = variable
- *                     dependent = linear_dependence
- *                     if missing_flag and not covered:             # <<<<<<<<<<<<<<
- *                         choice_needs_coverage = True
- *                     else:
- */
-        __pyx_t_14 = (__pyx_v_missing_flag != 0);
-        if (__pyx_t_14) {
-        } else {
-          __pyx_t_3 = __pyx_t_14;
-          goto __pyx_L50_bool_binop_done;
-        }
-        __pyx_t_14 = ((!(__pyx_v_covered != 0)) != 0);
-        __pyx_t_3 = __pyx_t_14;
-        __pyx_L50_bool_binop_done:;
-        if (__pyx_t_3) {
-
-          /* "pyearth/_forward.pyx":608
- *                     dependent = linear_dependence
- *                     if missing_flag and not covered:
- *                         choice_needs_coverage = True             # <<<<<<<<<<<<<<
- *                     else:
- *                         choice_needs_coverage = False
- */
-          __pyx_v_choice_needs_coverage = 1;
-
-          /* "pyearth/_forward.pyx":607
- *                     variable_choice = variable
- *                     dependent = linear_dependence
- *                     if missing_flag and not covered:             # <<<<<<<<<<<<<<
- *                         choice_needs_coverage = True
- *                     else:
- */
-          goto __pyx_L49;
-        }
-
-        /* "pyearth/_forward.pyx":610
- *                         choice_needs_coverage = True
- *                     else:
- *                         choice_needs_coverage = False             # <<<<<<<<<<<<<<
- * 
- *                 if self.use_fast is True:
- */
-        /*else*/ {
-          __pyx_v_choice_needs_coverage = 0;
-        }
-        __pyx_L49:;
-
-        /* "pyearth/_forward.pyx":595
- * 
- *                 # Update the choices
- *                 if mse < mse_choice or first:             # <<<<<<<<<<<<<<
- *                     if first:
- *                         first = False
- */
-      }
-
-      /* "pyearth/_forward.pyx":612
- *                         choice_needs_coverage = False
- * 
- *                 if self.use_fast is True:             # <<<<<<<<<<<<<<
- *                     if (mse_choice_cur_parent == -1) or \
- *                        (mse < mse_choice_cur_parent):
- */
-      __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
-      if (__pyx_t_3) {
-
-        /* "pyearth/_forward.pyx":613
- * 
- *                 if self.use_fast is True:
- *                     if (mse_choice_cur_parent == -1) or \             # <<<<<<<<<<<<<<
- *                        (mse < mse_choice_cur_parent):
- *                         mse_choice_cur_parent = mse
- */
-        __pyx_t_14 = ((__pyx_v_mse_choice_cur_parent == -1.0) != 0);
-        if (!__pyx_t_14) {
-        } else {
-          __pyx_t_3 = __pyx_t_14;
-          goto __pyx_L54_bool_binop_done;
-        }
-
-        /* "pyearth/_forward.pyx":614
- *                 if self.use_fast is True:
- *                     if (mse_choice_cur_parent == -1) or \
- *                        (mse < mse_choice_cur_parent):             # <<<<<<<<<<<<<<
- *                         mse_choice_cur_parent = mse
- *                         variable_choice_cur_parent = variable
- */
-        __pyx_t_14 = ((__pyx_v_mse < __pyx_v_mse_choice_cur_parent) != 0);
-        __pyx_t_3 = __pyx_t_14;
-        __pyx_L54_bool_binop_done:;
-
-        /* "pyearth/_forward.pyx":613
- * 
- *                 if self.use_fast is True:
- *                     if (mse_choice_cur_parent == -1) or \             # <<<<<<<<<<<<<<
- *                        (mse < mse_choice_cur_parent):
- *                         mse_choice_cur_parent = mse
- */
-        if (__pyx_t_3) {
-
-          /* "pyearth/_forward.pyx":615
- *                     if (mse_choice_cur_parent == -1) or \
- *                        (mse < mse_choice_cur_parent):
- *                         mse_choice_cur_parent = mse             # <<<<<<<<<<<<<<
- *                         variable_choice_cur_parent = variable
- *             if self.use_fast is True:
- */
-          __pyx_v_mse_choice_cur_parent = __pyx_v_mse;
-
-          /* "pyearth/_forward.pyx":616
- *                        (mse < mse_choice_cur_parent):
- *                         mse_choice_cur_parent = mse
- *                         variable_choice_cur_parent = variable             # <<<<<<<<<<<<<<
- *             if self.use_fast is True:
- *                 if mse_choice_cur_parent != -1:
- */
-          __pyx_v_variable_choice_cur_parent = __pyx_v_variable;
-
-          /* "pyearth/_forward.pyx":613
- * 
- *                 if self.use_fast is True:
- *                     if (mse_choice_cur_parent == -1) or \             # <<<<<<<<<<<<<<
- *                        (mse < mse_choice_cur_parent):
- *                         mse_choice_cur_parent = mse
- */
-        }
-
-        /* "pyearth/_forward.pyx":612
- *                         choice_needs_coverage = False
- * 
- *                 if self.use_fast is True:             # <<<<<<<<<<<<<<
- *                     if (mse_choice_cur_parent == -1) or \
- *                        (mse < mse_choice_cur_parent):
- */
-      }
-
-      /* "pyearth/_forward.pyx":434
- *             parent_degree = parent.degree()
- * 
- *             for variable in variables:             # <<<<<<<<<<<<<<
- * 
- *                 # Determine whether missingness needs to be accounted for.
- */
-      __pyx_L11_continue:;
-    }
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-
-    /* "pyearth/_forward.pyx":617
- *                         mse_choice_cur_parent = mse
- *                         variable_choice_cur_parent = variable
- *             if self.use_fast is True:             # <<<<<<<<<<<<<<
- *                 if mse_choice_cur_parent != -1:
- *                     parent_basis_content.mse = mse_choice_cur_parent
- */
-    __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
-    if (__pyx_t_3) {
-
-      /* "pyearth/_forward.pyx":618
- *                         variable_choice_cur_parent = variable
- *             if self.use_fast is True:
- *                 if mse_choice_cur_parent != -1:             # <<<<<<<<<<<<<<
- *                     parent_basis_content.mse = mse_choice_cur_parent
- *                     parent_basis_content.v = variable_choice_cur_parent
- */
-      __pyx_t_3 = ((__pyx_v_mse_choice_cur_parent != -1.0) != 0);
-      if (__pyx_t_3) {
-
-        /* "pyearth/_forward.pyx":619
- *             if self.use_fast is True:
- *                 if mse_choice_cur_parent != -1:
- *                     parent_basis_content.mse = mse_choice_cur_parent             # <<<<<<<<<<<<<<
- *                     parent_basis_content.v = variable_choice_cur_parent
- * 
- */
-        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_mse_choice_cur_parent); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 619; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_4);
-        if (__Pyx_PyObject_SetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_mse, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 619; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-
-        /* "pyearth/_forward.pyx":620
- *                 if mse_choice_cur_parent != -1:
- *                     parent_basis_content.mse = mse_choice_cur_parent
- *                     parent_basis_content.v = variable_choice_cur_parent             # <<<<<<<<<<<<<<
- * 
- *         if self.use_fast is True:
- */
-        __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_variable_choice_cur_parent); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 620; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_4);
-        if (__Pyx_PyObject_SetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_v, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 620; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-
-        /* "pyearth/_forward.pyx":618
- *                         variable_choice_cur_parent = variable
- *             if self.use_fast is True:
- *                 if mse_choice_cur_parent != -1:             # <<<<<<<<<<<<<<
- *                     parent_basis_content.mse = mse_choice_cur_parent
- *                     parent_basis_content.v = variable_choice_cur_parent
- */
-      }
-
-      /* "pyearth/_forward.pyx":617
- *                         mse_choice_cur_parent = mse
- *                         variable_choice_cur_parent = variable
- *             if self.use_fast is True:             # <<<<<<<<<<<<<<
- *                 if mse_choice_cur_parent != -1:
- *                     parent_basis_content.mse = mse_choice_cur_parent
- */
-    }
-    __pyx_L5_continue:;
-  }
-
-  /* "pyearth/_forward.pyx":622
- *                     parent_basis_content.v = variable_choice_cur_parent
- * 
- *         if self.use_fast is True:             # <<<<<<<<<<<<<<
- *             for content in content_to_be_repushed:
- *                 heappush(self.fast_heap, content)
- */
-  __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
-  if (__pyx_t_3) {
-
-    /* "pyearth/_forward.pyx":623
- * 
- *         if self.use_fast is True:
- *             for content in content_to_be_repushed:             # <<<<<<<<<<<<<<
- *                 heappush(self.fast_heap, content)
- * 
- */
-    __pyx_t_4 = __pyx_v_content_to_be_repushed; __Pyx_INCREF(__pyx_t_4); __pyx_t_2 = 0;
-    for (;;) {
-      if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_4)) break;
-      #if CYTHON_COMPILING_IN_CPYTHON
-      __pyx_t_1 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_2); __Pyx_INCREF(__pyx_t_1); __pyx_t_2++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 623; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      #else
-      __pyx_t_1 = PySequence_ITEM(__pyx_t_4, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 623; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_1);
-      #endif
-      __Pyx_XDECREF_SET(__pyx_v_content, __pyx_t_1);
-      __pyx_t_1 = 0;
-
-      /* "pyearth/_forward.pyx":624
- *         if self.use_fast is True:
- *             for content in content_to_be_repushed:
- *                 heappush(self.fast_heap, content)             # <<<<<<<<<<<<<<
- * 
- *         # Make sure at least one candidate was checked
- */
-      __pyx_t_10 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 624; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_16 = NULL;
-      __pyx_t_22 = 0;
-      if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_10))) {
-        __pyx_t_16 = PyMethod_GET_SELF(__pyx_t_10);
-        if (likely(__pyx_t_16)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
-          __Pyx_INCREF(__pyx_t_16);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_10, function);
-          __pyx_t_22 = 1;
-        }
-      }
-      __pyx_t_15 = PyTuple_New(2+__pyx_t_22); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 624; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_15);
-      if (__pyx_t_16) {
-        __Pyx_GIVEREF(__pyx_t_16); PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_16); __pyx_t_16 = NULL;
-      }
-      __Pyx_INCREF(__pyx_v_self->fast_heap);
-      __Pyx_GIVEREF(__pyx_v_self->fast_heap);
-      PyTuple_SET_ITEM(__pyx_t_15, 0+__pyx_t_22, __pyx_v_self->fast_heap);
-      __Pyx_INCREF(__pyx_v_content);
-      __Pyx_GIVEREF(__pyx_v_content);
-      PyTuple_SET_ITEM(__pyx_t_15, 1+__pyx_t_22, __pyx_v_content);
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_15, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 624; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-      /* "pyearth/_forward.pyx":623
- * 
- *         if self.use_fast is True:
- *             for content in content_to_be_repushed:             # <<<<<<<<<<<<<<
- *                 heappush(self.fast_heap, content)
- * 
- */
-    }
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-
-    /* "pyearth/_forward.pyx":622
- *                     parent_basis_content.v = variable_choice_cur_parent
- * 
- *         if self.use_fast is True:             # <<<<<<<<<<<<<<
- *             for content in content_to_be_repushed:
- *                 heappush(self.fast_heap, content)
- */
-  }
-
-  /* "pyearth/_forward.pyx":627
- * 
- *         # Make sure at least one candidate was checked
- *         if first:             # <<<<<<<<<<<<<<
- *             self.record[len(self.record) - 1].set_no_candidates(True)
- *             return
- */
-  __pyx_t_3 = (__pyx_v_first != 0);
-  if (__pyx_t_3) {
-
-    /* "pyearth/_forward.pyx":628
- *         # Make sure at least one candidate was checked
- *         if first:
- *             self.record[len(self.record) - 1].set_no_candidates(True)             # <<<<<<<<<<<<<<
- *             return
- * 
- */
-    __pyx_t_4 = ((PyObject *)__pyx_v_self->record);
-    __Pyx_INCREF(__pyx_t_4);
-    __pyx_t_2 = PyObject_Length(__pyx_t_4); if (unlikely(__pyx_t_2 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 628; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_22 = (__pyx_t_2 - 1);
-    __pyx_t_4 = __Pyx_GetItemInt(((PyObject *)__pyx_v_self->record), __pyx_t_22, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 0, 0); if (unlikely(__pyx_t_4 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 628; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_set_no_candidates); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 628; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__23, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 628; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-
-    /* "pyearth/_forward.pyx":629
- *         if first:
- *             self.record[len(self.record) - 1].set_no_candidates(True)
- *             return             # <<<<<<<<<<<<<<
- * 
- *         # Add the new basis functions
- */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_r = Py_None; __Pyx_INCREF(Py_None);
-    goto __pyx_L0;
-
-    /* "pyearth/_forward.pyx":627
- * 
- *         # Make sure at least one candidate was checked
- *         if first:             # <<<<<<<<<<<<<<
- *             self.record[len(self.record) - 1].set_no_candidates(True)
- *             return
- */
-  }
-
-  /* "pyearth/_forward.pyx":632
- * 
- *         # Add the new basis functions
- *         label = self.xlabels[variable_choice]             # <<<<<<<<<<<<<<
- *         if choice_needs_coverage:
- *             bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
- */
-  if (unlikely(__pyx_v_self->xlabels == Py_None)) {
-    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 632; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  }
-  __pyx_t_4 = PyList_GET_ITEM(__pyx_v_self->xlabels, __pyx_v_variable_choice);
-  __Pyx_INCREF(__pyx_t_4);
-  __pyx_v_label = __pyx_t_4;
-  __pyx_t_4 = 0;
-
-  /* "pyearth/_forward.pyx":633
- *         # Add the new basis functions
- *         label = self.xlabels[variable_choice]
- *         if choice_needs_coverage:             # <<<<<<<<<<<<<<
- *             bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
- *                                            True, label)
- */
-  __pyx_t_3 = (__pyx_v_choice_needs_coverage != 0);
-  if (__pyx_t_3) {
-
-    /* "pyearth/_forward.pyx":634
- *         label = self.xlabels[variable_choice]
- *         if choice_needs_coverage:
- *             bf3 = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
- *                                            True, label)
- *             bf4 = MissingnessBasisFunction(parent_choice, variable_choice,
- */
-    if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 634; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-    __pyx_t_4 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 634; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-
-    /* "pyearth/_forward.pyx":635
- *         if choice_needs_coverage:
- *             bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
- *                                            True, label)             # <<<<<<<<<<<<<<
- *             bf4 = MissingnessBasisFunction(parent_choice, variable_choice,
- *                                            False, label)
- */
-    __pyx_t_1 = PyTuple_New(4); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 634; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_INCREF(((PyObject *)__pyx_v_parent_choice));
-    __Pyx_GIVEREF(((PyObject *)__pyx_v_parent_choice));
-    PyTuple_SET_ITEM(__pyx_t_1, 0, ((PyObject *)__pyx_v_parent_choice));
-    __Pyx_GIVEREF(__pyx_t_4);
-    PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_4);
-    __Pyx_INCREF(Py_True);
-    __Pyx_GIVEREF(Py_True);
-    PyTuple_SET_ITEM(__pyx_t_1, 2, Py_True);
-    __Pyx_INCREF(__pyx_v_label);
-    __Pyx_GIVEREF(__pyx_v_label);
-    PyTuple_SET_ITEM(__pyx_t_1, 3, __pyx_v_label);
-    __pyx_t_4 = 0;
-
-    /* "pyearth/_forward.pyx":634
- *         label = self.xlabels[variable_choice]
- *         if choice_needs_coverage:
- *             bf3 = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
- *                                            True, label)
- *             bf4 = MissingnessBasisFunction(parent_choice, variable_choice,
- */
-    __pyx_t_4 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction), __pyx_t_1, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 634; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_v_bf3 = ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_4);
-    __pyx_t_4 = 0;
-
-    /* "pyearth/_forward.pyx":636
- *             bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
- *                                            True, label)
- *             bf4 = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
- *                                            False, label)
- *             if self.basis.has_coverage(variable_choice):
- */
-    if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 636; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-    __pyx_t_4 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 636; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-
-    /* "pyearth/_forward.pyx":637
- *                                            True, label)
- *             bf4 = MissingnessBasisFunction(parent_choice, variable_choice,
- *                                            False, label)             # <<<<<<<<<<<<<<
- *             if self.basis.has_coverage(variable_choice):
- *                 bf3, bf4 = self.basis.get_coverage(variable_choice)
- */
-    __pyx_t_1 = PyTuple_New(4); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 636; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_INCREF(((PyObject *)__pyx_v_parent_choice));
-    __Pyx_GIVEREF(((PyObject *)__pyx_v_parent_choice));
-    PyTuple_SET_ITEM(__pyx_t_1, 0, ((PyObject *)__pyx_v_parent_choice));
-    __Pyx_GIVEREF(__pyx_t_4);
-    PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_4);
-    __Pyx_INCREF(Py_False);
-    __Pyx_GIVEREF(Py_False);
-    PyTuple_SET_ITEM(__pyx_t_1, 2, Py_False);
-    __Pyx_INCREF(__pyx_v_label);
-    __Pyx_GIVEREF(__pyx_v_label);
-    PyTuple_SET_ITEM(__pyx_t_1, 3, __pyx_v_label);
-    __pyx_t_4 = 0;
-
-    /* "pyearth/_forward.pyx":636
- *             bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
- *                                            True, label)
- *             bf4 = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
- *                                            False, label)
- *             if self.basis.has_coverage(variable_choice):
- */
-    __pyx_t_4 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction), __pyx_t_1, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 636; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_v_bf4 = ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_4);
-    __pyx_t_4 = 0;
-
-    /* "pyearth/_forward.pyx":638
- *             bf4 = MissingnessBasisFunction(parent_choice, variable_choice,
- *                                            False, label)
- *             if self.basis.has_coverage(variable_choice):             # <<<<<<<<<<<<<<
- *                 bf3, bf4 = self.basis.get_coverage(variable_choice)
- *                 already_covered = True
- */
-    __pyx_t_3 = (((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->has_coverage(__pyx_v_self->basis, __pyx_v_variable_choice, 0) != 0);
-    if (__pyx_t_3) {
-
-      /* "pyearth/_forward.pyx":639
- *                                            False, label)
- *             if self.basis.has_coverage(variable_choice):
- *                 bf3, bf4 = self.basis.get_coverage(variable_choice)             # <<<<<<<<<<<<<<
- *                 already_covered = True
- *             else:
- */
-      __pyx_t_4 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->get_coverage(__pyx_v_self->basis, __pyx_v_variable_choice, 0); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 639; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
-      if ((likely(PyTuple_CheckExact(__pyx_t_4))) || (PyList_CheckExact(__pyx_t_4))) {
-        PyObject* sequence = __pyx_t_4;
-        #if CYTHON_COMPILING_IN_CPYTHON
-        Py_ssize_t size = Py_SIZE(sequence);
-        #else
-        Py_ssize_t size = PySequence_Size(sequence);
-        #endif
-        if (unlikely(size != 2)) {
-          if (size > 2) __Pyx_RaiseTooManyValuesError(2);
-          else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-          {__pyx_filename = __pyx_f[0]; __pyx_lineno = 639; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        }
-        #if CYTHON_COMPILING_IN_CPYTHON
-        if (likely(PyTuple_CheckExact(sequence))) {
-          __pyx_t_1 = PyTuple_GET_ITEM(sequence, 0); 
-          __pyx_t_10 = PyTuple_GET_ITEM(sequence, 1); 
-        } else {
-          __pyx_t_1 = PyList_GET_ITEM(sequence, 0); 
-          __pyx_t_10 = PyList_GET_ITEM(sequence, 1); 
-        }
-        __Pyx_INCREF(__pyx_t_1);
-        __Pyx_INCREF(__pyx_t_10);
-        #else
-        __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 639; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_10 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 639; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        #endif
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      } else {
-        Py_ssize_t index = -1;
-        __pyx_t_15 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 639; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_15);
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_29 = Py_TYPE(__pyx_t_15)->tp_iternext;
-        index = 0; __pyx_t_1 = __pyx_t_29(__pyx_t_15); if (unlikely(!__pyx_t_1)) goto __pyx_L64_unpacking_failed;
-        __Pyx_GOTREF(__pyx_t_1);
-        index = 1; __pyx_t_10 = __pyx_t_29(__pyx_t_15); if (unlikely(!__pyx_t_10)) goto __pyx_L64_unpacking_failed;
-        __Pyx_GOTREF(__pyx_t_10);
-        if (__Pyx_IternextUnpackEndCheck(__pyx_t_29(__pyx_t_15), 2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 639; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __pyx_t_29 = NULL;
-        __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-        goto __pyx_L65_unpacking_done;
-        __pyx_L64_unpacking_failed:;
-        __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-        __pyx_t_29 = NULL;
-        if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 639; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __pyx_L65_unpacking_done:;
-      }
-      if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_7pyearth_6_basis_BasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 639; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      if (!(likely(((__pyx_t_10) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_10, __pyx_ptype_7pyearth_6_basis_BasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 639; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_DECREF_SET(__pyx_v_bf3, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_1));
-      __pyx_t_1 = 0;
-      __Pyx_DECREF_SET(__pyx_v_bf4, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_10));
-      __pyx_t_10 = 0;
-
-      /* "pyearth/_forward.pyx":640
- *             if self.basis.has_coverage(variable_choice):
- *                 bf3, bf4 = self.basis.get_coverage(variable_choice)
- *                 already_covered = True             # <<<<<<<<<<<<<<
- *             else:
- *                 already_covered = False
- */
-      __pyx_v_already_covered = 1;
-
-      /* "pyearth/_forward.pyx":638
- *             bf4 = MissingnessBasisFunction(parent_choice, variable_choice,
- *                                            False, label)
- *             if self.basis.has_coverage(variable_choice):             # <<<<<<<<<<<<<<
- *                 bf3, bf4 = self.basis.get_coverage(variable_choice)
- *                 already_covered = True
- */
-      goto __pyx_L63;
-    }
-
-    /* "pyearth/_forward.pyx":642
- *                 already_covered = True
- *             else:
- *                 already_covered = False             # <<<<<<<<<<<<<<
- *             parent_choice = bf3
- *         if knot_idx_choice != -1:
- */
-    /*else*/ {
-      __pyx_v_already_covered = 0;
-    }
-    __pyx_L63:;
-
-    /* "pyearth/_forward.pyx":643
- *             else:
- *                 already_covered = False
- *             parent_choice = bf3             # <<<<<<<<<<<<<<
- *         if knot_idx_choice != -1:
- *             # Add the new basis functions
- */
-    __Pyx_INCREF(((PyObject *)__pyx_v_bf3));
-    __Pyx_XDECREF_SET(__pyx_v_parent_choice, __pyx_v_bf3);
-
-    /* "pyearth/_forward.pyx":633
- *         # Add the new basis functions
- *         label = self.xlabels[variable_choice]
- *         if choice_needs_coverage:             # <<<<<<<<<<<<<<
- *             bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
- *                                            True, label)
- */
-  }
-
-  /* "pyearth/_forward.pyx":644
- *                 already_covered = False
- *             parent_choice = bf3
- *         if knot_idx_choice != -1:             # <<<<<<<<<<<<<<
- *             # Add the new basis functions
- *             bf1 = HingeBasisFunction(parent_choice,
- */
-  __pyx_t_3 = ((__pyx_v_knot_idx_choice != -1L) != 0);
-  if (__pyx_t_3) {
-
-    /* "pyearth/_forward.pyx":646
- *         if knot_idx_choice != -1:
- *             # Add the new basis functions
- *             bf1 = HingeBasisFunction(parent_choice,             # <<<<<<<<<<<<<<
- *                                      knot_choice, knot_idx_choice,
- *                                      variable_choice,
- */
-    if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 646; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-
-    /* "pyearth/_forward.pyx":647
- *             # Add the new basis functions
- *             bf1 = HingeBasisFunction(parent_choice,
- *                                      knot_choice, knot_idx_choice,             # <<<<<<<<<<<<<<
- *                                      variable_choice,
- *                                      False, label)
- */
-    __pyx_t_4 = PyFloat_FromDouble(__pyx_v_knot_choice); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 647; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_knot_idx_choice); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 647; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_10);
-
-    /* "pyearth/_forward.pyx":648
- *             bf1 = HingeBasisFunction(parent_choice,
- *                                      knot_choice, knot_idx_choice,
- *                                      variable_choice,             # <<<<<<<<<<<<<<
- *                                      False, label)
- *             bf2 = HingeBasisFunction(parent_choice,
- */
-    __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 648; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-
-    /* "pyearth/_forward.pyx":646
- *         if knot_idx_choice != -1:
- *             # Add the new basis functions
- *             bf1 = HingeBasisFunction(parent_choice,             # <<<<<<<<<<<<<<
- *                                      knot_choice, knot_idx_choice,
- *                                      variable_choice,
- */
-    __pyx_t_15 = PyTuple_New(6); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 646; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_15);
-    __Pyx_INCREF(((PyObject *)__pyx_v_parent_choice));
-    __Pyx_GIVEREF(((PyObject *)__pyx_v_parent_choice));
-    PyTuple_SET_ITEM(__pyx_t_15, 0, ((PyObject *)__pyx_v_parent_choice));
-    __Pyx_GIVEREF(__pyx_t_4);
-    PyTuple_SET_ITEM(__pyx_t_15, 1, __pyx_t_4);
-    __Pyx_GIVEREF(__pyx_t_10);
-    PyTuple_SET_ITEM(__pyx_t_15, 2, __pyx_t_10);
-    __Pyx_GIVEREF(__pyx_t_1);
-    PyTuple_SET_ITEM(__pyx_t_15, 3, __pyx_t_1);
-    __Pyx_INCREF(Py_False);
-    __Pyx_GIVEREF(Py_False);
-    PyTuple_SET_ITEM(__pyx_t_15, 4, Py_False);
-    __Pyx_INCREF(__pyx_v_label);
-    __Pyx_GIVEREF(__pyx_v_label);
-    PyTuple_SET_ITEM(__pyx_t_15, 5, __pyx_v_label);
-    __pyx_t_4 = 0;
-    __pyx_t_10 = 0;
-    __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_HingeBasisFunction), __pyx_t_15, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 646; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-    __pyx_v_bf1 = ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_1);
-    __pyx_t_1 = 0;
-
-    /* "pyearth/_forward.pyx":650
- *                                      variable_choice,
- *                                      False, label)
- *             bf2 = HingeBasisFunction(parent_choice,             # <<<<<<<<<<<<<<
- *                                      knot_choice, knot_idx_choice,
- *                                      variable_choice,
- */
-    if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 650; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-
-    /* "pyearth/_forward.pyx":651
- *                                      False, label)
- *             bf2 = HingeBasisFunction(parent_choice,
- *                                      knot_choice, knot_idx_choice,             # <<<<<<<<<<<<<<
- *                                      variable_choice,
- *                                      True, label)
- */
-    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_knot_choice); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 651; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_15 = __Pyx_PyInt_From_int(__pyx_v_knot_idx_choice); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 651; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_15);
-
-    /* "pyearth/_forward.pyx":652
- *             bf2 = HingeBasisFunction(parent_choice,
- *                                      knot_choice, knot_idx_choice,
- *                                      variable_choice,             # <<<<<<<<<<<<<<
- *                                      True, label)
- * 
- */
-    __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 652; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_10);
-
-    /* "pyearth/_forward.pyx":650
- *                                      variable_choice,
- *                                      False, label)
- *             bf2 = HingeBasisFunction(parent_choice,             # <<<<<<<<<<<<<<
- *                                      knot_choice, knot_idx_choice,
- *                                      variable_choice,
- */
-    __pyx_t_4 = PyTuple_New(6); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 650; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_INCREF(((PyObject *)__pyx_v_parent_choice));
-    __Pyx_GIVEREF(((PyObject *)__pyx_v_parent_choice));
-    PyTuple_SET_ITEM(__pyx_t_4, 0, ((PyObject *)__pyx_v_parent_choice));
-    __Pyx_GIVEREF(__pyx_t_1);
-    PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_1);
-    __Pyx_GIVEREF(__pyx_t_15);
-    PyTuple_SET_ITEM(__pyx_t_4, 2, __pyx_t_15);
-    __Pyx_GIVEREF(__pyx_t_10);
-    PyTuple_SET_ITEM(__pyx_t_4, 3, __pyx_t_10);
-    __Pyx_INCREF(Py_True);
-    __Pyx_GIVEREF(Py_True);
-    PyTuple_SET_ITEM(__pyx_t_4, 4, Py_True);
-    __Pyx_INCREF(__pyx_v_label);
-    __Pyx_GIVEREF(__pyx_v_label);
-    PyTuple_SET_ITEM(__pyx_t_4, 5, __pyx_v_label);
-    __pyx_t_1 = 0;
-    __pyx_t_15 = 0;
-    __pyx_t_10 = 0;
-    __pyx_t_10 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_HingeBasisFunction), __pyx_t_4, NULL); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 650; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_10);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_v_bf2 = ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_10);
-    __pyx_t_10 = 0;
-
-    /* "pyearth/_forward.pyx":655
- *                                      True, label)
- * 
- *             bf1.apply(X, missing, B[:, k])             # <<<<<<<<<<<<<<
- * #             apply_weights_slice(B, sample_weight, k)
- *             bf2.apply(X, missing, B[:, k + 1])
- */
-    __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_k); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 655; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 655; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_INCREF(__pyx_slice__24);
-    __Pyx_GIVEREF(__pyx_slice__24);
-    PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_slice__24);
-    __Pyx_GIVEREF(__pyx_t_10);
-    PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_10);
-    __pyx_t_10 = 0;
-    __pyx_t_10 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_4); if (unlikely(__pyx_t_10 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 655; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-    __Pyx_GOTREF(__pyx_t_10);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (!(likely(((__pyx_t_10) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_10, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 655; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __pyx_t_4 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf1->__pyx_vtab)->apply(__pyx_v_bf1, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_10), 0, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 655; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-
-    /* "pyearth/_forward.pyx":657
- *             bf1.apply(X, missing, B[:, k])
- * #             apply_weights_slice(B, sample_weight, k)
- *             bf2.apply(X, missing, B[:, k + 1])             # <<<<<<<<<<<<<<
- * #             apply_weights_slice(B, sample_weight, k + 1)
- * 
- */
-    __pyx_t_4 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 1)); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 657; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 657; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_10);
-    __Pyx_INCREF(__pyx_slice__25);
-    __Pyx_GIVEREF(__pyx_slice__25);
-    PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_slice__25);
-    __Pyx_GIVEREF(__pyx_t_4);
-    PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_4);
-    __pyx_t_4 = 0;
-    __pyx_t_4 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_10); if (unlikely(__pyx_t_4 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 657; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 657; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __pyx_t_10 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf2->__pyx_vtab)->apply(__pyx_v_bf2, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_4), 0, NULL); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 657; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_10);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-
-    /* "pyearth/_forward.pyx":660
- * #             apply_weights_slice(B, sample_weight, k + 1)
- * 
- *             self.basis.append(bf1)             # <<<<<<<<<<<<<<
- *             self.basis.append(bf2)
- * 
- */
-    __pyx_t_10 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->append(__pyx_v_self->basis, __pyx_v_bf1, 0); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 660; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_10);
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-
-    /* "pyearth/_forward.pyx":661
- * 
- *             self.basis.append(bf1)
- *             self.basis.append(bf2)             # <<<<<<<<<<<<<<
- * 
- *             if choice_needs_coverage:
- */
-    __pyx_t_10 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->append(__pyx_v_self->basis, __pyx_v_bf2, 0); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 661; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_10);
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-
-    /* "pyearth/_forward.pyx":663
- *             self.basis.append(bf2)
- * 
- *             if choice_needs_coverage:             # <<<<<<<<<<<<<<
- *                 if not already_covered:
- *                     bf3.apply(X, missing, B[:, k + 2])
- */
-    __pyx_t_3 = (__pyx_v_choice_needs_coverage != 0);
-    if (__pyx_t_3) {
-
-      /* "pyearth/_forward.pyx":664
- * 
- *             if choice_needs_coverage:
- *                 if not already_covered:             # <<<<<<<<<<<<<<
- *                     bf3.apply(X, missing, B[:, k + 2])
- * #                     apply_weights_slice(B, sample_weight, k + 2)
- */
-      __pyx_t_3 = ((!(__pyx_v_already_covered != 0)) != 0);
-      if (__pyx_t_3) {
-
-        /* "pyearth/_forward.pyx":665
- *             if choice_needs_coverage:
- *                 if not already_covered:
- *                     bf3.apply(X, missing, B[:, k + 2])             # <<<<<<<<<<<<<<
- * #                     apply_weights_slice(B, sample_weight, k + 2)
- *                     bf4.apply(X, missing, B[:, k + 3])
- */
-        if (unlikely(!__pyx_v_bf3)) { __Pyx_RaiseUnboundLocalError("bf3"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 665; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-        __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 2)); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 665; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 665; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_4);
-        __Pyx_INCREF(__pyx_slice__26);
-        __Pyx_GIVEREF(__pyx_slice__26);
-        PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_slice__26);
-        __Pyx_GIVEREF(__pyx_t_10);
-        PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_10);
-        __pyx_t_10 = 0;
-        __pyx_t_10 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_4); if (unlikely(__pyx_t_10 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 665; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        if (!(likely(((__pyx_t_10) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_10, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 665; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __pyx_t_4 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf3->__pyx_vtab)->apply(__pyx_v_bf3, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_10), 0, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 665; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_4);
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-
-        /* "pyearth/_forward.pyx":667
- *                     bf3.apply(X, missing, B[:, k + 2])
- * #                     apply_weights_slice(B, sample_weight, k + 2)
- *                     bf4.apply(X, missing, B[:, k + 3])             # <<<<<<<<<<<<<<
- * #                     apply_weights_slice(B, sample_weight, k + 3)
- *                     self.basis.add_coverage(variable_choice, bf3, bf4)
- */
-        if (unlikely(!__pyx_v_bf4)) { __Pyx_RaiseUnboundLocalError("bf4"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 667; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-        __pyx_t_4 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 3)); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 667; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 667; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_INCREF(__pyx_slice__27);
-        __Pyx_GIVEREF(__pyx_slice__27);
-        PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_slice__27);
-        __Pyx_GIVEREF(__pyx_t_4);
-        PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_4);
-        __pyx_t_4 = 0;
-        __pyx_t_4 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_10); if (unlikely(__pyx_t_4 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 667; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-        __Pyx_GOTREF(__pyx_t_4);
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 667; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __pyx_t_10 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf4->__pyx_vtab)->apply(__pyx_v_bf4, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_4), 0, NULL); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 667; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-
-        /* "pyearth/_forward.pyx":669
- *                     bf4.apply(X, missing, B[:, k + 3])
- * #                     apply_weights_slice(B, sample_weight, k + 3)
- *                     self.basis.add_coverage(variable_choice, bf3, bf4)             # <<<<<<<<<<<<<<
- * 
- *             if self.use_fast is True:
- */
-        if (unlikely(!__pyx_v_bf3)) { __Pyx_RaiseUnboundLocalError("bf3"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 669; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-        if (!(likely(((((PyObject *)__pyx_v_bf3)) == Py_None) || likely(__Pyx_TypeTest(((PyObject *)__pyx_v_bf3), __pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 669; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        if (unlikely(!__pyx_v_bf4)) { __Pyx_RaiseUnboundLocalError("bf4"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 669; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-        if (!(likely(((((PyObject *)__pyx_v_bf4)) == Py_None) || likely(__Pyx_TypeTest(((PyObject *)__pyx_v_bf4), __pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 669; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __pyx_t_10 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->add_coverage(__pyx_v_self->basis, __pyx_v_variable_choice, ((struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *)__pyx_v_bf3), ((struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *)__pyx_v_bf4), 0); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 669; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-
-        /* "pyearth/_forward.pyx":664
- * 
- *             if choice_needs_coverage:
- *                 if not already_covered:             # <<<<<<<<<<<<<<
- *                     bf3.apply(X, missing, B[:, k + 2])
- * #                     apply_weights_slice(B, sample_weight, k + 2)
- */
-      }
-
-      /* "pyearth/_forward.pyx":663
- *             self.basis.append(bf2)
- * 
- *             if choice_needs_coverage:             # <<<<<<<<<<<<<<
- *                 if not already_covered:
- *                     bf3.apply(X, missing, B[:, k + 2])
- */
-    }
-
-    /* "pyearth/_forward.pyx":671
- *                     self.basis.add_coverage(variable_choice, bf3, bf4)
- * 
- *             if self.use_fast is True:             # <<<<<<<<<<<<<<
- *                 bf1_content = FastHeapContent(idx=k)
- *                 heappush(self.fast_heap, bf1_content)
- */
-    __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
-    if (__pyx_t_3) {
-
-      /* "pyearth/_forward.pyx":672
- * 
- *             if self.use_fast is True:
- *                 bf1_content = FastHeapContent(idx=k)             # <<<<<<<<<<<<<<
- *                 heappush(self.fast_heap, bf1_content)
- *                 bf2_content = FastHeapContent(idx=k + 1)
- */
-      __pyx_t_10 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 672; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_4 = PyDict_New(); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 672; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_15 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_k); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 672; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_15);
-      if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_idx, __pyx_t_15) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 672; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-      __pyx_t_15 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_empty_tuple, __pyx_t_4); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 672; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_15);
-      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_v_bf1_content = __pyx_t_15;
-      __pyx_t_15 = 0;
-
-      /* "pyearth/_forward.pyx":673
- *             if self.use_fast is True:
- *                 bf1_content = FastHeapContent(idx=k)
- *                 heappush(self.fast_heap, bf1_content)             # <<<<<<<<<<<<<<
- *                 bf2_content = FastHeapContent(idx=k + 1)
- *                 heappush(self.fast_heap, bf2_content)
- */
-      __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 673; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_10 = NULL;
-      __pyx_t_22 = 0;
-      if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_4))) {
-        __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_4);
-        if (likely(__pyx_t_10)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-          __Pyx_INCREF(__pyx_t_10);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_4, function);
-          __pyx_t_22 = 1;
-        }
-      }
-      __pyx_t_1 = PyTuple_New(2+__pyx_t_22); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 673; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_1);
-      if (__pyx_t_10) {
-        __Pyx_GIVEREF(__pyx_t_10); PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_10); __pyx_t_10 = NULL;
-      }
-      __Pyx_INCREF(__pyx_v_self->fast_heap);
-      __Pyx_GIVEREF(__pyx_v_self->fast_heap);
-      PyTuple_SET_ITEM(__pyx_t_1, 0+__pyx_t_22, __pyx_v_self->fast_heap);
-      __Pyx_INCREF(__pyx_v_bf1_content);
-      __Pyx_GIVEREF(__pyx_v_bf1_content);
-      PyTuple_SET_ITEM(__pyx_t_1, 1+__pyx_t_22, __pyx_v_bf1_content);
-      __pyx_t_15 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_1, NULL); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 673; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_15);
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-
-      /* "pyearth/_forward.pyx":674
- *                 bf1_content = FastHeapContent(idx=k)
- *                 heappush(self.fast_heap, bf1_content)
- *                 bf2_content = FastHeapContent(idx=k + 1)             # <<<<<<<<<<<<<<
- *                 heappush(self.fast_heap, bf2_content)
- *                 if choice_needs_coverage:
- */
-      __pyx_t_15 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 674; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_15);
-      __pyx_t_4 = PyDict_New(); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 674; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 674; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_1);
-      if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_idx, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 674; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_15, __pyx_empty_tuple, __pyx_t_4); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 674; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_v_bf2_content = __pyx_t_1;
-      __pyx_t_1 = 0;
-
-      /* "pyearth/_forward.pyx":675
- *                 heappush(self.fast_heap, bf1_content)
- *                 bf2_content = FastHeapContent(idx=k + 1)
- *                 heappush(self.fast_heap, bf2_content)             # <<<<<<<<<<<<<<
- *                 if choice_needs_coverage:
- *                     if not already_covered:
- */
-      __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 675; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_15 = NULL;
-      __pyx_t_22 = 0;
-      if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_4))) {
-        __pyx_t_15 = PyMethod_GET_SELF(__pyx_t_4);
-        if (likely(__pyx_t_15)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-          __Pyx_INCREF(__pyx_t_15);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_4, function);
-          __pyx_t_22 = 1;
-        }
-      }
-      __pyx_t_10 = PyTuple_New(2+__pyx_t_22); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 675; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_10);
-      if (__pyx_t_15) {
-        __Pyx_GIVEREF(__pyx_t_15); PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_15); __pyx_t_15 = NULL;
-      }
-      __Pyx_INCREF(__pyx_v_self->fast_heap);
-      __Pyx_GIVEREF(__pyx_v_self->fast_heap);
-      PyTuple_SET_ITEM(__pyx_t_10, 0+__pyx_t_22, __pyx_v_self->fast_heap);
-      __Pyx_INCREF(__pyx_v_bf2_content);
-      __Pyx_GIVEREF(__pyx_v_bf2_content);
-      PyTuple_SET_ITEM(__pyx_t_10, 1+__pyx_t_22, __pyx_v_bf2_content);
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_10, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 675; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-      /* "pyearth/_forward.pyx":676
- *                 bf2_content = FastHeapContent(idx=k + 1)
- *                 heappush(self.fast_heap, bf2_content)
- *                 if choice_needs_coverage:             # <<<<<<<<<<<<<<
- *                     if not already_covered:
- *                         bf3_content = FastHeapContent(idx=k + 2)
- */
-      __pyx_t_3 = (__pyx_v_choice_needs_coverage != 0);
-      if (__pyx_t_3) {
-
-        /* "pyearth/_forward.pyx":677
- *                 heappush(self.fast_heap, bf2_content)
- *                 if choice_needs_coverage:
- *                     if not already_covered:             # <<<<<<<<<<<<<<
- *                         bf3_content = FastHeapContent(idx=k + 2)
- *                         heappush(self.fast_heap, FastHeapContent(idx=k + 2))
- */
-        __pyx_t_3 = ((!(__pyx_v_already_covered != 0)) != 0);
-        if (__pyx_t_3) {
-
-          /* "pyearth/_forward.pyx":678
- *                 if choice_needs_coverage:
- *                     if not already_covered:
- *                         bf3_content = FastHeapContent(idx=k + 2)             # <<<<<<<<<<<<<<
- *                         heappush(self.fast_heap, FastHeapContent(idx=k + 2))
- *                         bf4_content = FastHeapContent(idx=k + 3)
- */
-          __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 678; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_4 = PyDict_New(); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 678; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_4);
-          __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 2)); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 678; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_10);
-          if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_idx, __pyx_t_10) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 678; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_4); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 678; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_10);
-          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __pyx_v_bf3_content = __pyx_t_10;
-          __pyx_t_10 = 0;
-
-          /* "pyearth/_forward.pyx":679
- *                     if not already_covered:
- *                         bf3_content = FastHeapContent(idx=k + 2)
- *                         heappush(self.fast_heap, FastHeapContent(idx=k + 2))             # <<<<<<<<<<<<<<
- *                         bf4_content = FastHeapContent(idx=k + 3)
- *                         heappush(self.fast_heap, FastHeapContent(idx=k + 3))
- */
-          __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 679; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_4);
-          __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 679; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_15 = PyDict_New(); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 679; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_15);
-          __pyx_t_16 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 2)); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 679; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_16);
-          if (PyDict_SetItem(__pyx_t_15, __pyx_n_s_idx, __pyx_t_16) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 679; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
-          __pyx_t_16 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_15); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 679; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_16);
-          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-          __pyx_t_15 = NULL;
-          __pyx_t_22 = 0;
-          if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_4))) {
-            __pyx_t_15 = PyMethod_GET_SELF(__pyx_t_4);
-            if (likely(__pyx_t_15)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-              __Pyx_INCREF(__pyx_t_15);
-              __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_4, function);
-              __pyx_t_22 = 1;
-            }
-          }
-          __pyx_t_1 = PyTuple_New(2+__pyx_t_22); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 679; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_1);
-          if (__pyx_t_15) {
-            __Pyx_GIVEREF(__pyx_t_15); PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_15); __pyx_t_15 = NULL;
-          }
-          __Pyx_INCREF(__pyx_v_self->fast_heap);
-          __Pyx_GIVEREF(__pyx_v_self->fast_heap);
-          PyTuple_SET_ITEM(__pyx_t_1, 0+__pyx_t_22, __pyx_v_self->fast_heap);
-          __Pyx_GIVEREF(__pyx_t_16);
-          PyTuple_SET_ITEM(__pyx_t_1, 1+__pyx_t_22, __pyx_t_16);
-          __pyx_t_16 = 0;
-          __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_1, NULL); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 679; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_10);
-          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-
-          /* "pyearth/_forward.pyx":680
- *                         bf3_content = FastHeapContent(idx=k + 2)
- *                         heappush(self.fast_heap, FastHeapContent(idx=k + 2))
- *                         bf4_content = FastHeapContent(idx=k + 3)             # <<<<<<<<<<<<<<
- *                         heappush(self.fast_heap, FastHeapContent(idx=k + 3))
- * 
- */
-          __pyx_t_10 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 680; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_10);
-          __pyx_t_4 = PyDict_New(); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 680; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_4);
-          __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 3)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 680; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_1);
-          if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_idx, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 680; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_empty_tuple, __pyx_t_4); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 680; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_1);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __pyx_v_bf4_content = __pyx_t_1;
-          __pyx_t_1 = 0;
-
-          /* "pyearth/_forward.pyx":681
- *                         heappush(self.fast_heap, FastHeapContent(idx=k + 2))
- *                         bf4_content = FastHeapContent(idx=k + 3)
- *                         heappush(self.fast_heap, FastHeapContent(idx=k + 3))             # <<<<<<<<<<<<<<
- * 
- *             # Orthogonalize the new basis
- */
-          __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 681; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_4);
-          __pyx_t_10 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 681; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_10);
-          __pyx_t_16 = PyDict_New(); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 681; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_16);
-          __pyx_t_15 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 3)); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 681; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_15);
-          if (PyDict_SetItem(__pyx_t_16, __pyx_n_s_idx, __pyx_t_15) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 681; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-          __pyx_t_15 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_empty_tuple, __pyx_t_16); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 681; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_15);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
-          __pyx_t_16 = NULL;
-          __pyx_t_22 = 0;
-          if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_4))) {
-            __pyx_t_16 = PyMethod_GET_SELF(__pyx_t_4);
-            if (likely(__pyx_t_16)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-              __Pyx_INCREF(__pyx_t_16);
-              __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_4, function);
-              __pyx_t_22 = 1;
-            }
-          }
-          __pyx_t_10 = PyTuple_New(2+__pyx_t_22); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 681; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_10);
-          if (__pyx_t_16) {
-            __Pyx_GIVEREF(__pyx_t_16); PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_16); __pyx_t_16 = NULL;
-          }
-          __Pyx_INCREF(__pyx_v_self->fast_heap);
-          __Pyx_GIVEREF(__pyx_v_self->fast_heap);
-          PyTuple_SET_ITEM(__pyx_t_10, 0+__pyx_t_22, __pyx_v_self->fast_heap);
-          __Pyx_GIVEREF(__pyx_t_15);
-          PyTuple_SET_ITEM(__pyx_t_10, 1+__pyx_t_22, __pyx_t_15);
-          __pyx_t_15 = 0;
-          __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_10, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 681; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_1);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-          /* "pyearth/_forward.pyx":677
- *                 heappush(self.fast_heap, bf2_content)
- *                 if choice_needs_coverage:
- *                     if not already_covered:             # <<<<<<<<<<<<<<
- *                         bf3_content = FastHeapContent(idx=k + 2)
- *                         heappush(self.fast_heap, FastHeapContent(idx=k + 2))
- */
-        }
-
-        /* "pyearth/_forward.pyx":676
- *                 bf2_content = FastHeapContent(idx=k + 1)
- *                 heappush(self.fast_heap, bf2_content)
- *                 if choice_needs_coverage:             # <<<<<<<<<<<<<<
- *                     if not already_covered:
- *                         bf3_content = FastHeapContent(idx=k + 2)
- */
-      }
-
-      /* "pyearth/_forward.pyx":671
- *                     self.basis.add_coverage(variable_choice, bf3, bf4)
- * 
- *             if self.use_fast is True:             # <<<<<<<<<<<<<<
- *                 bf1_content = FastHeapContent(idx=k)
- *                 heappush(self.fast_heap, bf1_content)
- */
-    }
-
-    /* "pyearth/_forward.pyx":685
- *             # Orthogonalize the new basis
- * #             B_orth[:, k] = B[:, k]
- *             if self.orthonormal_update(B[:, k]) == 1:             # <<<<<<<<<<<<<<
- *                 bf1.make_unsplittable()
- * #             B_orth[:, k + 1] = B[:, k + 1]
- */
-    __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_k); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 685; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 685; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_INCREF(__pyx_slice__28);
-    __Pyx_GIVEREF(__pyx_slice__28);
-    PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_slice__28);
-    __Pyx_GIVEREF(__pyx_t_1);
-    PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_1);
-    __pyx_t_1 = 0;
-    __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_4); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 685; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_1, 0); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 685; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_t_4, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 685; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_3 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 685; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (__pyx_t_3) {
-
-      /* "pyearth/_forward.pyx":686
- * #             B_orth[:, k] = B[:, k]
- *             if self.orthonormal_update(B[:, k]) == 1:
- *                 bf1.make_unsplittable()             # <<<<<<<<<<<<<<
- * #             B_orth[:, k + 1] = B[:, k + 1]
- *             if self.orthonormal_update(B[:, k + 1]) == 1:
- */
-      ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf1->__pyx_vtab)->make_unsplittable(__pyx_v_bf1, 0);
-
-      /* "pyearth/_forward.pyx":685
- *             # Orthogonalize the new basis
- * #             B_orth[:, k] = B[:, k]
- *             if self.orthonormal_update(B[:, k]) == 1:             # <<<<<<<<<<<<<<
- *                 bf1.make_unsplittable()
- * #             B_orth[:, k + 1] = B[:, k + 1]
- */
-    }
-
-    /* "pyearth/_forward.pyx":688
- *                 bf1.make_unsplittable()
- * #             B_orth[:, k + 1] = B[:, k + 1]
- *             if self.orthonormal_update(B[:, k + 1]) == 1:             # <<<<<<<<<<<<<<
- *                 bf2.make_unsplittable()
- *             if choice_needs_coverage:
- */
-    __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 688; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 688; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_INCREF(__pyx_slice__29);
-    __Pyx_GIVEREF(__pyx_slice__29);
-    PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_slice__29);
-    __Pyx_GIVEREF(__pyx_t_1);
-    PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_1);
-    __pyx_t_1 = 0;
-    __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_4); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 688; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_1, 0); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 688; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_t_4, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 688; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_3 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 688; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (__pyx_t_3) {
-
-      /* "pyearth/_forward.pyx":689
- * #             B_orth[:, k + 1] = B[:, k + 1]
- *             if self.orthonormal_update(B[:, k + 1]) == 1:
- *                 bf2.make_unsplittable()             # <<<<<<<<<<<<<<
- *             if choice_needs_coverage:
- *                 if not already_covered:
- */
-      ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf2->__pyx_vtab)->make_unsplittable(__pyx_v_bf2, 0);
-
-      /* "pyearth/_forward.pyx":688
- *                 bf1.make_unsplittable()
- * #             B_orth[:, k + 1] = B[:, k + 1]
- *             if self.orthonormal_update(B[:, k + 1]) == 1:             # <<<<<<<<<<<<<<
- *                 bf2.make_unsplittable()
- *             if choice_needs_coverage:
- */
-    }
-
-    /* "pyearth/_forward.pyx":690
- *             if self.orthonormal_update(B[:, k + 1]) == 1:
- *                 bf2.make_unsplittable()
- *             if choice_needs_coverage:             # <<<<<<<<<<<<<<
- *                 if not already_covered:
- * #                     B_orth[:, k + 2] = B[:, k + 2]
- */
-    __pyx_t_3 = (__pyx_v_choice_needs_coverage != 0);
-    if (__pyx_t_3) {
-
-      /* "pyearth/_forward.pyx":691
- *                 bf2.make_unsplittable()
- *             if choice_needs_coverage:
- *                 if not already_covered:             # <<<<<<<<<<<<<<
- * #                     B_orth[:, k + 2] = B[:, k + 2]
- *                     if self.orthonormal_update(B[:, k + 2]) == 1:
- */
-      __pyx_t_3 = ((!(__pyx_v_already_covered != 0)) != 0);
-      if (__pyx_t_3) {
-
-        /* "pyearth/_forward.pyx":693
- *                 if not already_covered:
- * #                     B_orth[:, k + 2] = B[:, k + 2]
- *                     if self.orthonormal_update(B[:, k + 2]) == 1:             # <<<<<<<<<<<<<<
- *                         pass
- * #                         bf3.make_unsplittable()
- */
-        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 2)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 693; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 693; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_4);
-        __Pyx_INCREF(__pyx_slice__30);
-        __Pyx_GIVEREF(__pyx_slice__30);
-        PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_slice__30);
-        __Pyx_GIVEREF(__pyx_t_1);
-        PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_1);
-        __pyx_t_1 = 0;
-        __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_4); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 693; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_4 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_1, 0); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 693; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_4);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_t_4, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 693; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_3 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 693; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        if (__pyx_t_3) {
-        }
-
-        /* "pyearth/_forward.pyx":697
- * #                         bf3.make_unsplittable()
- * #                     B_orth[:, k + 3] = B[:, k + 3]
- *                     if self.orthonormal_update(B[:, k + 3]) == 1:             # <<<<<<<<<<<<<<
- *                         pass
- * #                         bf4.make_unsplittable()
- */
-        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 3)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 697; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 697; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_4);
-        __Pyx_INCREF(__pyx_slice__31);
-        __Pyx_GIVEREF(__pyx_slice__31);
-        PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_slice__31);
-        __Pyx_GIVEREF(__pyx_t_1);
-        PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_1);
-        __pyx_t_1 = 0;
-        __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_4); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 697; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_4 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_1, 0); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 697; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_4);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_t_4, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 697; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_3 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 697; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        if (__pyx_t_3) {
-        }
-
-        /* "pyearth/_forward.pyx":691
- *                 bf2.make_unsplittable()
- *             if choice_needs_coverage:
- *                 if not already_covered:             # <<<<<<<<<<<<<<
- * #                     B_orth[:, k + 2] = B[:, k + 2]
- *                     if self.orthonormal_update(B[:, k + 2]) == 1:
- */
-      }
-
-      /* "pyearth/_forward.pyx":690
- *             if self.orthonormal_update(B[:, k + 1]) == 1:
- *                 bf2.make_unsplittable()
- *             if choice_needs_coverage:             # <<<<<<<<<<<<<<
- *                 if not already_covered:
- * #                     B_orth[:, k + 2] = B[:, k + 2]
- */
-    }
-
-    /* "pyearth/_forward.pyx":644
- *                 already_covered = False
- *             parent_choice = bf3
- *         if knot_idx_choice != -1:             # <<<<<<<<<<<<<<
- *             # Add the new basis functions
- *             bf1 = HingeBasisFunction(parent_choice,
- */
-    goto __pyx_L66;
-  }
-
-  /* "pyearth/_forward.pyx":700
- *                         pass
- * #                         bf4.make_unsplittable()
- *         elif not dependent and knot_idx_choice == -1:             # <<<<<<<<<<<<<<
- *             # In this case, only add the linear basis function (in addition to
- *             # covering missingness basis functions if needed)
- */
-  __pyx_t_14 = ((!(__pyx_v_dependent != 0)) != 0);
-  if (__pyx_t_14) {
-  } else {
-    __pyx_t_3 = __pyx_t_14;
-    goto __pyx_L78_bool_binop_done;
-  }
-  __pyx_t_14 = ((__pyx_v_knot_idx_choice == -1L) != 0);
-  __pyx_t_3 = __pyx_t_14;
-  __pyx_L78_bool_binop_done:;
-  if (__pyx_t_3) {
-
-    /* "pyearth/_forward.pyx":703
- *             # In this case, only add the linear basis function (in addition to
- *             # covering missingness basis functions if needed)
- *             if choice_needs_coverage:             # <<<<<<<<<<<<<<
- *                 bf2 = MissingnessBasisFunction(parent_choice, variable_choice,
- *                                                True, label)
- */
-    __pyx_t_3 = (__pyx_v_choice_needs_coverage != 0);
-    if (__pyx_t_3) {
-
-      /* "pyearth/_forward.pyx":704
- *             # covering missingness basis functions if needed)
- *             if choice_needs_coverage:
- *                 bf2 = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
- *                                                True, label)
- *                 bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
- */
-      if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 704; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-      __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 704; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_1);
-
-      /* "pyearth/_forward.pyx":705
- *             if choice_needs_coverage:
- *                 bf2 = MissingnessBasisFunction(parent_choice, variable_choice,
- *                                                True, label)             # <<<<<<<<<<<<<<
- *                 bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
- *                                                False, label)
- */
-      __pyx_t_4 = PyTuple_New(4); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 704; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_INCREF(((PyObject *)__pyx_v_parent_choice));
-      __Pyx_GIVEREF(((PyObject *)__pyx_v_parent_choice));
-      PyTuple_SET_ITEM(__pyx_t_4, 0, ((PyObject *)__pyx_v_parent_choice));
-      __Pyx_GIVEREF(__pyx_t_1);
-      PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_1);
-      __Pyx_INCREF(Py_True);
-      __Pyx_GIVEREF(Py_True);
-      PyTuple_SET_ITEM(__pyx_t_4, 2, Py_True);
-      __Pyx_INCREF(__pyx_v_label);
-      __Pyx_GIVEREF(__pyx_v_label);
-      PyTuple_SET_ITEM(__pyx_t_4, 3, __pyx_v_label);
-      __pyx_t_1 = 0;
-
-      /* "pyearth/_forward.pyx":704
- *             # covering missingness basis functions if needed)
- *             if choice_needs_coverage:
- *                 bf2 = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
- *                                                True, label)
- *                 bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
- */
-      __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction), __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 704; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_v_bf2 = ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_1);
-      __pyx_t_1 = 0;
-
-      /* "pyearth/_forward.pyx":706
- *                 bf2 = MissingnessBasisFunction(parent_choice, variable_choice,
- *                                                True, label)
- *                 bf3 = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
- *                                                False, label)
- *                 if self.basis.has_coverage(variable_choice):
- */
-      if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 706; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-      __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 706; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_1);
-
-      /* "pyearth/_forward.pyx":707
- *                                                True, label)
- *                 bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
- *                                                False, label)             # <<<<<<<<<<<<<<
- *                 if self.basis.has_coverage(variable_choice):
- *                     bf2, bf3 = self.basis.get_coverage(variable_choice)
- */
-      __pyx_t_4 = PyTuple_New(4); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 706; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_INCREF(((PyObject *)__pyx_v_parent_choice));
-      __Pyx_GIVEREF(((PyObject *)__pyx_v_parent_choice));
-      PyTuple_SET_ITEM(__pyx_t_4, 0, ((PyObject *)__pyx_v_parent_choice));
-      __Pyx_GIVEREF(__pyx_t_1);
-      PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_1);
-      __Pyx_INCREF(Py_False);
-      __Pyx_GIVEREF(Py_False);
-      PyTuple_SET_ITEM(__pyx_t_4, 2, Py_False);
-      __Pyx_INCREF(__pyx_v_label);
-      __Pyx_GIVEREF(__pyx_v_label);
-      PyTuple_SET_ITEM(__pyx_t_4, 3, __pyx_v_label);
-      __pyx_t_1 = 0;
-
-      /* "pyearth/_forward.pyx":706
- *                 bf2 = MissingnessBasisFunction(parent_choice, variable_choice,
- *                                                True, label)
- *                 bf3 = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
- *                                                False, label)
- *                 if self.basis.has_coverage(variable_choice):
- */
-      __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction), __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 706; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __Pyx_XDECREF_SET(__pyx_v_bf3, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_1));
-      __pyx_t_1 = 0;
-
-      /* "pyearth/_forward.pyx":708
- *                 bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
- *                                                False, label)
- *                 if self.basis.has_coverage(variable_choice):             # <<<<<<<<<<<<<<
- *                     bf2, bf3 = self.basis.get_coverage(variable_choice)
- *                     already_covered = True
- */
-      __pyx_t_3 = (((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->has_coverage(__pyx_v_self->basis, __pyx_v_variable_choice, 0) != 0);
-      if (__pyx_t_3) {
-
-        /* "pyearth/_forward.pyx":709
- *                                                False, label)
- *                 if self.basis.has_coverage(variable_choice):
- *                     bf2, bf3 = self.basis.get_coverage(variable_choice)             # <<<<<<<<<<<<<<
- *                     already_covered = True
- *                 else:
- */
-        __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->get_coverage(__pyx_v_self->basis, __pyx_v_variable_choice, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 709; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
         if ((likely(PyTuple_CheckExact(__pyx_t_1))) || (PyList_CheckExact(__pyx_t_1))) {
           PyObject* sequence = __pyx_t_1;
           #if CYTHON_COMPILING_IN_CPYTHON
@@ -11029,54 +8951,2727 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           if (unlikely(size != 2)) {
             if (size > 2) __Pyx_RaiseTooManyValuesError(2);
             else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-            {__pyx_filename = __pyx_f[0]; __pyx_lineno = 709; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            {__pyx_filename = __pyx_f[0]; __pyx_lineno = 405; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           }
           #if CYTHON_COMPILING_IN_CPYTHON
           if (likely(PyTuple_CheckExact(sequence))) {
-            __pyx_t_4 = PyTuple_GET_ITEM(sequence, 0); 
-            __pyx_t_10 = PyTuple_GET_ITEM(sequence, 1); 
+            __pyx_t_14 = PyTuple_GET_ITEM(sequence, 0); 
+            __pyx_t_27 = PyTuple_GET_ITEM(sequence, 1); 
           } else {
-            __pyx_t_4 = PyList_GET_ITEM(sequence, 0); 
-            __pyx_t_10 = PyList_GET_ITEM(sequence, 1); 
+            __pyx_t_14 = PyList_GET_ITEM(sequence, 0); 
+            __pyx_t_27 = PyList_GET_ITEM(sequence, 1); 
           }
-          __Pyx_INCREF(__pyx_t_4);
-          __Pyx_INCREF(__pyx_t_10);
+          __Pyx_INCREF(__pyx_t_14);
+          __Pyx_INCREF(__pyx_t_27);
           #else
-          __pyx_t_4 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 709; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_4);
-          __pyx_t_10 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 709; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_10);
+          __pyx_t_14 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 405; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_14);
+          __pyx_t_27 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 405; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_27);
           #endif
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         } else {
           Py_ssize_t index = -1;
-          __pyx_t_15 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 709; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_15);
+          __pyx_t_25 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_25)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 405; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_25);
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __pyx_t_29 = Py_TYPE(__pyx_t_15)->tp_iternext;
-          index = 0; __pyx_t_4 = __pyx_t_29(__pyx_t_15); if (unlikely(!__pyx_t_4)) goto __pyx_L82_unpacking_failed;
-          __Pyx_GOTREF(__pyx_t_4);
-          index = 1; __pyx_t_10 = __pyx_t_29(__pyx_t_15); if (unlikely(!__pyx_t_10)) goto __pyx_L82_unpacking_failed;
-          __Pyx_GOTREF(__pyx_t_10);
-          if (__Pyx_IternextUnpackEndCheck(__pyx_t_29(__pyx_t_15), 2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 709; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __pyx_t_29 = NULL;
-          __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-          goto __pyx_L83_unpacking_done;
-          __pyx_L82_unpacking_failed:;
-          __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-          __pyx_t_29 = NULL;
+          __pyx_t_28 = Py_TYPE(__pyx_t_25)->tp_iternext;
+          index = 0; __pyx_t_14 = __pyx_t_28(__pyx_t_25); if (unlikely(!__pyx_t_14)) goto __pyx_L33_unpacking_failed;
+          __Pyx_GOTREF(__pyx_t_14);
+          index = 1; __pyx_t_27 = __pyx_t_28(__pyx_t_25); if (unlikely(!__pyx_t_27)) goto __pyx_L33_unpacking_failed;
+          __Pyx_GOTREF(__pyx_t_27);
+          if (__Pyx_IternextUnpackEndCheck(__pyx_t_28(__pyx_t_25), 2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 405; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_28 = NULL;
+          __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
+          goto __pyx_L34_unpacking_done;
+          __pyx_L33_unpacking_failed:;
+          __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
+          __pyx_t_28 = NULL;
           if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-          {__pyx_filename = __pyx_f[0]; __pyx_lineno = 709; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __pyx_L83_unpacking_done:;
+          {__pyx_filename = __pyx_f[0]; __pyx_lineno = 405; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_L34_unpacking_done:;
         }
-        if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_7pyearth_6_basis_BasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 709; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        if (!(likely(((__pyx_t_10) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_10, __pyx_ptype_7pyearth_6_basis_BasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 709; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_DECREF_SET(__pyx_v_bf2, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_4));
-        __pyx_t_4 = 0;
-        __Pyx_DECREF_SET(__pyx_v_bf3, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_10));
-        __pyx_t_10 = 0;
 
-        /* "pyearth/_forward.pyx":710
+        /* "pyearth/_forward.pyx":405
+ * #                                                         self.minspan_alpha,
+ * #                                                         self.n, self.mwork)
+ *                     candidates, candidates_idx = predictor.knot_candidates(p, self.endspan,             # <<<<<<<<<<<<<<
+ *                                                                            self.minspan,
+ *                                                                            self.minspan_alpha,
+ */
+        if (!(likely(((__pyx_t_27) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_27, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 405; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_XDECREF_SET(__pyx_v_candidates, __pyx_t_14);
+        __pyx_t_14 = 0;
+        __pyx_t_29 = ((PyArrayObject *)__pyx_t_27);
+        {
+          __Pyx_BufFmt_StackElem __pyx_stack[1];
+          __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer);
+          __pyx_t_16 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer, (PyObject*)__pyx_t_29, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
+          if (unlikely(__pyx_t_16 < 0)) {
+            PyErr_Fetch(&__pyx_t_18, &__pyx_t_19, &__pyx_t_20);
+            if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer, (PyObject*)__pyx_v_candidates_idx, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
+              Py_XDECREF(__pyx_t_18); Py_XDECREF(__pyx_t_19); Py_XDECREF(__pyx_t_20);
+              __Pyx_RaiseBufferFallbackError();
+            } else {
+              PyErr_Restore(__pyx_t_18, __pyx_t_19, __pyx_t_20);
+            }
+          }
+          __pyx_pybuffernd_candidates_idx.diminfo[0].strides = __pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_candidates_idx.diminfo[0].shape = __pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer.shape[0];
+          if (unlikely(__pyx_t_16 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 405; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        }
+        __pyx_t_29 = 0;
+        __Pyx_XDECREF_SET(__pyx_v_candidates_idx, ((PyArrayObject *)__pyx_t_27));
+        __pyx_t_27 = 0;
+
+        /* "pyearth/_forward.pyx":412
+ *                     # improvement on the linear term in terms of gcv, knot_idx
+ *                     # is set to -1
+ *                     if len(candidates_idx) > 0:             # <<<<<<<<<<<<<<
+ * #                         candidates = np.array(predictor.x)[candidates_idx]
+ * 
+ */
+        __pyx_t_22 = PyObject_Length(((PyObject *)__pyx_v_candidates_idx)); if (unlikely(__pyx_t_22 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 412; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_3 = ((__pyx_t_22 > 0) != 0);
+        if (__pyx_t_3) {
+
+          /* "pyearth/_forward.pyx":418
+ *                         # variable combination
+ *                         # Assemble the knot search data structure
+ *                         constant = KnotSearchReadOnlyData(predictor, self.outcomes)             # <<<<<<<<<<<<<<
+ *                         search_data = KnotSearchData(constant, self.workings, q)
+ *                         print variable, parent
+ */
+          __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 418; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_1);
+          __Pyx_INCREF(__pyx_v_predictor);
+          __Pyx_GIVEREF(__pyx_v_predictor);
+          PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_predictor);
+          __Pyx_INCREF(__pyx_v_self->outcomes);
+          __Pyx_GIVEREF(__pyx_v_self->outcomes);
+          PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_v_self->outcomes);
+          __pyx_t_27 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchReadOnlyData), __pyx_t_1, NULL); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 418; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_27);
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __Pyx_XDECREF_SET(__pyx_v_constant, ((struct __pyx_obj_7pyearth_12_knot_search_KnotSearchReadOnlyData *)__pyx_t_27));
+          __pyx_t_27 = 0;
+
+          /* "pyearth/_forward.pyx":419
+ *                         # Assemble the knot search data structure
+ *                         constant = KnotSearchReadOnlyData(predictor, self.outcomes)
+ *                         search_data = KnotSearchData(constant, self.workings, q)             # <<<<<<<<<<<<<<
+ *                         print variable, parent
+ *                         # Run knot search
+ */
+          __pyx_t_27 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_q); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 419; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_27);
+          __pyx_t_1 = PyTuple_New(3); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 419; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_1);
+          __Pyx_INCREF(((PyObject *)__pyx_v_constant));
+          __Pyx_GIVEREF(((PyObject *)__pyx_v_constant));
+          PyTuple_SET_ITEM(__pyx_t_1, 0, ((PyObject *)__pyx_v_constant));
+          __Pyx_INCREF(__pyx_v_self->workings);
+          __Pyx_GIVEREF(__pyx_v_self->workings);
+          PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_v_self->workings);
+          __Pyx_GIVEREF(__pyx_t_27);
+          PyTuple_SET_ITEM(__pyx_t_1, 2, __pyx_t_27);
+          __pyx_t_27 = 0;
+          __pyx_t_27 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchData), __pyx_t_1, NULL); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 419; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_27);
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __Pyx_XDECREF_SET(__pyx_v_search_data, ((struct __pyx_obj_7pyearth_12_knot_search_KnotSearchData *)__pyx_t_27));
+          __pyx_t_27 = 0;
+
+          /* "pyearth/_forward.pyx":420
+ *                         constant = KnotSearchReadOnlyData(predictor, self.outcomes)
+ *                         search_data = KnotSearchData(constant, self.workings, q)
+ *                         print variable, parent             # <<<<<<<<<<<<<<
+ *                         # Run knot search
+ *                         if variable == 4 and parent_idx == 2:
+ */
+          __pyx_t_27 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 420; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_27);
+          __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 420; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_1);
+          __Pyx_GIVEREF(__pyx_t_27);
+          PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_27);
+          __Pyx_INCREF(((PyObject *)__pyx_v_parent));
+          __Pyx_GIVEREF(((PyObject *)__pyx_v_parent));
+          PyTuple_SET_ITEM(__pyx_t_1, 1, ((PyObject *)__pyx_v_parent));
+          __pyx_t_27 = 0;
+          if (__Pyx_Print(0, __pyx_t_1, 1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 420; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+          /* "pyearth/_forward.pyx":422
+ *                         print variable, parent
+ *                         # Run knot search
+ *                         if variable == 4 and parent_idx == 2:             # <<<<<<<<<<<<<<
+ *                             print variable, parent, [outcome.k for outcome in self.outcomes]
+ *                             print q, linear_dependence, parent_idx
+ */
+          __pyx_t_13 = ((__pyx_v_variable == 4) != 0);
+          if (__pyx_t_13) {
+          } else {
+            __pyx_t_3 = __pyx_t_13;
+            goto __pyx_L37_bool_binop_done;
+          }
+          __pyx_t_13 = ((__pyx_v_parent_idx == 2) != 0);
+          __pyx_t_3 = __pyx_t_13;
+          __pyx_L37_bool_binop_done:;
+          if (__pyx_t_3) {
+
+            /* "pyearth/_forward.pyx":423
+ *                         # Run knot search
+ *                         if variable == 4 and parent_idx == 2:
+ *                             print variable, parent, [outcome.k for outcome in self.outcomes]             # <<<<<<<<<<<<<<
+ *                             print q, linear_dependence, parent_idx
+ * 
+ */
+            __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 423; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            __Pyx_GOTREF(__pyx_t_1);
+            __pyx_t_27 = PyList_New(0); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 423; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            __Pyx_GOTREF(__pyx_t_27);
+            if (unlikely(__pyx_v_self->outcomes == Py_None)) {
+              PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
+              {__pyx_filename = __pyx_f[0]; __pyx_lineno = 423; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            }
+            __pyx_t_14 = __pyx_v_self->outcomes; __Pyx_INCREF(__pyx_t_14); __pyx_t_22 = 0;
+            for (;;) {
+              if (__pyx_t_22 >= PyList_GET_SIZE(__pyx_t_14)) break;
+              #if CYTHON_COMPILING_IN_CPYTHON
+              __pyx_t_25 = PyList_GET_ITEM(__pyx_t_14, __pyx_t_22); __Pyx_INCREF(__pyx_t_25); __pyx_t_22++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 423; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+              #else
+              __pyx_t_25 = PySequence_ITEM(__pyx_t_14, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_25)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 423; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+              __Pyx_GOTREF(__pyx_t_25);
+              #endif
+              __Pyx_XDECREF_SET(__pyx_v_outcome, __pyx_t_25);
+              __pyx_t_25 = 0;
+              __pyx_t_25 = __Pyx_PyObject_GetAttrStr(__pyx_v_outcome, __pyx_n_s_k); if (unlikely(!__pyx_t_25)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 423; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+              __Pyx_GOTREF(__pyx_t_25);
+              if (unlikely(__Pyx_ListComp_Append(__pyx_t_27, (PyObject*)__pyx_t_25))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 423; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+              __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
+            }
+            __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+            __pyx_t_14 = PyTuple_New(3); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 423; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            __Pyx_GOTREF(__pyx_t_14);
+            __Pyx_GIVEREF(__pyx_t_1);
+            PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_1);
+            __Pyx_INCREF(((PyObject *)__pyx_v_parent));
+            __Pyx_GIVEREF(((PyObject *)__pyx_v_parent));
+            PyTuple_SET_ITEM(__pyx_t_14, 1, ((PyObject *)__pyx_v_parent));
+            __Pyx_GIVEREF(__pyx_t_27);
+            PyTuple_SET_ITEM(__pyx_t_14, 2, __pyx_t_27);
+            __pyx_t_1 = 0;
+            __pyx_t_27 = 0;
+            if (__Pyx_Print(0, __pyx_t_14, 1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 423; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+
+            /* "pyearth/_forward.pyx":424
+ *                         if variable == 4 and parent_idx == 2:
+ *                             print variable, parent, [outcome.k for outcome in self.outcomes]
+ *                             print q, linear_dependence, parent_idx             # <<<<<<<<<<<<<<
+ * 
+ *                             sys.stdout.flush()
+ */
+            __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_q); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 424; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            __Pyx_GOTREF(__pyx_t_14);
+            __pyx_t_27 = __Pyx_PyBool_FromLong(__pyx_v_linear_dependence); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 424; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            __Pyx_GOTREF(__pyx_t_27);
+            __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 424; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            __Pyx_GOTREF(__pyx_t_1);
+            __pyx_t_25 = PyTuple_New(3); if (unlikely(!__pyx_t_25)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 424; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            __Pyx_GOTREF(__pyx_t_25);
+            __Pyx_GIVEREF(__pyx_t_14);
+            PyTuple_SET_ITEM(__pyx_t_25, 0, __pyx_t_14);
+            __Pyx_GIVEREF(__pyx_t_27);
+            PyTuple_SET_ITEM(__pyx_t_25, 1, __pyx_t_27);
+            __Pyx_GIVEREF(__pyx_t_1);
+            PyTuple_SET_ITEM(__pyx_t_25, 2, __pyx_t_1);
+            __pyx_t_14 = 0;
+            __pyx_t_27 = 0;
+            __pyx_t_1 = 0;
+            if (__Pyx_Print(0, __pyx_t_25, 1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 424; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
+
+            /* "pyearth/_forward.pyx":426
+ *                             print q, linear_dependence, parent_idx
+ * 
+ *                             sys.stdout.flush()             # <<<<<<<<<<<<<<
+ *                         try:
+ *                             knot, knot_idx, mse = knot_search(search_data, candidates, p, q,
+ */
+            __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_sys); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 426; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            __Pyx_GOTREF(__pyx_t_1);
+            __pyx_t_27 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_stdout); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 426; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            __Pyx_GOTREF(__pyx_t_27);
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_27, __pyx_n_s_flush); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 426; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            __Pyx_GOTREF(__pyx_t_1);
+            __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+            __pyx_t_27 = NULL;
+            if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_1))) {
+              __pyx_t_27 = PyMethod_GET_SELF(__pyx_t_1);
+              if (likely(__pyx_t_27)) {
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+                __Pyx_INCREF(__pyx_t_27);
+                __Pyx_INCREF(function);
+                __Pyx_DECREF_SET(__pyx_t_1, function);
+              }
+            }
+            if (__pyx_t_27) {
+              __pyx_t_25 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_27); if (unlikely(!__pyx_t_25)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 426; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+              __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+            } else {
+              __pyx_t_25 = __Pyx_PyObject_CallNoArg(__pyx_t_1); if (unlikely(!__pyx_t_25)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 426; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            }
+            __Pyx_GOTREF(__pyx_t_25);
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
+
+            /* "pyearth/_forward.pyx":422
+ *                         print variable, parent
+ *                         # Run knot search
+ *                         if variable == 4 and parent_idx == 2:             # <<<<<<<<<<<<<<
+ *                             print variable, parent, [outcome.k for outcome in self.outcomes]
+ *                             print q, linear_dependence, parent_idx
+ */
+          }
+
+          /* "pyearth/_forward.pyx":427
+ * 
+ *                             sys.stdout.flush()
+ *                         try:             # <<<<<<<<<<<<<<
+ *                             knot, knot_idx, mse = knot_search(search_data, candidates, p, q,
+ *                                                           self.m, len(candidates), self.n_outcomes)
+ */
+          {
+            __Pyx_ExceptionSave(&__pyx_t_20, &__pyx_t_19, &__pyx_t_18);
+            __Pyx_XGOTREF(__pyx_t_20);
+            __Pyx_XGOTREF(__pyx_t_19);
+            __Pyx_XGOTREF(__pyx_t_18);
+            /*try:*/ {
+
+              /* "pyearth/_forward.pyx":428
+ *                             sys.stdout.flush()
+ *                         try:
+ *                             knot, knot_idx, mse = knot_search(search_data, candidates, p, q,             # <<<<<<<<<<<<<<
+ *                                                           self.m, len(candidates), self.n_outcomes)
+ *                         except:
+ */
+              __pyx_t_30 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(__pyx_v_candidates);
+              if (unlikely(!__pyx_t_30.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 428; __pyx_clineno = __LINE__; goto __pyx_L41_error;}
+              __pyx_t_31 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(((PyObject *)__pyx_v_p));
+              if (unlikely(!__pyx_t_31.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 428; __pyx_clineno = __LINE__; goto __pyx_L41_error;}
+
+              /* "pyearth/_forward.pyx":429
+ *                         try:
+ *                             knot, knot_idx, mse = knot_search(search_data, candidates, p, q,
+ *                                                           self.m, len(candidates), self.n_outcomes)             # <<<<<<<<<<<<<<
+ *                         except:
+ *                             print parent
+ */
+              __pyx_t_22 = PyObject_Length(__pyx_v_candidates); if (unlikely(__pyx_t_22 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 429; __pyx_clineno = __LINE__; goto __pyx_L41_error;}
+
+              /* "pyearth/_forward.pyx":428
+ *                             sys.stdout.flush()
+ *                         try:
+ *                             knot, knot_idx, mse = knot_search(search_data, candidates, p, q,             # <<<<<<<<<<<<<<
+ *                                                           self.m, len(candidates), self.n_outcomes)
+ *                         except:
+ */
+              __pyx_t_25 = __pyx_f_7pyearth_12_knot_search_knot_search(__pyx_v_search_data, __pyx_t_30, __pyx_t_31, __pyx_v_q, __pyx_v_self->m, __pyx_t_22, __pyx_v_self->n_outcomes, 0); if (unlikely(!__pyx_t_25)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 428; __pyx_clineno = __LINE__; goto __pyx_L41_error;}
+              __Pyx_GOTREF(__pyx_t_25);
+              __PYX_XDEC_MEMVIEW(&__pyx_t_30, 1);
+              __PYX_XDEC_MEMVIEW(&__pyx_t_31, 1);
+              if (likely(__pyx_t_25 != Py_None)) {
+                PyObject* sequence = __pyx_t_25;
+                #if CYTHON_COMPILING_IN_CPYTHON
+                Py_ssize_t size = Py_SIZE(sequence);
+                #else
+                Py_ssize_t size = PySequence_Size(sequence);
+                #endif
+                if (unlikely(size != 3)) {
+                  if (size > 3) __Pyx_RaiseTooManyValuesError(3);
+                  else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
+                  {__pyx_filename = __pyx_f[0]; __pyx_lineno = 428; __pyx_clineno = __LINE__; goto __pyx_L41_error;}
+                }
+                #if CYTHON_COMPILING_IN_CPYTHON
+                __pyx_t_1 = PyTuple_GET_ITEM(sequence, 0); 
+                __pyx_t_27 = PyTuple_GET_ITEM(sequence, 1); 
+                __pyx_t_14 = PyTuple_GET_ITEM(sequence, 2); 
+                __Pyx_INCREF(__pyx_t_1);
+                __Pyx_INCREF(__pyx_t_27);
+                __Pyx_INCREF(__pyx_t_14);
+                #else
+                __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 428; __pyx_clineno = __LINE__; goto __pyx_L41_error;}
+                __Pyx_GOTREF(__pyx_t_1);
+                __pyx_t_27 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 428; __pyx_clineno = __LINE__; goto __pyx_L41_error;}
+                __Pyx_GOTREF(__pyx_t_27);
+                __pyx_t_14 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 428; __pyx_clineno = __LINE__; goto __pyx_L41_error;}
+                __Pyx_GOTREF(__pyx_t_14);
+                #endif
+                __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
+              } else {
+                __Pyx_RaiseNoneNotIterableError(); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 428; __pyx_clineno = __LINE__; goto __pyx_L41_error;}
+              }
+              __pyx_t_32 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_32 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 428; __pyx_clineno = __LINE__; goto __pyx_L41_error;}
+              __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+              __pyx_t_33 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_27); if (unlikely((__pyx_t_33 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 428; __pyx_clineno = __LINE__; goto __pyx_L41_error;}
+              __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+              __pyx_t_34 = __pyx_PyFloat_AsDouble(__pyx_t_14); if (unlikely((__pyx_t_34 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 428; __pyx_clineno = __LINE__; goto __pyx_L41_error;}
+              __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+              __pyx_v_knot = __pyx_t_32;
+              __pyx_v_knot_idx = __pyx_t_33;
+              __pyx_v_mse = __pyx_t_34;
+
+              /* "pyearth/_forward.pyx":427
+ * 
+ *                             sys.stdout.flush()
+ *                         try:             # <<<<<<<<<<<<<<
+ *                             knot, knot_idx, mse = knot_search(search_data, candidates, p, q,
+ *                                                           self.m, len(candidates), self.n_outcomes)
+ */
+            }
+            __Pyx_XDECREF(__pyx_t_20); __pyx_t_20 = 0;
+            __Pyx_XDECREF(__pyx_t_19); __pyx_t_19 = 0;
+            __Pyx_XDECREF(__pyx_t_18); __pyx_t_18 = 0;
+            goto __pyx_L48_try_end;
+            __pyx_L41_error:;
+            __Pyx_XDECREF(__pyx_t_26); __pyx_t_26 = 0;
+            __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
+            __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+            __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
+            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __Pyx_XDECREF(__pyx_t_27); __pyx_t_27 = 0;
+            __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+            __Pyx_XDECREF(__pyx_t_25); __pyx_t_25 = 0;
+            __PYX_XDEC_MEMVIEW(&__pyx_t_30, 1);
+            __PYX_XDEC_MEMVIEW(&__pyx_t_31, 1);
+
+            /* "pyearth/_forward.pyx":430
+ *                             knot, knot_idx, mse = knot_search(search_data, candidates, p, q,
+ *                                                           self.m, len(candidates), self.n_outcomes)
+ *                         except:             # <<<<<<<<<<<<<<
+ *                             print parent
+ *                             print 'candidates:', candidates
+ */
+            /*except:*/ {
+              __Pyx_AddTraceback("pyearth._forward.ForwardPasser.next_pair", __pyx_clineno, __pyx_lineno, __pyx_filename);
+              if (__Pyx_GetException(&__pyx_t_25, &__pyx_t_14, &__pyx_t_27) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 430; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_GOTREF(__pyx_t_25);
+              __Pyx_GOTREF(__pyx_t_14);
+              __Pyx_GOTREF(__pyx_t_27);
+
+              /* "pyearth/_forward.pyx":431
+ *                                                           self.m, len(candidates), self.n_outcomes)
+ *                         except:
+ *                             print parent             # <<<<<<<<<<<<<<
+ *                             print 'candidates:', candidates
+ *                             print len(candidates), len(set(candidates))
+ */
+              if (__Pyx_PrintOne(0, ((PyObject *)__pyx_v_parent)) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 431; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+
+              /* "pyearth/_forward.pyx":432
+ *                         except:
+ *                             print parent
+ *                             print 'candidates:', candidates             # <<<<<<<<<<<<<<
+ *                             print len(candidates), len(set(candidates))
+ *                             print np.max(predictor.x), np.min(predictor.x)
+ */
+              __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 432; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_GOTREF(__pyx_t_1);
+              __Pyx_INCREF(__pyx_kp_s_candidates);
+              __Pyx_GIVEREF(__pyx_kp_s_candidates);
+              PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_kp_s_candidates);
+              __Pyx_INCREF(__pyx_v_candidates);
+              __Pyx_GIVEREF(__pyx_v_candidates);
+              PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_v_candidates);
+              if (__Pyx_Print(0, __pyx_t_1, 1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 432; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+              /* "pyearth/_forward.pyx":433
+ *                             print parent
+ *                             print 'candidates:', candidates
+ *                             print len(candidates), len(set(candidates))             # <<<<<<<<<<<<<<
+ *                             print np.max(predictor.x), np.min(predictor.x)
+ *                             print np.max(candidates), np.min(candidates)
+ */
+              __pyx_t_22 = PyObject_Length(__pyx_v_candidates); if (unlikely(__pyx_t_22 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 433; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __pyx_t_1 = PyInt_FromSsize_t(__pyx_t_22); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 433; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_GOTREF(__pyx_t_1);
+              __pyx_t_8 = PySet_New(__pyx_v_candidates); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 433; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_GOTREF(__pyx_t_8);
+              __pyx_t_22 = PySet_GET_SIZE(__pyx_t_8); if (unlikely(__pyx_t_22 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 433; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+              __pyx_t_8 = PyInt_FromSsize_t(__pyx_t_22); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 433; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_GOTREF(__pyx_t_8);
+              __pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 433; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_GOTREF(__pyx_t_9);
+              __Pyx_GIVEREF(__pyx_t_1);
+              PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_1);
+              __Pyx_GIVEREF(__pyx_t_8);
+              PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_8);
+              __pyx_t_1 = 0;
+              __pyx_t_8 = 0;
+              if (__Pyx_Print(0, __pyx_t_9, 1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 433; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+
+              /* "pyearth/_forward.pyx":434
+ *                             print 'candidates:', candidates
+ *                             print len(candidates), len(set(candidates))
+ *                             print np.max(predictor.x), np.min(predictor.x)             # <<<<<<<<<<<<<<
+ *                             print np.max(candidates), np.min(candidates)
+ *                             raise
+ */
+              __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_GOTREF(__pyx_t_8);
+              __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_max); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_GOTREF(__pyx_t_1);
+              __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+              __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_predictor, __pyx_n_s_x); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_GOTREF(__pyx_t_8);
+              __pyx_t_15 = NULL;
+              if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_1))) {
+                __pyx_t_15 = PyMethod_GET_SELF(__pyx_t_1);
+                if (likely(__pyx_t_15)) {
+                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+                  __Pyx_INCREF(__pyx_t_15);
+                  __Pyx_INCREF(function);
+                  __Pyx_DECREF_SET(__pyx_t_1, function);
+                }
+              }
+              if (!__pyx_t_15) {
+                __pyx_t_9 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_8); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+                __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+                __Pyx_GOTREF(__pyx_t_9);
+              } else {
+                __pyx_t_26 = PyTuple_New(1+1); if (unlikely(!__pyx_t_26)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+                __Pyx_GOTREF(__pyx_t_26);
+                __Pyx_GIVEREF(__pyx_t_15); PyTuple_SET_ITEM(__pyx_t_26, 0, __pyx_t_15); __pyx_t_15 = NULL;
+                __Pyx_GIVEREF(__pyx_t_8);
+                PyTuple_SET_ITEM(__pyx_t_26, 0+1, __pyx_t_8);
+                __pyx_t_8 = 0;
+                __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_26, NULL); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+                __Pyx_GOTREF(__pyx_t_9);
+                __Pyx_DECREF(__pyx_t_26); __pyx_t_26 = 0;
+              }
+              __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+              __pyx_t_26 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_26)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_GOTREF(__pyx_t_26);
+              __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_26, __pyx_n_s_min); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_GOTREF(__pyx_t_8);
+              __Pyx_DECREF(__pyx_t_26); __pyx_t_26 = 0;
+              __pyx_t_26 = __Pyx_PyObject_GetAttrStr(__pyx_v_predictor, __pyx_n_s_x); if (unlikely(!__pyx_t_26)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_GOTREF(__pyx_t_26);
+              __pyx_t_15 = NULL;
+              if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_8))) {
+                __pyx_t_15 = PyMethod_GET_SELF(__pyx_t_8);
+                if (likely(__pyx_t_15)) {
+                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_8);
+                  __Pyx_INCREF(__pyx_t_15);
+                  __Pyx_INCREF(function);
+                  __Pyx_DECREF_SET(__pyx_t_8, function);
+                }
+              }
+              if (!__pyx_t_15) {
+                __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_t_26); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+                __Pyx_DECREF(__pyx_t_26); __pyx_t_26 = 0;
+                __Pyx_GOTREF(__pyx_t_1);
+              } else {
+                __pyx_t_35 = PyTuple_New(1+1); if (unlikely(!__pyx_t_35)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+                __Pyx_GOTREF(__pyx_t_35);
+                __Pyx_GIVEREF(__pyx_t_15); PyTuple_SET_ITEM(__pyx_t_35, 0, __pyx_t_15); __pyx_t_15 = NULL;
+                __Pyx_GIVEREF(__pyx_t_26);
+                PyTuple_SET_ITEM(__pyx_t_35, 0+1, __pyx_t_26);
+                __pyx_t_26 = 0;
+                __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_35, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+                __Pyx_GOTREF(__pyx_t_1);
+                __Pyx_DECREF(__pyx_t_35); __pyx_t_35 = 0;
+              }
+              __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+              __pyx_t_8 = PyTuple_New(2); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_GOTREF(__pyx_t_8);
+              __Pyx_GIVEREF(__pyx_t_9);
+              PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_9);
+              __Pyx_GIVEREF(__pyx_t_1);
+              PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_t_1);
+              __pyx_t_9 = 0;
+              __pyx_t_1 = 0;
+              if (__Pyx_Print(0, __pyx_t_8, 1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+
+              /* "pyearth/_forward.pyx":435
+ *                             print len(candidates), len(set(candidates))
+ *                             print np.max(predictor.x), np.min(predictor.x)
+ *                             print np.max(candidates), np.min(candidates)             # <<<<<<<<<<<<<<
+ *                             raise
+ *                         knot_idx = candidates_idx[knot_idx]
+ */
+              __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 435; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_GOTREF(__pyx_t_1);
+              __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_max); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 435; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_GOTREF(__pyx_t_9);
+              __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+              __pyx_t_1 = NULL;
+              if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_9))) {
+                __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_9);
+                if (likely(__pyx_t_1)) {
+                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
+                  __Pyx_INCREF(__pyx_t_1);
+                  __Pyx_INCREF(function);
+                  __Pyx_DECREF_SET(__pyx_t_9, function);
+                }
+              }
+              if (!__pyx_t_1) {
+                __pyx_t_8 = __Pyx_PyObject_CallOneArg(__pyx_t_9, __pyx_v_candidates); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 435; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+                __Pyx_GOTREF(__pyx_t_8);
+              } else {
+                __pyx_t_35 = PyTuple_New(1+1); if (unlikely(!__pyx_t_35)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 435; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+                __Pyx_GOTREF(__pyx_t_35);
+                __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_35, 0, __pyx_t_1); __pyx_t_1 = NULL;
+                __Pyx_INCREF(__pyx_v_candidates);
+                __Pyx_GIVEREF(__pyx_v_candidates);
+                PyTuple_SET_ITEM(__pyx_t_35, 0+1, __pyx_v_candidates);
+                __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_35, NULL); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 435; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+                __Pyx_GOTREF(__pyx_t_8);
+                __Pyx_DECREF(__pyx_t_35); __pyx_t_35 = 0;
+              }
+              __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+              __pyx_t_35 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_35)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 435; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_GOTREF(__pyx_t_35);
+              __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_35, __pyx_n_s_min); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 435; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_GOTREF(__pyx_t_1);
+              __Pyx_DECREF(__pyx_t_35); __pyx_t_35 = 0;
+              __pyx_t_35 = NULL;
+              if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_1))) {
+                __pyx_t_35 = PyMethod_GET_SELF(__pyx_t_1);
+                if (likely(__pyx_t_35)) {
+                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+                  __Pyx_INCREF(__pyx_t_35);
+                  __Pyx_INCREF(function);
+                  __Pyx_DECREF_SET(__pyx_t_1, function);
+                }
+              }
+              if (!__pyx_t_35) {
+                __pyx_t_9 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_v_candidates); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 435; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+                __Pyx_GOTREF(__pyx_t_9);
+              } else {
+                __pyx_t_26 = PyTuple_New(1+1); if (unlikely(!__pyx_t_26)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 435; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+                __Pyx_GOTREF(__pyx_t_26);
+                __Pyx_GIVEREF(__pyx_t_35); PyTuple_SET_ITEM(__pyx_t_26, 0, __pyx_t_35); __pyx_t_35 = NULL;
+                __Pyx_INCREF(__pyx_v_candidates);
+                __Pyx_GIVEREF(__pyx_v_candidates);
+                PyTuple_SET_ITEM(__pyx_t_26, 0+1, __pyx_v_candidates);
+                __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_26, NULL); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 435; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+                __Pyx_GOTREF(__pyx_t_9);
+                __Pyx_DECREF(__pyx_t_26); __pyx_t_26 = 0;
+              }
+              __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+              __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 435; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_GOTREF(__pyx_t_1);
+              __Pyx_GIVEREF(__pyx_t_8);
+              PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_8);
+              __Pyx_GIVEREF(__pyx_t_9);
+              PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_9);
+              __pyx_t_8 = 0;
+              __pyx_t_9 = 0;
+              if (__Pyx_Print(0, __pyx_t_1, 1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 435; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+              __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+              /* "pyearth/_forward.pyx":436
+ *                             print np.max(predictor.x), np.min(predictor.x)
+ *                             print np.max(candidates), np.min(candidates)
+ *                             raise             # <<<<<<<<<<<<<<
+ *                         knot_idx = candidates_idx[knot_idx]
+ *                         mse = mse ** 2
+ */
+              __Pyx_GIVEREF(__pyx_t_25);
+              __Pyx_GIVEREF(__pyx_t_14);
+              __Pyx_XGIVEREF(__pyx_t_27);
+              __Pyx_ErrRestore(__pyx_t_25, __pyx_t_14, __pyx_t_27);
+              __pyx_t_25 = 0; __pyx_t_14 = 0; __pyx_t_27 = 0; 
+              {__pyx_filename = __pyx_f[0]; __pyx_lineno = 436; __pyx_clineno = __LINE__; goto __pyx_L43_except_error;}
+            }
+            __pyx_L43_except_error:;
+
+            /* "pyearth/_forward.pyx":427
+ * 
+ *                             sys.stdout.flush()
+ *                         try:             # <<<<<<<<<<<<<<
+ *                             knot, knot_idx, mse = knot_search(search_data, candidates, p, q,
+ *                                                           self.m, len(candidates), self.n_outcomes)
+ */
+            __Pyx_XGIVEREF(__pyx_t_20);
+            __Pyx_XGIVEREF(__pyx_t_19);
+            __Pyx_XGIVEREF(__pyx_t_18);
+            __Pyx_ExceptionReset(__pyx_t_20, __pyx_t_19, __pyx_t_18);
+            goto __pyx_L1_error;
+            __pyx_L48_try_end:;
+          }
+
+          /* "pyearth/_forward.pyx":437
+ *                             print np.max(candidates), np.min(candidates)
+ *                             raise
+ *                         knot_idx = candidates_idx[knot_idx]             # <<<<<<<<<<<<<<
+ *                         mse = mse ** 2
+ * 
+ */
+          __pyx_t_33 = __pyx_v_knot_idx;
+          __pyx_v_knot_idx = (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer.buf, __pyx_t_33, __pyx_pybuffernd_candidates_idx.diminfo[0].strides));
+
+          /* "pyearth/_forward.pyx":438
+ *                             raise
+ *                         knot_idx = candidates_idx[knot_idx]
+ *                         mse = mse ** 2             # <<<<<<<<<<<<<<
+ * 
+ *                         # If the hinge function does not decrease the gcv then
+ */
+          __pyx_v_mse = pow(__pyx_v_mse, 2.0);
+
+          /* "pyearth/_forward.pyx":442
+ *                         # If the hinge function does not decrease the gcv then
+ *                         # just keep the linear term (if allow_linear is True)
+ *                         if self.allow_linear:             # <<<<<<<<<<<<<<
+ *                             if missing_flag and not covered:
+ *                                 if gcv_factor_k_plus_4 * mse >= gcv_:
+ */
+          __pyx_t_3 = (__pyx_v_self->allow_linear != 0);
+          if (__pyx_t_3) {
+
+            /* "pyearth/_forward.pyx":443
+ *                         # just keep the linear term (if allow_linear is True)
+ *                         if self.allow_linear:
+ *                             if missing_flag and not covered:             # <<<<<<<<<<<<<<
+ *                                 if gcv_factor_k_plus_4 * mse >= gcv_:
+ *                                     mse = mse_
+ */
+            __pyx_t_13 = (__pyx_v_missing_flag != 0);
+            if (__pyx_t_13) {
+            } else {
+              __pyx_t_3 = __pyx_t_13;
+              goto __pyx_L53_bool_binop_done;
+            }
+            __pyx_t_13 = ((!(__pyx_v_covered != 0)) != 0);
+            __pyx_t_3 = __pyx_t_13;
+            __pyx_L53_bool_binop_done:;
+            if (__pyx_t_3) {
+
+              /* "pyearth/_forward.pyx":444
+ *                         if self.allow_linear:
+ *                             if missing_flag and not covered:
+ *                                 if gcv_factor_k_plus_4 * mse >= gcv_:             # <<<<<<<<<<<<<<
+ *                                     mse = mse_
+ *                                     knot_idx = -1
+ */
+              __pyx_t_3 = (((__pyx_v_gcv_factor_k_plus_4 * __pyx_v_mse) >= __pyx_v_gcv_) != 0);
+              if (__pyx_t_3) {
+
+                /* "pyearth/_forward.pyx":445
+ *                             if missing_flag and not covered:
+ *                                 if gcv_factor_k_plus_4 * mse >= gcv_:
+ *                                     mse = mse_             # <<<<<<<<<<<<<<
+ *                                     knot_idx = -1
+ *                             else:
+ */
+                __pyx_v_mse = __pyx_v_mse_;
+
+                /* "pyearth/_forward.pyx":446
+ *                                 if gcv_factor_k_plus_4 * mse >= gcv_:
+ *                                     mse = mse_
+ *                                     knot_idx = -1             # <<<<<<<<<<<<<<
+ *                             else:
+ *                                 if gcv_factor_k_plus_2 * mse >= gcv_:
+ */
+                __pyx_v_knot_idx = -1LL;
+
+                /* "pyearth/_forward.pyx":444
+ *                         if self.allow_linear:
+ *                             if missing_flag and not covered:
+ *                                 if gcv_factor_k_plus_4 * mse >= gcv_:             # <<<<<<<<<<<<<<
+ *                                     mse = mse_
+ *                                     knot_idx = -1
+ */
+              }
+
+              /* "pyearth/_forward.pyx":443
+ *                         # just keep the linear term (if allow_linear is True)
+ *                         if self.allow_linear:
+ *                             if missing_flag and not covered:             # <<<<<<<<<<<<<<
+ *                                 if gcv_factor_k_plus_4 * mse >= gcv_:
+ *                                     mse = mse_
+ */
+              goto __pyx_L52;
+            }
+
+            /* "pyearth/_forward.pyx":448
+ *                                     knot_idx = -1
+ *                             else:
+ *                                 if gcv_factor_k_plus_2 * mse >= gcv_:             # <<<<<<<<<<<<<<
+ *                                     mse = mse_
+ *                                     knot_idx = -1
+ */
+            /*else*/ {
+              __pyx_t_3 = (((__pyx_v_gcv_factor_k_plus_2 * __pyx_v_mse) >= __pyx_v_gcv_) != 0);
+              if (__pyx_t_3) {
+
+                /* "pyearth/_forward.pyx":449
+ *                             else:
+ *                                 if gcv_factor_k_plus_2 * mse >= gcv_:
+ *                                     mse = mse_             # <<<<<<<<<<<<<<
+ *                                     knot_idx = -1
+ *                     else:
+ */
+                __pyx_v_mse = __pyx_v_mse_;
+
+                /* "pyearth/_forward.pyx":450
+ *                                 if gcv_factor_k_plus_2 * mse >= gcv_:
+ *                                     mse = mse_
+ *                                     knot_idx = -1             # <<<<<<<<<<<<<<
+ *                     else:
+ *                         # Do an orthonormal downdate and skip to the next
+ */
+                __pyx_v_knot_idx = -1LL;
+
+                /* "pyearth/_forward.pyx":448
+ *                                     knot_idx = -1
+ *                             else:
+ *                                 if gcv_factor_k_plus_2 * mse >= gcv_:             # <<<<<<<<<<<<<<
+ *                                     mse = mse_
+ *                                     knot_idx = -1
+ */
+              }
+            }
+            __pyx_L52:;
+
+            /* "pyearth/_forward.pyx":442
+ *                         # If the hinge function does not decrease the gcv then
+ *                         # just keep the linear term (if allow_linear is True)
+ *                         if self.allow_linear:             # <<<<<<<<<<<<<<
+ *                             if missing_flag and not covered:
+ *                                 if gcv_factor_k_plus_4 * mse >= gcv_:
+ */
+          }
+
+          /* "pyearth/_forward.pyx":412
+ *                     # improvement on the linear term in terms of gcv, knot_idx
+ *                     # is set to -1
+ *                     if len(candidates_idx) > 0:             # <<<<<<<<<<<<<<
+ * #                         candidates = np.array(predictor.x)[candidates_idx]
+ * 
+ */
+          goto __pyx_L35;
+        }
+
+        /* "pyearth/_forward.pyx":454
+ *                         # Do an orthonormal downdate and skip to the next
+ *                         # iteration
+ *                         if missing_flag and not covered:             # <<<<<<<<<<<<<<
+ *                             self.orthonormal_downdate()
+ *                             self.orthonormal_downdate()
+ */
+        /*else*/ {
+          __pyx_t_13 = (__pyx_v_missing_flag != 0);
+          if (__pyx_t_13) {
+          } else {
+            __pyx_t_3 = __pyx_t_13;
+            goto __pyx_L58_bool_binop_done;
+          }
+          __pyx_t_13 = ((!(__pyx_v_covered != 0)) != 0);
+          __pyx_t_3 = __pyx_t_13;
+          __pyx_L58_bool_binop_done:;
+          if (__pyx_t_3) {
+
+            /* "pyearth/_forward.pyx":455
+ *                         # iteration
+ *                         if missing_flag and not covered:
+ *                             self.orthonormal_downdate()             # <<<<<<<<<<<<<<
+ *                             self.orthonormal_downdate()
+ *                         self.orthonormal_downdate()
+ */
+            __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 455; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            __Pyx_GOTREF(__pyx_t_27);
+            __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+
+            /* "pyearth/_forward.pyx":456
+ *                         if missing_flag and not covered:
+ *                             self.orthonormal_downdate()
+ *                             self.orthonormal_downdate()             # <<<<<<<<<<<<<<
+ *                         self.orthonormal_downdate()
+ *                         continue
+ */
+            __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 456; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            __Pyx_GOTREF(__pyx_t_27);
+            __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+
+            /* "pyearth/_forward.pyx":454
+ *                         # Do an orthonormal downdate and skip to the next
+ *                         # iteration
+ *                         if missing_flag and not covered:             # <<<<<<<<<<<<<<
+ *                             self.orthonormal_downdate()
+ *                             self.orthonormal_downdate()
+ */
+          }
+
+          /* "pyearth/_forward.pyx":457
+ *                             self.orthonormal_downdate()
+ *                             self.orthonormal_downdate()
+ *                         self.orthonormal_downdate()             # <<<<<<<<<<<<<<
+ *                         continue
+ *                         # TODO: Should that continue be there?
+ */
+          __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 457; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_27);
+          __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+
+          /* "pyearth/_forward.pyx":458
+ *                             self.orthonormal_downdate()
+ *                         self.orthonormal_downdate()
+ *                         continue             # <<<<<<<<<<<<<<
+ *                         # TODO: Should that continue be there?
+ * 
+ */
+          goto __pyx_L10_continue;
+        }
+        __pyx_L35:;
+      }
+      __pyx_L32:;
+
+      /* "pyearth/_forward.pyx":462
+ * 
+ *                 # Do an orthonormal downdate
+ *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
+ *                     self.orthonormal_downdate()
+ *                     self.orthonormal_downdate()
+ */
+      __pyx_t_13 = (__pyx_v_missing_flag != 0);
+      if (__pyx_t_13) {
+      } else {
+        __pyx_t_3 = __pyx_t_13;
+        goto __pyx_L61_bool_binop_done;
+      }
+      __pyx_t_13 = ((!(__pyx_v_covered != 0)) != 0);
+      __pyx_t_3 = __pyx_t_13;
+      __pyx_L61_bool_binop_done:;
+      if (__pyx_t_3) {
+
+        /* "pyearth/_forward.pyx":463
+ *                 # Do an orthonormal downdate
+ *                 if missing_flag and not covered:
+ *                     self.orthonormal_downdate()             # <<<<<<<<<<<<<<
+ *                     self.orthonormal_downdate()
+ *                 self.orthonormal_downdate()
+ */
+        __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 463; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_27);
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+
+        /* "pyearth/_forward.pyx":464
+ *                 if missing_flag and not covered:
+ *                     self.orthonormal_downdate()
+ *                     self.orthonormal_downdate()             # <<<<<<<<<<<<<<
+ *                 self.orthonormal_downdate()
+ * 
+ */
+        __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 464; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_27);
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+
+        /* "pyearth/_forward.pyx":462
+ * 
+ *                 # Do an orthonormal downdate
+ *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
+ *                     self.orthonormal_downdate()
+ *                     self.orthonormal_downdate()
+ */
+      }
+
+      /* "pyearth/_forward.pyx":465
+ *                     self.orthonormal_downdate()
+ *                     self.orthonormal_downdate()
+ *                 self.orthonormal_downdate()             # <<<<<<<<<<<<<<
+ * 
+ *                 # Update the choices
+ */
+      __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 465; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_27);
+      __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+
+      /* "pyearth/_forward.pyx":468
+ * 
+ *                 # Update the choices
+ *                 if mse < mse_choice or first:             # <<<<<<<<<<<<<<
+ *                     if first:
+ *                         first = False
+ */
+      __pyx_t_13 = ((__pyx_v_mse < __pyx_v_mse_choice) != 0);
+      if (!__pyx_t_13) {
+      } else {
+        __pyx_t_3 = __pyx_t_13;
+        goto __pyx_L64_bool_binop_done;
+      }
+      __pyx_t_13 = (__pyx_v_first != 0);
+      __pyx_t_3 = __pyx_t_13;
+      __pyx_L64_bool_binop_done:;
+      if (__pyx_t_3) {
+
+        /* "pyearth/_forward.pyx":469
+ *                 # Update the choices
+ *                 if mse < mse_choice or first:
+ *                     if first:             # <<<<<<<<<<<<<<
+ *                         first = False
+ *                     knot_choice = knot
+ */
+        __pyx_t_3 = (__pyx_v_first != 0);
+        if (__pyx_t_3) {
+
+          /* "pyearth/_forward.pyx":470
+ *                 if mse < mse_choice or first:
+ *                     if first:
+ *                         first = False             # <<<<<<<<<<<<<<
+ *                     knot_choice = knot
+ *                     mse_choice = mse
+ */
+          __pyx_v_first = 0;
+
+          /* "pyearth/_forward.pyx":469
+ *                 # Update the choices
+ *                 if mse < mse_choice or first:
+ *                     if first:             # <<<<<<<<<<<<<<
+ *                         first = False
+ *                     knot_choice = knot
+ */
+        }
+
+        /* "pyearth/_forward.pyx":471
+ *                     if first:
+ *                         first = False
+ *                     knot_choice = knot             # <<<<<<<<<<<<<<
+ *                     mse_choice = mse
+ *                     knot_idx_choice = knot_idx
+ */
+        __pyx_v_knot_choice = __pyx_v_knot;
+
+        /* "pyearth/_forward.pyx":472
+ *                         first = False
+ *                     knot_choice = knot
+ *                     mse_choice = mse             # <<<<<<<<<<<<<<
+ *                     knot_idx_choice = knot_idx
+ *                     parent_idx_choice = parent_idx
+ */
+        __pyx_v_mse_choice = __pyx_v_mse;
+
+        /* "pyearth/_forward.pyx":473
+ *                     knot_choice = knot
+ *                     mse_choice = mse
+ *                     knot_idx_choice = knot_idx             # <<<<<<<<<<<<<<
+ *                     parent_idx_choice = parent_idx
+ *                     parent_choice = parent
+ */
+        __pyx_v_knot_idx_choice = __pyx_v_knot_idx;
+
+        /* "pyearth/_forward.pyx":474
+ *                     mse_choice = mse
+ *                     knot_idx_choice = knot_idx
+ *                     parent_idx_choice = parent_idx             # <<<<<<<<<<<<<<
+ *                     parent_choice = parent
+ *                     if self.use_fast is True:
+ */
+        __pyx_v_parent_idx_choice = __pyx_v_parent_idx;
+
+        /* "pyearth/_forward.pyx":475
+ *                     knot_idx_choice = knot_idx
+ *                     parent_idx_choice = parent_idx
+ *                     parent_choice = parent             # <<<<<<<<<<<<<<
+ *                     if self.use_fast is True:
+ *                         parent_basis_content_choice = parent_basis_content
+ */
+        __Pyx_INCREF(((PyObject *)__pyx_v_parent));
+        __Pyx_XDECREF_SET(__pyx_v_parent_choice, __pyx_v_parent);
+
+        /* "pyearth/_forward.pyx":476
+ *                     parent_idx_choice = parent_idx
+ *                     parent_choice = parent
+ *                     if self.use_fast is True:             # <<<<<<<<<<<<<<
+ *                         parent_basis_content_choice = parent_basis_content
+ *                     variable_choice = variable
+ */
+        __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
+        if (__pyx_t_3) {
+
+          /* "pyearth/_forward.pyx":477
+ *                     parent_choice = parent
+ *                     if self.use_fast is True:
+ *                         parent_basis_content_choice = parent_basis_content             # <<<<<<<<<<<<<<
+ *                     variable_choice = variable
+ *                     dependent = linear_dependence
+ */
+          __Pyx_INCREF(__pyx_v_parent_basis_content);
+          __Pyx_DECREF_SET(__pyx_v_parent_basis_content_choice, __pyx_v_parent_basis_content);
+
+          /* "pyearth/_forward.pyx":476
+ *                     parent_idx_choice = parent_idx
+ *                     parent_choice = parent
+ *                     if self.use_fast is True:             # <<<<<<<<<<<<<<
+ *                         parent_basis_content_choice = parent_basis_content
+ *                     variable_choice = variable
+ */
+        }
+
+        /* "pyearth/_forward.pyx":478
+ *                     if self.use_fast is True:
+ *                         parent_basis_content_choice = parent_basis_content
+ *                     variable_choice = variable             # <<<<<<<<<<<<<<
+ *                     dependent = linear_dependence
+ *                     if missing_flag and not covered:
+ */
+        __pyx_v_variable_choice = __pyx_v_variable;
+
+        /* "pyearth/_forward.pyx":479
+ *                         parent_basis_content_choice = parent_basis_content
+ *                     variable_choice = variable
+ *                     dependent = linear_dependence             # <<<<<<<<<<<<<<
+ *                     if missing_flag and not covered:
+ *                         choice_needs_coverage = True
+ */
+        __pyx_v_dependent = __pyx_v_linear_dependence;
+
+        /* "pyearth/_forward.pyx":480
+ *                     variable_choice = variable
+ *                     dependent = linear_dependence
+ *                     if missing_flag and not covered:             # <<<<<<<<<<<<<<
+ *                         choice_needs_coverage = True
+ *                     else:
+ */
+        __pyx_t_13 = (__pyx_v_missing_flag != 0);
+        if (__pyx_t_13) {
+        } else {
+          __pyx_t_3 = __pyx_t_13;
+          goto __pyx_L69_bool_binop_done;
+        }
+        __pyx_t_13 = ((!(__pyx_v_covered != 0)) != 0);
+        __pyx_t_3 = __pyx_t_13;
+        __pyx_L69_bool_binop_done:;
+        if (__pyx_t_3) {
+
+          /* "pyearth/_forward.pyx":481
+ *                     dependent = linear_dependence
+ *                     if missing_flag and not covered:
+ *                         choice_needs_coverage = True             # <<<<<<<<<<<<<<
+ *                     else:
+ *                         choice_needs_coverage = False
+ */
+          __pyx_v_choice_needs_coverage = 1;
+
+          /* "pyearth/_forward.pyx":480
+ *                     variable_choice = variable
+ *                     dependent = linear_dependence
+ *                     if missing_flag and not covered:             # <<<<<<<<<<<<<<
+ *                         choice_needs_coverage = True
+ *                     else:
+ */
+          goto __pyx_L68;
+        }
+
+        /* "pyearth/_forward.pyx":483
+ *                         choice_needs_coverage = True
+ *                     else:
+ *                         choice_needs_coverage = False             # <<<<<<<<<<<<<<
+ * 
+ *                 if self.use_fast is True:
+ */
+        /*else*/ {
+          __pyx_v_choice_needs_coverage = 0;
+        }
+        __pyx_L68:;
+
+        /* "pyearth/_forward.pyx":468
+ * 
+ *                 # Update the choices
+ *                 if mse < mse_choice or first:             # <<<<<<<<<<<<<<
+ *                     if first:
+ *                         first = False
+ */
+      }
+
+      /* "pyearth/_forward.pyx":485
+ *                         choice_needs_coverage = False
+ * 
+ *                 if self.use_fast is True:             # <<<<<<<<<<<<<<
+ *                     if (mse_choice_cur_parent == -1) or \
+ *                        (mse < mse_choice_cur_parent):
+ */
+      __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
+      if (__pyx_t_3) {
+
+        /* "pyearth/_forward.pyx":486
+ * 
+ *                 if self.use_fast is True:
+ *                     if (mse_choice_cur_parent == -1) or \             # <<<<<<<<<<<<<<
+ *                        (mse < mse_choice_cur_parent):
+ *                         mse_choice_cur_parent = mse
+ */
+        __pyx_t_13 = ((__pyx_v_mse_choice_cur_parent == -1.0) != 0);
+        if (!__pyx_t_13) {
+        } else {
+          __pyx_t_3 = __pyx_t_13;
+          goto __pyx_L73_bool_binop_done;
+        }
+
+        /* "pyearth/_forward.pyx":487
+ *                 if self.use_fast is True:
+ *                     if (mse_choice_cur_parent == -1) or \
+ *                        (mse < mse_choice_cur_parent):             # <<<<<<<<<<<<<<
+ *                         mse_choice_cur_parent = mse
+ *                         variable_choice_cur_parent = variable
+ */
+        __pyx_t_13 = ((__pyx_v_mse < __pyx_v_mse_choice_cur_parent) != 0);
+        __pyx_t_3 = __pyx_t_13;
+        __pyx_L73_bool_binop_done:;
+
+        /* "pyearth/_forward.pyx":486
+ * 
+ *                 if self.use_fast is True:
+ *                     if (mse_choice_cur_parent == -1) or \             # <<<<<<<<<<<<<<
+ *                        (mse < mse_choice_cur_parent):
+ *                         mse_choice_cur_parent = mse
+ */
+        if (__pyx_t_3) {
+
+          /* "pyearth/_forward.pyx":488
+ *                     if (mse_choice_cur_parent == -1) or \
+ *                        (mse < mse_choice_cur_parent):
+ *                         mse_choice_cur_parent = mse             # <<<<<<<<<<<<<<
+ *                         variable_choice_cur_parent = variable
+ *             if self.use_fast is True:
+ */
+          __pyx_v_mse_choice_cur_parent = __pyx_v_mse;
+
+          /* "pyearth/_forward.pyx":489
+ *                        (mse < mse_choice_cur_parent):
+ *                         mse_choice_cur_parent = mse
+ *                         variable_choice_cur_parent = variable             # <<<<<<<<<<<<<<
+ *             if self.use_fast is True:
+ *                 if mse_choice_cur_parent != -1:
+ */
+          __pyx_v_variable_choice_cur_parent = __pyx_v_variable;
+
+          /* "pyearth/_forward.pyx":486
+ * 
+ *                 if self.use_fast is True:
+ *                     if (mse_choice_cur_parent == -1) or \             # <<<<<<<<<<<<<<
+ *                        (mse < mse_choice_cur_parent):
+ *                         mse_choice_cur_parent = mse
+ */
+        }
+
+        /* "pyearth/_forward.pyx":485
+ *                         choice_needs_coverage = False
+ * 
+ *                 if self.use_fast is True:             # <<<<<<<<<<<<<<
+ *                     if (mse_choice_cur_parent == -1) or \
+ *                        (mse < mse_choice_cur_parent):
+ */
+      }
+
+      /* "pyearth/_forward.pyx":329
+ *             parent_degree = parent.degree()
+ * 
+ *             for variable in variables:             # <<<<<<<<<<<<<<
+ *                 # Determine whether missingness needs to be accounted for.
+ *                 if self.allow_missing and has_missing[variable]:
+ */
+      __pyx_L10_continue:;
+    }
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+
+    /* "pyearth/_forward.pyx":490
+ *                         mse_choice_cur_parent = mse
+ *                         variable_choice_cur_parent = variable
+ *             if self.use_fast is True:             # <<<<<<<<<<<<<<
+ *                 if mse_choice_cur_parent != -1:
+ *                     parent_basis_content.mse = mse_choice_cur_parent
+ */
+    __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
+    if (__pyx_t_3) {
+
+      /* "pyearth/_forward.pyx":491
+ *                         variable_choice_cur_parent = variable
+ *             if self.use_fast is True:
+ *                 if mse_choice_cur_parent != -1:             # <<<<<<<<<<<<<<
+ *                     parent_basis_content.mse = mse_choice_cur_parent
+ *                     parent_basis_content.v = variable_choice_cur_parent
+ */
+      __pyx_t_3 = ((__pyx_v_mse_choice_cur_parent != -1.0) != 0);
+      if (__pyx_t_3) {
+
+        /* "pyearth/_forward.pyx":492
+ *             if self.use_fast is True:
+ *                 if mse_choice_cur_parent != -1:
+ *                     parent_basis_content.mse = mse_choice_cur_parent             # <<<<<<<<<<<<<<
+ *                     parent_basis_content.v = variable_choice_cur_parent
+ * 
+ */
+        __pyx_t_7 = PyFloat_FromDouble(__pyx_v_mse_choice_cur_parent); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 492; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_7);
+        if (__Pyx_PyObject_SetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_mse, __pyx_t_7) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 492; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+
+        /* "pyearth/_forward.pyx":493
+ *                 if mse_choice_cur_parent != -1:
+ *                     parent_basis_content.mse = mse_choice_cur_parent
+ *                     parent_basis_content.v = variable_choice_cur_parent             # <<<<<<<<<<<<<<
+ * 
+ *         if self.use_fast is True:
+ */
+        __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_variable_choice_cur_parent); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 493; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_7);
+        if (__Pyx_PyObject_SetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_v, __pyx_t_7) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 493; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+
+        /* "pyearth/_forward.pyx":491
+ *                         variable_choice_cur_parent = variable
+ *             if self.use_fast is True:
+ *                 if mse_choice_cur_parent != -1:             # <<<<<<<<<<<<<<
+ *                     parent_basis_content.mse = mse_choice_cur_parent
+ *                     parent_basis_content.v = variable_choice_cur_parent
+ */
+      }
+
+      /* "pyearth/_forward.pyx":490
+ *                         mse_choice_cur_parent = mse
+ *                         variable_choice_cur_parent = variable
+ *             if self.use_fast is True:             # <<<<<<<<<<<<<<
+ *                 if mse_choice_cur_parent != -1:
+ *                     parent_basis_content.mse = mse_choice_cur_parent
+ */
+    }
+    __pyx_L4_continue:;
+  }
+
+  /* "pyearth/_forward.pyx":495
+ *                     parent_basis_content.v = variable_choice_cur_parent
+ * 
+ *         if self.use_fast is True:             # <<<<<<<<<<<<<<
+ *             for content in content_to_be_repushed:
+ *                 heappush(self.fast_heap, content)
+ */
+  __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
+  if (__pyx_t_3) {
+
+    /* "pyearth/_forward.pyx":496
+ * 
+ *         if self.use_fast is True:
+ *             for content in content_to_be_repushed:             # <<<<<<<<<<<<<<
+ *                 heappush(self.fast_heap, content)
+ * 
+ */
+    __pyx_t_7 = __pyx_v_content_to_be_repushed; __Pyx_INCREF(__pyx_t_7); __pyx_t_2 = 0;
+    for (;;) {
+      if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_7)) break;
+      #if CYTHON_COMPILING_IN_CPYTHON
+      __pyx_t_27 = PyList_GET_ITEM(__pyx_t_7, __pyx_t_2); __Pyx_INCREF(__pyx_t_27); __pyx_t_2++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 496; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      #else
+      __pyx_t_27 = PySequence_ITEM(__pyx_t_7, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 496; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_27);
+      #endif
+      __Pyx_XDECREF_SET(__pyx_v_content, __pyx_t_27);
+      __pyx_t_27 = 0;
+
+      /* "pyearth/_forward.pyx":497
+ *         if self.use_fast is True:
+ *             for content in content_to_be_repushed:
+ *                 heappush(self.fast_heap, content)             # <<<<<<<<<<<<<<
+ * 
+ *         # Make sure at least one candidate was checked
+ */
+      __pyx_t_14 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 497; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_14);
+      __pyx_t_25 = NULL;
+      __pyx_t_22 = 0;
+      if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_14))) {
+        __pyx_t_25 = PyMethod_GET_SELF(__pyx_t_14);
+        if (likely(__pyx_t_25)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_14);
+          __Pyx_INCREF(__pyx_t_25);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_14, function);
+          __pyx_t_22 = 1;
+        }
+      }
+      __pyx_t_1 = PyTuple_New(2+__pyx_t_22); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 497; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_1);
+      if (__pyx_t_25) {
+        __Pyx_GIVEREF(__pyx_t_25); PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_25); __pyx_t_25 = NULL;
+      }
+      __Pyx_INCREF(__pyx_v_self->fast_heap);
+      __Pyx_GIVEREF(__pyx_v_self->fast_heap);
+      PyTuple_SET_ITEM(__pyx_t_1, 0+__pyx_t_22, __pyx_v_self->fast_heap);
+      __Pyx_INCREF(__pyx_v_content);
+      __Pyx_GIVEREF(__pyx_v_content);
+      PyTuple_SET_ITEM(__pyx_t_1, 1+__pyx_t_22, __pyx_v_content);
+      __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_14, __pyx_t_1, NULL); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 497; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_27);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+      __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+
+      /* "pyearth/_forward.pyx":496
+ * 
+ *         if self.use_fast is True:
+ *             for content in content_to_be_repushed:             # <<<<<<<<<<<<<<
+ *                 heappush(self.fast_heap, content)
+ * 
+ */
+    }
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+
+    /* "pyearth/_forward.pyx":495
+ *                     parent_basis_content.v = variable_choice_cur_parent
+ * 
+ *         if self.use_fast is True:             # <<<<<<<<<<<<<<
+ *             for content in content_to_be_repushed:
+ *                 heappush(self.fast_heap, content)
+ */
+  }
+
+  /* "pyearth/_forward.pyx":500
+ * 
+ *         # Make sure at least one candidate was checked
+ *         if first:             # <<<<<<<<<<<<<<
+ *             self.record[len(self.record) - 1].set_no_candidates(True)
+ *             return
+ */
+  __pyx_t_3 = (__pyx_v_first != 0);
+  if (__pyx_t_3) {
+
+    /* "pyearth/_forward.pyx":501
+ *         # Make sure at least one candidate was checked
+ *         if first:
+ *             self.record[len(self.record) - 1].set_no_candidates(True)             # <<<<<<<<<<<<<<
+ *             return
+ * 
+ */
+    __pyx_t_7 = ((PyObject *)__pyx_v_self->record);
+    __Pyx_INCREF(__pyx_t_7);
+    __pyx_t_2 = PyObject_Length(__pyx_t_7); if (unlikely(__pyx_t_2 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 501; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __pyx_t_22 = (__pyx_t_2 - 1);
+    __pyx_t_7 = __Pyx_GetItemInt(((PyObject *)__pyx_v_self->record), __pyx_t_22, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 0, 0); if (unlikely(__pyx_t_7 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 501; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __Pyx_GOTREF(__pyx_t_7);
+    __pyx_t_27 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_set_no_candidates); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 501; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_27);
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_27, __pyx_tuple__23, NULL); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 501; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_7);
+    __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+
+    /* "pyearth/_forward.pyx":502
+ *         if first:
+ *             self.record[len(self.record) - 1].set_no_candidates(True)
+ *             return             # <<<<<<<<<<<<<<
+ * 
+ *         # Add the new basis functions
+ */
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+    goto __pyx_L0;
+
+    /* "pyearth/_forward.pyx":500
+ * 
+ *         # Make sure at least one candidate was checked
+ *         if first:             # <<<<<<<<<<<<<<
+ *             self.record[len(self.record) - 1].set_no_candidates(True)
+ *             return
+ */
+  }
+
+  /* "pyearth/_forward.pyx":505
+ * 
+ *         # Add the new basis functions
+ *         label = self.xlabels[variable_choice]             # <<<<<<<<<<<<<<
+ *         if choice_needs_coverage:
+ *             bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
+ */
+  if (unlikely(__pyx_v_self->xlabels == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 505; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  }
+  __pyx_t_7 = PyList_GET_ITEM(__pyx_v_self->xlabels, __pyx_v_variable_choice);
+  __Pyx_INCREF(__pyx_t_7);
+  __pyx_v_label = __pyx_t_7;
+  __pyx_t_7 = 0;
+
+  /* "pyearth/_forward.pyx":506
+ *         # Add the new basis functions
+ *         label = self.xlabels[variable_choice]
+ *         if choice_needs_coverage:             # <<<<<<<<<<<<<<
+ *             bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
+ *                                            True, label)
+ */
+  __pyx_t_3 = (__pyx_v_choice_needs_coverage != 0);
+  if (__pyx_t_3) {
+
+    /* "pyearth/_forward.pyx":507
+ *         label = self.xlabels[variable_choice]
+ *         if choice_needs_coverage:
+ *             bf3 = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
+ *                                            True, label)
+ *             bf4 = MissingnessBasisFunction(parent_choice, variable_choice,
+ */
+    if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 507; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+    __pyx_t_7 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 507; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_7);
+
+    /* "pyearth/_forward.pyx":508
+ *         if choice_needs_coverage:
+ *             bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
+ *                                            True, label)             # <<<<<<<<<<<<<<
+ *             bf4 = MissingnessBasisFunction(parent_choice, variable_choice,
+ *                                            False, label)
+ */
+    __pyx_t_27 = PyTuple_New(4); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 507; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_27);
+    __Pyx_INCREF(((PyObject *)__pyx_v_parent_choice));
+    __Pyx_GIVEREF(((PyObject *)__pyx_v_parent_choice));
+    PyTuple_SET_ITEM(__pyx_t_27, 0, ((PyObject *)__pyx_v_parent_choice));
+    __Pyx_GIVEREF(__pyx_t_7);
+    PyTuple_SET_ITEM(__pyx_t_27, 1, __pyx_t_7);
+    __Pyx_INCREF(Py_True);
+    __Pyx_GIVEREF(Py_True);
+    PyTuple_SET_ITEM(__pyx_t_27, 2, Py_True);
+    __Pyx_INCREF(__pyx_v_label);
+    __Pyx_GIVEREF(__pyx_v_label);
+    PyTuple_SET_ITEM(__pyx_t_27, 3, __pyx_v_label);
+    __pyx_t_7 = 0;
+
+    /* "pyearth/_forward.pyx":507
+ *         label = self.xlabels[variable_choice]
+ *         if choice_needs_coverage:
+ *             bf3 = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
+ *                                            True, label)
+ *             bf4 = MissingnessBasisFunction(parent_choice, variable_choice,
+ */
+    __pyx_t_7 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction), __pyx_t_27, NULL); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 507; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_7);
+    __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+    __pyx_v_bf3 = ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_7);
+    __pyx_t_7 = 0;
+
+    /* "pyearth/_forward.pyx":509
+ *             bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
+ *                                            True, label)
+ *             bf4 = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
+ *                                            False, label)
+ *             if self.basis.has_coverage(variable_choice):
+ */
+    if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 509; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+    __pyx_t_7 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 509; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_7);
+
+    /* "pyearth/_forward.pyx":510
+ *                                            True, label)
+ *             bf4 = MissingnessBasisFunction(parent_choice, variable_choice,
+ *                                            False, label)             # <<<<<<<<<<<<<<
+ *             if self.basis.has_coverage(variable_choice):
+ *                 bf3, bf4 = self.basis.get_coverage(variable_choice)
+ */
+    __pyx_t_27 = PyTuple_New(4); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 509; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_27);
+    __Pyx_INCREF(((PyObject *)__pyx_v_parent_choice));
+    __Pyx_GIVEREF(((PyObject *)__pyx_v_parent_choice));
+    PyTuple_SET_ITEM(__pyx_t_27, 0, ((PyObject *)__pyx_v_parent_choice));
+    __Pyx_GIVEREF(__pyx_t_7);
+    PyTuple_SET_ITEM(__pyx_t_27, 1, __pyx_t_7);
+    __Pyx_INCREF(Py_False);
+    __Pyx_GIVEREF(Py_False);
+    PyTuple_SET_ITEM(__pyx_t_27, 2, Py_False);
+    __Pyx_INCREF(__pyx_v_label);
+    __Pyx_GIVEREF(__pyx_v_label);
+    PyTuple_SET_ITEM(__pyx_t_27, 3, __pyx_v_label);
+    __pyx_t_7 = 0;
+
+    /* "pyearth/_forward.pyx":509
+ *             bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
+ *                                            True, label)
+ *             bf4 = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
+ *                                            False, label)
+ *             if self.basis.has_coverage(variable_choice):
+ */
+    __pyx_t_7 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction), __pyx_t_27, NULL); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 509; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_7);
+    __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+    __pyx_v_bf4 = ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_7);
+    __pyx_t_7 = 0;
+
+    /* "pyearth/_forward.pyx":511
+ *             bf4 = MissingnessBasisFunction(parent_choice, variable_choice,
+ *                                            False, label)
+ *             if self.basis.has_coverage(variable_choice):             # <<<<<<<<<<<<<<
+ *                 bf3, bf4 = self.basis.get_coverage(variable_choice)
+ *                 already_covered = True
+ */
+    __pyx_t_3 = (((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->has_coverage(__pyx_v_self->basis, __pyx_v_variable_choice, 0) != 0);
+    if (__pyx_t_3) {
+
+      /* "pyearth/_forward.pyx":512
+ *                                            False, label)
+ *             if self.basis.has_coverage(variable_choice):
+ *                 bf3, bf4 = self.basis.get_coverage(variable_choice)             # <<<<<<<<<<<<<<
+ *                 already_covered = True
+ *             else:
+ */
+      __pyx_t_7 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->get_coverage(__pyx_v_self->basis, __pyx_v_variable_choice, 0); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 512; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
+      if ((likely(PyTuple_CheckExact(__pyx_t_7))) || (PyList_CheckExact(__pyx_t_7))) {
+        PyObject* sequence = __pyx_t_7;
+        #if CYTHON_COMPILING_IN_CPYTHON
+        Py_ssize_t size = Py_SIZE(sequence);
+        #else
+        Py_ssize_t size = PySequence_Size(sequence);
+        #endif
+        if (unlikely(size != 2)) {
+          if (size > 2) __Pyx_RaiseTooManyValuesError(2);
+          else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
+          {__pyx_filename = __pyx_f[0]; __pyx_lineno = 512; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        }
+        #if CYTHON_COMPILING_IN_CPYTHON
+        if (likely(PyTuple_CheckExact(sequence))) {
+          __pyx_t_27 = PyTuple_GET_ITEM(sequence, 0); 
+          __pyx_t_14 = PyTuple_GET_ITEM(sequence, 1); 
+        } else {
+          __pyx_t_27 = PyList_GET_ITEM(sequence, 0); 
+          __pyx_t_14 = PyList_GET_ITEM(sequence, 1); 
+        }
+        __Pyx_INCREF(__pyx_t_27);
+        __Pyx_INCREF(__pyx_t_14);
+        #else
+        __pyx_t_27 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 512; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_27);
+        __pyx_t_14 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 512; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        #endif
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      } else {
+        Py_ssize_t index = -1;
+        __pyx_t_1 = PyObject_GetIter(__pyx_t_7); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 512; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_1);
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+        __pyx_t_28 = Py_TYPE(__pyx_t_1)->tp_iternext;
+        index = 0; __pyx_t_27 = __pyx_t_28(__pyx_t_1); if (unlikely(!__pyx_t_27)) goto __pyx_L83_unpacking_failed;
+        __Pyx_GOTREF(__pyx_t_27);
+        index = 1; __pyx_t_14 = __pyx_t_28(__pyx_t_1); if (unlikely(!__pyx_t_14)) goto __pyx_L83_unpacking_failed;
+        __Pyx_GOTREF(__pyx_t_14);
+        if (__Pyx_IternextUnpackEndCheck(__pyx_t_28(__pyx_t_1), 2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 512; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_28 = NULL;
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        goto __pyx_L84_unpacking_done;
+        __pyx_L83_unpacking_failed:;
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __pyx_t_28 = NULL;
+        if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
+        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 512; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_L84_unpacking_done:;
+      }
+      if (!(likely(((__pyx_t_27) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_27, __pyx_ptype_7pyearth_6_basis_BasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 512; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      if (!(likely(((__pyx_t_14) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_14, __pyx_ptype_7pyearth_6_basis_BasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 512; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_DECREF_SET(__pyx_v_bf3, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_27));
+      __pyx_t_27 = 0;
+      __Pyx_DECREF_SET(__pyx_v_bf4, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_14));
+      __pyx_t_14 = 0;
+
+      /* "pyearth/_forward.pyx":513
+ *             if self.basis.has_coverage(variable_choice):
+ *                 bf3, bf4 = self.basis.get_coverage(variable_choice)
+ *                 already_covered = True             # <<<<<<<<<<<<<<
+ *             else:
+ *                 already_covered = False
+ */
+      __pyx_v_already_covered = 1;
+
+      /* "pyearth/_forward.pyx":511
+ *             bf4 = MissingnessBasisFunction(parent_choice, variable_choice,
+ *                                            False, label)
+ *             if self.basis.has_coverage(variable_choice):             # <<<<<<<<<<<<<<
+ *                 bf3, bf4 = self.basis.get_coverage(variable_choice)
+ *                 already_covered = True
+ */
+      goto __pyx_L82;
+    }
+
+    /* "pyearth/_forward.pyx":515
+ *                 already_covered = True
+ *             else:
+ *                 already_covered = False             # <<<<<<<<<<<<<<
+ *             parent_choice = bf3
+ *         if knot_idx_choice != -1:
+ */
+    /*else*/ {
+      __pyx_v_already_covered = 0;
+    }
+    __pyx_L82:;
+
+    /* "pyearth/_forward.pyx":516
+ *             else:
+ *                 already_covered = False
+ *             parent_choice = bf3             # <<<<<<<<<<<<<<
+ *         if knot_idx_choice != -1:
+ *             # Add the new basis functions
+ */
+    __Pyx_INCREF(((PyObject *)__pyx_v_bf3));
+    __Pyx_XDECREF_SET(__pyx_v_parent_choice, __pyx_v_bf3);
+
+    /* "pyearth/_forward.pyx":506
+ *         # Add the new basis functions
+ *         label = self.xlabels[variable_choice]
+ *         if choice_needs_coverage:             # <<<<<<<<<<<<<<
+ *             bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
+ *                                            True, label)
+ */
+  }
+
+  /* "pyearth/_forward.pyx":517
+ *                 already_covered = False
+ *             parent_choice = bf3
+ *         if knot_idx_choice != -1:             # <<<<<<<<<<<<<<
+ *             # Add the new basis functions
+ *             bf1 = HingeBasisFunction(parent_choice,
+ */
+  __pyx_t_3 = ((__pyx_v_knot_idx_choice != -1L) != 0);
+  if (__pyx_t_3) {
+
+    /* "pyearth/_forward.pyx":519
+ *         if knot_idx_choice != -1:
+ *             # Add the new basis functions
+ *             bf1 = HingeBasisFunction(parent_choice,             # <<<<<<<<<<<<<<
+ *                                      knot_choice, knot_idx_choice,
+ *                                      variable_choice,
+ */
+    if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 519; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+
+    /* "pyearth/_forward.pyx":520
+ *             # Add the new basis functions
+ *             bf1 = HingeBasisFunction(parent_choice,
+ *                                      knot_choice, knot_idx_choice,             # <<<<<<<<<<<<<<
+ *                                      variable_choice,
+ *                                      False, label)
+ */
+    __pyx_t_7 = PyFloat_FromDouble(__pyx_v_knot_choice); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 520; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_7);
+    __pyx_t_14 = __Pyx_PyInt_From_int(__pyx_v_knot_idx_choice); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 520; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_14);
+
+    /* "pyearth/_forward.pyx":521
+ *             bf1 = HingeBasisFunction(parent_choice,
+ *                                      knot_choice, knot_idx_choice,
+ *                                      variable_choice,             # <<<<<<<<<<<<<<
+ *                                      False, label)
+ *             bf2 = HingeBasisFunction(parent_choice,
+ */
+    __pyx_t_27 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 521; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_27);
+
+    /* "pyearth/_forward.pyx":519
+ *         if knot_idx_choice != -1:
+ *             # Add the new basis functions
+ *             bf1 = HingeBasisFunction(parent_choice,             # <<<<<<<<<<<<<<
+ *                                      knot_choice, knot_idx_choice,
+ *                                      variable_choice,
+ */
+    __pyx_t_1 = PyTuple_New(6); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 519; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_INCREF(((PyObject *)__pyx_v_parent_choice));
+    __Pyx_GIVEREF(((PyObject *)__pyx_v_parent_choice));
+    PyTuple_SET_ITEM(__pyx_t_1, 0, ((PyObject *)__pyx_v_parent_choice));
+    __Pyx_GIVEREF(__pyx_t_7);
+    PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_7);
+    __Pyx_GIVEREF(__pyx_t_14);
+    PyTuple_SET_ITEM(__pyx_t_1, 2, __pyx_t_14);
+    __Pyx_GIVEREF(__pyx_t_27);
+    PyTuple_SET_ITEM(__pyx_t_1, 3, __pyx_t_27);
+    __Pyx_INCREF(Py_False);
+    __Pyx_GIVEREF(Py_False);
+    PyTuple_SET_ITEM(__pyx_t_1, 4, Py_False);
+    __Pyx_INCREF(__pyx_v_label);
+    __Pyx_GIVEREF(__pyx_v_label);
+    PyTuple_SET_ITEM(__pyx_t_1, 5, __pyx_v_label);
+    __pyx_t_7 = 0;
+    __pyx_t_14 = 0;
+    __pyx_t_27 = 0;
+    __pyx_t_27 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_HingeBasisFunction), __pyx_t_1, NULL); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 519; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_27);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_v_bf1 = ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_27);
+    __pyx_t_27 = 0;
+
+    /* "pyearth/_forward.pyx":523
+ *                                      variable_choice,
+ *                                      False, label)
+ *             bf2 = HingeBasisFunction(parent_choice,             # <<<<<<<<<<<<<<
+ *                                      knot_choice, knot_idx_choice,
+ *                                      variable_choice,
+ */
+    if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 523; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+
+    /* "pyearth/_forward.pyx":524
+ *                                      False, label)
+ *             bf2 = HingeBasisFunction(parent_choice,
+ *                                      knot_choice, knot_idx_choice,             # <<<<<<<<<<<<<<
+ *                                      variable_choice,
+ *                                      True, label)
+ */
+    __pyx_t_27 = PyFloat_FromDouble(__pyx_v_knot_choice); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_27);
+    __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_knot_idx_choice); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_1);
+
+    /* "pyearth/_forward.pyx":525
+ *             bf2 = HingeBasisFunction(parent_choice,
+ *                                      knot_choice, knot_idx_choice,
+ *                                      variable_choice,             # <<<<<<<<<<<<<<
+ *                                      True, label)
+ * 
+ */
+    __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 525; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_14);
+
+    /* "pyearth/_forward.pyx":523
+ *                                      variable_choice,
+ *                                      False, label)
+ *             bf2 = HingeBasisFunction(parent_choice,             # <<<<<<<<<<<<<<
+ *                                      knot_choice, knot_idx_choice,
+ *                                      variable_choice,
+ */
+    __pyx_t_7 = PyTuple_New(6); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 523; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_7);
+    __Pyx_INCREF(((PyObject *)__pyx_v_parent_choice));
+    __Pyx_GIVEREF(((PyObject *)__pyx_v_parent_choice));
+    PyTuple_SET_ITEM(__pyx_t_7, 0, ((PyObject *)__pyx_v_parent_choice));
+    __Pyx_GIVEREF(__pyx_t_27);
+    PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_27);
+    __Pyx_GIVEREF(__pyx_t_1);
+    PyTuple_SET_ITEM(__pyx_t_7, 2, __pyx_t_1);
+    __Pyx_GIVEREF(__pyx_t_14);
+    PyTuple_SET_ITEM(__pyx_t_7, 3, __pyx_t_14);
+    __Pyx_INCREF(Py_True);
+    __Pyx_GIVEREF(Py_True);
+    PyTuple_SET_ITEM(__pyx_t_7, 4, Py_True);
+    __Pyx_INCREF(__pyx_v_label);
+    __Pyx_GIVEREF(__pyx_v_label);
+    PyTuple_SET_ITEM(__pyx_t_7, 5, __pyx_v_label);
+    __pyx_t_27 = 0;
+    __pyx_t_1 = 0;
+    __pyx_t_14 = 0;
+    __pyx_t_14 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_HingeBasisFunction), __pyx_t_7, NULL); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 523; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_14);
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __pyx_v_bf2 = ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_14);
+    __pyx_t_14 = 0;
+
+    /* "pyearth/_forward.pyx":528
+ *                                      True, label)
+ * 
+ *             bf1.apply(X, missing, B[:, k])             # <<<<<<<<<<<<<<
+ *             bf2.apply(X, missing, B[:, k + 1])
+ * 
+ */
+    __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_k); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 528; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_14);
+    __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 528; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_7);
+    __Pyx_INCREF(__pyx_slice__24);
+    __Pyx_GIVEREF(__pyx_slice__24);
+    PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_slice__24);
+    __Pyx_GIVEREF(__pyx_t_14);
+    PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_14);
+    __pyx_t_14 = 0;
+    __pyx_t_14 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_7); if (unlikely(__pyx_t_14 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 528; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __Pyx_GOTREF(__pyx_t_14);
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    if (!(likely(((__pyx_t_14) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_14, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 528; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_7 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf1->__pyx_vtab)->apply(__pyx_v_bf1, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_14), 0, NULL); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 528; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_7);
+    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+
+    /* "pyearth/_forward.pyx":529
+ * 
+ *             bf1.apply(X, missing, B[:, k])
+ *             bf2.apply(X, missing, B[:, k + 1])             # <<<<<<<<<<<<<<
+ * 
+ *             self.basis.append(bf1)
+ */
+    __pyx_t_7 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 1)); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 529; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_7);
+    __pyx_t_14 = PyTuple_New(2); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 529; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_14);
+    __Pyx_INCREF(__pyx_slice__25);
+    __Pyx_GIVEREF(__pyx_slice__25);
+    PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_slice__25);
+    __Pyx_GIVEREF(__pyx_t_7);
+    PyTuple_SET_ITEM(__pyx_t_14, 1, __pyx_t_7);
+    __pyx_t_7 = 0;
+    __pyx_t_7 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_14); if (unlikely(__pyx_t_7 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 529; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __Pyx_GOTREF(__pyx_t_7);
+    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+    if (!(likely(((__pyx_t_7) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_7, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 529; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_14 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf2->__pyx_vtab)->apply(__pyx_v_bf2, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_7), 0, NULL); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 529; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_14);
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+
+    /* "pyearth/_forward.pyx":531
+ *             bf2.apply(X, missing, B[:, k + 1])
+ * 
+ *             self.basis.append(bf1)             # <<<<<<<<<<<<<<
+ *             self.basis.append(bf2)
+ * 
+ */
+    __pyx_t_14 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->append(__pyx_v_self->basis, __pyx_v_bf1, 0); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 531; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_14);
+    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+
+    /* "pyearth/_forward.pyx":532
+ * 
+ *             self.basis.append(bf1)
+ *             self.basis.append(bf2)             # <<<<<<<<<<<<<<
+ * 
+ *             if choice_needs_coverage:
+ */
+    __pyx_t_14 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->append(__pyx_v_self->basis, __pyx_v_bf2, 0); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 532; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_14);
+    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+
+    /* "pyearth/_forward.pyx":534
+ *             self.basis.append(bf2)
+ * 
+ *             if choice_needs_coverage:             # <<<<<<<<<<<<<<
+ *                 if not already_covered:
+ *                     bf3.apply(X, missing, B[:, k + 2])
+ */
+    __pyx_t_3 = (__pyx_v_choice_needs_coverage != 0);
+    if (__pyx_t_3) {
+
+      /* "pyearth/_forward.pyx":535
+ * 
+ *             if choice_needs_coverage:
+ *                 if not already_covered:             # <<<<<<<<<<<<<<
+ *                     bf3.apply(X, missing, B[:, k + 2])
+ *                     bf4.apply(X, missing, B[:, k + 3])
+ */
+      __pyx_t_3 = ((!(__pyx_v_already_covered != 0)) != 0);
+      if (__pyx_t_3) {
+
+        /* "pyearth/_forward.pyx":536
+ *             if choice_needs_coverage:
+ *                 if not already_covered:
+ *                     bf3.apply(X, missing, B[:, k + 2])             # <<<<<<<<<<<<<<
+ *                     bf4.apply(X, missing, B[:, k + 3])
+ *                     self.basis.add_coverage(variable_choice, bf3, bf4)
+ */
+        if (unlikely(!__pyx_v_bf3)) { __Pyx_RaiseUnboundLocalError("bf3"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 536; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+        __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 2)); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 536; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 536; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_7);
+        __Pyx_INCREF(__pyx_slice__26);
+        __Pyx_GIVEREF(__pyx_slice__26);
+        PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_slice__26);
+        __Pyx_GIVEREF(__pyx_t_14);
+        PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_14);
+        __pyx_t_14 = 0;
+        __pyx_t_14 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_7); if (unlikely(__pyx_t_14 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 536; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __Pyx_GOTREF(__pyx_t_14);
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+        if (!(likely(((__pyx_t_14) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_14, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 536; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_7 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf3->__pyx_vtab)->apply(__pyx_v_bf3, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_14), 0, NULL); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 536; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_7);
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+
+        /* "pyearth/_forward.pyx":537
+ *                 if not already_covered:
+ *                     bf3.apply(X, missing, B[:, k + 2])
+ *                     bf4.apply(X, missing, B[:, k + 3])             # <<<<<<<<<<<<<<
+ *                     self.basis.add_coverage(variable_choice, bf3, bf4)
+ * 
+ */
+        if (unlikely(!__pyx_v_bf4)) { __Pyx_RaiseUnboundLocalError("bf4"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 537; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+        __pyx_t_7 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 3)); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 537; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_7);
+        __pyx_t_14 = PyTuple_New(2); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 537; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __Pyx_INCREF(__pyx_slice__27);
+        __Pyx_GIVEREF(__pyx_slice__27);
+        PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_slice__27);
+        __Pyx_GIVEREF(__pyx_t_7);
+        PyTuple_SET_ITEM(__pyx_t_14, 1, __pyx_t_7);
+        __pyx_t_7 = 0;
+        __pyx_t_7 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_14); if (unlikely(__pyx_t_7 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 537; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __Pyx_GOTREF(__pyx_t_7);
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        if (!(likely(((__pyx_t_7) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_7, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 537; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_14 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf4->__pyx_vtab)->apply(__pyx_v_bf4, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_7), 0, NULL); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 537; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+
+        /* "pyearth/_forward.pyx":538
+ *                     bf3.apply(X, missing, B[:, k + 2])
+ *                     bf4.apply(X, missing, B[:, k + 3])
+ *                     self.basis.add_coverage(variable_choice, bf3, bf4)             # <<<<<<<<<<<<<<
+ * 
+ *             if self.use_fast is True:
+ */
+        if (unlikely(!__pyx_v_bf3)) { __Pyx_RaiseUnboundLocalError("bf3"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 538; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+        if (!(likely(((((PyObject *)__pyx_v_bf3)) == Py_None) || likely(__Pyx_TypeTest(((PyObject *)__pyx_v_bf3), __pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 538; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        if (unlikely(!__pyx_v_bf4)) { __Pyx_RaiseUnboundLocalError("bf4"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 538; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+        if (!(likely(((((PyObject *)__pyx_v_bf4)) == Py_None) || likely(__Pyx_TypeTest(((PyObject *)__pyx_v_bf4), __pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 538; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_14 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->add_coverage(__pyx_v_self->basis, __pyx_v_variable_choice, ((struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *)__pyx_v_bf3), ((struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *)__pyx_v_bf4), 0); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 538; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+
+        /* "pyearth/_forward.pyx":535
+ * 
+ *             if choice_needs_coverage:
+ *                 if not already_covered:             # <<<<<<<<<<<<<<
+ *                     bf3.apply(X, missing, B[:, k + 2])
+ *                     bf4.apply(X, missing, B[:, k + 3])
+ */
+      }
+
+      /* "pyearth/_forward.pyx":534
+ *             self.basis.append(bf2)
+ * 
+ *             if choice_needs_coverage:             # <<<<<<<<<<<<<<
+ *                 if not already_covered:
+ *                     bf3.apply(X, missing, B[:, k + 2])
+ */
+    }
+
+    /* "pyearth/_forward.pyx":540
+ *                     self.basis.add_coverage(variable_choice, bf3, bf4)
+ * 
+ *             if self.use_fast is True:             # <<<<<<<<<<<<<<
+ *                 bf1_content = FastHeapContent(idx=k)
+ *                 heappush(self.fast_heap, bf1_content)
+ */
+    __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
+    if (__pyx_t_3) {
+
+      /* "pyearth/_forward.pyx":541
+ * 
+ *             if self.use_fast is True:
+ *                 bf1_content = FastHeapContent(idx=k)             # <<<<<<<<<<<<<<
+ *                 heappush(self.fast_heap, bf1_content)
+ *                 bf2_content = FastHeapContent(idx=k + 1)
+ */
+      __pyx_t_14 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 541; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_14);
+      __pyx_t_7 = PyDict_New(); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 541; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
+      __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_k); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 541; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_1);
+      if (PyDict_SetItem(__pyx_t_7, __pyx_n_s_idx, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 541; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_14, __pyx_empty_tuple, __pyx_t_7); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 541; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __pyx_v_bf1_content = __pyx_t_1;
+      __pyx_t_1 = 0;
+
+      /* "pyearth/_forward.pyx":542
+ *             if self.use_fast is True:
+ *                 bf1_content = FastHeapContent(idx=k)
+ *                 heappush(self.fast_heap, bf1_content)             # <<<<<<<<<<<<<<
+ *                 bf2_content = FastHeapContent(idx=k + 1)
+ *                 heappush(self.fast_heap, bf2_content)
+ */
+      __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 542; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
+      __pyx_t_14 = NULL;
+      __pyx_t_22 = 0;
+      if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_7))) {
+        __pyx_t_14 = PyMethod_GET_SELF(__pyx_t_7);
+        if (likely(__pyx_t_14)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
+          __Pyx_INCREF(__pyx_t_14);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_7, function);
+          __pyx_t_22 = 1;
+        }
+      }
+      __pyx_t_27 = PyTuple_New(2+__pyx_t_22); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 542; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_27);
+      if (__pyx_t_14) {
+        __Pyx_GIVEREF(__pyx_t_14); PyTuple_SET_ITEM(__pyx_t_27, 0, __pyx_t_14); __pyx_t_14 = NULL;
+      }
+      __Pyx_INCREF(__pyx_v_self->fast_heap);
+      __Pyx_GIVEREF(__pyx_v_self->fast_heap);
+      PyTuple_SET_ITEM(__pyx_t_27, 0+__pyx_t_22, __pyx_v_self->fast_heap);
+      __Pyx_INCREF(__pyx_v_bf1_content);
+      __Pyx_GIVEREF(__pyx_v_bf1_content);
+      PyTuple_SET_ITEM(__pyx_t_27, 1+__pyx_t_22, __pyx_v_bf1_content);
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_27, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 542; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+      /* "pyearth/_forward.pyx":543
+ *                 bf1_content = FastHeapContent(idx=k)
+ *                 heappush(self.fast_heap, bf1_content)
+ *                 bf2_content = FastHeapContent(idx=k + 1)             # <<<<<<<<<<<<<<
+ *                 heappush(self.fast_heap, bf2_content)
+ *                 if choice_needs_coverage:
+ */
+      __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 543; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_7 = PyDict_New(); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 543; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
+      __pyx_t_27 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 1)); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 543; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_27);
+      if (PyDict_SetItem(__pyx_t_7, __pyx_n_s_idx, __pyx_t_27) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 543; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+      __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_7); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 543; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_27);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __pyx_v_bf2_content = __pyx_t_27;
+      __pyx_t_27 = 0;
+
+      /* "pyearth/_forward.pyx":544
+ *                 heappush(self.fast_heap, bf1_content)
+ *                 bf2_content = FastHeapContent(idx=k + 1)
+ *                 heappush(self.fast_heap, bf2_content)             # <<<<<<<<<<<<<<
+ *                 if choice_needs_coverage:
+ *                     if not already_covered:
+ */
+      __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 544; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
+      __pyx_t_1 = NULL;
+      __pyx_t_22 = 0;
+      if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_7))) {
+        __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_7);
+        if (likely(__pyx_t_1)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
+          __Pyx_INCREF(__pyx_t_1);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_7, function);
+          __pyx_t_22 = 1;
+        }
+      }
+      __pyx_t_14 = PyTuple_New(2+__pyx_t_22); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 544; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_14);
+      if (__pyx_t_1) {
+        __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_1); __pyx_t_1 = NULL;
+      }
+      __Pyx_INCREF(__pyx_v_self->fast_heap);
+      __Pyx_GIVEREF(__pyx_v_self->fast_heap);
+      PyTuple_SET_ITEM(__pyx_t_14, 0+__pyx_t_22, __pyx_v_self->fast_heap);
+      __Pyx_INCREF(__pyx_v_bf2_content);
+      __Pyx_GIVEREF(__pyx_v_bf2_content);
+      PyTuple_SET_ITEM(__pyx_t_14, 1+__pyx_t_22, __pyx_v_bf2_content);
+      __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_14, NULL); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 544; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_27);
+      __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+
+      /* "pyearth/_forward.pyx":545
+ *                 bf2_content = FastHeapContent(idx=k + 1)
+ *                 heappush(self.fast_heap, bf2_content)
+ *                 if choice_needs_coverage:             # <<<<<<<<<<<<<<
+ *                     if not already_covered:
+ *                         bf3_content = FastHeapContent(idx=k + 2)
+ */
+      __pyx_t_3 = (__pyx_v_choice_needs_coverage != 0);
+      if (__pyx_t_3) {
+
+        /* "pyearth/_forward.pyx":546
+ *                 heappush(self.fast_heap, bf2_content)
+ *                 if choice_needs_coverage:
+ *                     if not already_covered:             # <<<<<<<<<<<<<<
+ *                         bf3_content = FastHeapContent(idx=k + 2)
+ *                         heappush(self.fast_heap, FastHeapContent(idx=k + 2))
+ */
+        __pyx_t_3 = ((!(__pyx_v_already_covered != 0)) != 0);
+        if (__pyx_t_3) {
+
+          /* "pyearth/_forward.pyx":547
+ *                 if choice_needs_coverage:
+ *                     if not already_covered:
+ *                         bf3_content = FastHeapContent(idx=k + 2)             # <<<<<<<<<<<<<<
+ *                         heappush(self.fast_heap, FastHeapContent(idx=k + 2))
+ *                         bf4_content = FastHeapContent(idx=k + 3)
+ */
+          __pyx_t_27 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 547; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_27);
+          __pyx_t_7 = PyDict_New(); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 547; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_7);
+          __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 2)); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 547; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_14);
+          if (PyDict_SetItem(__pyx_t_7, __pyx_n_s_idx, __pyx_t_14) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 547; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+          __pyx_t_14 = __Pyx_PyObject_Call(__pyx_t_27, __pyx_empty_tuple, __pyx_t_7); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 547; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_14);
+          __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __pyx_v_bf3_content = __pyx_t_14;
+          __pyx_t_14 = 0;
+
+          /* "pyearth/_forward.pyx":548
+ *                     if not already_covered:
+ *                         bf3_content = FastHeapContent(idx=k + 2)
+ *                         heappush(self.fast_heap, FastHeapContent(idx=k + 2))             # <<<<<<<<<<<<<<
+ *                         bf4_content = FastHeapContent(idx=k + 3)
+ *                         heappush(self.fast_heap, FastHeapContent(idx=k + 3))
+ */
+          __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 548; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_7);
+          __pyx_t_27 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 548; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_27);
+          __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 548; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_t_25 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 2)); if (unlikely(!__pyx_t_25)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 548; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_25);
+          if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_idx, __pyx_t_25) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 548; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
+          __pyx_t_25 = __Pyx_PyObject_Call(__pyx_t_27, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_25)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 548; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_25);
+          __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __pyx_t_1 = NULL;
+          __pyx_t_22 = 0;
+          if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_7))) {
+            __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_7);
+            if (likely(__pyx_t_1)) {
+              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
+              __Pyx_INCREF(__pyx_t_1);
+              __Pyx_INCREF(function);
+              __Pyx_DECREF_SET(__pyx_t_7, function);
+              __pyx_t_22 = 1;
+            }
+          }
+          __pyx_t_27 = PyTuple_New(2+__pyx_t_22); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 548; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_27);
+          if (__pyx_t_1) {
+            __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_27, 0, __pyx_t_1); __pyx_t_1 = NULL;
+          }
+          __Pyx_INCREF(__pyx_v_self->fast_heap);
+          __Pyx_GIVEREF(__pyx_v_self->fast_heap);
+          PyTuple_SET_ITEM(__pyx_t_27, 0+__pyx_t_22, __pyx_v_self->fast_heap);
+          __Pyx_GIVEREF(__pyx_t_25);
+          PyTuple_SET_ITEM(__pyx_t_27, 1+__pyx_t_22, __pyx_t_25);
+          __pyx_t_25 = 0;
+          __pyx_t_14 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_27, NULL); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 548; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_14);
+          __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+
+          /* "pyearth/_forward.pyx":549
+ *                         bf3_content = FastHeapContent(idx=k + 2)
+ *                         heappush(self.fast_heap, FastHeapContent(idx=k + 2))
+ *                         bf4_content = FastHeapContent(idx=k + 3)             # <<<<<<<<<<<<<<
+ *                         heappush(self.fast_heap, FastHeapContent(idx=k + 3))
+ * 
+ */
+          __pyx_t_14 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 549; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_14);
+          __pyx_t_7 = PyDict_New(); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 549; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_7);
+          __pyx_t_27 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 3)); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 549; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_27);
+          if (PyDict_SetItem(__pyx_t_7, __pyx_n_s_idx, __pyx_t_27) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 549; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+          __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_14, __pyx_empty_tuple, __pyx_t_7); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 549; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_27);
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __pyx_v_bf4_content = __pyx_t_27;
+          __pyx_t_27 = 0;
+
+          /* "pyearth/_forward.pyx":550
+ *                         heappush(self.fast_heap, FastHeapContent(idx=k + 2))
+ *                         bf4_content = FastHeapContent(idx=k + 3)
+ *                         heappush(self.fast_heap, FastHeapContent(idx=k + 3))             # <<<<<<<<<<<<<<
+ * 
+ *             # Orthogonalize the new basis
+ */
+          __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 550; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_7);
+          __pyx_t_14 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 550; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_14);
+          __pyx_t_25 = PyDict_New(); if (unlikely(!__pyx_t_25)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 550; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_25);
+          __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 3)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 550; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_1);
+          if (PyDict_SetItem(__pyx_t_25, __pyx_n_s_idx, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 550; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_14, __pyx_empty_tuple, __pyx_t_25); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 550; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_1);
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+          __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
+          __pyx_t_25 = NULL;
+          __pyx_t_22 = 0;
+          if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_7))) {
+            __pyx_t_25 = PyMethod_GET_SELF(__pyx_t_7);
+            if (likely(__pyx_t_25)) {
+              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
+              __Pyx_INCREF(__pyx_t_25);
+              __Pyx_INCREF(function);
+              __Pyx_DECREF_SET(__pyx_t_7, function);
+              __pyx_t_22 = 1;
+            }
+          }
+          __pyx_t_14 = PyTuple_New(2+__pyx_t_22); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 550; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_14);
+          if (__pyx_t_25) {
+            __Pyx_GIVEREF(__pyx_t_25); PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_25); __pyx_t_25 = NULL;
+          }
+          __Pyx_INCREF(__pyx_v_self->fast_heap);
+          __Pyx_GIVEREF(__pyx_v_self->fast_heap);
+          PyTuple_SET_ITEM(__pyx_t_14, 0+__pyx_t_22, __pyx_v_self->fast_heap);
+          __Pyx_GIVEREF(__pyx_t_1);
+          PyTuple_SET_ITEM(__pyx_t_14, 1+__pyx_t_22, __pyx_t_1);
+          __pyx_t_1 = 0;
+          __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_14, NULL); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 550; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_27);
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+
+          /* "pyearth/_forward.pyx":546
+ *                 heappush(self.fast_heap, bf2_content)
+ *                 if choice_needs_coverage:
+ *                     if not already_covered:             # <<<<<<<<<<<<<<
+ *                         bf3_content = FastHeapContent(idx=k + 2)
+ *                         heappush(self.fast_heap, FastHeapContent(idx=k + 2))
+ */
+        }
+
+        /* "pyearth/_forward.pyx":545
+ *                 bf2_content = FastHeapContent(idx=k + 1)
+ *                 heappush(self.fast_heap, bf2_content)
+ *                 if choice_needs_coverage:             # <<<<<<<<<<<<<<
+ *                     if not already_covered:
+ *                         bf3_content = FastHeapContent(idx=k + 2)
+ */
+      }
+
+      /* "pyearth/_forward.pyx":540
+ *                     self.basis.add_coverage(variable_choice, bf3, bf4)
+ * 
+ *             if self.use_fast is True:             # <<<<<<<<<<<<<<
+ *                 bf1_content = FastHeapContent(idx=k)
+ *                 heappush(self.fast_heap, bf1_content)
+ */
+    }
+
+    /* "pyearth/_forward.pyx":553
+ * 
+ *             # Orthogonalize the new basis
+ *             if self.orthonormal_update(B[:, k]) == 1:             # <<<<<<<<<<<<<<
+ *                 bf1.make_unsplittable()
+ *             if self.orthonormal_update(B[:, k + 1]) == 1:
+ */
+    __pyx_t_27 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_k); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 553; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_27);
+    __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 553; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_7);
+    __Pyx_INCREF(__pyx_slice__28);
+    __Pyx_GIVEREF(__pyx_slice__28);
+    PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_slice__28);
+    __Pyx_GIVEREF(__pyx_t_27);
+    PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_27);
+    __pyx_t_27 = 0;
+    __pyx_t_27 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_7); if (unlikely(__pyx_t_27 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 553; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __Pyx_GOTREF(__pyx_t_27);
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __pyx_t_7 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_27, 0); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 553; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_7);
+    __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+    __pyx_t_27 = __Pyx_PyInt_EqObjC(__pyx_t_7, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 553; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_27);
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_27); if (unlikely(__pyx_t_3 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 553; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+    if (__pyx_t_3) {
+
+      /* "pyearth/_forward.pyx":554
+ *             # Orthogonalize the new basis
+ *             if self.orthonormal_update(B[:, k]) == 1:
+ *                 bf1.make_unsplittable()             # <<<<<<<<<<<<<<
+ *             if self.orthonormal_update(B[:, k + 1]) == 1:
+ *                 bf2.make_unsplittable()
+ */
+      ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf1->__pyx_vtab)->make_unsplittable(__pyx_v_bf1, 0);
+
+      /* "pyearth/_forward.pyx":553
+ * 
+ *             # Orthogonalize the new basis
+ *             if self.orthonormal_update(B[:, k]) == 1:             # <<<<<<<<<<<<<<
+ *                 bf1.make_unsplittable()
+ *             if self.orthonormal_update(B[:, k + 1]) == 1:
+ */
+    }
+
+    /* "pyearth/_forward.pyx":555
+ *             if self.orthonormal_update(B[:, k]) == 1:
+ *                 bf1.make_unsplittable()
+ *             if self.orthonormal_update(B[:, k + 1]) == 1:             # <<<<<<<<<<<<<<
+ *                 bf2.make_unsplittable()
+ *             if choice_needs_coverage:
+ */
+    __pyx_t_27 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 1)); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 555; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_27);
+    __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 555; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_7);
+    __Pyx_INCREF(__pyx_slice__29);
+    __Pyx_GIVEREF(__pyx_slice__29);
+    PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_slice__29);
+    __Pyx_GIVEREF(__pyx_t_27);
+    PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_27);
+    __pyx_t_27 = 0;
+    __pyx_t_27 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_7); if (unlikely(__pyx_t_27 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 555; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __Pyx_GOTREF(__pyx_t_27);
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __pyx_t_7 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_27, 0); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 555; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_7);
+    __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+    __pyx_t_27 = __Pyx_PyInt_EqObjC(__pyx_t_7, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 555; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_27);
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_27); if (unlikely(__pyx_t_3 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 555; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+    if (__pyx_t_3) {
+
+      /* "pyearth/_forward.pyx":556
+ *                 bf1.make_unsplittable()
+ *             if self.orthonormal_update(B[:, k + 1]) == 1:
+ *                 bf2.make_unsplittable()             # <<<<<<<<<<<<<<
+ *             if choice_needs_coverage:
+ *                 if not already_covered:
+ */
+      ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf2->__pyx_vtab)->make_unsplittable(__pyx_v_bf2, 0);
+
+      /* "pyearth/_forward.pyx":555
+ *             if self.orthonormal_update(B[:, k]) == 1:
+ *                 bf1.make_unsplittable()
+ *             if self.orthonormal_update(B[:, k + 1]) == 1:             # <<<<<<<<<<<<<<
+ *                 bf2.make_unsplittable()
+ *             if choice_needs_coverage:
+ */
+    }
+
+    /* "pyearth/_forward.pyx":557
+ *             if self.orthonormal_update(B[:, k + 1]) == 1:
+ *                 bf2.make_unsplittable()
+ *             if choice_needs_coverage:             # <<<<<<<<<<<<<<
+ *                 if not already_covered:
+ *                     if self.orthonormal_update(B[:, k + 2]) == 1:
+ */
+    __pyx_t_3 = (__pyx_v_choice_needs_coverage != 0);
+    if (__pyx_t_3) {
+
+      /* "pyearth/_forward.pyx":558
+ *                 bf2.make_unsplittable()
+ *             if choice_needs_coverage:
+ *                 if not already_covered:             # <<<<<<<<<<<<<<
+ *                     if self.orthonormal_update(B[:, k + 2]) == 1:
+ *                         pass
+ */
+      __pyx_t_3 = ((!(__pyx_v_already_covered != 0)) != 0);
+      if (__pyx_t_3) {
+
+        /* "pyearth/_forward.pyx":559
+ *             if choice_needs_coverage:
+ *                 if not already_covered:
+ *                     if self.orthonormal_update(B[:, k + 2]) == 1:             # <<<<<<<<<<<<<<
+ *                         pass
+ *                     if self.orthonormal_update(B[:, k + 3]) == 1:
+ */
+        __pyx_t_27 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 2)); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 559; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_27);
+        __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 559; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_7);
+        __Pyx_INCREF(__pyx_slice__30);
+        __Pyx_GIVEREF(__pyx_slice__30);
+        PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_slice__30);
+        __Pyx_GIVEREF(__pyx_t_27);
+        PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_27);
+        __pyx_t_27 = 0;
+        __pyx_t_27 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_7); if (unlikely(__pyx_t_27 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 559; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __Pyx_GOTREF(__pyx_t_27);
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+        __pyx_t_7 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_27, 0); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 559; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_7);
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+        __pyx_t_27 = __Pyx_PyInt_EqObjC(__pyx_t_7, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 559; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_27);
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_27); if (unlikely(__pyx_t_3 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 559; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+        if (__pyx_t_3) {
+        }
+
+        /* "pyearth/_forward.pyx":561
+ *                     if self.orthonormal_update(B[:, k + 2]) == 1:
+ *                         pass
+ *                     if self.orthonormal_update(B[:, k + 3]) == 1:             # <<<<<<<<<<<<<<
+ *                         pass
+ *         elif not dependent and knot_idx_choice == -1:
+ */
+        __pyx_t_27 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 3)); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 561; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_27);
+        __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 561; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_7);
+        __Pyx_INCREF(__pyx_slice__31);
+        __Pyx_GIVEREF(__pyx_slice__31);
+        PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_slice__31);
+        __Pyx_GIVEREF(__pyx_t_27);
+        PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_27);
+        __pyx_t_27 = 0;
+        __pyx_t_27 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_7); if (unlikely(__pyx_t_27 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 561; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __Pyx_GOTREF(__pyx_t_27);
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+        __pyx_t_7 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_27, 0); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 561; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_7);
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+        __pyx_t_27 = __Pyx_PyInt_EqObjC(__pyx_t_7, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 561; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_27);
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_27); if (unlikely(__pyx_t_3 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 561; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+        if (__pyx_t_3) {
+        }
+
+        /* "pyearth/_forward.pyx":558
+ *                 bf2.make_unsplittable()
+ *             if choice_needs_coverage:
+ *                 if not already_covered:             # <<<<<<<<<<<<<<
+ *                     if self.orthonormal_update(B[:, k + 2]) == 1:
+ *                         pass
+ */
+      }
+
+      /* "pyearth/_forward.pyx":557
+ *             if self.orthonormal_update(B[:, k + 1]) == 1:
+ *                 bf2.make_unsplittable()
+ *             if choice_needs_coverage:             # <<<<<<<<<<<<<<
+ *                 if not already_covered:
+ *                     if self.orthonormal_update(B[:, k + 2]) == 1:
+ */
+    }
+
+    /* "pyearth/_forward.pyx":517
+ *                 already_covered = False
+ *             parent_choice = bf3
+ *         if knot_idx_choice != -1:             # <<<<<<<<<<<<<<
+ *             # Add the new basis functions
+ *             bf1 = HingeBasisFunction(parent_choice,
+ */
+    goto __pyx_L85;
+  }
+
+  /* "pyearth/_forward.pyx":563
+ *                     if self.orthonormal_update(B[:, k + 3]) == 1:
+ *                         pass
+ *         elif not dependent and knot_idx_choice == -1:             # <<<<<<<<<<<<<<
+ *             # In this case, only add the linear basis function (in addition to
+ *             # covering missingness basis functions if needed)
+ */
+  __pyx_t_13 = ((!(__pyx_v_dependent != 0)) != 0);
+  if (__pyx_t_13) {
+  } else {
+    __pyx_t_3 = __pyx_t_13;
+    goto __pyx_L97_bool_binop_done;
+  }
+  __pyx_t_13 = ((__pyx_v_knot_idx_choice == -1L) != 0);
+  __pyx_t_3 = __pyx_t_13;
+  __pyx_L97_bool_binop_done:;
+  if (__pyx_t_3) {
+
+    /* "pyearth/_forward.pyx":566
+ *             # In this case, only add the linear basis function (in addition to
+ *             # covering missingness basis functions if needed)
+ *             if choice_needs_coverage:             # <<<<<<<<<<<<<<
+ *                 bf2 = MissingnessBasisFunction(parent_choice, variable_choice,
+ *                                                True, label)
+ */
+    __pyx_t_3 = (__pyx_v_choice_needs_coverage != 0);
+    if (__pyx_t_3) {
+
+      /* "pyearth/_forward.pyx":567
+ *             # covering missingness basis functions if needed)
+ *             if choice_needs_coverage:
+ *                 bf2 = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
+ *                                                True, label)
+ *                 bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
+ */
+      if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 567; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+      __pyx_t_27 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 567; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_27);
+
+      /* "pyearth/_forward.pyx":568
+ *             if choice_needs_coverage:
+ *                 bf2 = MissingnessBasisFunction(parent_choice, variable_choice,
+ *                                                True, label)             # <<<<<<<<<<<<<<
+ *                 bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
+ *                                                False, label)
+ */
+      __pyx_t_7 = PyTuple_New(4); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 567; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
+      __Pyx_INCREF(((PyObject *)__pyx_v_parent_choice));
+      __Pyx_GIVEREF(((PyObject *)__pyx_v_parent_choice));
+      PyTuple_SET_ITEM(__pyx_t_7, 0, ((PyObject *)__pyx_v_parent_choice));
+      __Pyx_GIVEREF(__pyx_t_27);
+      PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_27);
+      __Pyx_INCREF(Py_True);
+      __Pyx_GIVEREF(Py_True);
+      PyTuple_SET_ITEM(__pyx_t_7, 2, Py_True);
+      __Pyx_INCREF(__pyx_v_label);
+      __Pyx_GIVEREF(__pyx_v_label);
+      PyTuple_SET_ITEM(__pyx_t_7, 3, __pyx_v_label);
+      __pyx_t_27 = 0;
+
+      /* "pyearth/_forward.pyx":567
+ *             # covering missingness basis functions if needed)
+ *             if choice_needs_coverage:
+ *                 bf2 = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
+ *                                                True, label)
+ *                 bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
+ */
+      __pyx_t_27 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction), __pyx_t_7, NULL); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 567; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_27);
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __pyx_v_bf2 = ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_27);
+      __pyx_t_27 = 0;
+
+      /* "pyearth/_forward.pyx":569
+ *                 bf2 = MissingnessBasisFunction(parent_choice, variable_choice,
+ *                                                True, label)
+ *                 bf3 = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
+ *                                                False, label)
+ *                 if self.basis.has_coverage(variable_choice):
+ */
+      if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 569; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+      __pyx_t_27 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 569; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_27);
+
+      /* "pyearth/_forward.pyx":570
+ *                                                True, label)
+ *                 bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
+ *                                                False, label)             # <<<<<<<<<<<<<<
+ *                 if self.basis.has_coverage(variable_choice):
+ *                     bf2, bf3 = self.basis.get_coverage(variable_choice)
+ */
+      __pyx_t_7 = PyTuple_New(4); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 569; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
+      __Pyx_INCREF(((PyObject *)__pyx_v_parent_choice));
+      __Pyx_GIVEREF(((PyObject *)__pyx_v_parent_choice));
+      PyTuple_SET_ITEM(__pyx_t_7, 0, ((PyObject *)__pyx_v_parent_choice));
+      __Pyx_GIVEREF(__pyx_t_27);
+      PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_27);
+      __Pyx_INCREF(Py_False);
+      __Pyx_GIVEREF(Py_False);
+      PyTuple_SET_ITEM(__pyx_t_7, 2, Py_False);
+      __Pyx_INCREF(__pyx_v_label);
+      __Pyx_GIVEREF(__pyx_v_label);
+      PyTuple_SET_ITEM(__pyx_t_7, 3, __pyx_v_label);
+      __pyx_t_27 = 0;
+
+      /* "pyearth/_forward.pyx":569
+ *                 bf2 = MissingnessBasisFunction(parent_choice, variable_choice,
+ *                                                True, label)
+ *                 bf3 = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
+ *                                                False, label)
+ *                 if self.basis.has_coverage(variable_choice):
+ */
+      __pyx_t_27 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction), __pyx_t_7, NULL); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 569; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_27);
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __Pyx_XDECREF_SET(__pyx_v_bf3, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_27));
+      __pyx_t_27 = 0;
+
+      /* "pyearth/_forward.pyx":571
+ *                 bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
+ *                                                False, label)
+ *                 if self.basis.has_coverage(variable_choice):             # <<<<<<<<<<<<<<
+ *                     bf2, bf3 = self.basis.get_coverage(variable_choice)
+ *                     already_covered = True
+ */
+      __pyx_t_3 = (((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->has_coverage(__pyx_v_self->basis, __pyx_v_variable_choice, 0) != 0);
+      if (__pyx_t_3) {
+
+        /* "pyearth/_forward.pyx":572
+ *                                                False, label)
+ *                 if self.basis.has_coverage(variable_choice):
+ *                     bf2, bf3 = self.basis.get_coverage(variable_choice)             # <<<<<<<<<<<<<<
+ *                     already_covered = True
+ *                 else:
+ */
+        __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->get_coverage(__pyx_v_self->basis, __pyx_v_variable_choice, 0); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 572; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_27);
+        if ((likely(PyTuple_CheckExact(__pyx_t_27))) || (PyList_CheckExact(__pyx_t_27))) {
+          PyObject* sequence = __pyx_t_27;
+          #if CYTHON_COMPILING_IN_CPYTHON
+          Py_ssize_t size = Py_SIZE(sequence);
+          #else
+          Py_ssize_t size = PySequence_Size(sequence);
+          #endif
+          if (unlikely(size != 2)) {
+            if (size > 2) __Pyx_RaiseTooManyValuesError(2);
+            else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
+            {__pyx_filename = __pyx_f[0]; __pyx_lineno = 572; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          }
+          #if CYTHON_COMPILING_IN_CPYTHON
+          if (likely(PyTuple_CheckExact(sequence))) {
+            __pyx_t_7 = PyTuple_GET_ITEM(sequence, 0); 
+            __pyx_t_14 = PyTuple_GET_ITEM(sequence, 1); 
+          } else {
+            __pyx_t_7 = PyList_GET_ITEM(sequence, 0); 
+            __pyx_t_14 = PyList_GET_ITEM(sequence, 1); 
+          }
+          __Pyx_INCREF(__pyx_t_7);
+          __Pyx_INCREF(__pyx_t_14);
+          #else
+          __pyx_t_7 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 572; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_7);
+          __pyx_t_14 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 572; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_14);
+          #endif
+          __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+        } else {
+          Py_ssize_t index = -1;
+          __pyx_t_1 = PyObject_GetIter(__pyx_t_27); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 572; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_1);
+          __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+          __pyx_t_28 = Py_TYPE(__pyx_t_1)->tp_iternext;
+          index = 0; __pyx_t_7 = __pyx_t_28(__pyx_t_1); if (unlikely(!__pyx_t_7)) goto __pyx_L101_unpacking_failed;
+          __Pyx_GOTREF(__pyx_t_7);
+          index = 1; __pyx_t_14 = __pyx_t_28(__pyx_t_1); if (unlikely(!__pyx_t_14)) goto __pyx_L101_unpacking_failed;
+          __Pyx_GOTREF(__pyx_t_14);
+          if (__Pyx_IternextUnpackEndCheck(__pyx_t_28(__pyx_t_1), 2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 572; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_28 = NULL;
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          goto __pyx_L102_unpacking_done;
+          __pyx_L101_unpacking_failed:;
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __pyx_t_28 = NULL;
+          if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
+          {__pyx_filename = __pyx_f[0]; __pyx_lineno = 572; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_L102_unpacking_done:;
+        }
+        if (!(likely(((__pyx_t_7) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_7, __pyx_ptype_7pyearth_6_basis_BasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 572; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        if (!(likely(((__pyx_t_14) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_14, __pyx_ptype_7pyearth_6_basis_BasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 572; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF_SET(__pyx_v_bf2, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_7));
+        __pyx_t_7 = 0;
+        __Pyx_DECREF_SET(__pyx_v_bf3, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_14));
+        __pyx_t_14 = 0;
+
+        /* "pyearth/_forward.pyx":573
  *                 if self.basis.has_coverage(variable_choice):
  *                     bf2, bf3 = self.basis.get_coverage(variable_choice)
  *                     already_covered = True             # <<<<<<<<<<<<<<
@@ -11085,17 +11680,17 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         __pyx_v_already_covered = 1;
 
-        /* "pyearth/_forward.pyx":708
+        /* "pyearth/_forward.pyx":571
  *                 bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
  *                                                False, label)
  *                 if self.basis.has_coverage(variable_choice):             # <<<<<<<<<<<<<<
  *                     bf2, bf3 = self.basis.get_coverage(variable_choice)
  *                     already_covered = True
  */
-        goto __pyx_L81;
+        goto __pyx_L100;
       }
 
-      /* "pyearth/_forward.pyx":712
+      /* "pyearth/_forward.pyx":575
  *                     already_covered = True
  *                 else:
  *                     already_covered = False             # <<<<<<<<<<<<<<
@@ -11105,9 +11700,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       /*else*/ {
         __pyx_v_already_covered = 0;
       }
-      __pyx_L81:;
+      __pyx_L100:;
 
-      /* "pyearth/_forward.pyx":713
+      /* "pyearth/_forward.pyx":576
  *                 else:
  *                     already_covered = False
  *                 parent_choice = bf2             # <<<<<<<<<<<<<<
@@ -11117,7 +11712,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __Pyx_INCREF(((PyObject *)__pyx_v_bf2));
       __Pyx_XDECREF_SET(__pyx_v_parent_choice, __pyx_v_bf2);
 
-      /* "pyearth/_forward.pyx":703
+      /* "pyearth/_forward.pyx":566
  *             # In this case, only add the linear basis function (in addition to
  *             # covering missingness basis functions if needed)
  *             if choice_needs_coverage:             # <<<<<<<<<<<<<<
@@ -11126,72 +11721,72 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
     }
 
-    /* "pyearth/_forward.pyx":714
+    /* "pyearth/_forward.pyx":577
  *                     already_covered = False
  *                 parent_choice = bf2
  *             bf1 = LinearBasisFunction(parent_choice, variable_choice, label)             # <<<<<<<<<<<<<<
  *             bf1.apply(X, missing, B[:, k])
- * #             apply_weights_slice(B, sample_weight, k)
+ *             self.basis.append(bf1)
  */
-    if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 714; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-    __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 714; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_10 = PyTuple_New(3); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 714; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_10);
+    if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 577; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+    __pyx_t_27 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 577; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_27);
+    __pyx_t_14 = PyTuple_New(3); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 577; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_14);
     __Pyx_INCREF(((PyObject *)__pyx_v_parent_choice));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_parent_choice));
-    PyTuple_SET_ITEM(__pyx_t_10, 0, ((PyObject *)__pyx_v_parent_choice));
-    __Pyx_GIVEREF(__pyx_t_1);
-    PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_1);
+    PyTuple_SET_ITEM(__pyx_t_14, 0, ((PyObject *)__pyx_v_parent_choice));
+    __Pyx_GIVEREF(__pyx_t_27);
+    PyTuple_SET_ITEM(__pyx_t_14, 1, __pyx_t_27);
     __Pyx_INCREF(__pyx_v_label);
     __Pyx_GIVEREF(__pyx_v_label);
-    PyTuple_SET_ITEM(__pyx_t_10, 2, __pyx_v_label);
-    __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_LinearBasisFunction), __pyx_t_10, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 714; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __pyx_v_bf1 = ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_1);
-    __pyx_t_1 = 0;
+    PyTuple_SET_ITEM(__pyx_t_14, 2, __pyx_v_label);
+    __pyx_t_27 = 0;
+    __pyx_t_27 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_LinearBasisFunction), __pyx_t_14, NULL); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 577; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_27);
+    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+    __pyx_v_bf1 = ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_27);
+    __pyx_t_27 = 0;
 
-    /* "pyearth/_forward.pyx":715
+    /* "pyearth/_forward.pyx":578
  *                 parent_choice = bf2
  *             bf1 = LinearBasisFunction(parent_choice, variable_choice, label)
  *             bf1.apply(X, missing, B[:, k])             # <<<<<<<<<<<<<<
- * #             apply_weights_slice(B, sample_weight, k)
  *             self.basis.append(bf1)
+ *             if choice_needs_coverage:
  */
-    __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_k); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 715; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 715; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_10);
+    __pyx_t_27 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_k); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 578; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_27);
+    __pyx_t_14 = PyTuple_New(2); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 578; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_14);
     __Pyx_INCREF(__pyx_slice__32);
     __Pyx_GIVEREF(__pyx_slice__32);
-    PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_slice__32);
-    __Pyx_GIVEREF(__pyx_t_1);
-    PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_1);
-    __pyx_t_1 = 0;
-    __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_10); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 715; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 715; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __pyx_t_10 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf1->__pyx_vtab)->apply(__pyx_v_bf1, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_1), 0, NULL); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 715; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_10);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_slice__32);
+    __Pyx_GIVEREF(__pyx_t_27);
+    PyTuple_SET_ITEM(__pyx_t_14, 1, __pyx_t_27);
+    __pyx_t_27 = 0;
+    __pyx_t_27 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_14); if (unlikely(__pyx_t_27 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 578; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __Pyx_GOTREF(__pyx_t_27);
+    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+    if (!(likely(((__pyx_t_27) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_27, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 578; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_14 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf1->__pyx_vtab)->apply(__pyx_v_bf1, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_27), 0, NULL); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 578; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_14);
+    __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
 
-    /* "pyearth/_forward.pyx":717
+    /* "pyearth/_forward.pyx":579
+ *             bf1 = LinearBasisFunction(parent_choice, variable_choice, label)
  *             bf1.apply(X, missing, B[:, k])
- * #             apply_weights_slice(B, sample_weight, k)
  *             self.basis.append(bf1)             # <<<<<<<<<<<<<<
  *             if choice_needs_coverage:
  *                 if not already_covered:
  */
-    __pyx_t_10 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->append(__pyx_v_self->basis, __pyx_v_bf1, 0); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 717; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_10);
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    __pyx_t_14 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->append(__pyx_v_self->basis, __pyx_v_bf1, 0); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 579; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_14);
+    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
 
-    /* "pyearth/_forward.pyx":718
- * #             apply_weights_slice(B, sample_weight, k)
+    /* "pyearth/_forward.pyx":580
+ *             bf1.apply(X, missing, B[:, k])
  *             self.basis.append(bf1)
  *             if choice_needs_coverage:             # <<<<<<<<<<<<<<
  *                 if not already_covered:
@@ -11200,96 +11795,96 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __pyx_t_3 = (__pyx_v_choice_needs_coverage != 0);
     if (__pyx_t_3) {
 
-      /* "pyearth/_forward.pyx":719
+      /* "pyearth/_forward.pyx":581
  *             self.basis.append(bf1)
  *             if choice_needs_coverage:
  *                 if not already_covered:             # <<<<<<<<<<<<<<
  *                     bf2.apply(X, missing, B[:, k + 1])
- * #                     apply_weights_slice(B, sample_weight, k + 1)
+ *                     bf3.apply(X, missing, B[:, k + 2])
  */
       __pyx_t_3 = ((!(__pyx_v_already_covered != 0)) != 0);
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":720
+        /* "pyearth/_forward.pyx":582
  *             if choice_needs_coverage:
  *                 if not already_covered:
  *                     bf2.apply(X, missing, B[:, k + 1])             # <<<<<<<<<<<<<<
- * #                     apply_weights_slice(B, sample_weight, k + 1)
  *                     bf3.apply(X, missing, B[:, k + 2])
- */
-        if (unlikely(!__pyx_v_bf2)) { __Pyx_RaiseUnboundLocalError("bf2"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 720; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-        __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 1)); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 720; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 720; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_INCREF(__pyx_slice__33);
-        __Pyx_GIVEREF(__pyx_slice__33);
-        PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__33);
-        __Pyx_GIVEREF(__pyx_t_10);
-        PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_10);
-        __pyx_t_10 = 0;
-        __pyx_t_10 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_1); if (unlikely(__pyx_t_10 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 720; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        if (!(likely(((__pyx_t_10) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_10, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 720; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf2->__pyx_vtab)->apply(__pyx_v_bf2, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_10), 0, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 720; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-        /* "pyearth/_forward.pyx":722
- *                     bf2.apply(X, missing, B[:, k + 1])
- * #                     apply_weights_slice(B, sample_weight, k + 1)
- *                     bf3.apply(X, missing, B[:, k + 2])             # <<<<<<<<<<<<<<
- * #                     apply_weights_slice(B, sample_weight, k + 2)
  *                     self.basis.add_coverage(variable_choice, bf2, bf3)
  */
-        if (unlikely(!__pyx_v_bf3)) { __Pyx_RaiseUnboundLocalError("bf3"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 722; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 2)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 722; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 722; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
+        if (unlikely(!__pyx_v_bf2)) { __Pyx_RaiseUnboundLocalError("bf2"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 582; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+        __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 1)); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 582; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __pyx_t_27 = PyTuple_New(2); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 582; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_27);
+        __Pyx_INCREF(__pyx_slice__33);
+        __Pyx_GIVEREF(__pyx_slice__33);
+        PyTuple_SET_ITEM(__pyx_t_27, 0, __pyx_slice__33);
+        __Pyx_GIVEREF(__pyx_t_14);
+        PyTuple_SET_ITEM(__pyx_t_27, 1, __pyx_t_14);
+        __pyx_t_14 = 0;
+        __pyx_t_14 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_27); if (unlikely(__pyx_t_14 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 582; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __Pyx_GOTREF(__pyx_t_14);
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+        if (!(likely(((__pyx_t_14) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_14, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 582; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf2->__pyx_vtab)->apply(__pyx_v_bf2, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_14), 0, NULL); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 582; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_27);
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+
+        /* "pyearth/_forward.pyx":583
+ *                 if not already_covered:
+ *                     bf2.apply(X, missing, B[:, k + 1])
+ *                     bf3.apply(X, missing, B[:, k + 2])             # <<<<<<<<<<<<<<
+ *                     self.basis.add_coverage(variable_choice, bf2, bf3)
+ *             if self.use_fast is True:
+ */
+        if (unlikely(!__pyx_v_bf3)) { __Pyx_RaiseUnboundLocalError("bf3"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 583; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+        __pyx_t_27 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 2)); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 583; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_27);
+        __pyx_t_14 = PyTuple_New(2); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 583; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
         __Pyx_INCREF(__pyx_slice__34);
         __Pyx_GIVEREF(__pyx_slice__34);
-        PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_slice__34);
-        __Pyx_GIVEREF(__pyx_t_1);
-        PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_1);
-        __pyx_t_1 = 0;
-        __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_10); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 722; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 722; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __pyx_t_10 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf3->__pyx_vtab)->apply(__pyx_v_bf3, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_1), 0, NULL); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 722; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+        PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_slice__34);
+        __Pyx_GIVEREF(__pyx_t_27);
+        PyTuple_SET_ITEM(__pyx_t_14, 1, __pyx_t_27);
+        __pyx_t_27 = 0;
+        __pyx_t_27 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_14); if (unlikely(__pyx_t_27 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 583; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __Pyx_GOTREF(__pyx_t_27);
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        if (!(likely(((__pyx_t_27) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_27, __pyx_ptype_5numpy_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 583; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_14 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf3->__pyx_vtab)->apply(__pyx_v_bf3, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_27), 0, NULL); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 583; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
 
-        /* "pyearth/_forward.pyx":724
+        /* "pyearth/_forward.pyx":584
+ *                     bf2.apply(X, missing, B[:, k + 1])
  *                     bf3.apply(X, missing, B[:, k + 2])
- * #                     apply_weights_slice(B, sample_weight, k + 2)
  *                     self.basis.add_coverage(variable_choice, bf2, bf3)             # <<<<<<<<<<<<<<
  *             if self.use_fast is True:
  *                 bf1_content = FastHeapContent(idx=k)
  */
-        if (unlikely(!__pyx_v_bf2)) { __Pyx_RaiseUnboundLocalError("bf2"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 724; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-        if (!(likely(((((PyObject *)__pyx_v_bf2)) == Py_None) || likely(__Pyx_TypeTest(((PyObject *)__pyx_v_bf2), __pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 724; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        if (unlikely(!__pyx_v_bf3)) { __Pyx_RaiseUnboundLocalError("bf3"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 724; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-        if (!(likely(((((PyObject *)__pyx_v_bf3)) == Py_None) || likely(__Pyx_TypeTest(((PyObject *)__pyx_v_bf3), __pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 724; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __pyx_t_10 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->add_coverage(__pyx_v_self->basis, __pyx_v_variable_choice, ((struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *)__pyx_v_bf2), ((struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *)__pyx_v_bf3), 0); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 724; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+        if (unlikely(!__pyx_v_bf2)) { __Pyx_RaiseUnboundLocalError("bf2"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 584; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+        if (!(likely(((((PyObject *)__pyx_v_bf2)) == Py_None) || likely(__Pyx_TypeTest(((PyObject *)__pyx_v_bf2), __pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 584; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        if (unlikely(!__pyx_v_bf3)) { __Pyx_RaiseUnboundLocalError("bf3"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 584; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+        if (!(likely(((((PyObject *)__pyx_v_bf3)) == Py_None) || likely(__Pyx_TypeTest(((PyObject *)__pyx_v_bf3), __pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 584; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_14 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->add_coverage(__pyx_v_self->basis, __pyx_v_variable_choice, ((struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *)__pyx_v_bf2), ((struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *)__pyx_v_bf3), 0); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 584; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
 
-        /* "pyearth/_forward.pyx":719
+        /* "pyearth/_forward.pyx":581
  *             self.basis.append(bf1)
  *             if choice_needs_coverage:
  *                 if not already_covered:             # <<<<<<<<<<<<<<
  *                     bf2.apply(X, missing, B[:, k + 1])
- * #                     apply_weights_slice(B, sample_weight, k + 1)
+ *                     bf3.apply(X, missing, B[:, k + 2])
  */
       }
 
-      /* "pyearth/_forward.pyx":718
- * #             apply_weights_slice(B, sample_weight, k)
+      /* "pyearth/_forward.pyx":580
+ *             bf1.apply(X, missing, B[:, k])
  *             self.basis.append(bf1)
  *             if choice_needs_coverage:             # <<<<<<<<<<<<<<
  *                 if not already_covered:
@@ -11297,8 +11892,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
     }
 
-    /* "pyearth/_forward.pyx":725
- * #                     apply_weights_slice(B, sample_weight, k + 2)
+    /* "pyearth/_forward.pyx":585
+ *                     bf3.apply(X, missing, B[:, k + 2])
  *                     self.basis.add_coverage(variable_choice, bf2, bf3)
  *             if self.use_fast is True:             # <<<<<<<<<<<<<<
  *                 bf1_content = FastHeapContent(idx=k)
@@ -11307,67 +11902,67 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
     if (__pyx_t_3) {
 
-      /* "pyearth/_forward.pyx":726
+      /* "pyearth/_forward.pyx":586
  *                     self.basis.add_coverage(variable_choice, bf2, bf3)
  *             if self.use_fast is True:
  *                 bf1_content = FastHeapContent(idx=k)             # <<<<<<<<<<<<<<
  *                 heappush(self.fast_heap, bf1_content)
  *                 if choice_needs_coverage:
  */
-      __pyx_t_10 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 726; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 726; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_4 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_k); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 726; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
-      if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_idx, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 726; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 726; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_v_bf1_content = __pyx_t_4;
-      __pyx_t_4 = 0;
+      __pyx_t_14 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 586; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_14);
+      __pyx_t_27 = PyDict_New(); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 586; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_27);
+      __pyx_t_7 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_k); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 586; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
+      if (PyDict_SetItem(__pyx_t_27, __pyx_n_s_idx, __pyx_t_7) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 586; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_14, __pyx_empty_tuple, __pyx_t_27); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 586; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
+      __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+      __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+      __pyx_v_bf1_content = __pyx_t_7;
+      __pyx_t_7 = 0;
 
-      /* "pyearth/_forward.pyx":727
+      /* "pyearth/_forward.pyx":587
  *             if self.use_fast is True:
  *                 bf1_content = FastHeapContent(idx=k)
  *                 heappush(self.fast_heap, bf1_content)             # <<<<<<<<<<<<<<
  *                 if choice_needs_coverage:
  *                     if not already_covered:
  */
-      __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 727; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_10 = NULL;
+      __pyx_t_27 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 587; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_27);
+      __pyx_t_14 = NULL;
       __pyx_t_22 = 0;
-      if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_1))) {
-        __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_1);
-        if (likely(__pyx_t_10)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
-          __Pyx_INCREF(__pyx_t_10);
+      if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_27))) {
+        __pyx_t_14 = PyMethod_GET_SELF(__pyx_t_27);
+        if (likely(__pyx_t_14)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_27);
+          __Pyx_INCREF(__pyx_t_14);
           __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_1, function);
+          __Pyx_DECREF_SET(__pyx_t_27, function);
           __pyx_t_22 = 1;
         }
       }
-      __pyx_t_15 = PyTuple_New(2+__pyx_t_22); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 727; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_15);
-      if (__pyx_t_10) {
-        __Pyx_GIVEREF(__pyx_t_10); PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_10); __pyx_t_10 = NULL;
+      __pyx_t_1 = PyTuple_New(2+__pyx_t_22); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 587; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_1);
+      if (__pyx_t_14) {
+        __Pyx_GIVEREF(__pyx_t_14); PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_14); __pyx_t_14 = NULL;
       }
       __Pyx_INCREF(__pyx_v_self->fast_heap);
       __Pyx_GIVEREF(__pyx_v_self->fast_heap);
-      PyTuple_SET_ITEM(__pyx_t_15, 0+__pyx_t_22, __pyx_v_self->fast_heap);
+      PyTuple_SET_ITEM(__pyx_t_1, 0+__pyx_t_22, __pyx_v_self->fast_heap);
       __Pyx_INCREF(__pyx_v_bf1_content);
       __Pyx_GIVEREF(__pyx_v_bf1_content);
-      PyTuple_SET_ITEM(__pyx_t_15, 1+__pyx_t_22, __pyx_v_bf1_content);
-      __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_15, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 727; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
+      PyTuple_SET_ITEM(__pyx_t_1, 1+__pyx_t_22, __pyx_v_bf1_content);
+      __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_27, __pyx_t_1, NULL); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 587; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-      /* "pyearth/_forward.pyx":728
+      /* "pyearth/_forward.pyx":588
  *                 bf1_content = FastHeapContent(idx=k)
  *                 heappush(self.fast_heap, bf1_content)
  *                 if choice_needs_coverage:             # <<<<<<<<<<<<<<
@@ -11377,7 +11972,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __pyx_t_3 = (__pyx_v_choice_needs_coverage != 0);
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":729
+        /* "pyearth/_forward.pyx":589
  *                 heappush(self.fast_heap, bf1_content)
  *                 if choice_needs_coverage:
  *                     if not already_covered:             # <<<<<<<<<<<<<<
@@ -11387,127 +11982,127 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         __pyx_t_3 = ((!(__pyx_v_already_covered != 0)) != 0);
         if (__pyx_t_3) {
 
-          /* "pyearth/_forward.pyx":730
+          /* "pyearth/_forward.pyx":590
  *                 if choice_needs_coverage:
  *                     if not already_covered:
  *                         bf2_content = FastHeapContent(idx=k + 1)             # <<<<<<<<<<<<<<
  *                         heappush(self.fast_heap, bf2_content)
  *                         bf3_content = FastHeapContent(idx=k + 2)
  */
-          __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 730; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_4);
-          __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 730; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 590; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_7);
+          __pyx_t_27 = PyDict_New(); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 590; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_27);
+          __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 590; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_15 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 1)); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 730; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_15);
-          if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_idx, __pyx_t_15) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 730; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-          __pyx_t_15 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 730; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_15);
-          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+          if (PyDict_SetItem(__pyx_t_27, __pyx_n_s_idx, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 590; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __pyx_v_bf2_content = __pyx_t_15;
-          __pyx_t_15 = 0;
+          __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_empty_tuple, __pyx_t_27); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 590; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_1);
+          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+          __pyx_v_bf2_content = __pyx_t_1;
+          __pyx_t_1 = 0;
 
-          /* "pyearth/_forward.pyx":731
+          /* "pyearth/_forward.pyx":591
  *                     if not already_covered:
  *                         bf2_content = FastHeapContent(idx=k + 1)
  *                         heappush(self.fast_heap, bf2_content)             # <<<<<<<<<<<<<<
  *                         bf3_content = FastHeapContent(idx=k + 2)
  *                         heappush(self.fast_heap, bf3_content)
  */
-          __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 731; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_4 = NULL;
+          __pyx_t_27 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 591; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_27);
+          __pyx_t_7 = NULL;
           __pyx_t_22 = 0;
-          if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_1))) {
-            __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_1);
-            if (likely(__pyx_t_4)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
-              __Pyx_INCREF(__pyx_t_4);
+          if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_27))) {
+            __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_27);
+            if (likely(__pyx_t_7)) {
+              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_27);
+              __Pyx_INCREF(__pyx_t_7);
               __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_1, function);
+              __Pyx_DECREF_SET(__pyx_t_27, function);
               __pyx_t_22 = 1;
             }
           }
-          __pyx_t_10 = PyTuple_New(2+__pyx_t_22); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 731; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_10);
-          if (__pyx_t_4) {
-            __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_4); __pyx_t_4 = NULL;
+          __pyx_t_14 = PyTuple_New(2+__pyx_t_22); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 591; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_14);
+          if (__pyx_t_7) {
+            __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_7); __pyx_t_7 = NULL;
           }
           __Pyx_INCREF(__pyx_v_self->fast_heap);
           __Pyx_GIVEREF(__pyx_v_self->fast_heap);
-          PyTuple_SET_ITEM(__pyx_t_10, 0+__pyx_t_22, __pyx_v_self->fast_heap);
+          PyTuple_SET_ITEM(__pyx_t_14, 0+__pyx_t_22, __pyx_v_self->fast_heap);
           __Pyx_INCREF(__pyx_v_bf2_content);
           __Pyx_GIVEREF(__pyx_v_bf2_content);
-          PyTuple_SET_ITEM(__pyx_t_10, 1+__pyx_t_22, __pyx_v_bf2_content);
-          __pyx_t_15 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_10, NULL); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 731; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_15);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+          PyTuple_SET_ITEM(__pyx_t_14, 1+__pyx_t_22, __pyx_v_bf2_content);
+          __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_27, __pyx_t_14, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 591; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_1);
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+          __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
 
-          /* "pyearth/_forward.pyx":732
+          /* "pyearth/_forward.pyx":592
  *                         bf2_content = FastHeapContent(idx=k + 1)
  *                         heappush(self.fast_heap, bf2_content)
  *                         bf3_content = FastHeapContent(idx=k + 2)             # <<<<<<<<<<<<<<
  *                         heappush(self.fast_heap, bf3_content)
  *             # Orthogonalize the new basis
  */
-          __pyx_t_15 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 732; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_15);
-          __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 732; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 592; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 2)); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 732; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_10);
-          if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_idx, __pyx_t_10) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 732; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_15, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 732; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_10);
-          __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
+          __pyx_t_27 = PyDict_New(); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 592; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_27);
+          __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 2)); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 592; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_14);
+          if (PyDict_SetItem(__pyx_t_27, __pyx_n_s_idx, __pyx_t_14) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 592; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+          __pyx_t_14 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_27); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 592; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_14);
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __pyx_v_bf3_content = __pyx_t_10;
-          __pyx_t_10 = 0;
+          __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+          __pyx_v_bf3_content = __pyx_t_14;
+          __pyx_t_14 = 0;
 
-          /* "pyearth/_forward.pyx":733
+          /* "pyearth/_forward.pyx":593
  *                         heappush(self.fast_heap, bf2_content)
  *                         bf3_content = FastHeapContent(idx=k + 2)
  *                         heappush(self.fast_heap, bf3_content)             # <<<<<<<<<<<<<<
  *             # Orthogonalize the new basis
- * #             B_orth[:, k] = B[:, k]
+ *             if self.orthonormal_update(B[:, k]) == 1:
  */
-          __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 733; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_15 = NULL;
+          __pyx_t_27 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 593; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_27);
+          __pyx_t_1 = NULL;
           __pyx_t_22 = 0;
-          if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_1))) {
-            __pyx_t_15 = PyMethod_GET_SELF(__pyx_t_1);
-            if (likely(__pyx_t_15)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
-              __Pyx_INCREF(__pyx_t_15);
+          if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_27))) {
+            __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_27);
+            if (likely(__pyx_t_1)) {
+              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_27);
+              __Pyx_INCREF(__pyx_t_1);
               __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_1, function);
+              __Pyx_DECREF_SET(__pyx_t_27, function);
               __pyx_t_22 = 1;
             }
           }
-          __pyx_t_4 = PyTuple_New(2+__pyx_t_22); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 733; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_4);
-          if (__pyx_t_15) {
-            __Pyx_GIVEREF(__pyx_t_15); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_15); __pyx_t_15 = NULL;
+          __pyx_t_7 = PyTuple_New(2+__pyx_t_22); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 593; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_7);
+          if (__pyx_t_1) {
+            __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_1); __pyx_t_1 = NULL;
           }
           __Pyx_INCREF(__pyx_v_self->fast_heap);
           __Pyx_GIVEREF(__pyx_v_self->fast_heap);
-          PyTuple_SET_ITEM(__pyx_t_4, 0+__pyx_t_22, __pyx_v_self->fast_heap);
+          PyTuple_SET_ITEM(__pyx_t_7, 0+__pyx_t_22, __pyx_v_self->fast_heap);
           __Pyx_INCREF(__pyx_v_bf3_content);
           __Pyx_GIVEREF(__pyx_v_bf3_content);
-          PyTuple_SET_ITEM(__pyx_t_4, 1+__pyx_t_22, __pyx_v_bf3_content);
-          __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_4, NULL); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 733; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_10);
-          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+          PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_22, __pyx_v_bf3_content);
+          __pyx_t_14 = __Pyx_PyObject_Call(__pyx_t_27, __pyx_t_7, NULL); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 593; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_14);
+          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
 
-          /* "pyearth/_forward.pyx":729
+          /* "pyearth/_forward.pyx":589
  *                 heappush(self.fast_heap, bf1_content)
  *                 if choice_needs_coverage:
  *                     if not already_covered:             # <<<<<<<<<<<<<<
@@ -11516,7 +12111,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         }
 
-        /* "pyearth/_forward.pyx":728
+        /* "pyearth/_forward.pyx":588
  *                 bf1_content = FastHeapContent(idx=k)
  *                 heappush(self.fast_heap, bf1_content)
  *                 if choice_needs_coverage:             # <<<<<<<<<<<<<<
@@ -11525,8 +12120,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       }
 
-      /* "pyearth/_forward.pyx":725
- * #                     apply_weights_slice(B, sample_weight, k + 2)
+      /* "pyearth/_forward.pyx":585
+ *                     bf3.apply(X, missing, B[:, k + 2])
  *                     self.basis.add_coverage(variable_choice, bf2, bf3)
  *             if self.use_fast is True:             # <<<<<<<<<<<<<<
  *                 bf1_content = FastHeapContent(idx=k)
@@ -11534,38 +12129,38 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
     }
 
-    /* "pyearth/_forward.pyx":736
+    /* "pyearth/_forward.pyx":595
+ *                         heappush(self.fast_heap, bf3_content)
  *             # Orthogonalize the new basis
- * #             B_orth[:, k] = B[:, k]
  *             if self.orthonormal_update(B[:, k]) == 1:             # <<<<<<<<<<<<<<
  *                 bf1.make_unsplittable()
  *             if choice_needs_coverage:
  */
-    __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_k); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 736; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 736; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_k); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 595; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_14);
+    __pyx_t_27 = PyTuple_New(2); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 595; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_27);
     __Pyx_INCREF(__pyx_slice__35);
     __Pyx_GIVEREF(__pyx_slice__35);
-    PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__35);
-    __Pyx_GIVEREF(__pyx_t_10);
-    PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_10);
-    __pyx_t_10 = 0;
-    __pyx_t_10 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_1); if (unlikely(__pyx_t_10 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 736; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-    __Pyx_GOTREF(__pyx_t_10);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_10, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 736; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __pyx_t_10 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 736; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_10);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_10); if (unlikely(__pyx_t_3 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 736; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    PyTuple_SET_ITEM(__pyx_t_27, 0, __pyx_slice__35);
+    __Pyx_GIVEREF(__pyx_t_14);
+    PyTuple_SET_ITEM(__pyx_t_27, 1, __pyx_t_14);
+    __pyx_t_14 = 0;
+    __pyx_t_14 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_27); if (unlikely(__pyx_t_14 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 595; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __Pyx_GOTREF(__pyx_t_14);
+    __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+    __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_14, 0); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 595; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_27);
+    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+    __pyx_t_14 = __Pyx_PyInt_EqObjC(__pyx_t_27, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 595; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_14);
+    __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+    __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_14); if (unlikely(__pyx_t_3 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 595; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
     if (__pyx_t_3) {
 
-      /* "pyearth/_forward.pyx":737
- * #             B_orth[:, k] = B[:, k]
+      /* "pyearth/_forward.pyx":596
+ *             # Orthogonalize the new basis
  *             if self.orthonormal_update(B[:, k]) == 1:
  *                 bf1.make_unsplittable()             # <<<<<<<<<<<<<<
  *             if choice_needs_coverage:
@@ -11573,126 +12168,126 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf1->__pyx_vtab)->make_unsplittable(__pyx_v_bf1, 0);
 
-      /* "pyearth/_forward.pyx":736
+      /* "pyearth/_forward.pyx":595
+ *                         heappush(self.fast_heap, bf3_content)
  *             # Orthogonalize the new basis
- * #             B_orth[:, k] = B[:, k]
  *             if self.orthonormal_update(B[:, k]) == 1:             # <<<<<<<<<<<<<<
  *                 bf1.make_unsplittable()
  *             if choice_needs_coverage:
  */
     }
 
-    /* "pyearth/_forward.pyx":738
+    /* "pyearth/_forward.pyx":597
  *             if self.orthonormal_update(B[:, k]) == 1:
  *                 bf1.make_unsplittable()
  *             if choice_needs_coverage:             # <<<<<<<<<<<<<<
  *                 if not already_covered:
- * #                     B_orth[:, k + 1] = B[:, k + 1]
+ *                     if self.orthonormal_update(B[:, k + 1]) == 1:
  */
     __pyx_t_3 = (__pyx_v_choice_needs_coverage != 0);
     if (__pyx_t_3) {
 
-      /* "pyearth/_forward.pyx":739
+      /* "pyearth/_forward.pyx":598
  *                 bf1.make_unsplittable()
  *             if choice_needs_coverage:
  *                 if not already_covered:             # <<<<<<<<<<<<<<
- * #                     B_orth[:, k + 1] = B[:, k + 1]
  *                     if self.orthonormal_update(B[:, k + 1]) == 1:
+ *                         pass
  */
       __pyx_t_3 = ((!(__pyx_v_already_covered != 0)) != 0);
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":741
+        /* "pyearth/_forward.pyx":599
+ *             if choice_needs_coverage:
  *                 if not already_covered:
- * #                     B_orth[:, k + 1] = B[:, k + 1]
  *                     if self.orthonormal_update(B[:, k + 1]) == 1:             # <<<<<<<<<<<<<<
  *                         pass
- * #                         bf2.make_unsplittable()
+ *                     if self.orthonormal_update(B[:, k + 2]) == 1:
  */
-        __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 1)); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 741; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 741; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
+        __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 1)); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 599; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __pyx_t_27 = PyTuple_New(2); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 599; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_27);
         __Pyx_INCREF(__pyx_slice__36);
         __Pyx_GIVEREF(__pyx_slice__36);
-        PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__36);
-        __Pyx_GIVEREF(__pyx_t_10);
-        PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_10);
-        __pyx_t_10 = 0;
-        __pyx_t_10 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_1); if (unlikely(__pyx_t_10 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 741; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_10, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 741; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_10 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 741; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_10); if (unlikely(__pyx_t_3 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 741; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+        PyTuple_SET_ITEM(__pyx_t_27, 0, __pyx_slice__36);
+        __Pyx_GIVEREF(__pyx_t_14);
+        PyTuple_SET_ITEM(__pyx_t_27, 1, __pyx_t_14);
+        __pyx_t_14 = 0;
+        __pyx_t_14 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_27); if (unlikely(__pyx_t_14 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 599; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __Pyx_GOTREF(__pyx_t_14);
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+        __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_14, 0); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 599; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_27);
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        __pyx_t_14 = __Pyx_PyInt_EqObjC(__pyx_t_27, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 599; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_14); if (unlikely(__pyx_t_3 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 599; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
         if (__pyx_t_3) {
         }
 
-        /* "pyearth/_forward.pyx":745
- * #                         bf2.make_unsplittable()
- * #                     B_orth[:, k + 2] = B[:, k + 2]
+        /* "pyearth/_forward.pyx":601
+ *                     if self.orthonormal_update(B[:, k + 1]) == 1:
+ *                         pass
  *                     if self.orthonormal_update(B[:, k + 2]) == 1:             # <<<<<<<<<<<<<<
  *                         pass
- * #                         bf3.make_unsplittable()
+ *         else:  # dependent and knot_idx_choice == -1
  */
-        __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 2)); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 745; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 745; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
+        __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong((__pyx_v_k + 2)); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 601; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __pyx_t_27 = PyTuple_New(2); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 601; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_27);
         __Pyx_INCREF(__pyx_slice__37);
         __Pyx_GIVEREF(__pyx_slice__37);
-        PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__37);
-        __Pyx_GIVEREF(__pyx_t_10);
-        PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_10);
-        __pyx_t_10 = 0;
-        __pyx_t_10 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_1); if (unlikely(__pyx_t_10 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 745; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_10, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 745; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_10 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 745; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_10); if (unlikely(__pyx_t_3 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 745; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+        PyTuple_SET_ITEM(__pyx_t_27, 0, __pyx_slice__37);
+        __Pyx_GIVEREF(__pyx_t_14);
+        PyTuple_SET_ITEM(__pyx_t_27, 1, __pyx_t_14);
+        __pyx_t_14 = 0;
+        __pyx_t_14 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_27); if (unlikely(__pyx_t_14 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 601; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+        __Pyx_GOTREF(__pyx_t_14);
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+        __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_14, 0); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 601; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_27);
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+        __pyx_t_14 = __Pyx_PyInt_EqObjC(__pyx_t_27, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 601; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_14);
+        __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_14); if (unlikely(__pyx_t_3 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 601; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
         if (__pyx_t_3) {
         }
 
-        /* "pyearth/_forward.pyx":739
+        /* "pyearth/_forward.pyx":598
  *                 bf1.make_unsplittable()
  *             if choice_needs_coverage:
  *                 if not already_covered:             # <<<<<<<<<<<<<<
- * #                     B_orth[:, k + 1] = B[:, k + 1]
  *                     if self.orthonormal_update(B[:, k + 1]) == 1:
+ *                         pass
  */
       }
 
-      /* "pyearth/_forward.pyx":738
+      /* "pyearth/_forward.pyx":597
  *             if self.orthonormal_update(B[:, k]) == 1:
  *                 bf1.make_unsplittable()
  *             if choice_needs_coverage:             # <<<<<<<<<<<<<<
  *                 if not already_covered:
- * #                     B_orth[:, k + 1] = B[:, k + 1]
+ *                     if self.orthonormal_update(B[:, k + 1]) == 1:
  */
     }
 
-    /* "pyearth/_forward.pyx":700
+    /* "pyearth/_forward.pyx":563
+ *                     if self.orthonormal_update(B[:, k + 3]) == 1:
  *                         pass
- * #                         bf4.make_unsplittable()
  *         elif not dependent and knot_idx_choice == -1:             # <<<<<<<<<<<<<<
  *             # In this case, only add the linear basis function (in addition to
  *             # covering missingness basis functions if needed)
  */
-    goto __pyx_L66;
+    goto __pyx_L85;
   }
 
-  /* "pyearth/_forward.pyx":751
+  /* "pyearth/_forward.pyx":606
  *             # In this case there were no acceptable choices remaining, so end
  *             # the forward pass
  *             self.record[len(self.record) - 1].set_no_candidates(True)             # <<<<<<<<<<<<<<
@@ -11700,22 +12295,22 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  *         if self.use_fast is True:
  */
   /*else*/ {
-    __pyx_t_10 = ((PyObject *)__pyx_v_self->record);
-    __Pyx_INCREF(__pyx_t_10);
-    __pyx_t_22 = PyObject_Length(__pyx_t_10); if (unlikely(__pyx_t_22 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 751; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    __pyx_t_14 = ((PyObject *)__pyx_v_self->record);
+    __Pyx_INCREF(__pyx_t_14);
+    __pyx_t_22 = PyObject_Length(__pyx_t_14); if (unlikely(__pyx_t_22 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 606; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
     __pyx_t_2 = (__pyx_t_22 - 1);
-    __pyx_t_10 = __Pyx_GetItemInt(((PyObject *)__pyx_v_self->record), __pyx_t_2, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 0, 0); if (unlikely(__pyx_t_10 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 751; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
-    __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_n_s_set_no_candidates); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 751; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__38, NULL); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 751; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_10);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    __pyx_t_14 = __Pyx_GetItemInt(((PyObject *)__pyx_v_self->record), __pyx_t_2, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 0, 0); if (unlikely(__pyx_t_14 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 606; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __Pyx_GOTREF(__pyx_t_14);
+    __pyx_t_27 = __Pyx_PyObject_GetAttrStr(__pyx_t_14, __pyx_n_s_set_no_candidates); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 606; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_27);
+    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+    __pyx_t_14 = __Pyx_PyObject_Call(__pyx_t_27, __pyx_tuple__38, NULL); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 606; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_14);
+    __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
 
-    /* "pyearth/_forward.pyx":752
+    /* "pyearth/_forward.pyx":607
  *             # the forward pass
  *             self.record[len(self.record) - 1].set_no_candidates(True)
  *             return             # <<<<<<<<<<<<<<
@@ -11726,9 +12321,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __pyx_r = Py_None; __Pyx_INCREF(Py_None);
     goto __pyx_L0;
   }
-  __pyx_L66:;
+  __pyx_L85:;
 
-  /* "pyearth/_forward.pyx":753
+  /* "pyearth/_forward.pyx":608
  *             self.record[len(self.record) - 1].set_no_candidates(True)
  *             return
  *         if self.use_fast is True:             # <<<<<<<<<<<<<<
@@ -11738,25 +12333,25 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
   if (__pyx_t_3) {
 
-    /* "pyearth/_forward.pyx":754
+    /* "pyearth/_forward.pyx":609
  *             return
  *         if self.use_fast is True:
  *             parent_basis_content_choice.m = -np.inf             # <<<<<<<<<<<<<<
  * 
  *         # Update the build record
  */
-    __pyx_t_10 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 754; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_n_s_inf); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 754; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __pyx_t_10 = PyNumber_Negative(__pyx_t_1); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 754; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_10);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (__Pyx_PyObject_SetAttrStr(__pyx_v_parent_basis_content_choice, __pyx_n_s_m, __pyx_t_10) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 754; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    __pyx_t_14 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 609; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_14);
+    __pyx_t_27 = __Pyx_PyObject_GetAttrStr(__pyx_t_14, __pyx_n_s_inf); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 609; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_27);
+    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+    __pyx_t_14 = PyNumber_Negative(__pyx_t_27); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 609; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_14);
+    __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
+    if (__Pyx_PyObject_SetAttrStr(__pyx_v_parent_basis_content_choice, __pyx_n_s_m, __pyx_t_14) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 609; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
 
-    /* "pyearth/_forward.pyx":753
+    /* "pyearth/_forward.pyx":608
  *             self.record[len(self.record) - 1].set_no_candidates(True)
  *             return
  *         if self.use_fast is True:             # <<<<<<<<<<<<<<
@@ -11765,85 +12360,82 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
   }
 
-  /* "pyearth/_forward.pyx":757
+  /* "pyearth/_forward.pyx":612
  * 
  *         # Update the build record
  *         self.record.append(ForwardPassIteration(parent_idx_choice,             # <<<<<<<<<<<<<<
  *                                                 variable_choice,
  *                                                 knot_idx_choice, mse_choice,
  */
-  __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx_choice); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 757; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_10);
+  __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx_choice); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 612; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_14);
 
-  /* "pyearth/_forward.pyx":758
+  /* "pyearth/_forward.pyx":613
  *         # Update the build record
  *         self.record.append(ForwardPassIteration(parent_idx_choice,
  *                                                 variable_choice,             # <<<<<<<<<<<<<<
  *                                                 knot_idx_choice, mse_choice,
  *                                                 len(self.basis)))
  */
-  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 758; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_27 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 613; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_27);
 
-  /* "pyearth/_forward.pyx":759
+  /* "pyearth/_forward.pyx":614
  *         self.record.append(ForwardPassIteration(parent_idx_choice,
  *                                                 variable_choice,
  *                                                 knot_idx_choice, mse_choice,             # <<<<<<<<<<<<<<
  *                                                 len(self.basis)))
- *     # Removed in favor of new knot search code
  */
-  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_knot_idx_choice); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 759; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_15 = PyFloat_FromDouble(__pyx_v_mse_choice); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 759; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_15);
+  __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_knot_idx_choice); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 614; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_7);
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_mse_choice); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 614; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
 
-  /* "pyearth/_forward.pyx":760
+  /* "pyearth/_forward.pyx":615
  *                                                 variable_choice,
  *                                                 knot_idx_choice, mse_choice,
  *                                                 len(self.basis)))             # <<<<<<<<<<<<<<
- *     # Removed in favor of new knot search code
- * #     cdef best_knot(ForwardPasser self, INDEX_t parent, cnp.ndarray[FLOAT_t, ndim=1] x,
  */
-  __pyx_t_16 = ((PyObject *)__pyx_v_self->basis);
-  __Pyx_INCREF(__pyx_t_16);
-  __pyx_t_2 = PyObject_Length(__pyx_t_16); if (unlikely(__pyx_t_2 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 760; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
-  __pyx_t_16 = PyInt_FromSsize_t(__pyx_t_2); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 760; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_16);
+  __pyx_t_25 = ((PyObject *)__pyx_v_self->basis);
+  __Pyx_INCREF(__pyx_t_25);
+  __pyx_t_2 = PyObject_Length(__pyx_t_25); if (unlikely(__pyx_t_2 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 615; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
+  __pyx_t_25 = PyInt_FromSsize_t(__pyx_t_2); if (unlikely(!__pyx_t_25)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 615; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_25);
 
-  /* "pyearth/_forward.pyx":757
+  /* "pyearth/_forward.pyx":612
  * 
  *         # Update the build record
  *         self.record.append(ForwardPassIteration(parent_idx_choice,             # <<<<<<<<<<<<<<
  *                                                 variable_choice,
  *                                                 knot_idx_choice, mse_choice,
  */
-  __pyx_t_9 = PyTuple_New(5); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 757; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_9 = PyTuple_New(5); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 612; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_9);
-  __Pyx_GIVEREF(__pyx_t_10);
-  PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_10);
+  __Pyx_GIVEREF(__pyx_t_14);
+  PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_14);
+  __Pyx_GIVEREF(__pyx_t_27);
+  PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_27);
+  __Pyx_GIVEREF(__pyx_t_7);
+  PyTuple_SET_ITEM(__pyx_t_9, 2, __pyx_t_7);
   __Pyx_GIVEREF(__pyx_t_1);
-  PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_1);
-  __Pyx_GIVEREF(__pyx_t_4);
-  PyTuple_SET_ITEM(__pyx_t_9, 2, __pyx_t_4);
-  __Pyx_GIVEREF(__pyx_t_15);
-  PyTuple_SET_ITEM(__pyx_t_9, 3, __pyx_t_15);
-  __Pyx_GIVEREF(__pyx_t_16);
-  PyTuple_SET_ITEM(__pyx_t_9, 4, __pyx_t_16);
-  __pyx_t_10 = 0;
+  PyTuple_SET_ITEM(__pyx_t_9, 3, __pyx_t_1);
+  __Pyx_GIVEREF(__pyx_t_25);
+  PyTuple_SET_ITEM(__pyx_t_9, 4, __pyx_t_25);
+  __pyx_t_14 = 0;
+  __pyx_t_27 = 0;
+  __pyx_t_7 = 0;
   __pyx_t_1 = 0;
-  __pyx_t_4 = 0;
-  __pyx_t_15 = 0;
-  __pyx_t_16 = 0;
-  __pyx_t_16 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_7_record_ForwardPassIteration), __pyx_t_9, NULL); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 757; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_16);
+  __pyx_t_25 = 0;
+  __pyx_t_25 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_7_record_ForwardPassIteration), __pyx_t_9, NULL); if (unlikely(!__pyx_t_25)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 612; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_25);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  __pyx_t_9 = ((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->record->__pyx_base.__pyx_vtab)->__pyx_base.append(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self->record), ((struct __pyx_obj_7pyearth_7_record_Iteration *)__pyx_t_16), 0); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 757; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_9 = ((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->record->__pyx_base.__pyx_vtab)->__pyx_base.append(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self->record), ((struct __pyx_obj_7pyearth_7_record_Iteration *)__pyx_t_25), 0); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 612; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_9);
-  __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+  __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-  /* "pyearth/_forward.pyx":319
+  /* "pyearth/_forward.pyx":230
  *         return self.record
  * 
  *     cdef next_pair(ForwardPasser self):             # <<<<<<<<<<<<<<
@@ -11856,13 +12448,17 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_8);
   __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_XDECREF(__pyx_t_10);
+  __Pyx_XDECREF(__pyx_t_14);
   __Pyx_XDECREF(__pyx_t_15);
-  __Pyx_XDECREF(__pyx_t_16);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_26, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_27, 1);
+  __Pyx_XDECREF(__pyx_t_25);
+  __Pyx_XDECREF(__pyx_t_26);
+  __Pyx_XDECREF(__pyx_t_27);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_30, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_31, 1);
+  __Pyx_XDECREF(__pyx_t_35);
   { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
     __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_B.rcbuffer->pybuffer);
@@ -25606,6 +26202,9 @@ static PyObject *__pyx_tp_new_7pyearth_8_forward_ForwardPasser(PyTypeObject *t, 
   p->y_row_sum = ((PyArrayObject *)Py_None); Py_INCREF(Py_None);
   p->sample_weight = ((PyArrayObject *)Py_None); Py_INCREF(Py_None);
   p->output_weight = ((PyArrayObject *)Py_None); Py_INCREF(Py_None);
+  p->outcomes = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  p->predictors = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  p->workings = ((PyObject*)Py_None); Py_INCREF(Py_None);
   p->B = ((PyArrayObject *)Py_None); Py_INCREF(Py_None);
   p->B_orth = ((PyArrayObject *)Py_None); Py_INCREF(Py_None);
   p->c = ((PyArrayObject *)Py_None); Py_INCREF(Py_None);
@@ -25640,6 +26239,9 @@ static void __pyx_tp_dealloc_7pyearth_8_forward_ForwardPasser(PyObject *o) {
   Py_CLEAR(p->y_row_sum);
   Py_CLEAR(p->sample_weight);
   Py_CLEAR(p->output_weight);
+  Py_CLEAR(p->outcomes);
+  Py_CLEAR(p->predictors);
+  Py_CLEAR(p->workings);
   Py_CLEAR(p->B);
   Py_CLEAR(p->B_orth);
   Py_CLEAR(p->c);
@@ -25686,6 +26288,15 @@ static int __pyx_tp_traverse_7pyearth_8_forward_ForwardPasser(PyObject *o, visit
   }
   if (p->output_weight) {
     e = (*v)(((PyObject*)p->output_weight), a); if (e) return e;
+  }
+  if (p->outcomes) {
+    e = (*v)(p->outcomes, a); if (e) return e;
+  }
+  if (p->predictors) {
+    e = (*v)(p->predictors, a); if (e) return e;
+  }
+  if (p->workings) {
+    e = (*v)(p->workings, a); if (e) return e;
   }
   if (p->B) {
     e = (*v)(((PyObject*)p->B), a); if (e) return e;
@@ -25761,6 +26372,15 @@ static int __pyx_tp_clear_7pyearth_8_forward_ForwardPasser(PyObject *o) {
   Py_XDECREF(tmp);
   tmp = ((PyObject*)p->output_weight);
   p->output_weight = ((PyArrayObject *)Py_None); Py_INCREF(Py_None);
+  Py_XDECREF(tmp);
+  tmp = ((PyObject*)p->outcomes);
+  p->outcomes = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  Py_XDECREF(tmp);
+  tmp = ((PyObject*)p->predictors);
+  p->predictors = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  Py_XDECREF(tmp);
+  tmp = ((PyObject*)p->workings);
+  p->workings = ((PyObject*)Py_None); Py_INCREF(Py_None);
   Py_XDECREF(tmp);
   tmp = ((PyObject*)p->B);
   p->B = ((PyArrayObject *)Py_None); Py_INCREF(Py_None);
@@ -26599,13 +27219,13 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_allow_linear, __pyx_k_allow_linear, sizeof(__pyx_k_allow_linear), 0, 0, 1, 1},
   {&__pyx_n_s_allow_missing, __pyx_k_allow_missing, sizeof(__pyx_k_allow_missing), 0, 0, 1, 1},
   {&__pyx_n_s_any, __pyx_k_any, sizeof(__pyx_k_any), 0, 0, 1, 1},
-  {&__pyx_n_s_append, __pyx_k_append, sizeof(__pyx_k_append), 0, 0, 1, 1},
   {&__pyx_n_s_argsort, __pyx_k_argsort, sizeof(__pyx_k_argsort), 0, 0, 1, 1},
   {&__pyx_n_s_astype, __pyx_k_astype, sizeof(__pyx_k_astype), 0, 0, 1, 1},
   {&__pyx_n_s_axis, __pyx_k_axis, sizeof(__pyx_k_axis), 0, 0, 1, 1},
   {&__pyx_n_s_base, __pyx_k_base, sizeof(__pyx_k_base), 0, 0, 1, 1},
   {&__pyx_n_s_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 0, 1, 1},
   {&__pyx_n_u_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 1, 0, 1},
+  {&__pyx_kp_s_candidates, __pyx_k_candidates, sizeof(__pyx_k_candidates), 0, 0, 1, 0},
   {&__pyx_n_s_check_every, __pyx_k_check_every, sizeof(__pyx_k_check_every), 0, 0, 1, 1},
   {&__pyx_n_s_class, __pyx_k_class, sizeof(__pyx_k_class), 0, 0, 1, 1},
   {&__pyx_kp_s_contiguous_and_direct, __pyx_k_contiguous_and_direct, sizeof(__pyx_k_contiguous_and_direct), 0, 0, 1, 0},
@@ -26618,14 +27238,18 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_eligible, __pyx_k_eligible, sizeof(__pyx_k_eligible), 0, 0, 1, 1},
   {&__pyx_n_s_empty, __pyx_k_empty, sizeof(__pyx_k_empty), 0, 0, 1, 1},
   {&__pyx_n_s_encode, __pyx_k_encode, sizeof(__pyx_k_encode), 0, 0, 1, 1},
+  {&__pyx_n_s_end, __pyx_k_end, sizeof(__pyx_k_end), 0, 0, 1, 1},
   {&__pyx_n_s_endspan, __pyx_k_endspan, sizeof(__pyx_k_endspan), 0, 0, 1, 1},
   {&__pyx_n_s_endspan_alpha, __pyx_k_endspan_alpha, sizeof(__pyx_k_endspan_alpha), 0, 0, 1, 1},
   {&__pyx_n_s_enumerate, __pyx_k_enumerate, sizeof(__pyx_k_enumerate), 0, 0, 1, 1},
   {&__pyx_n_s_error, __pyx_k_error, sizeof(__pyx_k_error), 0, 0, 1, 1},
   {&__pyx_n_s_fast_K, __pyx_k_fast_K, sizeof(__pyx_k_fast_K), 0, 0, 1, 1},
   {&__pyx_n_s_fast_h, __pyx_k_fast_h, sizeof(__pyx_k_fast_h), 0, 0, 1, 1},
+  {&__pyx_n_s_file, __pyx_k_file, sizeof(__pyx_k_file), 0, 0, 1, 1},
   {&__pyx_n_s_flags, __pyx_k_flags, sizeof(__pyx_k_flags), 0, 0, 1, 1},
+  {&__pyx_n_s_flatten, __pyx_k_flatten, sizeof(__pyx_k_flatten), 0, 0, 1, 1},
   {&__pyx_n_s_float, __pyx_k_float, sizeof(__pyx_k_float), 0, 0, 1, 1},
+  {&__pyx_n_s_flush, __pyx_k_flush, sizeof(__pyx_k_flush), 0, 0, 1, 1},
   {&__pyx_n_s_format, __pyx_k_format, sizeof(__pyx_k_format), 0, 0, 1, 1},
   {&__pyx_n_s_fortran, __pyx_k_fortran, sizeof(__pyx_k_fortran), 0, 0, 1, 1},
   {&__pyx_n_u_fortran, __pyx_k_fortran, sizeof(__pyx_k_fortran), 0, 1, 0, 1},
@@ -26646,16 +27270,20 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_int, __pyx_k_int, sizeof(__pyx_k_int), 0, 0, 1, 1},
   {&__pyx_n_s_itemsize, __pyx_k_itemsize, sizeof(__pyx_k_itemsize), 0, 0, 1, 1},
   {&__pyx_kp_s_itemsize_0_for_cython_array, __pyx_k_itemsize_0_for_cython_array, sizeof(__pyx_k_itemsize_0_for_cython_array), 0, 0, 1, 0},
+  {&__pyx_n_s_k, __pyx_k_k, sizeof(__pyx_k_k), 0, 0, 1, 1},
+  {&__pyx_n_s_knot_candidates, __pyx_k_knot_candidates, sizeof(__pyx_k_knot_candidates), 0, 0, 1, 1},
   {&__pyx_n_s_len, __pyx_k_len, sizeof(__pyx_k_len), 0, 0, 1, 1},
   {&__pyx_n_s_linvars, __pyx_k_linvars, sizeof(__pyx_k_linvars), 0, 0, 1, 1},
   {&__pyx_n_s_lt, __pyx_k_lt, sizeof(__pyx_k_lt), 0, 0, 1, 1},
   {&__pyx_n_s_m, __pyx_k_m, sizeof(__pyx_k_m), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
+  {&__pyx_n_s_max, __pyx_k_max, sizeof(__pyx_k_max), 0, 0, 1, 1},
   {&__pyx_n_s_max_degree, __pyx_k_max_degree, sizeof(__pyx_k_max_degree), 0, 0, 1, 1},
   {&__pyx_n_s_max_terms, __pyx_k_max_terms, sizeof(__pyx_k_max_terms), 0, 0, 1, 1},
   {&__pyx_n_s_mean, __pyx_k_mean, sizeof(__pyx_k_mean), 0, 0, 1, 1},
   {&__pyx_n_s_memview, __pyx_k_memview, sizeof(__pyx_k_memview), 0, 0, 1, 1},
   {&__pyx_n_s_metaclass, __pyx_k_metaclass, sizeof(__pyx_k_metaclass), 0, 0, 1, 1},
+  {&__pyx_n_s_min, __pyx_k_min, sizeof(__pyx_k_min), 0, 0, 1, 1},
   {&__pyx_n_s_min_search_points, __pyx_k_min_search_points, sizeof(__pyx_k_min_search_points), 0, 0, 1, 1},
   {&__pyx_n_s_minspan, __pyx_k_minspan, sizeof(__pyx_k_minspan), 0, 0, 1, 1},
   {&__pyx_n_s_minspan_alpha, __pyx_k_minspan_alpha, sizeof(__pyx_k_minspan_alpha), 0, 0, 1, 1},
@@ -26663,7 +27291,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_mode, __pyx_k_mode, sizeof(__pyx_k_mode), 0, 0, 1, 1},
   {&__pyx_n_s_module, __pyx_k_module, sizeof(__pyx_k_module), 0, 0, 1, 1},
   {&__pyx_n_s_mse, __pyx_k_mse, sizeof(__pyx_k_mse), 0, 0, 1, 1},
-  {&__pyx_n_s_n_outcomes, __pyx_k_n_outcomes, sizeof(__pyx_k_n_outcomes), 0, 0, 1, 1},
   {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
   {&__pyx_n_s_name_2, __pyx_k_name_2, sizeof(__pyx_k_name_2), 0, 0, 1, 1},
   {&__pyx_kp_u_ndarray_is_not_C_contiguous, __pyx_k_ndarray_is_not_C_contiguous, sizeof(__pyx_k_ndarray_is_not_C_contiguous), 0, 1, 0, 0},
@@ -26678,11 +27305,10 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_orthonormal_downdate, __pyx_k_orthonormal_downdate, sizeof(__pyx_k_orthonormal_downdate), 0, 0, 1, 1},
   {&__pyx_n_s_orthonormal_update, __pyx_k_orthonormal_update, sizeof(__pyx_k_orthonormal_update), 0, 0, 1, 1},
   {&__pyx_n_s_other, __pyx_k_other, sizeof(__pyx_k_other), 0, 0, 1, 1},
-  {&__pyx_n_s_outcomes, __pyx_k_outcomes, sizeof(__pyx_k_outcomes), 0, 0, 1, 1},
   {&__pyx_n_s_pack, __pyx_k_pack, sizeof(__pyx_k_pack), 0, 0, 1, 1},
   {&__pyx_n_s_penalty, __pyx_k_penalty, sizeof(__pyx_k_penalty), 0, 0, 1, 1},
-  {&__pyx_n_s_predictors, __pyx_k_predictors, sizeof(__pyx_k_predictors), 0, 0, 1, 1},
   {&__pyx_n_s_prepare, __pyx_k_prepare, sizeof(__pyx_k_prepare), 0, 0, 1, 1},
+  {&__pyx_n_s_print, __pyx_k_print, sizeof(__pyx_k_print), 0, 0, 1, 1},
   {&__pyx_n_s_pyearth__forward, __pyx_k_pyearth__forward, sizeof(__pyx_k_pyearth__forward), 0, 0, 1, 1},
   {&__pyx_n_s_pyx_capi, __pyx_k_pyx_capi, sizeof(__pyx_k_pyx_capi), 0, 0, 1, 1},
   {&__pyx_n_s_pyx_getbuffer, __pyx_k_pyx_getbuffer, sizeof(__pyx_k_pyx_getbuffer), 0, 0, 1, 1},
@@ -26698,6 +27324,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_size, __pyx_k_size, sizeof(__pyx_k_size), 0, 0, 1, 1},
   {&__pyx_n_s_sqrt, __pyx_k_sqrt, sizeof(__pyx_k_sqrt), 0, 0, 1, 1},
   {&__pyx_n_s_start, __pyx_k_start, sizeof(__pyx_k_start), 0, 0, 1, 1},
+  {&__pyx_n_s_stdout, __pyx_k_stdout, sizeof(__pyx_k_stdout), 0, 0, 1, 1},
   {&__pyx_n_s_step, __pyx_k_step, sizeof(__pyx_k_step), 0, 0, 1, 1},
   {&__pyx_n_s_stop, __pyx_k_stop, sizeof(__pyx_k_stop), 0, 0, 1, 1},
   {&__pyx_n_s_stopping_conditions, __pyx_k_stopping_conditions, sizeof(__pyx_k_stopping_conditions), 0, 0, 1, 1},
@@ -26706,6 +27333,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_strided_and_indirect, __pyx_k_strided_and_indirect, sizeof(__pyx_k_strided_and_indirect), 0, 0, 1, 0},
   {&__pyx_n_s_struct, __pyx_k_struct, sizeof(__pyx_k_struct), 0, 0, 1, 1},
   {&__pyx_n_s_sum, __pyx_k_sum, sizeof(__pyx_k_sum), 0, 0, 1, 1},
+  {&__pyx_n_s_sys, __pyx_k_sys, sizeof(__pyx_k_sys), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_n_s_thresh, __pyx_k_thresh, sizeof(__pyx_k_thresh), 0, 0, 1, 1},
   {&__pyx_n_s_types, __pyx_k_types, sizeof(__pyx_k_types), 0, 0, 1, 1},
@@ -26716,7 +27344,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_update, __pyx_k_update, sizeof(__pyx_k_update), 0, 0, 1, 1},
   {&__pyx_n_s_use_fast, __pyx_k_use_fast, sizeof(__pyx_k_use_fast), 0, 0, 1, 1},
   {&__pyx_n_s_v, __pyx_k_v, sizeof(__pyx_k_v), 0, 0, 1, 1},
-  {&__pyx_n_s_workings, __pyx_k_workings, sizeof(__pyx_k_workings), 0, 0, 1, 1},
   {&__pyx_n_s_x, __pyx_k_x, sizeof(__pyx_k_x), 0, 0, 1, 1},
   {&__pyx_n_s_xlabels, __pyx_k_xlabels, sizeof(__pyx_k_xlabels), 0, 0, 1, 1},
   {&__pyx_n_s_y, __pyx_k_y, sizeof(__pyx_k_y), 0, 0, 1, 1},
@@ -26726,11 +27353,11 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
 };
 static int __Pyx_InitCachedBuiltins(void) {
   __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_builtin_IndexError = __Pyx_GetBuiltinName(__pyx_n_s_IndexError); if (!__pyx_builtin_IndexError) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_builtin_round = __Pyx_GetBuiltinName(__pyx_n_s_round); if (!__pyx_builtin_round) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 258; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_builtin_all = __Pyx_GetBuiltinName(__pyx_n_s_all); if (!__pyx_builtin_all) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 261; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_builtin_sum = __Pyx_GetBuiltinName(__pyx_n_s_sum); if (!__pyx_builtin_sum) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_round = __Pyx_GetBuiltinName(__pyx_n_s_round); if (!__pyx_builtin_round) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_IndexError = __Pyx_GetBuiltinName(__pyx_n_s_IndexError); if (!__pyx_builtin_IndexError) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 216; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_all = __Pyx_GetBuiltinName(__pyx_n_s_all); if (!__pyx_builtin_all) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 219; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_sum = __Pyx_GetBuiltinName(__pyx_n_s_sum); if (!__pyx_builtin_sum) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 799; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -26746,365 +27373,365 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "pyearth/_forward.pyx":122
+  /* "pyearth/_forward.pyx":111
  *         self.B = np.ones(
  *             shape=(self.m, self.max_terms), order='F', dtype=np.float)
  *         self.basis.transform(self.X, self.missing, self.B[:,0:1])             # <<<<<<<<<<<<<<
  * 
- *         # Removed in favor of new knot search code
+ *         if self.endspan < 0:
  */
-  __pyx_slice_ = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice_)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice_ = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice_)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice_);
   __Pyx_GIVEREF(__pyx_slice_);
-  __pyx_slice__2 = PySlice_New(__pyx_int_0, __pyx_int_1, Py_None); if (unlikely(!__pyx_slice__2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__2 = PySlice_New(__pyx_int_0, __pyx_int_1, Py_None); if (unlikely(!__pyx_slice__2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__2);
   __Pyx_GIVEREF(__pyx_slice__2);
-  __pyx_tuple__3 = PyTuple_Pack(2, __pyx_slice_, __pyx_slice__2); if (unlikely(!__pyx_tuple__3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__3 = PyTuple_Pack(2, __pyx_slice_, __pyx_slice__2); if (unlikely(!__pyx_tuple__3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__3);
   __Pyx_GIVEREF(__pyx_tuple__3);
 
-  /* "pyearth/_forward.pyx":153
+  /* "pyearth/_forward.pyx":131
  *                 self.linear_variables[linvar] = 1
  *             else:
  *                 raise IndexError(             # <<<<<<<<<<<<<<
  *                     'Unknown variable selected in linvars argument.')
  * 
  */
-  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_s_Unknown_variable_selected_in_lin); if (unlikely(!__pyx_tuple__4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_s_Unknown_variable_selected_in_lin); if (unlikely(!__pyx_tuple__4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__4);
   __Pyx_GIVEREF(__pyx_tuple__4);
 
-  /* "pyearth/_forward.pyx":163
+  /* "pyearth/_forward.pyx":141
  *         self.workings = []
- *         for i in range(n_outcomes):
+ *         for i in range(self.n_outcomes):
  *             y_col = self.y[:, i]             # <<<<<<<<<<<<<<
  *             if n_weights == 1:
- *                 w_col = self.sample_weight
+ *                 w_col = self.sample_weight.flatten()
  */
-  __pyx_slice__5 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__5 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 141; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__5);
   __Pyx_GIVEREF(__pyx_slice__5);
 
-  /* "pyearth/_forward.pyx":167
- *                 w_col = self.sample_weight
+  /* "pyearth/_forward.pyx":145
+ *                 w_col = self.sample_weight.flatten()
  *             else:
- *                 w_col = self.sample_weight[:, i]             # <<<<<<<<<<<<<<
+ *                 w_col = self.sample_weight[:, i].flatten()             # <<<<<<<<<<<<<<
  *             working = KnotSearchWorkingData.alloc(self.max_terms)
  *             outcome = OutcomeDependentData.alloc(y_col, w_col, self.m, self.max_terms)
  */
-  __pyx_slice__6 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__6 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__6);
   __Pyx_GIVEREF(__pyx_slice__6);
 
-  /* "pyearth/_forward.pyx":170
+  /* "pyearth/_forward.pyx":148
  *             working = KnotSearchWorkingData.alloc(self.max_terms)
  *             outcome = OutcomeDependentData.alloc(y_col, w_col, self.m, self.max_terms)
  *             outcome.update(self.B[:,0], self.zero_tol)             # <<<<<<<<<<<<<<
  *             self.workings.append(working)
  *             self.outcomes.append(outcome)
  */
-  __pyx_slice__7 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__7 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__7);
   __Pyx_GIVEREF(__pyx_slice__7);
-  __pyx_tuple__8 = PyTuple_Pack(2, __pyx_slice__7, __pyx_int_0); if (unlikely(!__pyx_tuple__8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__8 = PyTuple_Pack(2, __pyx_slice__7, __pyx_int_0); if (unlikely(!__pyx_tuple__8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__8);
   __Pyx_GIVEREF(__pyx_tuple__8);
 
-  /* "pyearth/_forward.pyx":175
+  /* "pyearth/_forward.pyx":153
  *         self.predictors = []
  *         for i in range(n_predictors):
  *             predictor = PredictorDependentData.alloc(self.X[:, i])             # <<<<<<<<<<<<<<
  *             self.predictors.append(predictor)
  * 
  */
-  __pyx_slice__9 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__9 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__9);
   __Pyx_GIVEREF(__pyx_slice__9);
 
-  /* "pyearth/_forward.pyx":208
+  /* "pyearth/_forward.pyx":170
  *         cdef ConstantBasisFunction root_basis_function = self.basis[0]
  *         for variable in range(self.n):
  *             order = np.argsort(X[:, variable])[::-1].astype(np.int)             # <<<<<<<<<<<<<<
  *             if root_basis_function.valid_knots(B[order, 0], X[order, variable],
  *                                                variable, self.check_every,
  */
-  __pyx_slice__10 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__10 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__10);
   __Pyx_GIVEREF(__pyx_slice__10);
-  __pyx_slice__11 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__11 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__11);
   __Pyx_GIVEREF(__pyx_slice__11);
 
-  /* "pyearth/_forward.pyx":258
+  /* "pyearth/_forward.pyx":216
  *             return_code = outcome.update(b, self.zero_tol)
  *             if return_code == -1:
  *                 raise ValueError('This should not have happened.')             # <<<<<<<<<<<<<<
  *             return_codes.append(return_code != 0)
  *         # TODO: Change to any?
  */
-  __pyx_tuple__12 = PyTuple_Pack(1, __pyx_kp_s_This_should_not_have_happened); if (unlikely(!__pyx_tuple__12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 258; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__12 = PyTuple_Pack(1, __pyx_kp_s_This_should_not_have_happened); if (unlikely(!__pyx_tuple__12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 216; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__12);
   __Pyx_GIVEREF(__pyx_tuple__12);
 
-  /* "pyearth/_forward.pyx":461
- *                 # Add the linear term to B
- *                 predictor = self.predictors[variable]
- *                 B[:, k] = p * predictor.x             # <<<<<<<<<<<<<<
- *                 # If necessary, protect from missing data
- *                 if missing_flag:
- */
-  __pyx_slice__13 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__13)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 461; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_slice__13);
-  __Pyx_GIVEREF(__pyx_slice__13);
-
-  /* "pyearth/_forward.pyx":464
+  /* "pyearth/_forward.pyx":358
  *                 # If necessary, protect from missing data
  *                 if missing_flag:
  *                     B[missing[:, variable]==1, k] = 0.             # <<<<<<<<<<<<<<
  *                     b = B[:, k]
  *                     # Update the outcome data
  */
-  __pyx_slice__14 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 464; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_slice__14);
-  __Pyx_GIVEREF(__pyx_slice__14);
+  __pyx_slice__13 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__13)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 358; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_slice__13);
+  __Pyx_GIVEREF(__pyx_slice__13);
 
-  /* "pyearth/_forward.pyx":465
+  /* "pyearth/_forward.pyx":359
  *                 if missing_flag:
  *                     B[missing[:, variable]==1, k] = 0.
  *                     b = B[:, k]             # <<<<<<<<<<<<<<
  *                     # Update the outcome data
  *                     linear_dependence = self.orthonormal_update(b)
  */
-  __pyx_slice__15 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 465; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__14 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 359; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_slice__14);
+  __Pyx_GIVEREF(__pyx_slice__14);
+
+  /* "pyearth/_forward.pyx":364
+ * 
+ *                 if missing_flag and not covered:
+ *                     p = B[:, parent_idx] * (1 - missing[:, variable])             # <<<<<<<<<<<<<<
+ *                     b = B[:, parent_idx] * (1 - missing[:, variable])
+ *                     self.orthonormal_update(b)
+ */
+  __pyx_slice__15 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 364; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__15);
   __Pyx_GIVEREF(__pyx_slice__15);
-
-  /* "pyearth/_forward.pyx":501
- * #                 linear_dependence = self.orthonormal_update(k)
- *                 if missing_flag and not covered:
- *                     p = self.B[:, parent_idx] * (1 - missing[:, variable])             # <<<<<<<<<<<<<<
- *                     b = B[:, parent_idx] * (1 - missing[:, variable])
- * #                     for i in range(self.m):
- */
-  __pyx_slice__16 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 501; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__16 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 364; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__16);
   __Pyx_GIVEREF(__pyx_slice__16);
-  __pyx_slice__17 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__17)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 501; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+
+  /* "pyearth/_forward.pyx":365
+ *                 if missing_flag and not covered:
+ *                     p = B[:, parent_idx] * (1 - missing[:, variable])
+ *                     b = B[:, parent_idx] * (1 - missing[:, variable])             # <<<<<<<<<<<<<<
+ *                     self.orthonormal_update(b)
+ *                     b = B[:, parent_idx] * missing[:, variable]
+ */
+  __pyx_slice__17 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__17)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 365; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__17);
   __Pyx_GIVEREF(__pyx_slice__17);
-
-  /* "pyearth/_forward.pyx":502
- *                 if missing_flag and not covered:
- *                     p = self.B[:, parent_idx] * (1 - missing[:, variable])
- *                     b = B[:, parent_idx] * (1 - missing[:, variable])             # <<<<<<<<<<<<<<
- * #                     for i in range(self.m):
- * #                         B_orth[i, k + 1] = B[i, parent_idx] * (1 - missing[i, variable])
- */
-  __pyx_slice__18 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__18)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 502; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__18 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__18)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 365; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__18);
   __Pyx_GIVEREF(__pyx_slice__18);
-  __pyx_slice__19 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__19)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 502; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_slice__19);
-  __Pyx_GIVEREF(__pyx_slice__19);
 
-  /* "pyearth/_forward.pyx":506
- * #                         B_orth[i, k + 1] = B[i, parent_idx] * (1 - missing[i, variable])
+  /* "pyearth/_forward.pyx":367
+ *                     b = B[:, parent_idx] * (1 - missing[:, variable])
  *                     self.orthonormal_update(b)
  *                     b = B[:, parent_idx] * missing[:, variable]             # <<<<<<<<<<<<<<
  *                     self.orthonormal_update(b)
  *                     q = k + 3
  */
-  __pyx_slice__20 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__20)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 506; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__19 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__19)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 367; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_slice__19);
+  __Pyx_GIVEREF(__pyx_slice__19);
+  __pyx_slice__20 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__20)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 367; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__20);
   __Pyx_GIVEREF(__pyx_slice__20);
-  __pyx_slice__21 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__21)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 506; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_slice__21);
-  __Pyx_GIVEREF(__pyx_slice__21);
 
-  /* "pyearth/_forward.pyx":510
+  /* "pyearth/_forward.pyx":371
  *                     q = k + 3
  *                 else:
  *                     p = self.B[:, parent_idx]             # <<<<<<<<<<<<<<
  *                     q = k + 1
  * 
  */
-  __pyx_slice__22 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__22)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 510; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__21 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__21)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 371; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_slice__21);
+  __Pyx_GIVEREF(__pyx_slice__21);
+
+  /* "pyearth/_forward.pyx":376
+ *                 b = p * predictor.x
+ *                 if missing_flag and not covered:
+ *                     b[missing[:, variable] == 1] = 0             # <<<<<<<<<<<<<<
+ *                 linear_dependence = self.orthonormal_update(b)
+ * 
+ */
+  __pyx_slice__22 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__22)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 376; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__22);
   __Pyx_GIVEREF(__pyx_slice__22);
 
-  /* "pyearth/_forward.pyx":628
+  /* "pyearth/_forward.pyx":501
  *         # Make sure at least one candidate was checked
  *         if first:
  *             self.record[len(self.record) - 1].set_no_candidates(True)             # <<<<<<<<<<<<<<
  *             return
  * 
  */
-  __pyx_tuple__23 = PyTuple_Pack(1, Py_True); if (unlikely(!__pyx_tuple__23)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 628; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__23 = PyTuple_Pack(1, Py_True); if (unlikely(!__pyx_tuple__23)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 501; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__23);
   __Pyx_GIVEREF(__pyx_tuple__23);
 
-  /* "pyearth/_forward.pyx":655
+  /* "pyearth/_forward.pyx":528
  *                                      True, label)
  * 
  *             bf1.apply(X, missing, B[:, k])             # <<<<<<<<<<<<<<
- * #             apply_weights_slice(B, sample_weight, k)
  *             bf2.apply(X, missing, B[:, k + 1])
+ * 
  */
-  __pyx_slice__24 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__24)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 655; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__24 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__24)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 528; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__24);
   __Pyx_GIVEREF(__pyx_slice__24);
 
-  /* "pyearth/_forward.pyx":657
- *             bf1.apply(X, missing, B[:, k])
- * #             apply_weights_slice(B, sample_weight, k)
- *             bf2.apply(X, missing, B[:, k + 1])             # <<<<<<<<<<<<<<
- * #             apply_weights_slice(B, sample_weight, k + 1)
+  /* "pyearth/_forward.pyx":529
  * 
+ *             bf1.apply(X, missing, B[:, k])
+ *             bf2.apply(X, missing, B[:, k + 1])             # <<<<<<<<<<<<<<
+ * 
+ *             self.basis.append(bf1)
  */
-  __pyx_slice__25 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__25)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 657; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__25 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__25)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 529; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__25);
   __Pyx_GIVEREF(__pyx_slice__25);
 
-  /* "pyearth/_forward.pyx":665
+  /* "pyearth/_forward.pyx":536
  *             if choice_needs_coverage:
  *                 if not already_covered:
  *                     bf3.apply(X, missing, B[:, k + 2])             # <<<<<<<<<<<<<<
- * #                     apply_weights_slice(B, sample_weight, k + 2)
  *                     bf4.apply(X, missing, B[:, k + 3])
+ *                     self.basis.add_coverage(variable_choice, bf3, bf4)
  */
-  __pyx_slice__26 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__26)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 665; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__26 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__26)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 536; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__26);
   __Pyx_GIVEREF(__pyx_slice__26);
 
-  /* "pyearth/_forward.pyx":667
+  /* "pyearth/_forward.pyx":537
+ *                 if not already_covered:
  *                     bf3.apply(X, missing, B[:, k + 2])
- * #                     apply_weights_slice(B, sample_weight, k + 2)
  *                     bf4.apply(X, missing, B[:, k + 3])             # <<<<<<<<<<<<<<
- * #                     apply_weights_slice(B, sample_weight, k + 3)
  *                     self.basis.add_coverage(variable_choice, bf3, bf4)
+ * 
  */
-  __pyx_slice__27 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 667; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__27 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__27)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 537; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__27);
   __Pyx_GIVEREF(__pyx_slice__27);
 
-  /* "pyearth/_forward.pyx":685
+  /* "pyearth/_forward.pyx":553
+ * 
  *             # Orthogonalize the new basis
- * #             B_orth[:, k] = B[:, k]
  *             if self.orthonormal_update(B[:, k]) == 1:             # <<<<<<<<<<<<<<
  *                 bf1.make_unsplittable()
- * #             B_orth[:, k + 1] = B[:, k + 1]
+ *             if self.orthonormal_update(B[:, k + 1]) == 1:
  */
-  __pyx_slice__28 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__28)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 685; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__28 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__28)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 553; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__28);
   __Pyx_GIVEREF(__pyx_slice__28);
 
-  /* "pyearth/_forward.pyx":688
+  /* "pyearth/_forward.pyx":555
+ *             if self.orthonormal_update(B[:, k]) == 1:
  *                 bf1.make_unsplittable()
- * #             B_orth[:, k + 1] = B[:, k + 1]
  *             if self.orthonormal_update(B[:, k + 1]) == 1:             # <<<<<<<<<<<<<<
  *                 bf2.make_unsplittable()
  *             if choice_needs_coverage:
  */
-  __pyx_slice__29 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__29)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 688; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__29 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__29)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 555; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__29);
   __Pyx_GIVEREF(__pyx_slice__29);
 
-  /* "pyearth/_forward.pyx":693
+  /* "pyearth/_forward.pyx":559
+ *             if choice_needs_coverage:
  *                 if not already_covered:
- * #                     B_orth[:, k + 2] = B[:, k + 2]
  *                     if self.orthonormal_update(B[:, k + 2]) == 1:             # <<<<<<<<<<<<<<
  *                         pass
- * #                         bf3.make_unsplittable()
+ *                     if self.orthonormal_update(B[:, k + 3]) == 1:
  */
-  __pyx_slice__30 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__30)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 693; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__30 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__30)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 559; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__30);
   __Pyx_GIVEREF(__pyx_slice__30);
 
-  /* "pyearth/_forward.pyx":697
- * #                         bf3.make_unsplittable()
- * #                     B_orth[:, k + 3] = B[:, k + 3]
+  /* "pyearth/_forward.pyx":561
+ *                     if self.orthonormal_update(B[:, k + 2]) == 1:
+ *                         pass
  *                     if self.orthonormal_update(B[:, k + 3]) == 1:             # <<<<<<<<<<<<<<
  *                         pass
- * #                         bf4.make_unsplittable()
+ *         elif not dependent and knot_idx_choice == -1:
  */
-  __pyx_slice__31 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__31)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 697; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__31 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__31)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 561; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__31);
   __Pyx_GIVEREF(__pyx_slice__31);
 
-  /* "pyearth/_forward.pyx":715
+  /* "pyearth/_forward.pyx":578
  *                 parent_choice = bf2
  *             bf1 = LinearBasisFunction(parent_choice, variable_choice, label)
  *             bf1.apply(X, missing, B[:, k])             # <<<<<<<<<<<<<<
- * #             apply_weights_slice(B, sample_weight, k)
  *             self.basis.append(bf1)
+ *             if choice_needs_coverage:
  */
-  __pyx_slice__32 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__32)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 715; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__32 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__32)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 578; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__32);
   __Pyx_GIVEREF(__pyx_slice__32);
 
-  /* "pyearth/_forward.pyx":720
+  /* "pyearth/_forward.pyx":582
  *             if choice_needs_coverage:
  *                 if not already_covered:
  *                     bf2.apply(X, missing, B[:, k + 1])             # <<<<<<<<<<<<<<
- * #                     apply_weights_slice(B, sample_weight, k + 1)
  *                     bf3.apply(X, missing, B[:, k + 2])
+ *                     self.basis.add_coverage(variable_choice, bf2, bf3)
  */
-  __pyx_slice__33 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__33)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 720; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__33 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__33)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 582; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__33);
   __Pyx_GIVEREF(__pyx_slice__33);
 
-  /* "pyearth/_forward.pyx":722
+  /* "pyearth/_forward.pyx":583
+ *                 if not already_covered:
  *                     bf2.apply(X, missing, B[:, k + 1])
- * #                     apply_weights_slice(B, sample_weight, k + 1)
  *                     bf3.apply(X, missing, B[:, k + 2])             # <<<<<<<<<<<<<<
- * #                     apply_weights_slice(B, sample_weight, k + 2)
  *                     self.basis.add_coverage(variable_choice, bf2, bf3)
+ *             if self.use_fast is True:
  */
-  __pyx_slice__34 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__34)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 722; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__34 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__34)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 583; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__34);
   __Pyx_GIVEREF(__pyx_slice__34);
 
-  /* "pyearth/_forward.pyx":736
+  /* "pyearth/_forward.pyx":595
+ *                         heappush(self.fast_heap, bf3_content)
  *             # Orthogonalize the new basis
- * #             B_orth[:, k] = B[:, k]
  *             if self.orthonormal_update(B[:, k]) == 1:             # <<<<<<<<<<<<<<
  *                 bf1.make_unsplittable()
  *             if choice_needs_coverage:
  */
-  __pyx_slice__35 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__35)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 736; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__35 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__35)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 595; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__35);
   __Pyx_GIVEREF(__pyx_slice__35);
 
-  /* "pyearth/_forward.pyx":741
+  /* "pyearth/_forward.pyx":599
+ *             if choice_needs_coverage:
  *                 if not already_covered:
- * #                     B_orth[:, k + 1] = B[:, k + 1]
  *                     if self.orthonormal_update(B[:, k + 1]) == 1:             # <<<<<<<<<<<<<<
  *                         pass
- * #                         bf2.make_unsplittable()
+ *                     if self.orthonormal_update(B[:, k + 2]) == 1:
  */
-  __pyx_slice__36 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__36)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 741; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__36 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__36)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 599; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__36);
   __Pyx_GIVEREF(__pyx_slice__36);
 
-  /* "pyearth/_forward.pyx":745
- * #                         bf2.make_unsplittable()
- * #                     B_orth[:, k + 2] = B[:, k + 2]
+  /* "pyearth/_forward.pyx":601
+ *                     if self.orthonormal_update(B[:, k + 1]) == 1:
+ *                         pass
  *                     if self.orthonormal_update(B[:, k + 2]) == 1:             # <<<<<<<<<<<<<<
  *                         pass
- * #                         bf3.make_unsplittable()
+ *         else:  # dependent and knot_idx_choice == -1
  */
-  __pyx_slice__37 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__37)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 745; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__37 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__37)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 601; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__37);
   __Pyx_GIVEREF(__pyx_slice__37);
 
-  /* "pyearth/_forward.pyx":751
+  /* "pyearth/_forward.pyx":606
  *             # In this case there were no acceptable choices remaining, so end
  *             # the forward pass
  *             self.record[len(self.record) - 1].set_no_candidates(True)             # <<<<<<<<<<<<<<
  *             return
  *         if self.use_fast is True:
  */
-  __pyx_tuple__38 = PyTuple_Pack(1, Py_True); if (unlikely(!__pyx_tuple__38)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 751; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__38 = PyTuple_Pack(1, Py_True); if (unlikely(!__pyx_tuple__38)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 606; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__38);
   __Pyx_GIVEREF(__pyx_tuple__38);
 
@@ -27659,8 +28286,20 @@ PyMODINIT_FUNC PyInit__forward(void)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
+  /* "pyearth/_forward.pyx":15
+ * from ._knot_search cimport knot_search, OutcomeDependentData, PredictorDependentData, \
+ *     KnotSearchReadOnlyData, KnotSearchState, KnotSearchWorkingData, KnotSearchData
+ * import sys             # <<<<<<<<<<<<<<
+ * from libc.math cimport sqrt, abs, log
+ * import numpy as np
+ */
+  __pyx_t_4 = __Pyx_Import(__pyx_n_s_sys, 0, -1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 15; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_4);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_sys, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 15; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+
   /* "pyearth/_forward.pyx":17
- * 
+ * import sys
  * from libc.math cimport sqrt, abs, log
  * import numpy as np             # <<<<<<<<<<<<<<
  * cnp.import_array()
@@ -29062,49 +29701,6 @@ bad:
 }
 #endif
 
-static PyObject* __Pyx_PyObject_CallMethod1(PyObject* obj, PyObject* method_name, PyObject* arg) {
-    PyObject *method, *result = NULL;
-    method = __Pyx_PyObject_GetAttrStr(obj, method_name);
-    if (unlikely(!method)) goto bad;
-#if CYTHON_COMPILING_IN_CPYTHON
-    if (likely(PyMethod_Check(method))) {
-        PyObject *self = PyMethod_GET_SELF(method);
-        if (likely(self)) {
-            PyObject *args;
-            PyObject *function = PyMethod_GET_FUNCTION(method);
-            args = PyTuple_New(2);
-            if (unlikely(!args)) goto bad;
-            Py_INCREF(self);
-            PyTuple_SET_ITEM(args, 0, self);
-            Py_INCREF(arg);
-            PyTuple_SET_ITEM(args, 1, arg);
-            Py_INCREF(function);
-            Py_DECREF(method); method = NULL;
-            result = __Pyx_PyObject_Call(function, args, NULL);
-            Py_DECREF(args);
-            Py_DECREF(function);
-            return result;
-        }
-    }
-#endif
-    result = __Pyx_PyObject_CallOneArg(method, arg);
-bad:
-    Py_XDECREF(method);
-    return result;
-}
-
-static CYTHON_INLINE int __Pyx_PyObject_Append(PyObject* L, PyObject* x) {
-    if (likely(PyList_CheckExact(L))) {
-        if (unlikely(__Pyx_PyList_Append(L, x) < 0)) return -1;
-    } else {
-        PyObject* retval = __Pyx_PyObject_CallMethod1(L, __pyx_n_s_append, x);
-        if (unlikely(!retval))
-            return -1;
-        Py_DECREF(retval);
-    }
-    return 0;
-}
-
 #if CYTHON_COMPILING_IN_CPYTHON
 static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func) {
 #ifdef __Pyx_CyFunction_USED
@@ -29585,6 +30181,62 @@ static PyObject* __Pyx_PyInt_SubtractCObj(PyObject *op1, PyObject *op2, CYTHON_U
 }
 #endif
 
+static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected) {
+    PyErr_Format(PyExc_ValueError,
+                 "too many values to unpack (expected %" CYTHON_FORMAT_SSIZE_T "d)", expected);
+}
+
+static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index) {
+    PyErr_Format(PyExc_ValueError,
+                 "need more than %" CYTHON_FORMAT_SSIZE_T "d value%.1s to unpack",
+                 index, (index == 1) ? "" : "s");
+}
+
+static CYTHON_INLINE int __Pyx_IterFinish(void) {
+#if CYTHON_COMPILING_IN_CPYTHON
+    PyThreadState *tstate = PyThreadState_GET();
+    PyObject* exc_type = tstate->curexc_type;
+    if (unlikely(exc_type)) {
+        if (likely(exc_type == PyExc_StopIteration) || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration)) {
+            PyObject *exc_value, *exc_tb;
+            exc_value = tstate->curexc_value;
+            exc_tb = tstate->curexc_traceback;
+            tstate->curexc_type = 0;
+            tstate->curexc_value = 0;
+            tstate->curexc_traceback = 0;
+            Py_DECREF(exc_type);
+            Py_XDECREF(exc_value);
+            Py_XDECREF(exc_tb);
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+    return 0;
+#else
+    if (unlikely(PyErr_Occurred())) {
+        if (likely(PyErr_ExceptionMatches(PyExc_StopIteration))) {
+            PyErr_Clear();
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+    return 0;
+#endif
+}
+
+static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected) {
+    if (unlikely(retval)) {
+        Py_DECREF(retval);
+        __Pyx_RaiseTooManyValuesError(expected);
+        return -1;
+    } else {
+        return __Pyx_IterFinish();
+    }
+    return 0;
+}
+
 static int
 __Pyx_init_memviewslice(struct __pyx_memoryview_obj *memview,
                         int ndim,
@@ -29719,68 +30371,100 @@ static CYTHON_INLINE void __Pyx_XDEC_MEMVIEW(__Pyx_memviewslice *memslice,
     }
 }
 
-static CYTHON_INLINE void __Pyx_RaiseUnboundLocalError(const char *varname) {
-    PyErr_Format(PyExc_UnboundLocalError, "local variable '%s' referenced before assignment", varname);
+static CYTHON_INLINE void __Pyx_RaiseNoneNotIterableError(void) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
 }
 
-static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected) {
-    PyErr_Format(PyExc_ValueError,
-                 "too many values to unpack (expected %" CYTHON_FORMAT_SSIZE_T "d)", expected);
-}
-
-static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index) {
-    PyErr_Format(PyExc_ValueError,
-                 "need more than %" CYTHON_FORMAT_SSIZE_T "d value%.1s to unpack",
-                 index, (index == 1) ? "" : "s");
-}
-
-static CYTHON_INLINE int __Pyx_IterFinish(void) {
+static CYTHON_INLINE void __Pyx_ExceptionSave(PyObject **type, PyObject **value, PyObject **tb) {
 #if CYTHON_COMPILING_IN_CPYTHON
     PyThreadState *tstate = PyThreadState_GET();
-    PyObject* exc_type = tstate->curexc_type;
-    if (unlikely(exc_type)) {
-        if (likely(exc_type == PyExc_StopIteration) || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration)) {
-            PyObject *exc_value, *exc_tb;
-            exc_value = tstate->curexc_value;
-            exc_tb = tstate->curexc_traceback;
-            tstate->curexc_type = 0;
-            tstate->curexc_value = 0;
-            tstate->curexc_traceback = 0;
-            Py_DECREF(exc_type);
-            Py_XDECREF(exc_value);
-            Py_XDECREF(exc_tb);
-            return 0;
-        } else {
-            return -1;
-        }
-    }
-    return 0;
+    *type = tstate->exc_type;
+    *value = tstate->exc_value;
+    *tb = tstate->exc_traceback;
+    Py_XINCREF(*type);
+    Py_XINCREF(*value);
+    Py_XINCREF(*tb);
 #else
-    if (unlikely(PyErr_Occurred())) {
-        if (likely(PyErr_ExceptionMatches(PyExc_StopIteration))) {
-            PyErr_Clear();
-            return 0;
-        } else {
-            return -1;
-        }
-    }
-    return 0;
+    PyErr_GetExcInfo(type, value, tb);
+#endif
+}
+static void __Pyx_ExceptionReset(PyObject *type, PyObject *value, PyObject *tb) {
+#if CYTHON_COMPILING_IN_CPYTHON
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    PyThreadState *tstate = PyThreadState_GET();
+    tmp_type = tstate->exc_type;
+    tmp_value = tstate->exc_value;
+    tmp_tb = tstate->exc_traceback;
+    tstate->exc_type = type;
+    tstate->exc_value = value;
+    tstate->exc_traceback = tb;
+    Py_XDECREF(tmp_type);
+    Py_XDECREF(tmp_value);
+    Py_XDECREF(tmp_tb);
+#else
+    PyErr_SetExcInfo(type, value, tb);
 #endif
 }
 
-static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected) {
-    if (unlikely(retval)) {
-        Py_DECREF(retval);
-        __Pyx_RaiseTooManyValuesError(expected);
-        return -1;
-    } else {
-        return __Pyx_IterFinish();
+static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb) {
+    PyObject *local_type, *local_value, *local_tb;
+#if CYTHON_COMPILING_IN_CPYTHON
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    PyThreadState *tstate = PyThreadState_GET();
+    local_type = tstate->curexc_type;
+    local_value = tstate->curexc_value;
+    local_tb = tstate->curexc_traceback;
+    tstate->curexc_type = 0;
+    tstate->curexc_value = 0;
+    tstate->curexc_traceback = 0;
+#else
+    PyErr_Fetch(&local_type, &local_value, &local_tb);
+#endif
+    PyErr_NormalizeException(&local_type, &local_value, &local_tb);
+#if CYTHON_COMPILING_IN_CPYTHON
+    if (unlikely(tstate->curexc_type))
+#else
+    if (unlikely(PyErr_Occurred()))
+#endif
+        goto bad;
+    #if PY_MAJOR_VERSION >= 3
+    if (local_tb) {
+        if (unlikely(PyException_SetTraceback(local_value, local_tb) < 0))
+            goto bad;
     }
+    #endif
+    Py_XINCREF(local_tb);
+    Py_XINCREF(local_type);
+    Py_XINCREF(local_value);
+    *type = local_type;
+    *value = local_value;
+    *tb = local_tb;
+#if CYTHON_COMPILING_IN_CPYTHON
+    tmp_type = tstate->exc_type;
+    tmp_value = tstate->exc_value;
+    tmp_tb = tstate->exc_traceback;
+    tstate->exc_type = local_type;
+    tstate->exc_value = local_value;
+    tstate->exc_traceback = local_tb;
+    Py_XDECREF(tmp_type);
+    Py_XDECREF(tmp_value);
+    Py_XDECREF(tmp_tb);
+#else
+    PyErr_SetExcInfo(local_type, local_value, local_tb);
+#endif
     return 0;
+bad:
+    *type = 0;
+    *value = 0;
+    *tb = 0;
+    Py_XDECREF(local_type);
+    Py_XDECREF(local_value);
+    Py_XDECREF(local_tb);
+    return -1;
 }
 
-static CYTHON_INLINE void __Pyx_RaiseNoneNotIterableError(void) {
-    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
+static CYTHON_INLINE void __Pyx_RaiseUnboundLocalError(const char *varname) {
+    PyErr_Format(PyExc_UnboundLocalError, "local variable '%s' referenced before assignment", varname);
 }
 
 static CYTHON_INLINE int __Pyx_PyBytes_Equals(PyObject* s1, PyObject* s2, int equals) {
@@ -29945,94 +30629,6 @@ static CYTHON_INLINE PyObject* __Pyx_decode_c_string(
     } else {
         return PyUnicode_Decode(cstring, length, encoding, errors);
     }
-}
-
-static CYTHON_INLINE void __Pyx_ExceptionSave(PyObject **type, PyObject **value, PyObject **tb) {
-#if CYTHON_COMPILING_IN_CPYTHON
-    PyThreadState *tstate = PyThreadState_GET();
-    *type = tstate->exc_type;
-    *value = tstate->exc_value;
-    *tb = tstate->exc_traceback;
-    Py_XINCREF(*type);
-    Py_XINCREF(*value);
-    Py_XINCREF(*tb);
-#else
-    PyErr_GetExcInfo(type, value, tb);
-#endif
-}
-static void __Pyx_ExceptionReset(PyObject *type, PyObject *value, PyObject *tb) {
-#if CYTHON_COMPILING_IN_CPYTHON
-    PyObject *tmp_type, *tmp_value, *tmp_tb;
-    PyThreadState *tstate = PyThreadState_GET();
-    tmp_type = tstate->exc_type;
-    tmp_value = tstate->exc_value;
-    tmp_tb = tstate->exc_traceback;
-    tstate->exc_type = type;
-    tstate->exc_value = value;
-    tstate->exc_traceback = tb;
-    Py_XDECREF(tmp_type);
-    Py_XDECREF(tmp_value);
-    Py_XDECREF(tmp_tb);
-#else
-    PyErr_SetExcInfo(type, value, tb);
-#endif
-}
-
-static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb) {
-    PyObject *local_type, *local_value, *local_tb;
-#if CYTHON_COMPILING_IN_CPYTHON
-    PyObject *tmp_type, *tmp_value, *tmp_tb;
-    PyThreadState *tstate = PyThreadState_GET();
-    local_type = tstate->curexc_type;
-    local_value = tstate->curexc_value;
-    local_tb = tstate->curexc_traceback;
-    tstate->curexc_type = 0;
-    tstate->curexc_value = 0;
-    tstate->curexc_traceback = 0;
-#else
-    PyErr_Fetch(&local_type, &local_value, &local_tb);
-#endif
-    PyErr_NormalizeException(&local_type, &local_value, &local_tb);
-#if CYTHON_COMPILING_IN_CPYTHON
-    if (unlikely(tstate->curexc_type))
-#else
-    if (unlikely(PyErr_Occurred()))
-#endif
-        goto bad;
-    #if PY_MAJOR_VERSION >= 3
-    if (local_tb) {
-        if (unlikely(PyException_SetTraceback(local_value, local_tb) < 0))
-            goto bad;
-    }
-    #endif
-    Py_XINCREF(local_tb);
-    Py_XINCREF(local_type);
-    Py_XINCREF(local_value);
-    *type = local_type;
-    *value = local_value;
-    *tb = local_tb;
-#if CYTHON_COMPILING_IN_CPYTHON
-    tmp_type = tstate->exc_type;
-    tmp_value = tstate->exc_value;
-    tmp_tb = tstate->exc_traceback;
-    tstate->exc_type = local_type;
-    tstate->exc_value = local_value;
-    tstate->exc_traceback = local_tb;
-    Py_XDECREF(tmp_type);
-    Py_XDECREF(tmp_value);
-    Py_XDECREF(tmp_tb);
-#else
-    PyErr_SetExcInfo(local_type, local_value, local_tb);
-#endif
-    return 0;
-bad:
-    *type = 0;
-    *value = 0;
-    *tb = 0;
-    Py_XDECREF(local_type);
-    Py_XDECREF(local_value);
-    Py_XDECREF(local_tb);
-    return -1;
 }
 
 static CYTHON_INLINE void __Pyx_ExceptionSwap(PyObject **type, PyObject **value, PyObject **tb) {
@@ -31830,6 +32426,147 @@ static CYTHON_INLINE PyObject* __Pyx_PyInt_From_npy_uint8(npy_uint8 value) {
                                      little, !is_unsigned);
     }
 }
+
+#if !CYTHON_COMPILING_IN_PYPY && PY_MAJOR_VERSION < 3
+static PyObject *__Pyx_GetStdout(void) {
+    PyObject *f = PySys_GetObject((char *)"stdout");
+    if (!f) {
+        PyErr_SetString(PyExc_RuntimeError, "lost sys.stdout");
+    }
+    return f;
+}
+static int __Pyx_Print(PyObject* f, PyObject *arg_tuple, int newline) {
+    int i;
+    if (!f) {
+        if (!(f = __Pyx_GetStdout()))
+            return -1;
+    }
+    Py_INCREF(f);
+    for (i=0; i < PyTuple_GET_SIZE(arg_tuple); i++) {
+        PyObject* v;
+        if (PyFile_SoftSpace(f, 1)) {
+            if (PyFile_WriteString(" ", f) < 0)
+                goto error;
+        }
+        v = PyTuple_GET_ITEM(arg_tuple, i);
+        if (PyFile_WriteObject(v, f, Py_PRINT_RAW) < 0)
+            goto error;
+        if (PyString_Check(v)) {
+            char *s = PyString_AsString(v);
+            Py_ssize_t len = PyString_Size(v);
+            if (len > 0) {
+                switch (s[len-1]) {
+                    case ' ': break;
+                    case '\f': case '\r': case '\n': case '\t': case '\v':
+                        PyFile_SoftSpace(f, 0);
+                        break;
+                    default:  break;
+                }
+            }
+        }
+    }
+    if (newline) {
+        if (PyFile_WriteString("\n", f) < 0)
+            goto error;
+        PyFile_SoftSpace(f, 0);
+    }
+    Py_DECREF(f);
+    return 0;
+error:
+    Py_DECREF(f);
+    return -1;
+}
+#else
+static int __Pyx_Print(PyObject* stream, PyObject *arg_tuple, int newline) {
+    PyObject* kwargs = 0;
+    PyObject* result = 0;
+    PyObject* end_string;
+    if (unlikely(!__pyx_print)) {
+        __pyx_print = PyObject_GetAttr(__pyx_b, __pyx_n_s_print);
+        if (!__pyx_print)
+            return -1;
+    }
+    if (stream) {
+        kwargs = PyDict_New();
+        if (unlikely(!kwargs))
+            return -1;
+        if (unlikely(PyDict_SetItem(kwargs, __pyx_n_s_file, stream) < 0))
+            goto bad;
+        if (!newline) {
+            end_string = PyUnicode_FromStringAndSize(" ", 1);
+            if (unlikely(!end_string))
+                goto bad;
+            if (PyDict_SetItem(kwargs, __pyx_n_s_end, end_string) < 0) {
+                Py_DECREF(end_string);
+                goto bad;
+            }
+            Py_DECREF(end_string);
+        }
+    } else if (!newline) {
+        if (unlikely(!__pyx_print_kwargs)) {
+            __pyx_print_kwargs = PyDict_New();
+            if (unlikely(!__pyx_print_kwargs))
+                return -1;
+            end_string = PyUnicode_FromStringAndSize(" ", 1);
+            if (unlikely(!end_string))
+                return -1;
+            if (PyDict_SetItem(__pyx_print_kwargs, __pyx_n_s_end, end_string) < 0) {
+                Py_DECREF(end_string);
+                return -1;
+            }
+            Py_DECREF(end_string);
+        }
+        kwargs = __pyx_print_kwargs;
+    }
+    result = PyObject_Call(__pyx_print, arg_tuple, kwargs);
+    if (unlikely(kwargs) && (kwargs != __pyx_print_kwargs))
+        Py_DECREF(kwargs);
+    if (!result)
+        return -1;
+    Py_DECREF(result);
+    return 0;
+bad:
+    if (kwargs != __pyx_print_kwargs)
+        Py_XDECREF(kwargs);
+    return -1;
+}
+#endif
+
+#if !CYTHON_COMPILING_IN_PYPY && PY_MAJOR_VERSION < 3
+static int __Pyx_PrintOne(PyObject* f, PyObject *o) {
+    if (!f) {
+        if (!(f = __Pyx_GetStdout()))
+            return -1;
+    }
+    Py_INCREF(f);
+    if (PyFile_SoftSpace(f, 0)) {
+        if (PyFile_WriteString(" ", f) < 0)
+            goto error;
+    }
+    if (PyFile_WriteObject(o, f, Py_PRINT_RAW) < 0)
+        goto error;
+    if (PyFile_WriteString("\n", f) < 0)
+        goto error;
+    Py_DECREF(f);
+    return 0;
+error:
+    Py_DECREF(f);
+    return -1;
+    /* the line below is just to avoid C compiler
+     * warnings about unused functions */
+    return __Pyx_Print(f, NULL, 0);
+}
+#else
+static int __Pyx_PrintOne(PyObject* stream, PyObject *o) {
+    int res;
+    PyObject* arg_tuple = PyTuple_Pack(1, o);
+    if (unlikely(!arg_tuple))
+        return -1;
+    res = __Pyx_Print(stream, arg_tuple, 1);
+    Py_DECREF(arg_tuple);
+    return res;
+}
+#endif
 
 #if CYTHON_CCOMPLEX
   #ifdef __cplusplus

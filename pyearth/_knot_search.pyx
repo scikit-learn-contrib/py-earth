@@ -1,7 +1,11 @@
+from Tkconstants import LAST
 cimport cython
 import numpy as np
 from libc.math cimport sqrt
-from _types import INDEX
+from libc.math cimport log
+cimport numpy as cnp
+from _types import INDEX, FLOAT
+from _util cimport log2
 import sys
 
 @cython.final
@@ -84,6 +88,50 @@ cdef class PredictorDependentData:
         self.x = x
         self.order = order
     
+    def knot_candidates(PredictorDependentData self, cnp.ndarray[FLOAT_t, ndim = 1] p, int endspan, 
+                        int minspan, FLOAT_t minspan_alpha, INDEX_t n):
+        cdef INDEX_t minspan_, i, count, m, idx
+        cdef FLOAT_t last, knot
+        cdef bint first, skip
+        cdef list candidates = []
+        cdef list candidates_idx = []
+        m = p.shape[0]
+        count = 0
+        for i in range(m):
+            if p[i] != 0:
+                count += 1
+        
+        if minspan < 0:
+            minspan_ =  <int> (-log2(-(1.0 / (n * count)) *
+                                log(1.0 - minspan_alpha)) / 2.5)
+        else:
+            minspan_ = minspan
+
+        i = endspan
+        first = True
+        skip = False
+        while True:
+            if m < endspan + i:
+                break
+            idx = self.order[i]
+            knot = self.x[idx]
+            if ((not first) and knot == last) or p[idx] == 0:
+                
+                skip = True
+                i += 1
+            else:
+                if first or knot != last:
+                    last = knot
+                    if not skip:
+                        candidates.append(knot)
+                        candidates_idx.append(idx)
+                    else:
+                        skip = False
+                i += minspan_
+            first = False
+                
+        return np.array(candidates, dtype=FLOAT), np.array(candidates_idx, dtype=INDEX)
+
     def ordered(self):
         return np.array(self.x)[self.order]
     
@@ -219,8 +267,10 @@ cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData out
     cdef FLOAT_t delta_lambda = 0.
     cdef FLOAT_t delta_mu = 0.
     cdef FLOAT_t delta_upsilon = 0.
+    counter = 0
     while predictor.x[working.state.idx] > working.state.phi_next:
         idx = working.state.idx
+        counter += 1
         
         # In predictor.x[idx] is missing, p[idx] will be zeroed out for protection
         # (because there will be a present(x[idx]) factor in it)..
@@ -244,7 +294,10 @@ cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData out
         if working.state.ord_idx >= m:
             break
         working.state.idx = predictor.order[working.state.ord_idx]
-        
+    if counter == 0:
+        print 'zero'
+#     else:
+#         print 'nonzero'
     # Update alpha, beta, and gamma
     working.state.alpha += sigma - working.state.phi_next * tau + \
         (working.state.phi - working.state.phi_next) * working.state.upsilon
@@ -255,11 +308,25 @@ cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData out
         working.gamma[j] += (working.state.phi - working.state.phi_next) * working.kappa[j] + working.chi[j] - working.state.phi_next * working.psi[j]
     
     # Compute epsilon_squared and zeta_squared
-    epsilon_squared = working.state.beta 
-    for j in range(q):
-        epsilon_squared -= working.gamma[j] ** 2
-    working.state.zeta_squared = (working.state.alpha - dot(working.gamma, outcome.theta, q)) ** 2
-    working.state.zeta_squared /= epsilon_squared
+#     print working.state.beta
+#     print np.array(working.gamma)
+    sys.stdout.flush()
+    if working.state.beta > 0:
+        epsilon_squared = working.state.beta 
+        if working.state.beta == 0:
+            print 'beta = 0'
+            print working.state.phi, working.state.phi_next
+    #     print epsilon_squared
+    #     sys.stdout.flush()
+        for j in range(q):
+            epsilon_squared -= working.gamma[j] ** 2
+    #         print '-', working.gamma[j] ** 2
+    #         print '=', epsilon_squared
+    #         sys.stdout.flush()
+        working.state.zeta_squared = (working.state.alpha - dot(working.gamma, outcome.theta, q)) ** 2
+        working.state.zeta_squared /= epsilon_squared
+    else:
+        working.state.zeta_squared = 0.
     # Now zeta_squared is correct for phi_next.
     
     # Update kappa, lambda, mu, and upsilon

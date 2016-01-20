@@ -2,7 +2,7 @@ from pyearth._knot_search import OutcomeDependentData, KnotSearchWorkingData, \
     PredictorDependentData, KnotSearchReadOnlyData, KnotSearchData, knot_search
 from nose.tools import assert_true, assert_equal
 import numpy as np
-from numpy.testing.utils import assert_almost_equal
+from numpy.testing.utils import assert_almost_equal, assert_array_equal
 from scipy.linalg import qr
 
 def test_outcome_dependent_data():
@@ -46,32 +46,20 @@ def test_outcome_dependent_data():
     assert_almost_equal(np.abs(np.dot(data.Q_t, Q2)), np.eye(max_terms))
     assert_almost_equal(np.array(data.theta[:max_terms]), np.dot(data.Q_t, w2 * y))
 
-
-def slow_knot_search_one_outcome(p, x, y, B, w, candidates):
-    # Brute force, utterly un-optimized knot search with no fast update.  Use only for
-    # testing the actual knot search function.
-
-    best_e = float('inf')
-    best_k = 0
-    best_knot = float('inf')
-    for k, knot in enumerate(candidates):
-        # Formulate the linear least squares problem
-        X = np.concatenate([B, p * np.maximum(x-knot, 0.0)], axis=1)
-
-        # Solve the system
-        beta = np.linalg.lstsq(w * X, w * y)
-
-        # Compute the error
-        r = w * (y - np.dot(X, beta))
-        e = np.sqrt(np.dot(r, r))
-
-        # Compare to the best error
-        if e < best_e:
-            best_e = e
-            best_k = k
-            best_knot = knot
-    return best_knot, best_k, best_e
-
+def test_knot_candidates():
+    np.random.seed(10)
+    m = 1000
+    x = np.random.normal(size=m)
+    p = np.random.normal(size=m)
+    p[np.random.binomial(p=.1, n=1,size=m)==1] = 0.
+    x[np.random.binomial(p=.1, n=1,size=m)==1] = 0.
+    predictor = PredictorDependentData.alloc(x)
+    candidates, candidates_idx = predictor.knot_candidates(p, 5, 10, 0, 0)
+    assert_array_equal(candidates, x[candidates_idx])
+    assert_equal(len(candidates), len(set(candidates)))
+    print candidates, np.sum(x==0)
+#     print candidates_idx
+    
 
 def slow_knot_search(p, x, B, candidates, outcomes):
     # Brute force, utterly un-optimized knot search with no fast update.  Use only for

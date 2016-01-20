@@ -47,7 +47,14 @@ cdef class ForwardPasser:
     cdef INDEX_t n
     cdef FLOAT_t sst
     cdef FLOAT_t y_squared
-
+    
+    # Knot search data
+    cdef list outcomes
+    cdef list predictors
+    cdef list workings
+    cdef INDEX_t n_outcomes
+    
+    
     # Working floating point data
     cdef cnp.ndarray B  # Data matrix in basis space
     cdef cnp.ndarray B_orth  # Orthogonalized version of B
