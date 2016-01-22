@@ -393,15 +393,6 @@ cdef class ForwardPasser:
                     knot_idx = -1
                 else:
                     # Find the valid knot candidates
-#                     print 'psort', p[np.array(predictor.order)]
-#                     print 'xsort', np.array(predictor.x)[np.array(predictor.order)]
-#                     candidates_idx = parent.valid_knots(p,#[np.array(predictor.order)],
-#                                                         np.array(predictor.x)[np.array(predictor.order)],
-#                                                         variable,
-#                                                         self.check_every,
-#                                                         endspan, self.minspan,
-#                                                         self.minspan_alpha,
-#                                                         self.n, self.mwork)
                     candidates, candidates_idx = predictor.knot_candidates(p, self.endspan,
                                                                            self.minspan, 
                                                                            self.minspan_alpha,
@@ -417,23 +408,10 @@ cdef class ForwardPasser:
                         # Assemble the knot search data structure
                         constant = KnotSearchReadOnlyData(predictor, self.outcomes)
                         search_data = KnotSearchData(constant, self.workings, q)
-                        print variable, parent
+
                         # Run knot search
-                        if variable == 4 and parent_idx == 2:
-                            print variable, parent, [outcome.k for outcome in self.outcomes]
-                            print q, linear_dependence, parent_idx
-                            
-                            sys.stdout.flush()
-                        try:
-                            knot, knot_idx, mse = knot_search(search_data, candidates, p, q, 
+                        knot, knot_idx, mse = knot_search(search_data, candidates, p, q, 
                                                           self.m, len(candidates), self.n_outcomes)
-                        except:
-                            print parent
-                            print 'candidates:', candidates
-                            print len(candidates), len(set(candidates))
-                            print np.max(predictor.x), np.min(predictor.x)
-                            print np.max(candidates), np.min(candidates)
-                            raise
                         knot_idx = candidates_idx[knot_idx]
                         mse = mse ** 2
                         

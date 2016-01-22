@@ -267,10 +267,9 @@ cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData out
     cdef FLOAT_t delta_lambda = 0.
     cdef FLOAT_t delta_mu = 0.
     cdef FLOAT_t delta_upsilon = 0.
-    counter = 0
+
     while predictor.x[working.state.idx] > working.state.phi_next:
         idx = working.state.idx
-        counter += 1
         
         # In predictor.x[idx] is missing, p[idx] will be zeroed out for protection
         # (because there will be a present(x[idx]) factor in it)..
@@ -294,10 +293,7 @@ cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData out
         if working.state.ord_idx >= m:
             break
         working.state.idx = predictor.order[working.state.ord_idx]
-    if counter == 0:
-        print 'zero'
-#     else:
-#         print 'nonzero'
+
     # Update alpha, beta, and gamma
     working.state.alpha += sigma - working.state.phi_next * tau + \
         (working.state.phi - working.state.phi_next) * working.state.upsilon
@@ -308,21 +304,14 @@ cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData out
         working.gamma[j] += (working.state.phi - working.state.phi_next) * working.kappa[j] + working.chi[j] - working.state.phi_next * working.psi[j]
     
     # Compute epsilon_squared and zeta_squared
-#     print working.state.beta
-#     print np.array(working.gamma)
     sys.stdout.flush()
     if working.state.beta > 0:
         epsilon_squared = working.state.beta 
         if working.state.beta == 0:
             print 'beta = 0'
             print working.state.phi, working.state.phi_next
-    #     print epsilon_squared
-    #     sys.stdout.flush()
         for j in range(q):
             epsilon_squared -= working.gamma[j] ** 2
-    #         print '-', working.gamma[j] ** 2
-    #         print '=', epsilon_squared
-    #         sys.stdout.flush()
         working.state.zeta_squared = (working.state.alpha - dot(working.gamma, outcome.theta, q)) ** 2
         working.state.zeta_squared /= epsilon_squared
     else:
