@@ -14,7 +14,7 @@ cdef class PruningPasser:
                  cnp.ndarray[FLOAT_t, ndim=2] X, 
                  cnp.ndarray[BOOL_t, ndim=2] missing, 
                  cnp.ndarray[FLOAT_t, ndim=2] y,
-                 cnp.ndarray[FLOAT_t, ndim=1] sample_weight,
+                 cnp.ndarray[FLOAT_t, ndim=2] sample_weight,
                  cnp.ndarray[FLOAT_t, ndim=1] output_weight,
                  **kwargs):
         self.X = X
@@ -54,23 +54,27 @@ cdef class PruningPasser:
             <cnp.ndarray[BOOL_t, ndim = 2] > self.missing)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] y = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.y)
-        cdef cnp.ndarray[FLOAT_t, ndim = 1] sample_weight = (
-            <cnp.ndarray[FLOAT_t, ndim = 1] > self.sample_weight)
+        cdef cnp.ndarray[FLOAT_t, ndim = 2] sample_weight = (
+            <cnp.ndarray[FLOAT_t, ndim = 2] > self.sample_weight)
         cdef cnp.ndarray[FLOAT_t, ndim = 1] output_weight = (
             <cnp.ndarray[FLOAT_t, ndim = 1] > self.output_weight)
-        cdef cnp.ndarray[FLOAT_t, ndim = 2] weighted_y = y.copy()
+        cdef cnp.ndarray[FLOAT_t, ndim = 1] weighted_y
 
         # Initial solution
-        weighted_y *= np.sqrt(sample_weight[:, np.newaxis])
-        self.basis.weighted_transform(X, missing, B, sample_weight)
+        
         mse = 0.
         for p in range(y.shape[1]):
-            beta, mse_ = np.linalg.lstsq(B[:, 0:(basis_size)], weighted_y[:, p])[0:2]
+            if sample_weight.shape[1] == 1:
+                weighted_y = y[:,p] * np.sqrt(sample_weight[:,0])
+            else:
+                weighted_y = y[:,p] * np.sqrt(sample_weight[:,p])
+            self.basis.weighted_transform(X, missing, B, sample_weight[:, p])
+            beta, mse_ = np.linalg.lstsq(B[:, 0:(basis_size)], weighted_y)[0:2]
             if mse_:
                 mse_ /= self.m
             else:
                 mse_ = (1.0 / self.m) * np.sum(
-                    (np.dot(B[:, 0:basis_size], beta) - weighted_y[:, p]) ** 2)
+                    (np.dot(B[:, 0:basis_size], beta) - weighted_y) ** 2)
             mse += mse_ * output_weight[p]
             
         # Create the record object
@@ -93,18 +97,23 @@ cdef class PruningPasser:
                 if not bf.is_prunable():
                     continue
                 bf.prune()
-                self.basis.weighted_transform(X, missing, B, sample_weight)
+                
 
                 mse = 0.
                 for p in range(y.shape[1]):
+                    if sample_weight.shape[1] == 1:
+                        weighted_y = y[:,p] * np.sqrt(sample_weight[:,0])
+                    else:
+                        weighted_y = y[:,p] * np.sqrt(sample_weight[:,p])
+                    self.basis.weighted_transform(X, missing, B, sample_weight[:, p])
                     beta, mse_ = np.linalg.lstsq(
-                        B[:, 0:pruned_basis_size], weighted_y[:, p])[0:2]
+                        B[:, 0:pruned_basis_size], weighted_y)[0:2]
                     if mse_:
                         mse_ /= self.m
                     else:
                         mse_ = ((1 / float(self.m)) *
                             np.sum((np.dot(B[:, 0:pruned_basis_size], beta) -
-                                    weighted_y[:, p]) ** 2))
+                                    weighted_y) ** 2))
                     mse += mse_ * output_weight[p]
                 gcv_ = gcv(mse, pruned_basis_size, self.m, self.penalty)
 
