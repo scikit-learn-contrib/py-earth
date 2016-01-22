@@ -790,25 +790,30 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             result += 'Unpruned Earth Model\n'
         else:
             result += 'Earth Model\n'
-        header = ['Basis Function', 'Pruned', 'Coefficient']
+        header = ['Basis Function', 'Pruned'] 
+        if self.coef_.shape[0] > 1:
+            header += ['Coefficient %d' % i for i in range(self.coef_.shape[0])]
+        else:
+            header += ['Coefficient']
         data = []
-        for c in range(self.coef_.shape[0]):
-            i = 0
-            for bf in self.basis_:
-                data.append([str(bf), 'Yes'
-                             if bf.is_pruned()
-                             else 'No', '%g' % self.coef_[c, i]
-                             if not bf.is_pruned() else 'None'])
-                if not bf.is_pruned():
-                    i += 1
-            result += ascii_table(header, data)
-            if self.pruning_trace() is not None:
-                record = self.pruning_trace()
-                selection = record.get_selected()
-            else:
-                record = self.forward_trace()
-                selection = len(record) - 1
-            result += '\n'
+        
+        i = 0
+        for bf in self.basis_:
+            data.append([str(bf), 'Yes'
+                         if bf.is_pruned()
+                         else 'No'] + ['%g' % self.coef_[c, i] if not bf.is_pruned() else 
+                                       'None' for c in range(self.coef_.shape[0])]
+                         )
+            if not bf.is_pruned():
+                i += 1
+        result += ascii_table(header, data)
+        if self.pruning_trace() is not None:
+            record = self.pruning_trace()
+            selection = record.get_selected()
+        else:
+            record = self.forward_trace()
+            selection = len(record) - 1
+        result += '\n'
         result += 'MSE: %.4f, GCV: %.4f, RSQ: %.4f, GRSQ: %.4f' % (
             self.mse_, self.gcv_, self.rsq_, self.grsq_)
         return result

@@ -1,5 +1,6 @@
 cimport cython
 from _types cimport FLOAT_t, INT_t, INDEX_t, BOOL_t
+from _basis cimport BasisFunction
 
 @cython.final
 cdef class OutcomeDependentData:
@@ -12,7 +13,9 @@ cdef class OutcomeDependentData:
     cdef public INDEX_t k
     cdef public INDEX_t max_terms
     cpdef FLOAT_t mse(OutcomeDependentData self)
-    cpdef int update(OutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *
+    cpdef int update_from_basis_function(OutcomeDependentData self, BasisFunction bf, FLOAT_t[:,:] X, BOOL_t[:,:] missing, FLOAT_t zero_tol) except *
+    cpdef int update_from_array(OutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *
+    cpdef int _update(OutcomeDependentData self, FLOAT_t zero_tol) except *
     cpdef downdate(OutcomeDependentData self)
     cpdef reweight(OutcomeDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k, FLOAT_t zero_tol)
     

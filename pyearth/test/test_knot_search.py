@@ -18,17 +18,17 @@ def test_outcome_dependent_data():
     for k in range(max_terms):
         b = np.random.normal(size=m)
         B[:,k] = b
-        code = data.update(b, 1e-16)
+        code = data.update_from_array(b, 1e-16)
         assert_equal(code, 0)
         assert_almost_equal(np.dot(data.Q_t[:k+1,:], np.transpose(data.Q_t[:k+1,:])),
                             np.eye(k+1))
-    assert_equal(data.update(b, 1e-16), -1)
+    assert_equal(data.update_from_array(b, 1e-16), -1)
     
     # Test downdating
     q = np.array(data.Q_t).copy()
     theta = np.array(data.theta[:max_terms]).copy()
     data.downdate()
-    data.update(b, 1e-16)
+    data.update_from_array(b, 1e-16)
     assert_almost_equal(q, np.array(data.Q_t))
     assert_almost_equal(theta, np.array(data.theta[:max_terms]))
     assert_almost_equal(np.array(data.theta[:max_terms]), np.dot(data.Q_t, w * y))
@@ -57,7 +57,7 @@ def test_knot_candidates():
     candidates, candidates_idx = predictor.knot_candidates(p, 5, 10, 0, 0)
     assert_array_equal(candidates, x[candidates_idx])
     assert_equal(len(candidates), len(set(candidates)))
-    print candidates, np.sum(x==0)
+#     print candidates, np.sum(x==0)
 #     print candidates_idx
     
 

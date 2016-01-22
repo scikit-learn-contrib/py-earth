@@ -145,12 +145,14 @@ cdef class ForwardPasser:
                 w_col = self.sample_weight[:, i].flatten()
             working = KnotSearchWorkingData.alloc(self.max_terms)
             outcome = OutcomeDependentData.alloc(y_col, w_col, self.m, self.max_terms)
-            outcome.update(self.B[:,0], self.zero_tol)
+            outcome.update_from_array(self.B[:,0], self.zero_tol)
             self.workings.append(working)
             self.outcomes.append(outcome)
         self.predictors = []
         for i in range(n_predictors):
-            predictor = PredictorDependentData.alloc(self.X[:, i])
+            x = self.X[:, i]
+            x[missing[:,i]==1] = 0.
+            predictor = PredictorDependentData.alloc(x)
             self.predictors.append(predictor)
 
     cpdef Basis get_basis(ForwardPasser self):
@@ -211,7 +213,7 @@ cdef class ForwardPasser:
         linear_dependence = False
         return_codes = []
         for outcome in self.outcomes:
-            return_code = outcome.update(b, self.zero_tol)
+            return_code = outcome.update_from_array(b, self.zero_tol)
             if return_code == -1:
                 raise ValueError('This should not have happened.')
             return_codes.append(return_code != 0)
@@ -353,12 +355,12 @@ cdef class ForwardPasser:
                 # Add the linear term to B
                 predictor = self.predictors[variable]
                 
-                # If necessary, protect from missing data
-                if missing_flag:
-                    B[missing[:, variable]==1, k] = 0.
-                    b = B[:, k]
-                    # Update the outcome data
-                    linear_dependence = self.orthonormal_update(b)
+#                 # If necessary, protect from missing data
+#                 if missing_flag:
+#                     B[missing[:, variable]==1, k] = 0.
+#                     b = B[:, k]
+#                     # Update the outcome data
+#                     linear_dependence = self.orthonormal_update(b)
                     
                 if missing_flag and not covered:
                     p = B[:, parent_idx] * (1 - missing[:, variable])

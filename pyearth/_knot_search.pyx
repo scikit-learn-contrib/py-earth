@@ -1,4 +1,3 @@
-from Tkconstants import LAST
 cimport cython
 import numpy as np
 from libc.math cimport sqrt
@@ -40,18 +39,34 @@ cdef class OutcomeDependentData:
         '''
         return ((self.omega - np.dot(self.theta, self.theta)) ** 2) / self.m
     
-    cpdef int update(OutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *:
+    cpdef int update_from_basis_function(OutcomeDependentData self, BasisFunction bf, FLOAT_t[:,:] X, 
+                                         BOOL_t[:,:] missing, FLOAT_t zero_tol) except *:
         if self.k >= self.max_terms:
             return -1
-         
-        # This should really use BLAS
-        nrm0 = sqrt(w2dot(self.w, b, b, self.m))
-        cdef INDEX_t i, j
-        cdef FLOAT_t coef
+        bf.apply(X, missing, self.Q_t[self.k, :])
+        return self._update(zero_tol)
+        
+    cpdef int update_from_array(OutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *:
+        if self.k >= self.max_terms:
+            return -1
+        
+        cdef INDEX_t j
         for j in range(self.m):
             self.Q_t[self.k,j] = self.w[j] * b[j]
+        return self._update(zero_tol)
+    
+    cpdef int _update(OutcomeDependentData self, FLOAT_t zero_tol) except *:
+        if self.k >= self.max_terms:
+            return -1
+        
+        cdef INDEX_t i, j
+        cdef FLOAT_t coef
+        
+        # This should really use BLAS
+        cdef FLOAT_t nrm0 = sqrt(dot(self.Q_t[self.k,:], self.Q_t[self.k,:], self.m))
+        
         for i in range(self.k):
-            coef = wdot(self.w, self.Q_t[i,:], b, self.m)
+            coef = dot(self.Q_t[i,:], self.Q_t[self.k,:], self.m)
             for j in range(self.m):
                 self.Q_t[self.k,j] -= coef * self.Q_t[i,j]
         cdef FLOAT_t nrm = sqrt(dot(self.Q_t[self.k,:], self.Q_t[self.k,:], self.m))
@@ -78,7 +93,7 @@ cdef class OutcomeDependentData:
         self.w = w
         self.k = 0
         for i in range(k):
-            self.update(B[:, i], zero_tol)
+            self.update_from_array(B[:, i], zero_tol)
         
 
 @cython.final
@@ -307,9 +322,6 @@ cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData out
     sys.stdout.flush()
     if working.state.beta > 0:
         epsilon_squared = working.state.beta 
-        if working.state.beta == 0:
-            print 'beta = 0'
-            print working.state.phi, working.state.phi_next
         for j in range(q):
             epsilon_squared -= working.gamma[j] ** 2
         working.state.zeta_squared = (working.state.alpha - dot(working.gamma, outcome.theta, q)) ** 2
