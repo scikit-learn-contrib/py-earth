@@ -1,5 +1,6 @@
 cimport cython
 import numpy as np
+import scipy as sp
 from libc.math cimport sqrt
 from libc.math cimport log
 cimport numpy as cnp
@@ -56,31 +57,37 @@ cdef class OutcomeDependentData:
         return self._update(zero_tol)
     
     cpdef int _update(OutcomeDependentData self, FLOAT_t zero_tol) except *:
+        # Assume Q_t[:k,:] is orthonormal (as transpose) and Q_t[k,:] has been added 
+        # and appropriately weighted.  Update k <- k + 1 and make Q_t[:k,:] orthonormal
+        # under the new value of k.
+    
         if self.k >= self.max_terms:
             return -1
         
         cdef INDEX_t i, j
         cdef FLOAT_t coef
         
-        # This should really use BLAS
-        cdef FLOAT_t nrm0 = sqrt(dot(self.Q_t[self.k,:], self.Q_t[self.k,:], self.m))
-        
-        for i in range(self.k):
-            coef = dot(self.Q_t[i,:], self.Q_t[self.k,:], self.m)
-            for j in range(self.m):
-                self.Q_t[self.k,j] -= coef * self.Q_t[i,j]
-        cdef FLOAT_t nrm = sqrt(dot(self.Q_t[self.k,:], self.Q_t[self.k,:], self.m))
-         
-        if nrm0 <= zero_tol or nrm / nrm0 <= zero_tol:
-            for i in range(self.m):
-                self.Q_t[self.k, i] = 0.
-            self.theta[self.k] = 0.
-            self.k += 1
-            # The new column is in the column space of the previous columns
-            return 1
-        for i in range(self.m):
-            self.Q_t[self.k, i] /= nrm
-         
+        # For the moment, just create an entirely new QR fatorization each time
+        np.asarray(self.Q_t)[:self.k+1,:] = sp.linalg.qr(np.transpose(self.Q_t[:self.k+1,:]), mode='economic')[0].transpose()
+#         # This should really use BLAS
+#         cdef FLOAT_t nrm0 = sqrt(dot(self.Q_t[self.k,:], self.Q_t[self.k,:], self.m))
+#         
+#         for i in range(self.k):
+#             coef = dot(self.Q_t[i,:], self.Q_t[self.k,:], self.m)
+#             for j in range(self.m):
+#                 self.Q_t[self.k,j] -= coef * self.Q_t[i,j]
+#         cdef FLOAT_t nrm = sqrt(dot(self.Q_t[self.k,:], self.Q_t[self.k,:], self.m))
+#          
+#         if nrm0 <= zero_tol or nrm / nrm0 <= zero_tol:
+#             for i in range(self.m):
+#                 self.Q_t[self.k, i] = 0.
+#             self.theta[self.k] = 0.
+#             self.k += 1
+#             # The new column is in the column space of the previous columns
+#             return 1
+#         for i in range(self.m):
+#             self.Q_t[self.k, i] /= nrm
+#          
         self.theta[self.k] = np.dot(self.Q_t[self.k, :], np.array(self.y) * np.array(self.w))
         self.k += 1
         return 0
@@ -104,8 +111,8 @@ cdef class PredictorDependentData:
         self.order = order
     
     def knot_candidates(PredictorDependentData self, cnp.ndarray[FLOAT_t, ndim = 1] p, int endspan, 
-                        int minspan, FLOAT_t minspan_alpha, INDEX_t n):
-        cdef INDEX_t minspan_, i, count, m, idx
+                        int minspan, FLOAT_t minspan_alpha, INDEX_t n, set knot_set):
+        cdef INDEX_t minspan_, i, count, m, idx, countdown
         cdef FLOAT_t last, knot
         cdef bint first, skip
         cdef list candidates = []
@@ -125,24 +132,26 @@ cdef class PredictorDependentData:
         i = endspan
         first = True
         skip = False
+        countdown = 0
         while True:
             if m < endspan + i:
                 break
             idx = self.order[i]
             knot = self.x[idx]
-            if ((not first) and knot == last) or p[idx] == 0:
-                
+            if ((not first) and knot == last) or p[idx] == 0 or knot in knot_set:
+                countdown = minspan_
                 skip = True
                 i += 1
             else:
                 if first or knot != last:
                     last = knot
-                    if not skip:
+                    if countdown <= 0:
                         candidates.append(knot)
                         candidates_idx.append(idx)
+                        countdown = minspan_
                     else:
-                        skip = False
-                i += minspan_
+                        countdown -= 1
+                i += 1
             first = False
                 
         return np.array(candidates, dtype=FLOAT), np.array(candidates_idx, dtype=INDEX)
@@ -316,10 +325,10 @@ cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData out
         2 * (working.state.phi - working.state.phi_next) * working.state.lambda_ + \
         (working.state.phi_next ** 2 - working.state.phi ** 2) * working.state.mu
     for j in range(q):
-        working.gamma[j] += (working.state.phi - working.state.phi_next) * working.kappa[j] + working.chi[j] - working.state.phi_next * working.psi[j]
+        working.gamma[j] += (working.state.phi - working.state.phi_next) * working.kappa[j] + \
+                            working.chi[j] - working.state.phi_next * working.psi[j]
     
     # Compute epsilon_squared and zeta_squared
-    sys.stdout.flush()
     if working.state.beta > 0:
         epsilon_squared = working.state.beta 
         for j in range(q):

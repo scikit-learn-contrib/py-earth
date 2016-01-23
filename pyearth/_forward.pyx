@@ -398,7 +398,7 @@ cdef class ForwardPasser:
                     candidates, candidates_idx = predictor.knot_candidates(p, self.endspan,
                                                                            self.minspan, 
                                                                            self.minspan_alpha,
-                                                                           self.n)
+                                                                           self.n, set(parent.knots(variable)))
                     # Choose the best candidate (if no candidate is an
                     # improvement on the linear term in terms of gcv, knot_idx
                     # is set to -1

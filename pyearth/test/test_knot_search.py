@@ -54,7 +54,7 @@ def test_knot_candidates():
     p[np.random.binomial(p=.1, n=1,size=m)==1] = 0.
     x[np.random.binomial(p=.1, n=1,size=m)==1] = 0.
     predictor = PredictorDependentData.alloc(x)
-    candidates, candidates_idx = predictor.knot_candidates(p, 5, 10, 0, 0)
+    candidates, candidates_idx = predictor.knot_candidates(p, 5, 10, 0, 0, set())
     assert_array_equal(candidates, x[candidates_idx])
     assert_equal(len(candidates), len(set(candidates)))
 #     print candidates, np.sum(x==0)
