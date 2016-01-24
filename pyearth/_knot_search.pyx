@@ -33,12 +33,12 @@ cdef class OutcomeDependentData:
         theta = np.dot(Q_t, wy)
         return cls(Q_t, y, w, theta, omega, m, 0, max_terms)
     
-    cpdef FLOAT_t mse(OutcomeDependentData self):
+    cpdef FLOAT_t sse(OutcomeDependentData self):
         '''
         Return the weighted mean squared error for the linear least squares problem
         represented by Q_t, y, and w.
         '''
-        return ((self.omega - np.dot(self.theta, self.theta)) ** 2) / self.m
+        return ((self.omega - np.dot(self.theta, self.theta)) ** 2)# / np.sum(self.w)
     
     cpdef int update_from_basis_function(OutcomeDependentData self, BasisFunction bf, FLOAT_t[:,:] X, 
                                          BOOL_t[:,:] missing, FLOAT_t zero_tol) except *:
@@ -428,7 +428,7 @@ cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p
     for i in range(n_outcomes):
         outcome = outcomes[i]
         loss += outcome.omega - np.dot(outcome.theta[:q], outcome.theta[:q])
-    loss = sqrt(loss)
+#     loss = sqrt(loss)
     
     # Return
     return best_knot, best_knot_index, loss

@@ -1503,7 +1503,7 @@ static struct __pyx_vtabstruct_7pyearth_6_basis_Basis *__pyx_vtabptr_7pyearth_6_
  */
 
 struct __pyx_vtabstruct_7pyearth_12_knot_search_OutcomeDependentData {
-  __pyx_t_7pyearth_6_types_FLOAT_t (*mse)(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *, int __pyx_skip_dispatch);
+  __pyx_t_7pyearth_6_types_FLOAT_t (*sse)(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *, int __pyx_skip_dispatch);
   int (*update_from_basis_function)(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *, struct __pyx_obj_7pyearth_6_basis_BasisFunction *, __Pyx_memviewslice, __Pyx_memviewslice, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch);
   int (*update_from_array)(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *, __Pyx_memviewslice, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch);
   int (*_update)(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch);
@@ -1511,7 +1511,7 @@ struct __pyx_vtabstruct_7pyearth_12_knot_search_OutcomeDependentData {
   PyObject *(*reweight)(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *, __Pyx_memviewslice, __Pyx_memviewslice, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch);
 };
 static struct __pyx_vtabstruct_7pyearth_12_knot_search_OutcomeDependentData *__pyx_vtabptr_7pyearth_12_knot_search_OutcomeDependentData;
-static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_12_knot_search_20OutcomeDependentData_mse(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *, int __pyx_skip_dispatch);
+static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_12_knot_search_20OutcomeDependentData_sse(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *, int __pyx_skip_dispatch);
 static int __pyx_f_7pyearth_12_knot_search_20OutcomeDependentData_update_from_basis_function(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *, struct __pyx_obj_7pyearth_6_basis_BasisFunction *, __Pyx_memviewslice, __Pyx_memviewslice, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch);
 static int __pyx_f_7pyearth_12_knot_search_20OutcomeDependentData_update_from_array(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *, __Pyx_memviewslice, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch);
 static int __pyx_f_7pyearth_12_knot_search_20OutcomeDependentData__update(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch);
@@ -2098,7 +2098,7 @@ static int __Pyx_ImportFunction(PyObject *module, const char *funcname, void (**
 
 static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
-static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_12_knot_search_20OutcomeDependentData_mse(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *__pyx_v_self, CYTHON_UNUSED int __pyx_skip_dispatch); /* proto*/
+static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_12_knot_search_20OutcomeDependentData_sse(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *__pyx_v_self, CYTHON_UNUSED int __pyx_skip_dispatch); /* proto*/
 static int __pyx_f_7pyearth_12_knot_search_20OutcomeDependentData_update_from_basis_function(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_bf, __Pyx_memviewslice __pyx_v_X, __Pyx_memviewslice __pyx_v_missing, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_zero_tol, CYTHON_UNUSED int __pyx_skip_dispatch); /* proto*/
 static int __pyx_f_7pyearth_12_knot_search_20OutcomeDependentData_update_from_array(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *__pyx_v_self, __Pyx_memviewslice __pyx_v_b, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_zero_tol, CYTHON_UNUSED int __pyx_skip_dispatch); /* proto*/
 static int __pyx_f_7pyearth_12_knot_search_20OutcomeDependentData__update(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *__pyx_v_self, CYTHON_UNUSED __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_zero_tol, CYTHON_UNUSED int __pyx_skip_dispatch); /* proto*/
@@ -2303,7 +2303,7 @@ static PyObject *__pyx_builtin_id;
 static PyObject *__pyx_builtin_IndexError;
 static int __pyx_pf_7pyearth_12_knot_search_20OutcomeDependentData___init__(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *__pyx_v_self, __Pyx_memviewslice __pyx_v_Q_t, __Pyx_memviewslice __pyx_v_y, __Pyx_memviewslice __pyx_v_w, __Pyx_memviewslice __pyx_v_theta, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_omega, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_m, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_k, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_max_terms); /* proto */
 static PyObject *__pyx_pf_7pyearth_12_knot_search_20OutcomeDependentData_2alloc(PyObject *__pyx_v_cls, __Pyx_memviewslice __pyx_v_y, __Pyx_memviewslice __pyx_v_w, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_m, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_max_terms); /* proto */
-static PyObject *__pyx_pf_7pyearth_12_knot_search_20OutcomeDependentData_4mse(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_7pyearth_12_knot_search_20OutcomeDependentData_4sse(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_7pyearth_12_knot_search_20OutcomeDependentData_6update_from_basis_function(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_bf, __Pyx_memviewslice __pyx_v_X, __Pyx_memviewslice __pyx_v_missing, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_zero_tol); /* proto */
 static PyObject *__pyx_pf_7pyearth_12_knot_search_20OutcomeDependentData_8update_from_array(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *__pyx_v_self, __Pyx_memviewslice __pyx_v_b, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_zero_tol); /* proto */
 static PyObject *__pyx_pf_7pyearth_12_knot_search_20OutcomeDependentData_10_update(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *__pyx_v_self, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_zero_tol); /* proto */
@@ -3308,7 +3308,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_20OutcomeDependentData_2alloc(
  *         theta = np.dot(Q_t, wy)
  *         return cls(Q_t, y, w, theta, omega, m, 0, max_terms)             # <<<<<<<<<<<<<<
  * 
- *     cpdef FLOAT_t mse(OutcomeDependentData self):
+ *     cpdef FLOAT_t sse(OutcomeDependentData self):
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_5 = __pyx_memoryview_fromslice(__pyx_v_Q_t, 2, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -3394,13 +3394,13 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_20OutcomeDependentData_2alloc(
 /* "pyearth/_knot_search.pyx":36
  *         return cls(Q_t, y, w, theta, omega, m, 0, max_terms)
  * 
- *     cpdef FLOAT_t mse(OutcomeDependentData self):             # <<<<<<<<<<<<<<
+ *     cpdef FLOAT_t sse(OutcomeDependentData self):             # <<<<<<<<<<<<<<
  *         '''
  *         Return the weighted mean squared error for the linear least squares problem
  */
 
-static PyObject *__pyx_pw_7pyearth_12_knot_search_20OutcomeDependentData_5mse(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_12_knot_search_20OutcomeDependentData_mse(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *__pyx_v_self, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_7pyearth_12_knot_search_20OutcomeDependentData_5sse(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_12_knot_search_20OutcomeDependentData_sse(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *__pyx_v_self, CYTHON_UNUSED int __pyx_skip_dispatch) {
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3415,12 +3415,12 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_12_knot_search_20Outcom
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("mse", 0);
+  __Pyx_RefNannySetupContext("sse", 0);
 
   /* "pyearth/_knot_search.pyx":41
  *         represented by Q_t, y, and w.
  *         '''
- *         return ((self.omega - np.dot(self.theta, self.theta)) ** 2) / self.m             # <<<<<<<<<<<<<<
+ *         return ((self.omega - np.dot(self.theta, self.theta)) ** 2)# / np.sum(self.w)             # <<<<<<<<<<<<<<
  * 
  *     cpdef int update_from_basis_function(OutcomeDependentData self, BasisFunction bf, FLOAT_t[:,:] X,
  */
@@ -3471,21 +3471,15 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_12_knot_search_20Outcom
   __pyx_t_2 = PyNumber_Power(__pyx_t_4, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->m); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_1 = __Pyx_PyNumber_Divide(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_9 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_r = __pyx_t_9;
   goto __pyx_L0;
 
   /* "pyearth/_knot_search.pyx":36
  *         return cls(Q_t, y, w, theta, omega, m, 0, max_terms)
  * 
- *     cpdef FLOAT_t mse(OutcomeDependentData self):             # <<<<<<<<<<<<<<
+ *     cpdef FLOAT_t sse(OutcomeDependentData self):             # <<<<<<<<<<<<<<
  *         '''
  *         Return the weighted mean squared error for the linear least squares problem
  */
@@ -3499,7 +3493,7 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_12_knot_search_20Outcom
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_8);
-  __Pyx_WriteUnraisable("pyearth._knot_search.OutcomeDependentData.mse", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
+  __Pyx_WriteUnraisable("pyearth._knot_search.OutcomeDependentData.sse", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
@@ -3507,29 +3501,29 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_12_knot_search_20Outcom
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_7pyearth_12_knot_search_20OutcomeDependentData_5mse(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static char __pyx_doc_7pyearth_12_knot_search_20OutcomeDependentData_4mse[] = "\n        Return the weighted mean squared error for the linear least squares problem\n        represented by Q_t, y, and w.\n        ";
-static PyObject *__pyx_pw_7pyearth_12_knot_search_20OutcomeDependentData_5mse(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_7pyearth_12_knot_search_20OutcomeDependentData_5sse(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static char __pyx_doc_7pyearth_12_knot_search_20OutcomeDependentData_4sse[] = "\n        Return the weighted mean squared error for the linear least squares problem\n        represented by Q_t, y, and w.\n        ";
+static PyObject *__pyx_pw_7pyearth_12_knot_search_20OutcomeDependentData_5sse(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("mse (wrapper)", 0);
-  __pyx_r = __pyx_pf_7pyearth_12_knot_search_20OutcomeDependentData_4mse(((struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *)__pyx_v_self));
+  __Pyx_RefNannySetupContext("sse (wrapper)", 0);
+  __pyx_r = __pyx_pf_7pyearth_12_knot_search_20OutcomeDependentData_4sse(((struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_7pyearth_12_knot_search_20OutcomeDependentData_4mse(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *__pyx_v_self) {
+static PyObject *__pyx_pf_7pyearth_12_knot_search_20OutcomeDependentData_4sse(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("mse", 0);
+  __Pyx_RefNannySetupContext("sse", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7pyearth_12_knot_search_20OutcomeDependentData_mse(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7pyearth_12_knot_search_20OutcomeDependentData_sse(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3538,7 +3532,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_20OutcomeDependentData_4mse(st
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("pyearth._knot_search.OutcomeDependentData.mse", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("pyearth._knot_search.OutcomeDependentData.sse", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3547,7 +3541,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_20OutcomeDependentData_4mse(st
 }
 
 /* "pyearth/_knot_search.pyx":43
- *         return ((self.omega - np.dot(self.theta, self.theta)) ** 2) / self.m
+ *         return ((self.omega - np.dot(self.theta, self.theta)) ** 2)# / np.sum(self.w)
  * 
  *     cpdef int update_from_basis_function(OutcomeDependentData self, BasisFunction bf, FLOAT_t[:,:] X,             # <<<<<<<<<<<<<<
  *                                          BOOL_t[:,:] missing, FLOAT_t zero_tol) except *:
@@ -3652,7 +3646,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_4, 1);
   goto __pyx_L0;
 
   /* "pyearth/_knot_search.pyx":43
- *         return ((self.omega - np.dot(self.theta, self.theta)) ** 2) / self.m
+ *         return ((self.omega - np.dot(self.theta, self.theta)) ** 2)# / np.sum(self.w)
  * 
  *     cpdef int update_from_basis_function(OutcomeDependentData self, BasisFunction bf, FLOAT_t[:,:] X,             # <<<<<<<<<<<<<<
  *                                          BOOL_t[:,:] missing, FLOAT_t zero_tol) except *:
@@ -5127,7 +5121,7 @@ static int __pyx_pf_7pyearth_12_knot_search_20OutcomeDependentData_1m_2__set__(s
  *     cdef public INDEX_t m
  *     cdef public INDEX_t k             # <<<<<<<<<<<<<<
  *     cdef public INDEX_t max_terms
- *     cpdef FLOAT_t mse(OutcomeDependentData self)
+ *     cpdef FLOAT_t sse(OutcomeDependentData self)
  */
 
 /* Python wrapper */
@@ -5208,7 +5202,7 @@ static int __pyx_pf_7pyearth_12_knot_search_20OutcomeDependentData_1k_2__set__(s
  *     cdef public INDEX_t m
  *     cdef public INDEX_t k
  *     cdef public INDEX_t max_terms             # <<<<<<<<<<<<<<
- *     cpdef FLOAT_t mse(OutcomeDependentData self)
+ *     cpdef FLOAT_t sse(OutcomeDependentData self)
  *     cpdef int update_from_basis_function(OutcomeDependentData self, BasisFunction bf, FLOAT_t[:,:] X, BOOL_t[:,:] missing, FLOAT_t zero_tol) except *
  */
 
@@ -11308,7 +11302,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
  *     for i in range(n_outcomes):
  *         outcome = outcomes[i]             # <<<<<<<<<<<<<<
  *         loss += outcome.omega - np.dot(outcome.theta[:q], outcome.theta[:q])
- *     loss = sqrt(loss)
+ * #     loss = sqrt(loss)
  */
     if (unlikely(__pyx_v_outcomes == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
@@ -11324,7 +11318,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
  *     for i in range(n_outcomes):
  *         outcome = outcomes[i]
  *         loss += outcome.omega - np.dot(outcome.theta[:q], outcome.theta[:q])             # <<<<<<<<<<<<<<
- *     loss = sqrt(loss)
+ * #     loss = sqrt(loss)
  * 
  */
     __pyx_t_5 = PyFloat_FromDouble(__pyx_v_loss); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 430; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -11431,15 +11425,6 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_19, 1);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_v_loss = __pyx_t_23;
   }
-
-  /* "pyearth/_knot_search.pyx":431
- *         outcome = outcomes[i]
- *         loss += outcome.omega - np.dot(outcome.theta[:q], outcome.theta[:q])
- *     loss = sqrt(loss)             # <<<<<<<<<<<<<<
- * 
- *     # Return
- */
-  __pyx_v_loss = sqrt(__pyx_v_loss);
 
   /* "pyearth/_knot_search.pyx":434
  * 
@@ -24388,7 +24373,7 @@ static int __pyx_setprop_7pyearth_12_knot_search_20OutcomeDependentData_max_term
 
 static PyMethodDef __pyx_methods_7pyearth_12_knot_search_OutcomeDependentData[] = {
   {"alloc", (PyCFunction)__pyx_pw_7pyearth_12_knot_search_20OutcomeDependentData_3alloc, METH_VARARGS|METH_KEYWORDS, 0},
-  {"mse", (PyCFunction)__pyx_pw_7pyearth_12_knot_search_20OutcomeDependentData_5mse, METH_NOARGS, __pyx_doc_7pyearth_12_knot_search_20OutcomeDependentData_4mse},
+  {"sse", (PyCFunction)__pyx_pw_7pyearth_12_knot_search_20OutcomeDependentData_5sse, METH_NOARGS, __pyx_doc_7pyearth_12_knot_search_20OutcomeDependentData_4sse},
   {"update_from_basis_function", (PyCFunction)__pyx_pw_7pyearth_12_knot_search_20OutcomeDependentData_7update_from_basis_function, METH_VARARGS|METH_KEYWORDS, 0},
   {"update_from_array", (PyCFunction)__pyx_pw_7pyearth_12_knot_search_20OutcomeDependentData_9update_from_array, METH_VARARGS|METH_KEYWORDS, 0},
   {"_update", (PyCFunction)__pyx_pw_7pyearth_12_knot_search_20OutcomeDependentData_11_update, METH_O, 0},
@@ -26434,7 +26419,7 @@ PyMODINIT_FUNC PyInit__knot_search(void)
   if (__Pyx_ExportFunction("knot_search", (void (*)(void))__pyx_f_7pyearth_12_knot_search_knot_search, "PyObject *(struct __pyx_obj_7pyearth_12_knot_search_KnotSearchData *, __Pyx_memviewslice, __Pyx_memviewslice, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch)") < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   /*--- Type init code ---*/
   __pyx_vtabptr_7pyearth_12_knot_search_OutcomeDependentData = &__pyx_vtable_7pyearth_12_knot_search_OutcomeDependentData;
-  __pyx_vtable_7pyearth_12_knot_search_OutcomeDependentData.mse = (__pyx_t_7pyearth_6_types_FLOAT_t (*)(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *, int __pyx_skip_dispatch))__pyx_f_7pyearth_12_knot_search_20OutcomeDependentData_mse;
+  __pyx_vtable_7pyearth_12_knot_search_OutcomeDependentData.sse = (__pyx_t_7pyearth_6_types_FLOAT_t (*)(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *, int __pyx_skip_dispatch))__pyx_f_7pyearth_12_knot_search_20OutcomeDependentData_sse;
   __pyx_vtable_7pyearth_12_knot_search_OutcomeDependentData.update_from_basis_function = (int (*)(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *, struct __pyx_obj_7pyearth_6_basis_BasisFunction *, __Pyx_memviewslice, __Pyx_memviewslice, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch))__pyx_f_7pyearth_12_knot_search_20OutcomeDependentData_update_from_basis_function;
   __pyx_vtable_7pyearth_12_knot_search_OutcomeDependentData.update_from_array = (int (*)(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *, __Pyx_memviewslice, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch))__pyx_f_7pyearth_12_knot_search_20OutcomeDependentData_update_from_array;
   __pyx_vtable_7pyearth_12_knot_search_OutcomeDependentData._update = (int (*)(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData *, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch))__pyx_f_7pyearth_12_knot_search_20OutcomeDependentData__update;

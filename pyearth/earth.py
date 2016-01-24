@@ -438,7 +438,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         check_X_y(X, y, accept_sparse=None, multi_output=True,
                   force_all_finite=False)
 
-        return X, y, sample_weight, missing
+        return X, y, sample_weight, None, missing
 
     def fit(self, X, y=None,
             sample_weight=None,
@@ -517,7 +517,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             self.xlabels_ = xlabels
 
         self.linvars_ = linvars
-        X, y, sample_weight, missing = self._scrub(
+        X, y, sample_weight, output_weight, missing = self._scrub(
             X, y, sample_weight, output_weight, missing)
 
         # Do the actual work
@@ -630,7 +630,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         else:
             self.xlabels_ = xlabels
         if not skip_scrub:
-            X, y, sample_weight, missing = self._scrub(
+            X, y, sample_weight, output_weight, missing = self._scrub(
                 X, y, sample_weight, output_weight, missing)
 
         # Do the actual work
@@ -695,7 +695,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         '''
         # Format data
         if not skip_scrub:
-            X, y, sample_weight, missing = self._scrub(
+            X, y, sample_weight, output_weight, missing = self._scrub(
                 X, y, sample_weight, output_weight, missing)
 
         # Pull arguments from self
@@ -877,7 +877,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         '''
         # Format data
         if not skip_scrub:
-            X, y, sample_weight, missing = self._scrub(
+            X, y, sample_weight, output_weight, missing = self._scrub(
                 X, y, sample_weight, output_weight, missing)
         
         # Solve the linear least squares problem
@@ -1074,7 +1074,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         '''
         check_is_fitted(self, "basis_")
         if not skip_scrub:
-            X, y, sample_weight, missing = self._scrub(
+            X, y, sample_weight, output_weight, missing = self._scrub(
                 X, y, sample_weight, output_weight, missing)
         y_hat = self.predict(X)
 #         m, _ = X.shape

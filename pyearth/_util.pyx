@@ -37,15 +37,15 @@ cpdef apply_weights_1d(cnp.ndarray[FLOAT_t, ndim=1] y,
     for i in range(m):
         y[i] *= sqrt(weights[i])
 
-cpdef FLOAT_t gcv(FLOAT_t mse, INDEX_t basis_size, INDEX_t data_size,
+cpdef FLOAT_t gcv(FLOAT_t mse, FLOAT_t basis_size, FLOAT_t data_size,
                   FLOAT_t penalty):
     return mse * gcv_adjust(basis_size, data_size, penalty)
 
-cpdef FLOAT_t gcv_adjust(INDEX_t basis_size, INDEX_t data_size,
+cpdef FLOAT_t gcv_adjust(FLOAT_t basis_size, FLOAT_t data_size,
                          FLOAT_t penalty):
-    return ( 1.0 /
-            ((1 - ((basis_size + penalty * (basis_size - 1)) / data_size)) ** 2)
-            )
+    cdef FLOAT_t effective_parameters
+    effective_parameters = basis_size + penalty * (basis_size - 1) / 2.0
+    return 1.0 / ( ( (1.0 - (effective_parameters / data_size)) ** 2 ) )
 
 cpdef str_pad(string, length):
     if len(string) >= length:

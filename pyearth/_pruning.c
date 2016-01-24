@@ -2016,7 +2016,7 @@ static PyTypeObject *__pyx_ptype_7pyearth_7_record_FirstForwardPassIteration = 0
 
 /* Module declarations from 'pyearth._util' */
 static PyObject *(*__pyx_f_7pyearth_5_util_apply_weights_2d)(PyArrayObject *, PyArrayObject *, int __pyx_skip_dispatch); /*proto*/
-static __pyx_t_7pyearth_6_types_FLOAT_t (*__pyx_f_7pyearth_5_util_gcv)(__pyx_t_7pyearth_6_types_FLOAT_t, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch); /*proto*/
+static __pyx_t_7pyearth_6_types_FLOAT_t (*__pyx_f_7pyearth_5_util_gcv)(__pyx_t_7pyearth_6_types_FLOAT_t, __pyx_t_7pyearth_6_types_FLOAT_t, __pyx_t_7pyearth_6_types_FLOAT_t, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch); /*proto*/
 
 /* Module declarations from 'pyearth._pruning' */
 static PyTypeObject *__pyx_ptype_7pyearth_8_pruning_PruningPasser = 0;
@@ -7330,7 +7330,7 @@ PyMODINIT_FUNC PyInit__pruning(void)
   /*--- Function import code ---*/
   __pyx_t_1 = __Pyx_ImportModule("pyearth._util"); if (!__pyx_t_1) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   if (__Pyx_ImportFunction(__pyx_t_1, "apply_weights_2d", (void (**)(void))&__pyx_f_7pyearth_5_util_apply_weights_2d, "PyObject *(PyArrayObject *, PyArrayObject *, int __pyx_skip_dispatch)") < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  if (__Pyx_ImportFunction(__pyx_t_1, "gcv", (void (**)(void))&__pyx_f_7pyearth_5_util_gcv, "__pyx_t_7pyearth_6_types_FLOAT_t (__pyx_t_7pyearth_6_types_FLOAT_t, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch)") < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (__Pyx_ImportFunction(__pyx_t_1, "gcv", (void (**)(void))&__pyx_f_7pyearth_5_util_gcv, "__pyx_t_7pyearth_6_types_FLOAT_t (__pyx_t_7pyearth_6_types_FLOAT_t, __pyx_t_7pyearth_6_types_FLOAT_t, __pyx_t_7pyearth_6_types_FLOAT_t, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch)") < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   Py_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   /*--- Execution code ---*/
 
