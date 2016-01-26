@@ -87,9 +87,10 @@ cdef class OutcomeDependentData:
 #             return 1
 #         for i in range(self.m):
 #             self.Q_t[self.k, i] /= nrm
-#          
-        self.theta[self.k] = np.dot(self.Q_t[self.k, :], np.array(self.y) * np.array(self.w))
+#
         self.k += 1
+        self.theta = np.dot(self.Q_t[:self.k, :], np.asarray(self.y) * self.w)
+        
         return 0
         
     cpdef downdate(OutcomeDependentData self):
@@ -327,14 +328,23 @@ cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData out
     for j in range(q):
         working.gamma[j] += (working.state.phi - working.state.phi_next) * working.kappa[j] + \
                             working.chi[j] - working.state.phi_next * working.psi[j]
+                            
+#     x_should_be = np.maximum(np.asarray(predictor.x) - working.state.phi_next, 0) * p 
+#     alpha_should_be = np.dot(x_should_be * outcome.w, np.array(outcome.w) * outcome.y)
+#     print 'alpha = ', np.asarray(working.state.alpha), alpha_should_be
+#     print 'beta =', np.asarray(working.state.beta), np.dot(x_should_be, x_should_be)
+#     print 'gamma =', np.asarray(working.gamma[:q]), np.dot(outcome.Q_t[:q,:], x_should_be)
     
     # Compute epsilon_squared and zeta_squared
     if working.state.beta > 0:
         epsilon_squared = working.state.beta 
         for j in range(q):
             epsilon_squared -= working.gamma[j] ** 2
-        working.state.zeta_squared = (working.state.alpha - dot(working.gamma, outcome.theta, q)) ** 2
-        working.state.zeta_squared /= epsilon_squared
+        if epsilon_squared > 0:
+            working.state.zeta_squared = (working.state.alpha - dot(working.gamma, outcome.theta, q)) ** 2
+            working.state.zeta_squared /= epsilon_squared
+        else:
+            working.state.zeta_squared = 0.
     else:
         working.state.zeta_squared = 0.
     # Now zeta_squared is correct for phi_next.
@@ -370,6 +380,7 @@ cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p
     cdef FLOAT_t phi
     cdef KnotSearchWorkingData working
     cdef INDEX_t j, i
+#     print 'begin knot search!'
     for j in range(n_outcomes):
         working = workings[j]
         working.state.phi_next = phi_next
@@ -398,6 +409,7 @@ cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p
     cdef OutcomeDependentData outcome
     cdef FLOAT_t zeta_squared
     cdef INDEX_t k
+    cdef FLOAT_t loss
     for k in range(r):
         phi = phi_next
         phi_next = candidates[k]
@@ -421,13 +433,47 @@ cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p
             best_knot_index = k
             best_knot = phi_next
             best_zeta_squared = zeta_squared
-
+        
+        # DEBUG
+#         loss = -best_zeta_squared
+#         for i in range(n_outcomes):
+#             outcome = outcomes[i]
+#             loss += outcome.omega - np.dot(outcome.theta[:q], outcome.theta[:q])
+#         if loss < 0:
+#             print 'negative loss!'
+#             print 'best_zeta_squared =', best_zeta_squared
+#             x_should_be = np.maximum(np.asarray(predictor.x) - best_knot, 0) * p 
+#             
+#             for i in range(n_outcomes):
+#                 outcome = outcomes[i]
+#                 print 'should be eye = ', np.dot(outcome.Q_t[:q,:], np.transpose(outcome.Q_t[:q,:]))
+#                 omega_should_be = np.dot(np.array(outcome.w) * outcome.y, np.array(outcome.w) * outcome.y)
+#                 theta_should_be = np.dot(outcome.Q_t[:q,:], np.array(outcome.w) * outcome.y)
+#                 print 'omega =', outcome.omega, omega_should_be
+#                 print 'theta =', np.array(outcome.theta[:q]), theta_should_be
+#                 print 'theta^2 =', np.dot(outcome.theta[:q], outcome.theta[:q]), np.dot(theta_should_be, theta_should_be)
+#             raise ValueError
+        # END DEBUG
     # Calculate value of overall objective function
     # (this is the sqrt of the sum of squared residuals)
-    cdef FLOAT_t loss = -best_zeta_squared
+    loss = -best_zeta_squared
     for i in range(n_outcomes):
         outcome = outcomes[i]
         loss += outcome.omega - np.dot(outcome.theta[:q], outcome.theta[:q])
+#     if loss < 0:
+#         print 'negative loss!'
+#         print 'best_zeta_squared =', best_zeta_squared
+#         x_should_be = np.maximum(np.asarray(predictor.x) - best_knot, 0) * p 
+#         
+#         for i in range(n_outcomes):
+#             outcome = outcomes[i]
+#             
+#             omega_should_be = np.dot(np.array(outcome.w) * outcome.y, np.array(outcome.w) * outcome.y)
+#             theta_should_be = np.dot(outcome.Q_t[:q,:], np.array(outcome.w) * outcome.y)
+#             print 'omega =', outcome.omega, omega_should_be
+#             print 'theta =', np.array(outcome.theta[:q]), theta_should_be
+#             print 'theta^2 =', np.dot(outcome.theta[:q], outcome.theta[:q]), np.dot(theta_should_be, theta_should_be)
+#         raise ValueError
 #     loss = sqrt(loss)
     
     # Return

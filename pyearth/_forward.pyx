@@ -74,7 +74,6 @@ cdef class ForwardPasser:
         self.max_degree    = kwargs.get('max_degree', 1)
         self.thresh        = kwargs.get('thresh', 0.001)
         self.penalty       = kwargs.get('penalty', 3.0)
-        print 'penalty =', self.penalty
         self.check_every   = kwargs.get('check_every', -1)
         self.min_search_points = kwargs.get('min_search_points', 100)
         self.xlabels       = kwargs.get('xlabels')
@@ -413,13 +412,13 @@ cdef class ForwardPasser:
                         search_data = KnotSearchData(constant, self.workings, q)
 
                         # Run knot search
-                        print len(candidates_idx)
+#                         print len(candidates_idx)
                         knot, knot_idx, mse = knot_search(search_data, candidates, p, q, 
                                                           self.m, len(candidates), self.n_outcomes)
                         mse /= np.sum(self.sample_weight ** 2)
-                        print knot_idx
+#                         print knot_idx
                         knot_idx = candidates_idx[knot_idx]
-                        print knot_idx
+#                         print knot_idx
 #                         mse = mse ** 2
                         
                         # If the hinge function does not decrease the gcv then
@@ -427,14 +426,10 @@ cdef class ForwardPasser:
                         if self.allow_linear:
                             if missing_flag and not covered:
                                 if gcv_factor_k_plus_4 * mse >= gcv_:
-                                    print 'gcv_4', gcv_factor_k_plus_4
-                                    print 'gcv =', gcv_
                                     mse = mse_
                                     knot_idx = -1
                             else:
                                 if gcv_factor_k_plus_2 * mse >= gcv_:
-                                    print 'gcv_2', gcv_factor_k_plus_2
-                                    print 'gcv =', gcv_
                                     mse = mse_
                                     knot_idx = -1
                     else:
@@ -454,15 +449,15 @@ cdef class ForwardPasser:
                 self.orthonormal_downdate()
                 
                 # Update the choices
-                print parent, variable, mse, mse_choice, knot_idx, knot_idx_choice
+#                 print parent, variable, mse, mse_choice, knot_idx, knot_idx_choice
                 if mse < mse_choice or first:
-                    print 'choose'
+#                     print 'choose'
                     if first:
                         first = False
                     knot_choice = knot
                     mse_choice = mse
                     knot_idx_choice = knot_idx
-                    print 'knot_idx_choice', knot_idx_choice
+#                     print 'knot_idx_choice', knot_idx_choice
                     parent_idx_choice = parent_idx
                     parent_choice = parent
                     if self.use_fast is True:

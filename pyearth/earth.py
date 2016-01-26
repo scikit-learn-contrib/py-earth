@@ -7,7 +7,6 @@ from sklearn.utils.validation import (assert_all_finite, check_is_fitted,
                                       check_X_y)
 import numpy as np
 from scipy import sparse
-from pyearth._record2 import PruningPassRecord
 import sys
 
 
