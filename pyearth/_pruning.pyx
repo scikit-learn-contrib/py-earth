@@ -2,7 +2,7 @@
 # cython: cdivision = True
 # cython: boundscheck = False
 # cython: wraparound = False
-# cython: profile = False
+# cython: profile = True
 
 from ._record cimport PruningPassIteration
 from ._util cimport gcv, apply_weights_2d

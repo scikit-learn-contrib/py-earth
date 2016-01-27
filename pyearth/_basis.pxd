@@ -26,8 +26,10 @@ cdef class BasisFunction:
 
     cpdef bint make_unsplittable(BasisFunction self)
 
-    cdef list get_children(BasisFunction self)
-
+    cpdef list get_children(BasisFunction self)
+    
+    cpdef BasisFunction get_coverage(BasisFunction self, INDEX_t variable)
+    
     cpdef _set_parent(BasisFunction self, BasisFunction parent)
 
     cpdef _add_child(BasisFunction self, BasisFunction child)
@@ -184,14 +186,14 @@ cdef class Basis:
 
     cdef list order
     cdef readonly INDEX_t num_variables
-    cdef dict coverage
+#     cdef dict coverage
     
-    cpdef add_coverage(Basis self, int variable, MissingnessBasisFunction b1, \
-                       MissingnessBasisFunction b2)
-        
-    cpdef get_coverage(Basis self, int variable)
-    
-    cpdef bint has_coverage(Basis self, int variable)
+#     cpdef add_coverage(Basis self, int variable, MissingnessBasisFunction b1, \
+#                        MissingnessBasisFunction b2)
+#         
+#     cpdef get_coverage(Basis self, int variable)
+#     
+#     cpdef bint has_coverage(Basis self, int variable)
 
     cpdef int get_num_variables(Basis self)
 

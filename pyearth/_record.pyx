@@ -2,7 +2,7 @@
 # cython: cdivision = True
 # cython: boundscheck = False
 # cython: wraparound = False
-# cython: profile = False
+# cython: profile = True
 
 from ._util cimport gcv, ascii_table
 from ._forward cimport stopping_conditions

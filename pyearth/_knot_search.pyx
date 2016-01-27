@@ -1,3 +1,9 @@
+# distutils: language = c
+# cython: cdivision = True
+# cython: boundscheck = False
+# cython: wraparound = False
+# cython: profile = True
+
 cimport cython
 import numpy as np
 import scipy as sp
@@ -123,6 +129,9 @@ cdef class PredictorDependentData:
         for i in range(m):
             if p[i] != 0:
                 count += 1
+        
+        if n * count == 0:
+            return np.array(candidates, dtype=FLOAT), np.array(candidates_idx, dtype=INDEX)
         
         if minspan < 0:
             minspan_ =  <int> (-log2(-(1.0 / (n * count)) *
@@ -268,6 +277,7 @@ cdef wdot(FLOAT_t[:] w, FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q):
         result += w[i] * x1[i] * x2[i]
     return result
 
+@cython.profile(False)
 cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData outcome, 
                         KnotSearchWorkingData working, FLOAT_t[:] p, INDEX_t q, INDEX_t m, INDEX_t r) except *:
     

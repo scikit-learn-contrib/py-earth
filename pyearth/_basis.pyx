@@ -2,7 +2,7 @@
 # cython: cdivision = True
 # cython: boundscheck = False
 # cython: wraparound = False
-# cython: profile = False
+# cython: profile = True
 
 from ._util cimport log2, apply_weights_2d
 from libc.math cimport log
@@ -106,8 +106,15 @@ cdef class BasisFunction:
     cpdef bint make_unsplittable(BasisFunction self):
         self.splittable = False
 
-    cdef list get_children(BasisFunction self):
+    cpdef list get_children(BasisFunction self):
         return self.children
+    
+    cpdef BasisFunction get_coverage(BasisFunction self, INDEX_t variable):
+        cdef BasisFunction child
+        for child in self.get_children():
+            if child.covered(variable):
+                return child
+        return None
 
     cpdef _set_parent(BasisFunction self, BasisFunction parent):
         '''Calls _add_child.'''
@@ -504,7 +511,7 @@ cdef class MissingnessBasisFunction(VariableBasisFunction):
         if self.complement and (variable == self.variable):
             return True
         else:
-            return False or self.parent.covered(variable)
+            return self.parent.covered(variable) or False
     
     cpdef bint eligible(MissingnessBasisFunction self, INDEX_t variable):
         '''
@@ -513,7 +520,7 @@ cdef class MissingnessBasisFunction(VariableBasisFunction):
         if (not self.complement) and (variable == self.variable):
             return False
         else:
-            return True and self.parent.eligible(variable)
+            return self.parent.eligible(variable) and True
     
     cpdef apply(MissingnessBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
                 cnp.ndarray[BOOL_t, ndim=2] missing,
@@ -858,22 +865,22 @@ cdef class Basis:
     def __init__(Basis self, num_variables):  # @DuplicatedSignature
         self.order = []
         self.num_variables = num_variables
-        self.coverage = dict()
+#         self.coverage = dict()
         
-    cpdef add_coverage(Basis self, int variable, MissingnessBasisFunction b1, \
-                       MissingnessBasisFunction b2):
-        cdef int index = len(self.order)
-        self.coverage[variable] = (index, index + 1)
-        self.append(b1)
-        self.append(b2)
-        
-    cpdef get_coverage(Basis self, int variable):
-        cdef int idx1, idx2
-        idx1, idx2 = self.coverage[variable]
-        return self.order[idx1], self.order[idx2]
-    
-    cpdef bint has_coverage(Basis self, int variable):
-        return variable in self.coverage
+#     cpdef add_coverage(Basis self, int variable, MissingnessBasisFunction b1, \
+#                        MissingnessBasisFunction b2):
+#         cdef int index = len(self.order)
+#         self.coverage[variable] = (index, index + 1)
+#         self.append(b1)
+#         self.append(b2)
+#         
+#     cpdef get_coverage(Basis self, int variable):
+#         cdef int idx1, idx2
+#         idx1, idx2 = self.coverage[variable]
+#         return self.order[idx1], self.order[idx2]
+#     
+#     cpdef bint has_coverage(Basis self, int variable):
+#         return variable in self.coverage
 
     def __reduce__(Basis self):
         return (self.__class__, (self.num_variables,), self._getstate())

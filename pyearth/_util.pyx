@@ -2,7 +2,7 @@
 # cython: cdivision = True
 # cython: boundscheck = False
 # cython: wraparound = False
-# cython: profile = False
+# cython: profile = True
 
 import numpy as np
 from libc.math cimport sqrt, log
