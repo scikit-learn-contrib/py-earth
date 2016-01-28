@@ -29,6 +29,7 @@ cdef class ForwardPasser:
     cdef int min_search_points
     cdef list xlabels
     cdef FLOAT_t zero_tol
+    cdef  bint last_fast_empty
     cdef list fast_heap
     cdef int use_fast
     cdef long fast_K
