@@ -277,7 +277,7 @@ cdef class ForwardPasser:
         cdef bint covered
         cdef bint missing_flag
         cdef bint choice_needs_coverage
-        cdef int max_variable_degree
+#         cdef int max_variable_degree
         
         cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
@@ -328,23 +328,23 @@ cdef class ForwardPasser:
             else:
                 variables = range(self.n)
             
-            parent_degree = parent.degree()
+            parent_degree = parent.effective_degree()
             
             for variable in variables:
-                # Determine whether missingness needs to be accounted for.
-                if self.allow_missing and has_missing[variable]:
-                    missing_flag = True
-                    eligible = parent.eligible(variable)
-                    covered = parent.covered(variable)
-                    max_variable_degree = self.max_degree + 1
-                else:
-                    missing_flag = False
-                    max_variable_degree = self.max_degree
+#                 # Determine whether missingness needs to be accounted for.
+#                 if self.allow_missing and has_missing[variable]:
+#                     missing_flag = True
+#                     eligible = parent.eligible(variable)
+#                     covered = parent.covered(variable)
+#                     max_variable_degree = self.max_degree + 1
+#                 else:
+#                     missing_flag = False
+#                     max_variable_degree = self.max_degree
                 
                 # Make sure not to exceed max_degree (but don't count the 
                 # covering missingness basis function if required)
                 if self.max_degree >= 0:
-                    if parent_degree >= max_variable_degree:
+                    if parent_degree >= self.max_degree:
                         continue
                 
                 # If there is missing data and this parent is not 
