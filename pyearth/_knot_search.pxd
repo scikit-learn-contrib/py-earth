@@ -12,6 +12,7 @@ cdef class OutcomeDependentData:
     cdef public INDEX_t m
     cdef public INDEX_t k
     cdef public INDEX_t max_terms
+    cdef public object householder
     cpdef FLOAT_t sse(OutcomeDependentData self)
     cpdef int update_from_basis_function(OutcomeDependentData self, BasisFunction bf, FLOAT_t[:,:] X, BOOL_t[:,:] missing, FLOAT_t zero_tol) except *
     cpdef int update_from_array(OutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *

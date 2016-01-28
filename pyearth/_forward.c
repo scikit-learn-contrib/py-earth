@@ -1271,10 +1271,11 @@ struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData {
   __pyx_t_7pyearth_6_types_INDEX_t m;
   __pyx_t_7pyearth_6_types_INDEX_t k;
   __pyx_t_7pyearth_6_types_INDEX_t max_terms;
+  PyObject *householder;
 };
 
 
-/* "_knot_search.pxd":23
+/* "_knot_search.pxd":24
  * 
  * @cython.final
  * cdef class PredictorDependentData:             # <<<<<<<<<<<<<<
@@ -1290,7 +1291,7 @@ struct __pyx_obj_7pyearth_12_knot_search_PredictorDependentData {
 };
 
 
-/* "_knot_search.pxd":30
+/* "_knot_search.pxd":31
  * 
  * @cython.final
  * cdef class KnotSearchReadOnlyData:             # <<<<<<<<<<<<<<
@@ -1304,7 +1305,7 @@ struct __pyx_obj_7pyearth_12_knot_search_KnotSearchReadOnlyData {
 };
 
 
-/* "_knot_search.pxd":35
+/* "_knot_search.pxd":36
  * 
  * @cython.final
  * cdef class KnotSearchState:             # <<<<<<<<<<<<<<
@@ -1326,7 +1327,7 @@ struct __pyx_obj_7pyearth_12_knot_search_KnotSearchState {
 };
 
 
-/* "_knot_search.pxd":48
+/* "_knot_search.pxd":49
  * 
  * @cython.final
  * cdef class KnotSearchWorkingData:             # <<<<<<<<<<<<<<
@@ -1344,7 +1345,7 @@ struct __pyx_obj_7pyearth_12_knot_search_KnotSearchWorkingData {
 };
 
 
-/* "_knot_search.pxd":57
+/* "_knot_search.pxd":58
  * 
  * @cython.final
  * cdef class KnotSearchData:             # <<<<<<<<<<<<<<
@@ -27645,11 +27646,11 @@ PyMODINIT_FUNC PyInit__forward(void)
   __pyx_vtabptr_7pyearth_7_record_FirstForwardPassIteration = (struct __pyx_vtabstruct_7pyearth_7_record_FirstForwardPassIteration*)__Pyx_GetVtable(__pyx_ptype_7pyearth_7_record_FirstForwardPassIteration->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_7_record_FirstForwardPassIteration)) {__pyx_filename = __pyx_f[7]; __pyx_lineno = 65; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_7pyearth_12_knot_search_OutcomeDependentData = __Pyx_ImportType("pyearth._knot_search", "OutcomeDependentData", sizeof(struct __pyx_obj_7pyearth_12_knot_search_OutcomeDependentData), 1); if (unlikely(!__pyx_ptype_7pyearth_12_knot_search_OutcomeDependentData)) {__pyx_filename = __pyx_f[8]; __pyx_lineno = 6; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_vtabptr_7pyearth_12_knot_search_OutcomeDependentData = (struct __pyx_vtabstruct_7pyearth_12_knot_search_OutcomeDependentData*)__Pyx_GetVtable(__pyx_ptype_7pyearth_12_knot_search_OutcomeDependentData->tp_dict); if (unlikely(!__pyx_vtabptr_7pyearth_12_knot_search_OutcomeDependentData)) {__pyx_filename = __pyx_f[8]; __pyx_lineno = 6; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_ptype_7pyearth_12_knot_search_PredictorDependentData = __Pyx_ImportType("pyearth._knot_search", "PredictorDependentData", sizeof(struct __pyx_obj_7pyearth_12_knot_search_PredictorDependentData), 1); if (unlikely(!__pyx_ptype_7pyearth_12_knot_search_PredictorDependentData)) {__pyx_filename = __pyx_f[8]; __pyx_lineno = 23; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_ptype_7pyearth_12_knot_search_KnotSearchReadOnlyData = __Pyx_ImportType("pyearth._knot_search", "KnotSearchReadOnlyData", sizeof(struct __pyx_obj_7pyearth_12_knot_search_KnotSearchReadOnlyData), 1); if (unlikely(!__pyx_ptype_7pyearth_12_knot_search_KnotSearchReadOnlyData)) {__pyx_filename = __pyx_f[8]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_ptype_7pyearth_12_knot_search_KnotSearchState = __Pyx_ImportType("pyearth._knot_search", "KnotSearchState", sizeof(struct __pyx_obj_7pyearth_12_knot_search_KnotSearchState), 1); if (unlikely(!__pyx_ptype_7pyearth_12_knot_search_KnotSearchState)) {__pyx_filename = __pyx_f[8]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_ptype_7pyearth_12_knot_search_KnotSearchWorkingData = __Pyx_ImportType("pyearth._knot_search", "KnotSearchWorkingData", sizeof(struct __pyx_obj_7pyearth_12_knot_search_KnotSearchWorkingData), 1); if (unlikely(!__pyx_ptype_7pyearth_12_knot_search_KnotSearchWorkingData)) {__pyx_filename = __pyx_f[8]; __pyx_lineno = 48; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_ptype_7pyearth_12_knot_search_KnotSearchData = __Pyx_ImportType("pyearth._knot_search", "KnotSearchData", sizeof(struct __pyx_obj_7pyearth_12_knot_search_KnotSearchData), 1); if (unlikely(!__pyx_ptype_7pyearth_12_knot_search_KnotSearchData)) {__pyx_filename = __pyx_f[8]; __pyx_lineno = 57; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_ptype_7pyearth_12_knot_search_PredictorDependentData = __Pyx_ImportType("pyearth._knot_search", "PredictorDependentData", sizeof(struct __pyx_obj_7pyearth_12_knot_search_PredictorDependentData), 1); if (unlikely(!__pyx_ptype_7pyearth_12_knot_search_PredictorDependentData)) {__pyx_filename = __pyx_f[8]; __pyx_lineno = 24; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_ptype_7pyearth_12_knot_search_KnotSearchReadOnlyData = __Pyx_ImportType("pyearth._knot_search", "KnotSearchReadOnlyData", sizeof(struct __pyx_obj_7pyearth_12_knot_search_KnotSearchReadOnlyData), 1); if (unlikely(!__pyx_ptype_7pyearth_12_knot_search_KnotSearchReadOnlyData)) {__pyx_filename = __pyx_f[8]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_ptype_7pyearth_12_knot_search_KnotSearchState = __Pyx_ImportType("pyearth._knot_search", "KnotSearchState", sizeof(struct __pyx_obj_7pyearth_12_knot_search_KnotSearchState), 1); if (unlikely(!__pyx_ptype_7pyearth_12_knot_search_KnotSearchState)) {__pyx_filename = __pyx_f[8]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_ptype_7pyearth_12_knot_search_KnotSearchWorkingData = __Pyx_ImportType("pyearth._knot_search", "KnotSearchWorkingData", sizeof(struct __pyx_obj_7pyearth_12_knot_search_KnotSearchWorkingData), 1); if (unlikely(!__pyx_ptype_7pyearth_12_knot_search_KnotSearchWorkingData)) {__pyx_filename = __pyx_f[8]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_ptype_7pyearth_12_knot_search_KnotSearchData = __Pyx_ImportType("pyearth._knot_search", "KnotSearchData", sizeof(struct __pyx_obj_7pyearth_12_knot_search_KnotSearchData), 1); if (unlikely(!__pyx_ptype_7pyearth_12_knot_search_KnotSearchData)) {__pyx_filename = __pyx_f[8]; __pyx_lineno = 58; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   /*--- Variable import code ---*/
   /*--- Function import code ---*/
   __pyx_t_1 = __Pyx_ImportModule("pyearth._util"); if (!__pyx_t_1) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}

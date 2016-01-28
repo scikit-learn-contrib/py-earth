@@ -4,6 +4,7 @@
 # cython: wraparound = False
 # cython: profile = True
 
+
 cimport cython
 import numpy as np
 import scipy as sp
@@ -12,12 +13,12 @@ from libc.math cimport log
 cimport numpy as cnp
 from _types import INDEX, FLOAT
 from _util cimport log2
-import sys
+from pyearth.qr import Householder
 
 @cython.final
 cdef class OutcomeDependentData:
     def __init__(OutcomeDependentData self, FLOAT_t[:,:] Q_t, FLOAT_t[:] y, FLOAT_t[:] w,
-                 FLOAT_t[:] theta, FLOAT_t omega, INDEX_t m, INDEX_t k, INDEX_t max_terms):
+                 FLOAT_t[:] theta, FLOAT_t omega, INDEX_t m, INDEX_t k, INDEX_t max_terms, householder):
         self.Q_t = Q_t
         self.y = y
         self.w = w
@@ -26,6 +27,7 @@ cdef class OutcomeDependentData:
         self.m = m
         self.k = k
         self.max_terms = max_terms
+        self.householder = householder
     
     @classmethod
     def alloc(cls, FLOAT_t[:] y, FLOAT_t[:] w, INDEX_t m, INDEX_t max_terms):
@@ -37,7 +39,8 @@ cdef class OutcomeDependentData:
             wy[i] = w[i] * y[i]
         cdef FLOAT_t omega = np.dot(wy, wy)
         theta = np.dot(Q_t, wy)
-        return cls(Q_t, y, w, theta, omega, m, 0, max_terms)
+        householder = Householder(m, max_terms)
+        return cls(Q_t, y, w, theta, omega, m, 0, max_terms, householder)
     
     cpdef FLOAT_t sse(OutcomeDependentData self):
         '''
@@ -73,8 +76,20 @@ cdef class OutcomeDependentData:
         cdef INDEX_t i, j
         cdef FLOAT_t coef
         
+        # Compute the new housholder reflection
+        np.asarray(self.Q_t)[self.k, :] = self.householder.apply_transpose(self.Q_t[self.k, :])
+        self.householder.push_from_column(self.Q_t[self.k, self.k], self.Q_t[self.k,(self.k + 1):])
+        
+        # Create the new row in Q_t and apply all existing householder reflections
+        # including the new one
+        self.Q_t[self.k, :] = 0.
+        self.Q_t[self.k, self.k] = 1.
+        np.asarray(self.Q_t)[self.k, :] = self.householder.apply(self.Q_t[self.k, :])
+        self.k += 1
+        self.theta = np.dot(self.Q_t[:self.k, :], np.asarray(self.y) * self.w)
+        
         # For the moment, just create an entirely new QR fatorization each time
-        np.asarray(self.Q_t)[:self.k+1,:] = sp.linalg.qr(np.transpose(self.Q_t[:self.k+1,:]), mode='economic')[0].transpose()
+#         np.asarray(self.Q_t)[:self.k+1,:] = sp.linalg.qr(np.transpose(self.Q_t[:self.k+1,:]), mode='economic')[0].transpose()
 #         # This should really use BLAS
 #         cdef FLOAT_t nrm0 = sqrt(dot(self.Q_t[self.k,:], self.Q_t[self.k,:], self.m))
 #         
@@ -94,12 +109,13 @@ cdef class OutcomeDependentData:
 #         for i in range(self.m):
 #             self.Q_t[self.k, i] /= nrm
 #
-        self.k += 1
-        self.theta = np.dot(self.Q_t[:self.k, :], np.asarray(self.y) * self.w)
+#         self.k += 1
+#         self.theta = np.dot(self.Q_t[:self.k, :], np.asarray(self.y) * self.w)
         
         return 0
         
     cpdef downdate(OutcomeDependentData self):
+        self.householder.pop_elementary_reflection()
         self.k -= 1
     
     cpdef reweight(OutcomeDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k, FLOAT_t zero_tol):
