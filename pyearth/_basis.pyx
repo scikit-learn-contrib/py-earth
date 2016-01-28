@@ -159,9 +159,18 @@ cdef class BasisFunction:
                 result.append(child.get_knot_idx())
         return result
 
-    cpdef INDEX_t degree(BasisFunction self):
-        return self.parent.degree() + 1
-
+    cpdef INDEX_t effective_degree(BasisFunction self):
+        cdef dict data_dict = {}
+        cdef dict missing_dict = {}
+        self._effective_degree(data_dict, missing_dict)
+        cdef INDEX_t k, v
+        for k, v in missing_dict.items():
+            if k in data_dict:
+                data_dict[k] += missing_dict[k] - 1
+            else:
+                data_dict[k] = missing_dict[k]
+        return sum(data_dict.values())
+    
     cpdef apply(BasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
                 cnp.ndarray[BOOL_t, ndim=2] missing,
                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=True):
@@ -367,7 +376,10 @@ cdef class RootBasisFunction(BasisFunction):
 
     cpdef INDEX_t degree(RootBasisFunction self):
         return 0
-
+    
+    cpdef _effective_degree(RootBasisFunction self, dict data_dict, dict missing_dict):
+        pass
+    
     cpdef _set_parent(RootBasisFunction self, BasisFunction parent):
         raise NotImplementedError
 
@@ -419,6 +431,9 @@ cdef class ConstantBasisFunction(RootBasisFunction):
             return ''
         
 cdef class VariableBasisFunction(BasisFunction):
+    cpdef INDEX_t degree(VariableBasisFunction self):
+        return self.parent.degree() + 1
+
     cpdef set variables(VariableBasisFunction self):
         cdef set result = self.parent.variables()
         result.add(self.get_variable())
@@ -428,6 +443,12 @@ cdef class VariableBasisFunction(BasisFunction):
         return self.variable
 
 cdef class DataVariableBasisFunction(VariableBasisFunction):
+    cpdef _effective_degree(DataVariableBasisFunction self, dict data_dict, dict missing_dict):
+        try:
+            data_dict[self.variable] += 1
+        except:
+            data_dict[self.variable] = 1
+    
     cpdef bint covered(DataVariableBasisFunction self, INDEX_t variable):
         '''
         Is this an covered parent for variable? (If not, a covering 
@@ -501,6 +522,12 @@ cdef class MissingnessBasisFunction(VariableBasisFunction):
         self.complement = complement
         self.label = label if label is not None else 'x' + str(variable)
         self._set_parent(parent)
+    
+    cpdef _effective_degree(MissingnessBasisFunction self, dict data_dict, dict missing_dict):
+        try:
+            missing_dict[self.variable] += 1
+        except:
+            missing_dict[self.variable] = 1
     
     cpdef bint covered(MissingnessBasisFunction self, INDEX_t variable):
         '''

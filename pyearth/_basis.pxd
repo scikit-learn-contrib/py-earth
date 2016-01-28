@@ -42,7 +42,7 @@ cdef class BasisFunction:
 
     cpdef knots(BasisFunction self, INDEX_t variable)
 
-    cpdef INDEX_t degree(BasisFunction self)
+    cpdef INDEX_t effective_degree(BasisFunction self)
 
     cpdef apply(BasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
                 cnp.ndarray[BOOL_t, ndim=2] missing,
@@ -67,7 +67,9 @@ cdef class RootBasisFunction(BasisFunction):
                             dict knot_dict, dict translation)
 
     cpdef INDEX_t degree(RootBasisFunction self)
-
+    
+    cpdef _effective_degree(RootBasisFunction self, dict data_dict, dict missing_dict)
+    
     cpdef _set_parent(RootBasisFunction self, BasisFunction parent)
 
     cpdef BasisFunction get_parent(RootBasisFunction self)
@@ -90,12 +92,16 @@ cdef class ConstantBasisFunction(RootBasisFunction):
 cdef class VariableBasisFunction(BasisFunction):
     cdef INDEX_t variable
     cdef str label
-
+    
+    cpdef INDEX_t degree(VariableBasisFunction self)
+    
     cpdef set variables(VariableBasisFunction self)
 
     cpdef INDEX_t get_variable(VariableBasisFunction self)
 
 cdef class DataVariableBasisFunction(VariableBasisFunction):
+    cpdef _effective_degree(DataVariableBasisFunction self, dict data_dict, dict missing_dict)
+    
     cpdef bint covered(DataVariableBasisFunction self, INDEX_t variable)
     
     cpdef bint eligible(DataVariableBasisFunction self, INDEX_t variable)
@@ -112,6 +118,8 @@ cdef class DataVariableBasisFunction(VariableBasisFunction):
 
 cdef class MissingnessBasisFunction(VariableBasisFunction):
     cdef bint complement
+    
+    cpdef _effective_degree(MissingnessBasisFunction self, dict data_dict, dict missing_dict)
     
     cpdef bint covered(MissingnessBasisFunction self, INDEX_t variable)
     

@@ -84,7 +84,8 @@ cdef class ForwardPasser:
         self.allow_missing = kwargs.get("allow_missing", False)
         if self.allow_missing:
             self.has_missing = np.any(self.missing, axis=0).astype(BOOL)
-
+            
+        self.last_fast_empty = False
         self.fast_heap = []
 
         if self.xlabels is None:
@@ -277,7 +278,7 @@ cdef class ForwardPasser:
         cdef bint covered
         cdef bint missing_flag
         cdef bint choice_needs_coverage
-        cdef int max_variable_degree
+#         cdef int max_variable_degree
         
         cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
@@ -292,7 +293,7 @@ cdef class ForwardPasser:
         cdef cnp.ndarray[FLOAT_t, ndim = 1] b
         cdef cnp.ndarray[FLOAT_t, ndim = 1] p
         
-        if self.use_fast is True:
+        if self.use_fast and not self.last_fast_empty:
             # choose only among the top "fast_K" basis functions
             # as parents
             nb_basis = min(self.fast_K, k)
@@ -318,7 +319,7 @@ cdef class ForwardPasser:
 
             if self.use_fast is True:
                 # each "fast_h" iteration, force to pass through all the variables,
-                if self.iteration_number - parent_basis_content.m > self.fast_h:
+                if self.iteration_number - parent_basis_content.m > self.fast_h or self.last_fast_empty:
                     variables = range(self.n)
                     parent_basis_content.m = self.iteration_number
                 # in the opposite case, just use the last chosen variable
@@ -328,7 +329,7 @@ cdef class ForwardPasser:
             else:
                 variables = range(self.n)
             
-            parent_degree = parent.degree()
+            parent_degree = parent.effective_degree()
             
             for variable in variables:
                 # Determine whether missingness needs to be accounted for.
@@ -336,15 +337,13 @@ cdef class ForwardPasser:
                     missing_flag = True
                     eligible = parent.eligible(variable)
                     covered = parent.covered(variable)
-                    max_variable_degree = self.max_degree + 1
                 else:
                     missing_flag = False
-                    max_variable_degree = self.max_degree
                 
                 # Make sure not to exceed max_degree (but don't count the 
                 # covering missingness basis function if required)
                 if self.max_degree >= 0:
-                    if parent_degree >= max_variable_degree:
+                    if parent_degree >= self.max_degree:
                         continue
                 
                 # If there is missing data and this parent is not 
@@ -457,6 +456,7 @@ cdef class ForwardPasser:
 #                     print 'choose'
                     if first:
                         first = False
+                        self.last_fast_empty = False
                     knot_choice = knot
                     mse_choice = mse
                     knot_idx_choice = knot_idx
@@ -488,8 +488,11 @@ cdef class ForwardPasser:
 
         # Make sure at least one candidate was checked
         if first:
-            self.record[len(self.record) - 1].set_no_candidates(True)
-            return
+            if self.use_fast and not self.last_fast_empty:
+                self.last_fast_empty = True
+            else:
+                self.record[len(self.record) - 1].set_no_candidates(True)
+                return
         print 'Chose variable %d and parent %s' % (variable_choice, parent_choice)
         # Add the new basis functions
         label = self.xlabels[variable_choice]
@@ -500,7 +503,7 @@ cdef class ForwardPasser:
                                                True, label)
                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
                 self.orthonormal_update(B[:, len(self.basis)])
-                if self.use_fast:
+                if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
                     heappush(self.fast_heap, FastHeapContent(idx=len(self.basis)))
                 self.basis.append(new_basis_function)
                 new_parent = new_basis_function
@@ -509,7 +512,7 @@ cdef class ForwardPasser:
                                                False, label)
                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
                 self.orthonormal_update(B[:, len(self.basis)])
-                if self.use_fast:
+                if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
                     heappush(self.fast_heap, FastHeapContent(idx=len(self.basis)))
                 self.basis.append(new_basis_function)
 #             if self.basis.has_coverage(variable_choice):
@@ -528,7 +531,7 @@ cdef class ForwardPasser:
                                      False, label)
             new_basis_function.apply(X, missing, B[:, len(self.basis)])
             self.orthonormal_update(B[:, len(self.basis)])
-            if self.use_fast:
+            if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
                 heappush(self.fast_heap, FastHeapContent(idx=len(self.basis)))
             self.basis.append(new_basis_function)
             
@@ -538,7 +541,7 @@ cdef class ForwardPasser:
                                      True, label)
             new_basis_function.apply(X, missing, B[:, len(self.basis)])
             self.orthonormal_update(B[:, len(self.basis)])
-            if self.use_fast:
+            if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
                 heappush(self.fast_heap, FastHeapContent(idx=len(self.basis)))
             self.basis.append(new_basis_function)
             
@@ -599,7 +602,7 @@ cdef class ForwardPasser:
             new_basis_function = LinearBasisFunction(parent_choice, variable_choice, label)
             new_basis_function.apply(X, missing, B[:, len(self.basis)])
             self.orthonormal_update(B[:, len(self.basis)])
-            if self.use_fast:
+            if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
                 heappush(self.fast_heap, FastHeapContent(idx=len(self.basis)))
             self.basis.append(new_basis_function)
             
