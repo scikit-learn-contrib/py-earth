@@ -886,12 +886,10 @@ cdef class Basis:
         return (self.__class__, (self.num_variables,), self._getstate())
 
     def _getstate(Basis self):
-        return {'order': self.order,
-                'coverage': self.coverage}
+        return {'order': self.order}
 
     def __setstate__(Basis self, state):
         self.order = state['order']
-        self.coverage = state['coverage']
 
     def __richcmp__(Basis self, other, method):
         if method == 2:
