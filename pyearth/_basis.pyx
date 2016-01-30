@@ -448,6 +448,7 @@ cdef class DataVariableBasisFunction(VariableBasisFunction):
             data_dict[self.variable] += 1
         except:
             data_dict[self.variable] = 1
+        self.parent._effective_degree(data_dict, missing_dict)
     
     cpdef bint covered(DataVariableBasisFunction self, INDEX_t variable):
         '''
@@ -528,6 +529,7 @@ cdef class MissingnessBasisFunction(VariableBasisFunction):
             missing_dict[self.variable] += 1
         except:
             missing_dict[self.variable] = 1
+        self.parent._effective_degree(data_dict, missing_dict)
     
     cpdef bint covered(MissingnessBasisFunction self, INDEX_t variable):
         '''

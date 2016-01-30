@@ -29,6 +29,7 @@ cdef class Record:
 
     cpdef append(Record self, Iteration iteration):
         self.iterations.append(iteration)
+        self.report_append()
 
     cpdef FLOAT_t mse(Record self, INDEX_t iteration):
         return self.iterations[iteration].get_mse()
@@ -60,7 +61,10 @@ cdef class PruningPassRecord(Record):
         self.penalty = penalty
         self.sst = sst
         self.iterations = [FirstPruningPassIteration(size, mse)]
-
+    
+    def report_append(self):
+        pass
+    
     def __reduce__(PruningPassRecord self):
         return (PruningPassRecord, (1, 1, 1.0, 1.0, 1, 1.0), self._getstate())
 
@@ -117,7 +121,10 @@ cdef class ForwardPassRecord(Record):
         self.sst = sst
         self.iterations = [FirstForwardPassIteration(self.sst)]
         self.xlabels = xlabels
-
+    
+    def report_append(self):
+        print 'Current R^2 = %f' % self.rsq(len(self) - 1)
+    
     def __reduce__(ForwardPassRecord self):
         return (ForwardPassRecord, (self.num_samples, self.num_variables,
                                     self.penalty, self.sst, self.xlabels),

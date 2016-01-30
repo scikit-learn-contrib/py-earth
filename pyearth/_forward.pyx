@@ -103,7 +103,9 @@ cdef class ForwardPasser:
         self.basis = Basis(self.n)
         self.basis.append(ConstantBasisFunction())
         if self.use_fast is True:
-            heappush(self.fast_heap, FastHeapContent(idx=0))
+            content = FastHeapContent(idx=0)
+            heappush(self.fast_heap, content)
+            print 'push', content
             
         self.mwork = np.empty(shape=self.m, dtype=np.int)
         
@@ -296,16 +298,17 @@ cdef class ForwardPasser:
         if self.use_fast and not self.last_fast_empty:
             # choose only among the top "fast_K" basis functions
             # as parents
-            nb_basis = min(self.fast_K, k)
+            nb_basis = min(self.fast_K, k, len(self.fast_heap))
         else:
             nb_basis = k
 
         content_to_be_repushed = []
         for idx in range(nb_basis):
             # Iterate over parents
-            if self.use_fast is True:
+            if self.use_fast:
                 # retrieve the next basis function to try as parent
                 parent_basis_content = heappop(self.fast_heap)
+                print 'pop', parent_basis_content
                 content_to_be_repushed.append(parent_basis_content)
                 parent_idx = parent_basis_content.idx
                 mse_choice_cur_parent = -1
@@ -317,7 +320,7 @@ cdef class ForwardPasser:
             if not parent.is_splittable():
                 continue
 
-            if self.use_fast is True:
+            if self.use_fast:
                 # each "fast_h" iteration, force to pass through all the variables,
                 if self.iteration_number - parent_basis_content.m > self.fast_h or self.last_fast_empty:
                     variables = range(self.n)
@@ -484,18 +487,23 @@ cdef class ForwardPasser:
         
         if self.use_fast is True:
             for content in content_to_be_repushed:
+                print 'push', content
                 heappush(self.fast_heap, content)
 
         # Make sure at least one candidate was checked
         if first:
             if self.use_fast and not self.last_fast_empty:
                 self.last_fast_empty = True
+                return
             else:
                 self.record[len(self.record) - 1].set_no_candidates(True)
                 return
-        print 'Chose variable %d and parent %s' % (variable_choice, parent_choice)
+        
         # Add the new basis functions
         label = self.xlabels[variable_choice]
+        print 'Chose variable %s and parent %s' % (label, parent_choice)
+        if self.use_fast is True: 
+            parent_basis_content_choice.m = -np.inf
         if choice_needs_coverage:
             new_parent = parent_choice.get_coverage(variable_choice)
             if new_parent is None:
@@ -504,7 +512,9 @@ cdef class ForwardPasser:
                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
                 self.orthonormal_update(B[:, len(self.basis)])
                 if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
-                    heappush(self.fast_heap, FastHeapContent(idx=len(self.basis)))
+                    content = FastHeapContent(idx=len(self.basis))
+                    heappush(self.fast_heap, content)
+                    print 'push', content
                 self.basis.append(new_basis_function)
                 new_parent = new_basis_function
                 
@@ -513,7 +523,9 @@ cdef class ForwardPasser:
                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
                 self.orthonormal_update(B[:, len(self.basis)])
                 if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
-                    heappush(self.fast_heap, FastHeapContent(idx=len(self.basis)))
+                    content = FastHeapContent(idx=len(self.basis))
+                    heappush(self.fast_heap, content)
+                    print 'push', content
                 self.basis.append(new_basis_function)
 #             if self.basis.has_coverage(variable_choice):
 #                 bf3, bf4 = self.basis.get_coverage(variable_choice)
@@ -532,7 +544,9 @@ cdef class ForwardPasser:
             new_basis_function.apply(X, missing, B[:, len(self.basis)])
             self.orthonormal_update(B[:, len(self.basis)])
             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
+                content = FastHeapContent(idx=len(self.basis))
                 heappush(self.fast_heap, FastHeapContent(idx=len(self.basis)))
+                print 'push', content
             self.basis.append(new_basis_function)
             
             new_basis_function = HingeBasisFunction(new_parent,
@@ -542,7 +556,9 @@ cdef class ForwardPasser:
             new_basis_function.apply(X, missing, B[:, len(self.basis)])
             self.orthonormal_update(B[:, len(self.basis)])
             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
-                heappush(self.fast_heap, FastHeapContent(idx=len(self.basis)))
+                content = FastHeapContent(idx=len(self.basis))
+                heappush(self.fast_heap, content)
+                print 'push', content
             self.basis.append(new_basis_function)
             
 #             bf1.apply(X, missing, B[:, k])
@@ -603,7 +619,9 @@ cdef class ForwardPasser:
             new_basis_function.apply(X, missing, B[:, len(self.basis)])
             self.orthonormal_update(B[:, len(self.basis)])
             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
-                heappush(self.fast_heap, FastHeapContent(idx=len(self.basis)))
+                content = FastHeapContent(idx=len(self.basis))
+                heappush(self.fast_heap, content)
+                print 'push', content
             self.basis.append(new_basis_function)
             
 #             bf1.apply(X, missing, B[:, k])
@@ -639,8 +657,7 @@ cdef class ForwardPasser:
             # the forward pass
             self.record[len(self.record) - 1].set_no_candidates(True)
             return
-        if self.use_fast is True: 
-            parent_basis_content_choice.m = -np.inf
+        
 
         # Update the build record
         self.record.append(ForwardPassIteration(parent_idx_choice,
