@@ -73,6 +73,9 @@ class Householder(object):
     def pop_elementary_reflection(self):
         self.k -= 1
     
+    def reset(self):
+        self.k = 0
+        
     def apply(self, X):
         return X - np.dot(self.V[:,:self.k], np.dot(self.T[:self.k,:self.k], np.dot(self.V[:,:self.k].T, X)))
     

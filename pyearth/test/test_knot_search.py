@@ -82,7 +82,7 @@ def slow_knot_search(p, x, B, candidates, outcomes):
             r = w * (y - np.dot(X, beta))
             e_squared += np.dot(r, r)
         # Compute loss
-        e = np.sqrt(e_squared)
+        e = e_squared# / np.sum(w ** 2)
     
         # Compare to the best error
         if e < best_e:
@@ -169,6 +169,7 @@ def test_knot_search():
     
     
     
-
-
-
+if __name__ == '__main__':
+    test_outcome_dependent_data()
+    test_knot_candidates()
+    test_knot_search()

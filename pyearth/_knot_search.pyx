@@ -15,6 +15,8 @@ from _types import INDEX, FLOAT
 from _util cimport log2
 from pyearth.qr import Householder
 
+
+
 @cython.final
 cdef class OutcomeDependentData:
     def __init__(OutcomeDependentData self, FLOAT_t[:,:] Q_t, FLOAT_t[:] y, FLOAT_t[:] w,
@@ -122,6 +124,7 @@ cdef class OutcomeDependentData:
         cdef INDEX_t i
         self.w = w
         self.k = 0
+        self.householder.reset()
         for i in range(k):
             self.update_from_array(B[:, i], zero_tol)
         
