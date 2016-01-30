@@ -1081,7 +1081,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         mse = np.sum(sample_weight * (residual ** 2)) / np.sum(sample_weight)
         y_avg = np.average(y, weights=sample_weight, axis=0)
         
-        mse0 = np.sum(sample_weight * (y - y_avg) ** 2) / np.sum(sample_weight)
+        mse0 = np.sum(sample_weight * ((y - y_avg) ** 2)) / np.sum(sample_weight)
 #         mse0 = np.sum(y_sqr * output_weight) / m
         return 1 - (mse / mse0)
 # 
