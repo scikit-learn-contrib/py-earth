@@ -1024,7 +1024,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         return J
 
     def score(self, X, y=None, sample_weight=None, output_weight=None, 
-              missing=None, skip_scrub=True):
+              missing=None, skip_scrub=False):
         '''
         Calculate the generalized r^2 of the model on data X and y.
 
@@ -1077,11 +1077,11 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                 X, y, sample_weight, output_weight, missing)
         y_hat = self.predict(X)
 #         m, _ = X.shape
-        residual = y - y_hat[:, np.newaxis]
-        mse = np.sum(sample_weight[:, np.newaxis] * (residual ** 2)) / np.sum(sample_weight)
+        residual = y - y_hat
+        mse = np.sum(sample_weight * (residual ** 2)) / np.sum(sample_weight)
         y_avg = np.average(y, weights=sample_weight, axis=0)
         
-        mse0 = np.sum(sample_weight[:, np.newaxis] * (y - y_avg[np.newaxis, :]) ** 2) / np.sum(sample_weight)
+        mse0 = np.sum(sample_weight * (y - y_avg) ** 2) / np.sum(sample_weight)
 #         mse0 = np.sum(y_sqr * output_weight) / m
         return 1 - (mse / mse0)
 # 
