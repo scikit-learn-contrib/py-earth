@@ -47,6 +47,11 @@ if cythonize_switch:
              include_dirs=[local_inc,
                            numpy_inc]),
          Extension(
+             "pyearth._qr",
+             ["pyearth/_qr.pyx"],
+             include_dirs=[local_inc,
+                           numpy_inc]),
+         Extension(
              "pyearth._types",
              ["pyearth/_types.pyx"],
              include_dirs=[local_inc,
@@ -76,6 +81,11 @@ else:
         Extension(
             "pyearth._knot_search",
             ["pyearth/_knot_search.c"],
+            include_dirs=[local_inc,
+                          numpy_inc]),
+        Extension(
+            "pyearth._qr",
+            ["pyearth/_qr.c"],
             include_dirs=[local_inc,
                           numpy_inc]),
         Extension(

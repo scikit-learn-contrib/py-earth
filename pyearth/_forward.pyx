@@ -110,7 +110,7 @@ cdef class ForwardPasser:
         self.mwork = np.empty(shape=self.m, dtype=np.int)
         
         self.B = np.ones(
-            shape=(self.m, self.max_terms), order='F', dtype=np.float)
+            shape=(self.m, self.max_terms + 4), order='F', dtype=np.float)
         self.basis.transform(self.X, self.missing, self.B[:,0:1])
         
         if self.endspan < 0:
@@ -143,7 +143,7 @@ cdef class ForwardPasser:
                                                           self.n_outcomes, self.max_terms + 4)
         self.outcome.update_from_array(self.B[:,0], self.zero_tol)
         for i in range(self.n_outcomes):
-            working = KnotSearchWorkingData.alloc(self.max_terms)
+            working = KnotSearchWorkingData.alloc(self.max_terms + 4)
             self.workings.append(working)
         self.predictors = []
         for i in range(n_predictors):

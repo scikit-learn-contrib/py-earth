@@ -4,7 +4,7 @@ Created on Jan 28, 2016
 @author: jason
 '''
 import numpy as np
-from pyearth.qr import UpdatingQT
+from pyearth._qr import UpdatingQT
 
 def test_updating_qt():
     m = 10

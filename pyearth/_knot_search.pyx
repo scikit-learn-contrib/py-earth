@@ -14,7 +14,7 @@ from libc.math cimport log
 cimport numpy as cnp
 from _types import INDEX, FLOAT
 from _util cimport log2
-from pyearth.qr import Householder
+from _qr import Householder
 
 
 
@@ -52,7 +52,7 @@ cdef class SingleWeightDependentData:
         return self._update(zero_tol)
     
     cpdef int _update(SingleWeightDependentData self, FLOAT_t zero_tol):
-        # Compute the new housholder reflection
+        # Compute the new householder reflection
         np.asarray(self.Q_t)[self.k, :] = self.householder.apply_transpose(self.Q_t[self.k, :])
         self.householder.push_from_column(self.Q_t[self.k, self.k], self.Q_t[self.k,(self.k + 1):])
         

@@ -2632,6 +2632,7 @@ static char __pyx_k_bf[] = "bf";
 static char __pyx_k_id[] = "id";
 static char __pyx_k_mu[] = "mu";
 static char __pyx_k_np[] = "np";
+static char __pyx_k_qr[] = "_qr";
 static char __pyx_k_sp[] = "sp";
 static char __pyx_k_Q_t[] = "Q_t";
 static char __pyx_k_chi[] = "chi";
@@ -2712,7 +2713,6 @@ static char __pyx_k_IndexError[] = "IndexError";
 static char __pyx_k_ValueError[] = "ValueError";
 static char __pyx_k_candidates[] = "candidates";
 static char __pyx_k_n_outcomes[] = "n_outcomes";
-static char __pyx_k_pyearth_qr[] = "pyearth.qr";
 static char __pyx_k_pyx_vtable[] = "__pyx_vtable__";
 static char __pyx_k_Householder[] = "Householder";
 static char __pyx_k_MemoryError[] = "MemoryError";
@@ -2867,10 +2867,10 @@ static PyObject *__pyx_n_s_pop_elementary_reflection;
 static PyObject *__pyx_n_s_predictor;
 static PyObject *__pyx_n_s_psi;
 static PyObject *__pyx_n_s_push_from_column;
-static PyObject *__pyx_n_s_pyearth_qr;
 static PyObject *__pyx_n_s_pyx_getbuffer;
 static PyObject *__pyx_n_s_pyx_vtable;
 static PyObject *__pyx_n_s_q;
+static PyObject *__pyx_n_s_qr;
 static PyObject *__pyx_n_s_r;
 static PyObject *__pyx_n_s_range;
 static PyObject *__pyx_n_s_reset;
@@ -3840,7 +3840,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_6u
  *         return self._update(zero_tol)
  * 
  *     cpdef int _update(SingleWeightDependentData self, FLOAT_t zero_tol):             # <<<<<<<<<<<<<<
- *         # Compute the new housholder reflection
+ *         # Compute the new householder reflection
  *         np.asarray(self.Q_t)[self.k, :] = self.householder.apply_transpose(self.Q_t[self.k, :])
  */
 
@@ -3872,7 +3872,7 @@ static int __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData__update(s
 
   /* "pyearth/_knot_search.pyx":56
  *     cpdef int _update(SingleWeightDependentData self, FLOAT_t zero_tol):
- *         # Compute the new housholder reflection
+ *         # Compute the new householder reflection
  *         np.asarray(self.Q_t)[self.k, :] = self.householder.apply_transpose(self.Q_t[self.k, :])             # <<<<<<<<<<<<<<
  *         self.householder.push_from_column(self.Q_t[self.k, self.k], self.Q_t[self.k,(self.k + 1):])
  * 
@@ -3982,7 +3982,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_3, 1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "pyearth/_knot_search.pyx":57
- *         # Compute the new housholder reflection
+ *         # Compute the new householder reflection
  *         np.asarray(self.Q_t)[self.k, :] = self.householder.apply_transpose(self.Q_t[self.k, :])
  *         self.householder.push_from_column(self.Q_t[self.k, self.k], self.Q_t[self.k,(self.k + 1):])             # <<<<<<<<<<<<<<
  * 
@@ -4248,7 +4248,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_3, 1);
  *         return self._update(zero_tol)
  * 
  *     cpdef int _update(SingleWeightDependentData self, FLOAT_t zero_tol):             # <<<<<<<<<<<<<<
- *         # Compute the new housholder reflection
+ *         # Compute the new householder reflection
  *         np.asarray(self.Q_t)[self.k, :] = self.householder.apply_transpose(self.Q_t[self.k, :])
  */
 
@@ -28915,10 +28915,10 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_predictor, __pyx_k_predictor, sizeof(__pyx_k_predictor), 0, 0, 1, 1},
   {&__pyx_n_s_psi, __pyx_k_psi, sizeof(__pyx_k_psi), 0, 0, 1, 1},
   {&__pyx_n_s_push_from_column, __pyx_k_push_from_column, sizeof(__pyx_k_push_from_column), 0, 0, 1, 1},
-  {&__pyx_n_s_pyearth_qr, __pyx_k_pyearth_qr, sizeof(__pyx_k_pyearth_qr), 0, 0, 1, 1},
   {&__pyx_n_s_pyx_getbuffer, __pyx_k_pyx_getbuffer, sizeof(__pyx_k_pyx_getbuffer), 0, 0, 1, 1},
   {&__pyx_n_s_pyx_vtable, __pyx_k_pyx_vtable, sizeof(__pyx_k_pyx_vtable), 0, 0, 1, 1},
   {&__pyx_n_s_q, __pyx_k_q, sizeof(__pyx_k_q), 0, 0, 1, 1},
+  {&__pyx_n_s_qr, __pyx_k_qr, sizeof(__pyx_k_qr), 0, 0, 1, 1},
   {&__pyx_n_s_r, __pyx_k_r, sizeof(__pyx_k_r), 0, 0, 1, 1},
   {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
   {&__pyx_n_s_reset, __pyx_k_reset, sizeof(__pyx_k_reset), 0, 0, 1, 1},
@@ -28975,7 +28975,7 @@ static int __Pyx_InitCachedConstants(void) {
 
   /* "pyearth/_knot_search.pyx":56
  *     cpdef int _update(SingleWeightDependentData self, FLOAT_t zero_tol):
- *         # Compute the new housholder reflection
+ *         # Compute the new householder reflection
  *         np.asarray(self.Q_t)[self.k, :] = self.householder.apply_transpose(self.Q_t[self.k, :])             # <<<<<<<<<<<<<<
  *         self.householder.push_from_column(self.Q_t[self.k, self.k], self.Q_t[self.k,(self.k + 1):])
  * 
@@ -29590,7 +29590,7 @@ PyMODINIT_FUNC PyInit__knot_search(void)
  * cimport numpy as cnp
  * from _types import INDEX, FLOAT             # <<<<<<<<<<<<<<
  * from _util cimport log2
- * from pyearth.qr import Householder
+ * from _qr import Householder
  */
   __pyx_t_3 = PyList_New(2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 15; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
@@ -29616,7 +29616,7 @@ PyMODINIT_FUNC PyInit__knot_search(void)
   /* "pyearth/_knot_search.pyx":17
  * from _types import INDEX, FLOAT
  * from _util cimport log2
- * from pyearth.qr import Householder             # <<<<<<<<<<<<<<
+ * from _qr import Householder             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -29625,7 +29625,7 @@ PyMODINIT_FUNC PyInit__knot_search(void)
   __Pyx_INCREF(__pyx_n_s_Householder);
   __Pyx_GIVEREF(__pyx_n_s_Householder);
   PyList_SET_ITEM(__pyx_t_2, 0, __pyx_n_s_Householder);
-  __pyx_t_3 = __Pyx_Import(__pyx_n_s_pyearth_qr, __pyx_t_2, -1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 17; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_Import(__pyx_n_s_qr, __pyx_t_2, -1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 17; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_3, __pyx_n_s_Householder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 17; __pyx_clineno = __LINE__; goto __pyx_L1_error;}

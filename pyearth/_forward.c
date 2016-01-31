@@ -2512,11 +2512,11 @@ static PyObject* __pyx_print = 0;
 static PyObject* __pyx_print_kwargs = 0;
 #endif
 
-static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
-
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
 
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_Py_intptr_t(Py_intptr_t value);
+
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
 
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_npy_uint8(npy_uint8 value);
 
@@ -4743,7 +4743,7 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
  *         self.mwork = np.empty(shape=self.m, dtype=np.int)
  * 
  *         self.B = np.ones(             # <<<<<<<<<<<<<<
- *             shape=(self.m, self.max_terms), order='F', dtype=np.float)
+ *             shape=(self.m, self.max_terms + 4), order='F', dtype=np.float)
  *         self.basis.transform(self.X, self.missing, self.B[:,0:1])
  */
   __pyx_t_9 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -4757,13 +4757,13 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
   /* "pyearth/_forward.pyx":113
  * 
  *         self.B = np.ones(
- *             shape=(self.m, self.max_terms), order='F', dtype=np.float)             # <<<<<<<<<<<<<<
+ *             shape=(self.m, self.max_terms + 4), order='F', dtype=np.float)             # <<<<<<<<<<<<<<
  *         self.basis.transform(self.X, self.missing, self.B[:,0:1])
  * 
  */
   __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->m); if (unlikely(!__pyx_t_14)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 113; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_14);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->max_terms); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 113; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_From_long((__pyx_v_self->max_terms + 4)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 113; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 113; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
@@ -4788,7 +4788,7 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
  *         self.mwork = np.empty(shape=self.m, dtype=np.int)
  * 
  *         self.B = np.ones(             # <<<<<<<<<<<<<<
- *             shape=(self.m, self.max_terms), order='F', dtype=np.float)
+ *             shape=(self.m, self.max_terms + 4), order='F', dtype=np.float)
  *         self.basis.transform(self.X, self.missing, self.B[:,0:1])
  */
   __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_empty_tuple, __pyx_t_9); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -4804,7 +4804,7 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
 
   /* "pyearth/_forward.pyx":114
  *         self.B = np.ones(
- *             shape=(self.m, self.max_terms), order='F', dtype=np.float)
+ *             shape=(self.m, self.max_terms + 4), order='F', dtype=np.float)
  *         self.basis.transform(self.X, self.missing, self.B[:,0:1])             # <<<<<<<<<<<<<<
  * 
  *         if self.endspan < 0:
@@ -5198,7 +5198,7 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
  *                                                           self.n_outcomes, self.max_terms + 4)
  *         self.outcome.update_from_array(self.B[:,0], self.zero_tol)             # <<<<<<<<<<<<<<
  *         for i in range(self.n_outcomes):
- *             working = KnotSearchWorkingData.alloc(self.max_terms)
+ *             working = KnotSearchWorkingData.alloc(self.max_terms + 4)
  */
   __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_self->B), __pyx_tuple__8); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_GOTREF(__pyx_t_1);
@@ -5214,7 +5214,7 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
  *                                                           self.n_outcomes, self.max_terms + 4)
  *         self.outcome.update_from_array(self.B[:,0], self.zero_tol)
  *         for i in range(self.n_outcomes):             # <<<<<<<<<<<<<<
- *             working = KnotSearchWorkingData.alloc(self.max_terms)
+ *             working = KnotSearchWorkingData.alloc(self.max_terms + 4)
  *             self.workings.append(working)
  */
   __pyx_t_11 = __pyx_v_self->n_outcomes;
@@ -5224,13 +5224,13 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
     /* "pyearth/_forward.pyx":146
  *         self.outcome.update_from_array(self.B[:,0], self.zero_tol)
  *         for i in range(self.n_outcomes):
- *             working = KnotSearchWorkingData.alloc(self.max_terms)             # <<<<<<<<<<<<<<
+ *             working = KnotSearchWorkingData.alloc(self.max_terms + 4)             # <<<<<<<<<<<<<<
  *             self.workings.append(working)
  *         self.predictors = []
  */
     __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)((PyObject*)__pyx_ptype_7pyearth_12_knot_search_KnotSearchWorkingData)), __pyx_n_s_alloc); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_16 = __Pyx_PyInt_From_int(__pyx_v_self->max_terms); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_16 = __Pyx_PyInt_From_long((__pyx_v_self->max_terms + 4)); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_16);
     __pyx_t_9 = NULL;
     if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_3))) {
@@ -5263,7 +5263,7 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
 
     /* "pyearth/_forward.pyx":147
  *         for i in range(self.n_outcomes):
- *             working = KnotSearchWorkingData.alloc(self.max_terms)
+ *             working = KnotSearchWorkingData.alloc(self.max_terms + 4)
  *             self.workings.append(working)             # <<<<<<<<<<<<<<
  *         self.predictors = []
  *         for i in range(n_predictors):
@@ -5276,7 +5276,7 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
   }
 
   /* "pyearth/_forward.pyx":148
- *             working = KnotSearchWorkingData.alloc(self.max_terms)
+ *             working = KnotSearchWorkingData.alloc(self.max_terms + 4)
  *             self.workings.append(working)
  *         self.predictors = []             # <<<<<<<<<<<<<<
  *         for i in range(n_predictors):
@@ -25099,7 +25099,7 @@ static int __Pyx_InitCachedConstants(void) {
 
   /* "pyearth/_forward.pyx":114
  *         self.B = np.ones(
- *             shape=(self.m, self.max_terms), order='F', dtype=np.float)
+ *             shape=(self.m, self.max_terms + 4), order='F', dtype=np.float)
  *         self.basis.transform(self.X, self.missing, self.B[:,0:1])             # <<<<<<<<<<<<<<
  * 
  *         if self.endspan < 0:
@@ -25130,7 +25130,7 @@ static int __Pyx_InitCachedConstants(void) {
  *                                                           self.n_outcomes, self.max_terms + 4)
  *         self.outcome.update_from_array(self.B[:,0], self.zero_tol)             # <<<<<<<<<<<<<<
  *         for i in range(self.n_outcomes):
- *             working = KnotSearchWorkingData.alloc(self.max_terms)
+ *             working = KnotSearchWorkingData.alloc(self.max_terms + 4)
  */
   __pyx_slice__7 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__7);
@@ -29482,32 +29482,6 @@ bad:
 }
 #endif
 
-static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
-    const int neg_one = (int) -1, const_zero = 0;
-    const int is_unsigned = neg_one > const_zero;
-    if (is_unsigned) {
-        if (sizeof(int) < sizeof(long)) {
-            return PyInt_FromLong((long) value);
-        } else if (sizeof(int) <= sizeof(unsigned long)) {
-            return PyLong_FromUnsignedLong((unsigned long) value);
-        } else if (sizeof(int) <= sizeof(unsigned PY_LONG_LONG)) {
-            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
-        }
-    } else {
-        if (sizeof(int) <= sizeof(long)) {
-            return PyInt_FromLong((long) value);
-        } else if (sizeof(int) <= sizeof(PY_LONG_LONG)) {
-            return PyLong_FromLongLong((PY_LONG_LONG) value);
-        }
-    }
-    {
-        int one = 1; int little = (int)*(unsigned char *)&one;
-        unsigned char *bytes = (unsigned char *)&value;
-        return _PyLong_FromByteArray(bytes, sizeof(int),
-                                     little, !is_unsigned);
-    }
-}
-
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
     const long neg_one = (long) -1, const_zero = 0;
     const int is_unsigned = neg_one > const_zero;
@@ -29556,6 +29530,32 @@ static CYTHON_INLINE PyObject* __Pyx_PyInt_From_Py_intptr_t(Py_intptr_t value) {
         int one = 1; int little = (int)*(unsigned char *)&one;
         unsigned char *bytes = (unsigned char *)&value;
         return _PyLong_FromByteArray(bytes, sizeof(Py_intptr_t),
+                                     little, !is_unsigned);
+    }
+}
+
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
+    const int neg_one = (int) -1, const_zero = 0;
+    const int is_unsigned = neg_one > const_zero;
+    if (is_unsigned) {
+        if (sizeof(int) < sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(int) <= sizeof(unsigned long)) {
+            return PyLong_FromUnsignedLong((unsigned long) value);
+        } else if (sizeof(int) <= sizeof(unsigned PY_LONG_LONG)) {
+            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
+        }
+    } else {
+        if (sizeof(int) <= sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(int) <= sizeof(PY_LONG_LONG)) {
+            return PyLong_FromLongLong((PY_LONG_LONG) value);
+        }
+    }
+    {
+        int one = 1; int little = (int)*(unsigned char *)&one;
+        unsigned char *bytes = (unsigned char *)&value;
+        return _PyLong_FromByteArray(bytes, sizeof(int),
                                      little, !is_unsigned);
     }
 }

@@ -1,32 +1,27 @@
-'''
-Created on Jan 26, 2016
-
-@author: jason
-'''
 import numpy as np
-
-def compute_householder(alpha, x):
-    s = np.dot(x, x)
-    v = x.copy()
-    if s == 0:
-        tau = 0.
-    else:
-        t = np.sqrt(alpha ** 2 + s)
-        if alpha <= 0:
-            v_one = alpha - t
-        else:
-            v_one = -s / (alpha + t)
-        tau = 2 * (v_one ** 2) / (s + (v_one ** 2))
-        v *= (1 / v_one)
-    return tau, v
-
-def apply_elementary_reflection(tau, v, X):
-    p = v.shape[0]
-    if len(X.shape) == 1:
-        X = X[:, None]
-    m, n = X.shape
-    vv = np.concatenate([[1], v])[:, None]
-    X[(m - p -1):, (n - (m-p)):] -= tau * np.dot( vv, np.dot(vv.T, X[(m - p -1):, (n - (m-p)):]) )
+# 
+# def compute_householder(alpha, x):
+#     s = np.dot(x, x)
+#     v = x.copy()
+#     if s == 0:
+#         tau = 0.
+#     else:
+#         t = np.sqrt(alpha ** 2 + s)
+#         if alpha <= 0:
+#             v_one = alpha - t
+#         else:
+#             v_one = -s / (alpha + t)
+#         tau = 2 * (v_one ** 2) / (s + (v_one ** 2))
+#         v *= (1 / v_one)
+#     return tau, v
+# 
+# def apply_elementary_reflection(tau, v, X):
+#     p = v.shape[0]
+#     if len(X.shape) == 1:
+#         X = X[:, None]
+#     m, n = X.shape
+#     vv = np.concatenate([[1], v])[:, None]
+#     X[(m - p -1):, (n - (m-p)):] -= tau * np.dot( vv, np.dot(vv.T, X[(m - p -1):, (n - (m-p)):]) )
 
 
 class Householder(object):
@@ -99,9 +94,10 @@ class UpdatingQT(object):
     
     def update(self, x):
         x_ = self.householder.apply_transpose(x)
-        tau, v = compute_householder(x_[self.k], x_[(self.k + 1):])
         
-        self.householder.push_elementary_reflection(tau, v)
+#         tau, v = compute_householder(x_[self.k], x_[(self.k + 1):])
+        
+        self.householder.push_from_column(x_[self.k], x_[(self.k + 1):])
         self.Q_t[self.k, self.k] = 1.
         self.Q_t[self.k, :] = self.householder.apply(self.Q_t[self.k, :])
         self.k += 1
