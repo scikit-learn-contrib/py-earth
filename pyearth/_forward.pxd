@@ -3,6 +3,7 @@ import numpy as np
 from _types cimport FLOAT_t, INT_t, INDEX_t, BOOL_t
 from _basis cimport Basis
 from _record cimport ForwardPassRecord
+from _knot_search cimport MultipleOutcomeDependentData
 
 ctypedef enum StoppingCondition:
     MAXTERMS = 0,
@@ -50,11 +51,10 @@ cdef class ForwardPasser:
     cdef FLOAT_t y_squared
     
     # Knot search data
-    cdef list outcomes
+    cdef MultipleOutcomeDependentData outcome
     cdef list predictors
     cdef list workings
     cdef INDEX_t n_outcomes
-    
     
     # Working floating point data
     cdef cnp.ndarray B  # Data matrix in basis space
@@ -65,7 +65,7 @@ cdef class ForwardPasser:
     cdef cnp.ndarray u
     cdef cnp.ndarray B_orth_times_parent_cum
     cdef FLOAT_t c_squared
-
+    
     # Working integer data
     cdef cnp.ndarray sort_tracker
     cdef cnp.ndarray sorting
@@ -73,7 +73,7 @@ cdef class ForwardPasser:
     cdef cnp.ndarray linear_variables
     cdef int iteration_number
     cdef cnp.ndarray has_missing
-
+    
     # Object construction
     cdef ForwardPassRecord record
     cdef Basis basis

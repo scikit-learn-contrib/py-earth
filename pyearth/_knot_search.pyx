@@ -3,6 +3,7 @@
 # cython: boundscheck = False
 # cython: wraparound = False
 # cython: profile = True
+from statsmodels.sandbox.nonparametric.tests.ex_smoothers import weights
 
 
 cimport cython
@@ -18,47 +19,30 @@ from pyearth.qr import Householder
 
 
 @cython.final
-cdef class OutcomeDependentData:
-    def __init__(OutcomeDependentData self, FLOAT_t[:,:] Q_t, FLOAT_t[:] y, FLOAT_t[:] w,
-                 FLOAT_t[:] theta, FLOAT_t omega, INDEX_t m, INDEX_t k, INDEX_t max_terms, householder):
+cdef class SingleWeightDependentData:
+    def __init__(SingleWeightDependentData self, FLOAT_t[:,:] Q_t, FLOAT_t[:] w, INDEX_t m, 
+                 INDEX_t k, INDEX_t max_terms, householder):
         self.Q_t = Q_t
-        self.y = y
         self.w = w
-        self.theta = theta
-        self.omega = omega
         self.m = m
         self.k = k
         self.max_terms = max_terms
         self.householder = householder
     
     @classmethod
-    def alloc(cls, FLOAT_t[:] y, FLOAT_t[:] w, INDEX_t m, INDEX_t max_terms):
+    def alloc(cls, FLOAT_t[:] w, INDEX_t m, INDEX_t max_terms):
         cdef FLOAT_t[:,:] Q_t = np.empty(shape=(max_terms, m), dtype=np.float)
-        cdef FLOAT_t[:] theta
-        cdef FLOAT_t[:] wy = np.empty(shape=m, dtype=np.float)
-        cdef int i
-        for i in range(m):
-            wy[i] = w[i] * y[i]
-        cdef FLOAT_t omega = np.dot(wy, wy)
-        theta = np.dot(Q_t, wy)
         householder = Householder(m, max_terms)
-        return cls(Q_t, y, w, theta, omega, m, 0, max_terms, householder)
+        return cls(Q_t, w, m, 0, max_terms, householder)
     
-    cpdef FLOAT_t sse(OutcomeDependentData self):
-        '''
-        Return the weighted mean squared error for the linear least squares problem
-        represented by Q_t, y, and w.
-        '''
-        return ((self.omega - np.dot(self.theta, self.theta)) ** 2)# / np.sum(self.w)
-    
-    cpdef int update_from_basis_function(OutcomeDependentData self, BasisFunction bf, FLOAT_t[:,:] X, 
+    cpdef int update_from_basis_function(SingleWeightDependentData self, BasisFunction bf, FLOAT_t[:,:] X, 
                                          BOOL_t[:,:] missing, FLOAT_t zero_tol) except *:
         if self.k >= self.max_terms:
             return -1
         bf.apply(X, missing, self.Q_t[self.k, :])
         return self._update(zero_tol)
-        
-    cpdef int update_from_array(OutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *:
+                            
+    cpdef int update_from_array(SingleWeightDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *:
         if self.k >= self.max_terms:
             return -1
         
@@ -67,17 +51,7 @@ cdef class OutcomeDependentData:
             self.Q_t[self.k,j] = self.w[j] * b[j]
         return self._update(zero_tol)
     
-    cpdef int _update(OutcomeDependentData self, FLOAT_t zero_tol) except *:
-        # Assume Q_t[:k,:] is orthonormal (as transpose) and Q_t[k,:] has been added 
-        # and appropriately weighted.  Update k <- k + 1 and make Q_t[:k,:] orthonormal
-        # under the new value of k.
-    
-        if self.k >= self.max_terms:
-            return -1
-        
-        cdef INDEX_t i, j
-        cdef FLOAT_t coef
-        
+    cpdef int _update(SingleWeightDependentData self, FLOAT_t zero_tol):
         # Compute the new housholder reflection
         np.asarray(self.Q_t)[self.k, :] = self.householder.apply_transpose(self.Q_t[self.k, :])
         self.householder.push_from_column(self.Q_t[self.k, self.k], self.Q_t[self.k,(self.k + 1):])
@@ -87,46 +61,145 @@ cdef class OutcomeDependentData:
         self.Q_t[self.k, :] = 0.
         self.Q_t[self.k, self.k] = 1.
         np.asarray(self.Q_t)[self.k, :] = self.householder.apply(self.Q_t[self.k, :])
+        
         self.k += 1
-        self.theta = np.dot(self.Q_t[:self.k, :], np.asarray(self.y) * self.w)
         
-        # For the moment, just create an entirely new QR fatorization each time
-#         np.asarray(self.Q_t)[:self.k+1,:] = sp.linalg.qr(np.transpose(self.Q_t[:self.k+1,:]), mode='economic')[0].transpose()
-#         # This should really use BLAS
-#         cdef FLOAT_t nrm0 = sqrt(dot(self.Q_t[self.k,:], self.Q_t[self.k,:], self.m))
-#         
-#         for i in range(self.k):
-#             coef = dot(self.Q_t[i,:], self.Q_t[self.k,:], self.m)
-#             for j in range(self.m):
-#                 self.Q_t[self.k,j] -= coef * self.Q_t[i,j]
-#         cdef FLOAT_t nrm = sqrt(dot(self.Q_t[self.k,:], self.Q_t[self.k,:], self.m))
-#          
-#         if nrm0 <= zero_tol or nrm / nrm0 <= zero_tol:
-#             for i in range(self.m):
-#                 self.Q_t[self.k, i] = 0.
-#             self.theta[self.k] = 0.
-#             self.k += 1
-#             # The new column is in the column space of the previous columns
-#             return 1
-#         for i in range(self.m):
-#             self.Q_t[self.k, i] /= nrm
-#
-#         self.k += 1
-#         self.theta = np.dot(self.Q_t[:self.k, :], np.asarray(self.y) * self.w)
-        
-        return 0
-        
-    cpdef downdate(OutcomeDependentData self):
+    cpdef downdate(SingleWeightDependentData self):
         self.householder.pop_elementary_reflection()
         self.k -= 1
     
-    cpdef reweight(OutcomeDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k, FLOAT_t zero_tol):
+    cpdef reweight(SingleWeightDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k, 
+                   FLOAT_t zero_tol):
         cdef INDEX_t i
         self.w = w
         self.k = 0
         self.householder.reset()
         for i in range(k):
             self.update_from_array(B[:, i], zero_tol)
+        
+@cython.final
+cdef class MultipleOutcomeDependentData:
+    def __init__(MultipleOutcomeDependentData self, list outcomes, list weights):
+        self.outcomes = outcomes
+        self.weights = weights
+        
+    @classmethod
+    def alloc(cls, FLOAT_t[:,:] y, w, INDEX_t m, INDEX_t n_outcomes, INDEX_t max_terms):
+        cdef list weights
+        cdef list outcomes
+        cdef int i, n_weights
+        # w is a numpy array of weights
+        if len(w.shape) == 2 and w.shape[1] == n_outcomes:
+            n_weights = w.shape[1]
+            weights = []
+            for i in range(w.shape[1]):
+                weights.append(SingleWeightDependentData.alloc(w[:, i], m, max_terms))
+        elif len(w.shape) == 1 or w.shape[1] == 1:
+            n_weights = 1
+            if len(w.shape) == 1:
+                weights = [SingleWeightDependentData.alloc(w, m, max_terms)]
+            else:
+                weights = [SingleWeightDependentData.alloc(w[:, 0], m, max_terms)]
+        else:
+            raise ValueError('Shape of weights does not match shape of outcomes.')
+        
+        outcomes = []
+        for i in range(n_outcomes):
+            outcomes.append(SingleOutcomeDependentData.alloc(y[:, i], weights[i % n_weights], m, max_terms))
+        
+        return cls(outcomes, weights)
+    
+    cpdef update_from_array(MultipleOutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol):
+        cdef SingleWeightDependentData weight
+        cdef SingleOutcomeDependentData outcome
+        for weight in self.weights:
+            weight.update_from_array(b, zero_tol)
+        for outcome in self.outcomes:
+            outcome.update(zero_tol)
+    
+    cpdef downdate(MultipleOutcomeDependentData self):
+        cdef SingleWeightDependentData weight
+        cdef SingleOutcomeDependentData outcome
+        for weight in self.weights:
+            weight.downdate()
+        for outcome in self.outcomes:
+            outcome.downdate()
+            
+    cpdef list sse(MultipleOutcomeDependentData self):
+        return [outcome.sse() for outcome in self.outcomes]
+        
+@cython.final
+cdef class SingleOutcomeDependentData:
+    def __init__(SingleOutcomeDependentData self, FLOAT_t[:] y, SingleWeightDependentData weight,
+                 FLOAT_t[:] theta, FLOAT_t omega, INDEX_t m, INDEX_t k, INDEX_t max_terms):
+        self.y = y
+        self.weight = weight
+        self.theta = theta
+        self.omega = omega
+        self.m = m
+        self.k = k
+        self.max_terms = max_terms
+    
+    @classmethod
+    def alloc(cls, FLOAT_t[:] y, SingleWeightDependentData weight, INDEX_t m, INDEX_t max_terms):
+        cdef FLOAT_t[:] theta
+        cdef FLOAT_t[:] wy = np.empty(shape=m, dtype=np.float)
+        cdef int i
+        for i in range(m):
+            wy[i] = weight.w[i] * y[i]
+        cdef FLOAT_t omega = np.dot(wy, wy)
+        theta = np.dot(weight.Q_t, wy)
+        return cls(y, weight, theta, omega, m, 0, max_terms)
+    
+    cpdef FLOAT_t sse(SingleOutcomeDependentData self):
+        '''
+        Return the weighted mean squared error for the linear least squares problem
+        represented by Q_t, y, and w.
+        '''
+        return ((self.omega - np.dot(self.theta, self.theta)) ** 2)# / np.sum(self.w)
+    
+#     cpdef int update_from_basis_function(OutcomeDependentData self, BasisFunction bf, FLOAT_t[:,:] X, 
+#                                          BOOL_t[:,:] missing, FLOAT_t zero_tol) except *:
+#         if self.k >= self.max_terms:
+#             return -1
+#         bf.apply(X, missing, self.Q_t[self.k, :])
+#         return self._update(zero_tol)
+#         
+#     cpdef int update_from_array(OutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *:
+#         if self.k >= self.max_terms:
+#             return -1
+#         
+#         
+#         cdef INDEX_t j
+#         for j in range(self.m):
+#             self.Q_t[self.k,j] = self.w[j] * b[j]
+#         return self._update(zero_tol)
+    cpdef int synchronize(SingleOutcomeDependentData self, FLOAT_t zero_tol) except *:
+        self.k = self.weight.k
+        self.theta = np.dot(self.weight.Q_t[:self.k, :], np.asarray(self.y) * self.weight.w)
+        return 0
+    
+    cpdef int update(SingleOutcomeDependentData self, FLOAT_t zero_tol) except *:
+        # Assume weight has already been updated.
+        if self.k >= self.max_terms:
+            return -1
+        self.k += 1
+        self.theta = np.dot(self.weight.Q_t[:self.k, :], np.asarray(self.y) * self.weight.w)
+        
+        return 0
+        
+    cpdef downdate(SingleOutcomeDependentData self):
+        self.k -= 1
+    
+#     cpdef reweight(OutcomeDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k, FLOAT_t zero_tol):
+#         cdef INDEX_t i
+#         for weight in self.weights:
+#             
+#         self.w = w
+#         self.k = 0
+#         self.householder.reset()
+#         for i in range(k):
+#             self.update_from_array(B[:, i], zero_tol)
         
 
 @cython.final
@@ -196,22 +269,23 @@ cdef class PredictorDependentData:
 
 @cython.final
 cdef class KnotSearchReadOnlyData:
-    def __init__(KnotSearchReadOnlyData self, PredictorDependentData predictor, list outcomes):
+    def __init__(KnotSearchReadOnlyData self, PredictorDependentData predictor, MultipleOutcomeDependentData outcome):
         self.predictor = predictor
-        self.outcomes = outcomes
+        self.outcome = outcome
 
-    @classmethod
-    def alloc(cls, FLOAT_t[:,:] Q_t, FLOAT_t[:] p, FLOAT_t[:] x, 
-              INDEX_t[:] order, FLOAT_t[:] y, 
-              FLOAT_t[:] w, int max_terms):
-        cdef int n_outcomes = y.shape[1]
-        cdef PredictorDependentData predictor = PredictorDependentData(p, x, 
-                                                        order)
-        cdef list outcomes = []
-        cdef int i
-        for i in range(n_outcomes):
-            outcomes.append(OutcomeDependentData.alloc(y, w, max_terms))
-        return cls(predictor, outcomes)
+#     @classmethod
+#     def alloc(cls, FLOAT_t[:,:] Q_t, FLOAT_t[:] p, FLOAT_t[:] x, 
+#               INDEX_t[:] order, FLOAT_t[:] y, 
+#               FLOAT_t[:] w, int max_terms):
+#         cdef int n_outcomes = y.shape[1]
+#         cdef PredictorDependentData predictor = PredictorDependentData(p, x, 
+#                                                         order)
+#         cdef list outcomes = []
+#         cdef int i
+#         cdef MultipleOutcomeDependentDataoutcome = MultipleOutcomeDependentData.alloc():
+#         for i in range(n_outcomes):
+#             outcomes.append(OutcomeDependentData.alloc(y, w, max_terms))
+#         return cls(predictor, outcomes)
 
 
 @cython.final
@@ -297,7 +371,7 @@ cdef wdot(FLOAT_t[:] w, FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q):
     return result
 
 @cython.profile(False)
-cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData outcome, 
+cdef void fast_update(PredictorDependentData predictor, SingleOutcomeDependentData outcome, 
                         KnotSearchWorkingData working, FLOAT_t[:] p, INDEX_t q, INDEX_t m, INDEX_t r) except *:
     
     # Calculate all quantities depending on the rows such that
@@ -321,7 +395,7 @@ cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData out
     cdef FLOAT_t delta_lambda = 0.
     cdef FLOAT_t delta_mu = 0.
     cdef FLOAT_t delta_upsilon = 0.
-
+    
     while predictor.x[working.state.idx] > working.state.phi_next:
         idx = working.state.idx
         
@@ -329,18 +403,18 @@ cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData out
         # (because there will be a present(x[idx]) factor in it)..
         # Skipping such indices prevents problems if x[idx] is a nan of some kind.
         if p[idx] != 0.:
-            nu += (outcome.w[idx] ** 2) * (p[idx] ** 2)
-            xi += (outcome.w[idx] ** 2) * (p[idx] ** 2) * predictor.x[idx]
-            rho += (outcome.w[idx] ** 2) * (p[idx] ** 2) * (predictor.x[idx] ** 2)
-            sigma += (outcome.w[idx] ** 2) * outcome.y[idx] * p[idx] * predictor.x[idx]
-            tau += (outcome.w[idx] ** 2) * outcome.y[idx] * p[idx]
-            delta_lambda += (outcome.w[idx] ** 2) * (p[idx] ** 2) * predictor.x[idx]
-            delta_mu += (outcome.w[idx] ** 2) * (p[idx] ** 2)
-            delta_upsilon += (outcome.w[idx] ** 2) * outcome.y[idx] * p[idx]
+            nu += (outcome.weight.w[idx] ** 2) * (p[idx] ** 2)
+            xi += (outcome.weight.w[idx] ** 2) * (p[idx] ** 2) * predictor.x[idx]
+            rho += (outcome.weight.w[idx] ** 2) * (p[idx] ** 2) * (predictor.x[idx] ** 2)
+            sigma += (outcome.weight.w[idx] ** 2) * outcome.y[idx] * p[idx] * predictor.x[idx]
+            tau += (outcome.weight.w[idx] ** 2) * outcome.y[idx] * p[idx]
+            delta_lambda += (outcome.weight.w[idx] ** 2) * (p[idx] ** 2) * predictor.x[idx]
+            delta_mu += (outcome.weight.w[idx] ** 2) * (p[idx] ** 2)
+            delta_upsilon += (outcome.weight.w[idx] ** 2) * outcome.y[idx] * p[idx]
             for j in range(q):
-                working.chi[j] += outcome.Q_t[j,idx] * outcome.w[idx] * p[idx] * predictor.x[idx]
-                working.psi[j] += outcome.Q_t[j,idx] * outcome.w[idx] * p[idx]
-                working.delta_kappa[j] += outcome.Q_t[j,idx] * outcome.w[idx] * p[idx]
+                working.chi[j] += outcome.weight.Q_t[j,idx] * outcome.weight.w[idx] * p[idx] * predictor.x[idx]
+                working.psi[j] += outcome.weight.Q_t[j,idx] * outcome.weight.w[idx] * p[idx]
+                working.delta_kappa[j] += outcome.weight.Q_t[j,idx] * outcome.weight.w[idx] * p[idx]
             
         # Update idx for next iteration
         working.state.ord_idx += 1
@@ -359,10 +433,10 @@ cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData out
                             working.chi[j] - working.state.phi_next * working.psi[j]
                             
 #     x_should_be = np.maximum(np.asarray(predictor.x) - working.state.phi_next, 0) * p 
-#     alpha_should_be = np.dot(x_should_be * outcome.w, np.array(outcome.w) * outcome.y)
+#     alpha_should_be = np.dot(x_should_be * outcome.weight.w, np.array(outcome.weight.w) * outcome.y)
 #     print 'alpha = ', np.asarray(working.state.alpha), alpha_should_be
 #     print 'beta =', np.asarray(working.state.beta), np.dot(x_should_be, x_should_be)
-#     print 'gamma =', np.asarray(working.gamma[:q]), np.dot(outcome.Q_t[:q,:], x_should_be)
+#     print 'gamma =', np.asarray(working.gamma[:q]), np.dot(outcome.weight.Q_t[:q,:], x_should_be)
     
     # Compute epsilon_squared and zeta_squared
     if working.state.beta > 0:
@@ -389,7 +463,7 @@ cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p
                  INDEX_t r, INDEX_t n_outcomes):
     cdef KnotSearchReadOnlyData constant = data.constant
     cdef PredictorDependentData predictor = constant.predictor
-    cdef list outcomes = constant.outcomes
+    cdef list outcomes = constant.outcome.outcomes
     cdef list workings = data.workings
     
     # TODO: Remove these assertions
@@ -435,7 +509,7 @@ cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p
     # upsilon are correct for the update from (not to) phi_next.  That is,
     # alpha, beta, and gamma should be updated before kappa, lambda, mu,
     # and upsilon are updated.
-    cdef OutcomeDependentData outcome
+    cdef SingleOutcomeDependentData outcome
     cdef FLOAT_t zeta_squared
     cdef INDEX_t k
     cdef FLOAT_t loss
@@ -475,9 +549,9 @@ cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p
 #             
 #             for i in range(n_outcomes):
 #                 outcome = outcomes[i]
-#                 print 'should be eye = ', np.dot(outcome.Q_t[:q,:], np.transpose(outcome.Q_t[:q,:]))
-#                 omega_should_be = np.dot(np.array(outcome.w) * outcome.y, np.array(outcome.w) * outcome.y)
-#                 theta_should_be = np.dot(outcome.Q_t[:q,:], np.array(outcome.w) * outcome.y)
+#                 print 'should be eye = ', np.dot(outcome.weight.Q_t[:q,:], np.transpose(outcome.weight.Q_t[:q,:]))
+#                 omega_should_be = np.dot(np.array(outcome.weight.w) * outcome.y, np.array(outcome.weight.w) * outcome.y)
+#                 theta_should_be = np.dot(outcome.weight.Q_t[:q,:], np.array(outcome.weight.w) * outcome.y)
 #                 print 'omega =', outcome.omega, omega_should_be
 #                 print 'theta =', np.array(outcome.theta[:q]), theta_should_be
 #                 print 'theta^2 =', np.dot(outcome.theta[:q], outcome.theta[:q]), np.dot(theta_should_be, theta_should_be)
@@ -497,8 +571,8 @@ cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p
 #         for i in range(n_outcomes):
 #             outcome = outcomes[i]
 #             
-#             omega_should_be = np.dot(np.array(outcome.w) * outcome.y, np.array(outcome.w) * outcome.y)
-#             theta_should_be = np.dot(outcome.Q_t[:q,:], np.array(outcome.w) * outcome.y)
+#             omega_should_be = np.dot(np.array(outcome.weight.w) * outcome.y, np.array(outcome.weight.w) * outcome.y)
+#             theta_should_be = np.dot(outcome.weight.Q_t[:q,:], np.array(outcome.weight.w) * outcome.y)
 #             print 'omega =', outcome.omega, omega_should_be
 #             print 'theta =', np.array(outcome.theta[:q]), theta_should_be
 #             print 'theta^2 =', np.dot(outcome.theta[:q], outcome.theta[:q]), np.dot(theta_should_be, theta_should_be)

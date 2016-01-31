@@ -3,23 +3,45 @@ from _types cimport FLOAT_t, INT_t, INDEX_t, BOOL_t
 from _basis cimport BasisFunction
 
 @cython.final
-cdef class OutcomeDependentData:
-    cdef readonly FLOAT_t[:,:] Q_t
-    cdef readonly FLOAT_t[:] y
+cdef class SingleWeightDependentData:
+    cdef readonly FLOAT_t[:, :] Q_t
     cdef readonly FLOAT_t[:] w
+    cdef readonly INDEX_t m
+    cdef readonly INDEX_t k
+    cdef readonly INDEX_t max_terms
+    cdef readonly object householder
+    cpdef int update_from_basis_function(SingleWeightDependentData self, BasisFunction bf, FLOAT_t[:,:] X, 
+                                         BOOL_t[:,:] missing, FLOAT_t zero_tol) except *
+    cpdef int update_from_array(SingleWeightDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *
+    cpdef int _update(SingleWeightDependentData self, FLOAT_t zero_tol)
+    cpdef downdate(SingleWeightDependentData self)
+    cpdef reweight(SingleWeightDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k, 
+                   FLOAT_t zero_tol)
+    
+@cython.final
+cdef class MultipleOutcomeDependentData:
+    cdef list outcomes
+    cdef list weights
+    cpdef update_from_array(MultipleOutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol)
+    cpdef downdate(MultipleOutcomeDependentData self)
+    cpdef list sse(MultipleOutcomeDependentData self)
+    
+@cython.final
+cdef class SingleOutcomeDependentData:
+    cdef readonly FLOAT_t[:] y
+    cdef readonly SingleWeightDependentData weight
     cdef readonly FLOAT_t[:] theta
     cdef public FLOAT_t omega
     cdef public INDEX_t m
     cdef public INDEX_t k
     cdef public INDEX_t max_terms
     cdef public object householder
-    cpdef FLOAT_t sse(OutcomeDependentData self)
-    cpdef int update_from_basis_function(OutcomeDependentData self, BasisFunction bf, FLOAT_t[:,:] X, BOOL_t[:,:] missing, FLOAT_t zero_tol) except *
-    cpdef int update_from_array(OutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *
-    cpdef int _update(OutcomeDependentData self, FLOAT_t zero_tol) except *
-    cpdef downdate(OutcomeDependentData self)
-    cpdef reweight(OutcomeDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k, FLOAT_t zero_tol)
-    
+    cpdef FLOAT_t sse(SingleOutcomeDependentData self)
+    cpdef int synchronize(SingleOutcomeDependentData self, FLOAT_t zero_tol) except *
+    cpdef int update(SingleOutcomeDependentData self, FLOAT_t zero_tol) except *
+    cpdef downdate(SingleOutcomeDependentData self)
+
+
 @cython.final
 cdef class PredictorDependentData:
     cdef readonly FLOAT_t[:] p
@@ -30,7 +52,7 @@ cdef class PredictorDependentData:
 @cython.final
 cdef class KnotSearchReadOnlyData:
     cdef readonly PredictorDependentData predictor
-    cdef readonly list outcomes
+    cdef readonly MultipleOutcomeDependentData outcome
 
 @cython.final
 cdef class KnotSearchState:
@@ -63,7 +85,7 @@ cdef class KnotSearchData:
 cdef dot(FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q)
 cdef w2dot(FLOAT_t[:] w, FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q)
 cdef wdot(FLOAT_t[:] w, FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q)
-cdef void fast_update(PredictorDependentData predictor, OutcomeDependentData outcome, 
+cdef void fast_update(PredictorDependentData predictor, SingleOutcomeDependentData outcome, 
                         KnotSearchWorkingData working, FLOAT_t[:] p, INDEX_t q, INDEX_t m ,INDEX_t r) except *
 cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p, INDEX_t q, INDEX_t m, INDEX_t r, INDEX_t n_outcomes)
 

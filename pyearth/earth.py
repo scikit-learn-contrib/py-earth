@@ -7,7 +7,6 @@ from sklearn.utils.validation import (assert_all_finite, check_is_fitted,
                                       check_X_y)
 import numpy as np
 from scipy import sparse
-import sys
 
 
 class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
@@ -399,16 +398,14 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
         # Deal with sample_weight
         if sample_weight is None:
-            sample_weight = np.ones((y.shape), dtype=y.dtype)
+            sample_weight = np.ones((y.shape[0], 1), dtype=y.dtype)
         else:
             sample_weight = np.asarray(sample_weight)
             assert_all_finite(sample_weight)
             if len(sample_weight.shape) == 1:
                 sample_weight = sample_weight[:, np.newaxis]
         # Deal with output_weight
-        if output_weight is None:
-            output_weight = np.ones(y.shape[1], dtype=y.dtype)
-        else:
+        if output_weight is not None:
             output_weight = np.asarray(output_weight)
             assert_all_finite(output_weight)
 
@@ -418,13 +415,14 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         if y.shape[0] != sample_weight.shape[0]:
             raise ValueError(
                 'y and sample_weight do not have compatible dimensions.')
-        if y.shape[1] > 1:
-            if sample_weight.shape[1] == 1:
-                sample_weight = np.repeat(sample_weight,2,axis=1)
-        if y.shape[1] != output_weight.shape[0]:
+        if output_weight is not None and y.shape[1] != output_weight.shape[0]:
             raise ValueError(
                 'y and output_weight do not have compatible dimensions.')
-        sample_weight *= output_weight
+        if y.shape[1] > 1:
+            if sample_weight.shape[1] == 1 and output_weight is not None:
+                sample_weight = np.repeat(sample_weight,y.shape[1],axis=1)
+        if output_weight is not None:
+            sample_weight *= output_weight
 
         # Make sure everything is finite (except X, which is allowed to have
         # missing values)
@@ -696,7 +694,9 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         if not skip_scrub:
             X, y, sample_weight, output_weight, missing = self._scrub(
                 X, y, sample_weight, output_weight, missing)
-
+            
+        if sample_weight.shape[1]:
+            sample_weight = np.repeat(sample_weight,y.shape[1],axis=1)
         # Pull arguments from self
         args = self._pull_pruning_args(**self.__dict__)
         # Do the actual work
@@ -879,13 +879,19 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             X, y, sample_weight, output_weight, missing = self._scrub(
                 X, y, sample_weight, output_weight, missing)
         
+        if sample_weight.shape[1]:
+            sample_weight = np.repeat(sample_weight,y.shape[1],axis=1)
+        
         # Solve the linear least squares problem
         self.coef_ = []
         resid_ = []
         for i in range(y.shape[1]):
             
             # Apply weights to B
-            w = sample_weight[:, i]
+            if sample_weight.shape[1] == 1:
+                w = sample_weight[:, i]
+            else:
+                w = sample_weight[:, 0]
             
             # Transform into basis space
             B = self.transform(X, missing) * w[:, None]
@@ -1075,6 +1081,8 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         if not skip_scrub:
             X, y, sample_weight, output_weight, missing = self._scrub(
                 X, y, sample_weight, output_weight, missing)
+        if sample_weight.shape[1]:
+            sample_weight = np.repeat(sample_weight,y.shape[1],axis=1)
         y_hat = self.predict(X)
 #         m, _ = X.shape
         residual = y - y_hat

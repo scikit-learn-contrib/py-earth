@@ -1,5 +1,6 @@
-from pyearth._knot_search import OutcomeDependentData, KnotSearchWorkingData, \
-    PredictorDependentData, KnotSearchReadOnlyData, KnotSearchData, knot_search
+from pyearth._knot_search import MultipleOutcomeDependentData, KnotSearchWorkingData, \
+    PredictorDependentData, KnotSearchReadOnlyData, KnotSearchData, knot_search, \
+    SingleWeightDependentData, SingleOutcomeDependentData
 from nose.tools import assert_true, assert_equal
 import numpy as np
 from numpy.testing.utils import assert_almost_equal, assert_array_equal
@@ -11,40 +12,48 @@ def test_outcome_dependent_data():
     max_terms = 100
     y = np.random.normal(size=m)
     w = np.random.normal(size=m) ** 2
-    data = OutcomeDependentData.alloc(y, w, m, max_terms)
+    weight = SingleWeightDependentData.alloc(w, m, max_terms)
+    data = SingleOutcomeDependentData.alloc(y, weight, m, max_terms)
     
     # Test updating
     B = np.empty(shape=(m,max_terms))
     for k in range(max_terms):
         b = np.random.normal(size=m)
         B[:,k] = b
-        code = data.update_from_array(b, 1e-16)
+        code = weight.update_from_array(b, 1e-16)
+        if k >= 99:
+            1+1
+        data.update(1e-16)
         assert_equal(code, 0)
-        assert_almost_equal(np.dot(data.Q_t[:k+1,:], np.transpose(data.Q_t[:k+1,:])),
+        assert_almost_equal(np.dot(weight.Q_t[:k+1,:], np.transpose(weight.Q_t[:k+1,:])),
                             np.eye(k+1))
-    assert_equal(data.update_from_array(b, 1e-16), -1)
+    assert_equal(weight.update_from_array(b, 1e-16), -1)
+#     data.update(1e-16)
     
     # Test downdating
-    q = np.array(data.Q_t).copy()
+    q = np.array(weight.Q_t).copy()
     theta = np.array(data.theta[:max_terms]).copy()
+    weight.downdate()
     data.downdate()
-    data.update_from_array(b, 1e-16)
-    assert_almost_equal(q, np.array(data.Q_t))
+    weight.update_from_array(b, 1e-16)
+    data.update(1e-16)
+    assert_almost_equal(q, np.array(weight.Q_t))
     assert_almost_equal(theta, np.array(data.theta[:max_terms]))
-    assert_almost_equal(np.array(data.theta[:max_terms]), np.dot(data.Q_t, w * y))
+    assert_almost_equal(np.array(data.theta[:max_terms]), np.dot(weight.Q_t, w * y))
     wB = B * w[:,None]
     Q, _ = qr(wB, pivoting=False, mode='economic')
-    assert_almost_equal(np.abs(np.dot(data.Q_t, Q)), np.eye(max_terms))
+    assert_almost_equal(np.abs(np.dot(weight.Q_t, Q)), np.eye(max_terms))
     
     # Test that reweighting works
     assert_equal(data.k, max_terms)
     w2 = np.random.normal(size=m) ** 2
-    data.reweight(w2, B, max_terms, 1e-16)
+    weight.reweight(w2, B, max_terms, 1e-16)
+    data.synchronize(1e-16)
     assert_equal(data.k, max_terms)
     w2B = B * w2[:,None]
     Q2, _ = qr(w2B, pivoting=False, mode='economic')
-    assert_almost_equal(np.abs(np.dot(data.Q_t, Q2)), np.eye(max_terms))
-    assert_almost_equal(np.array(data.theta[:max_terms]), np.dot(data.Q_t, w2 * y))
+    assert_almost_equal(np.abs(np.dot(weight.Q_t, Q2)), np.eye(max_terms))
+    assert_almost_equal(np.array(data.theta[:max_terms]), np.dot(weight.Q_t, w2 * y))
 
 def test_knot_candidates():
     np.random.seed(10)
@@ -118,21 +127,20 @@ def generate_problem(m, q, r, n_outcomes, shared_weight):
     return x, B, p, knot, candidates, outcomes
 
 
-def form_inputs(x, B, p, knot, candidates, outcomes):
+def form_inputs(x, B, p, knot, candidates, y, w):
     # Formulate the inputs for the fast version
     m, q = B.shape
     max_terms = q + 2
-    outcomes_ = []
     workings = []
-    for y, w in outcomes:
+    n_outcomes = w.shape[1]
+    for _ in range(n_outcomes):
         working = KnotSearchWorkingData.alloc(max_terms)
         workings.append(working)
-        outcome = OutcomeDependentData.alloc(y, w, m, max_terms)
-        outcome.reweight(w, B, q, 1e-16)
-        assert_equal(outcome.k, q)
-        outcomes_.append(outcome)
+    outcome = MultipleOutcomeDependentData.alloc(y, w, m, n_outcomes, max_terms)
+    for j in range(B.shape[1]):
+        outcome.update_from_array(B[:, j], 1e-16)
     predictor = PredictorDependentData.alloc(x)
-    constant = KnotSearchReadOnlyData(predictor, outcomes_)
+    constant = KnotSearchReadOnlyData(predictor, outcome)
     return KnotSearchData(constant, workings, q)
 
 def test_knot_search():
@@ -145,9 +153,11 @@ def test_knot_search():
     
     # Generate some problem data
     x, B, p, knot, candidates, outcomes = generate_problem(m, q,  r, n_outcomes, False)
-
+    y = np.concatenate([y_[:, None] for y_, _ in outcomes], axis=1)
+    w = np.concatenate([w_[:, None] for _, w_ in outcomes], axis=1)
+    
     # Formulate the inputs for the fast version
-    data = form_inputs(x, B, p, knot, candidates, outcomes)
+    data = form_inputs(x, B, p, knot, candidates, y, w)
     
     # Get the answer using the slow version
     best_knot, best_k, best_e = slow_knot_search(p, x, B, candidates, outcomes)

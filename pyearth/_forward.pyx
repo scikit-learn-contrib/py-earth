@@ -10,7 +10,7 @@ from ._basis cimport (Basis, BasisFunction, ConstantBasisFunction,
                       MissingnessBasisFunction)
 from ._record cimport ForwardPassIteration
 from ._types import BOOL
-from ._knot_search cimport knot_search, OutcomeDependentData, PredictorDependentData, \
+from ._knot_search cimport knot_search, MultipleOutcomeDependentData, PredictorDependentData, \
     KnotSearchReadOnlyData, KnotSearchState, KnotSearchWorkingData, KnotSearchData
 import sys
 from libc.math cimport sqrt, abs, log
@@ -138,19 +138,13 @@ cdef class ForwardPasser:
         self.n_outcomes = self.y.shape[1]
         n_predictors = self.X.shape[1]
         n_weights = self.sample_weight.shape[1]
-        self.outcomes = []
         self.workings = []
+        self.outcome = MultipleOutcomeDependentData.alloc(self.y, self.sample_weight, self.m, 
+                                                          self.n_outcomes, self.max_terms + 4)
+        self.outcome.update_from_array(self.B[:,0], self.zero_tol)
         for i in range(self.n_outcomes):
-            y_col = self.y[:, i]
-            if n_weights == 1:
-                w_col = self.sample_weight.flatten()
-            else:
-                w_col = self.sample_weight[:, i].flatten()
             working = KnotSearchWorkingData.alloc(self.max_terms)
-            outcome = OutcomeDependentData.alloc(y_col, w_col, self.m, self.max_terms)
-            outcome.update_from_array(self.B[:,0], self.zero_tol)
             self.workings.append(working)
-            self.outcomes.append(outcome)
         self.predictors = []
         for i in range(n_predictors):
             x = self.X[:, i]
@@ -192,7 +186,7 @@ cdef class ForwardPasser:
 
     cdef stop_check(ForwardPasser self):
         last = self.record.__len__() - 1
-        if self.record.iterations[last].get_size() + 4 > self.max_terms:
+        if self.record.iterations[last].get_size() > self.max_terms:
             self.record.stopping_condition = MAXTERMS
             return True
         rsq = self.record.rsq(last)
@@ -215,19 +209,24 @@ cdef class ForwardPasser:
         # Update the outcome data
         linear_dependence = False
         return_codes = []
-        for outcome in self.outcomes:
-            return_code = outcome.update_from_array(b, self.zero_tol)
-            if return_code == -1:
-                raise ValueError('This should not have happened.')
-            return_codes.append(return_code != 0)
-        # TODO: Change to any?
-        if all(return_codes):
+        return_code = self.outcome.update_from_array(b, self.zero_tol)
+        if return_code == -1:
+            raise ValueError('This should not have happened.')
+        if return_code == 1:
             linear_dependence = True
         return linear_dependence
+#         for outcome in self.outcomes:
+#             return_code = outcome.update_from_array(b, self.zero_tol)
+#             if return_code == -1:
+#                 raise ValueError('This should not have happened.')
+#             return_codes.append(return_code != 0)
+#         # TODO: Change to any?
+#         if all(return_codes):
+#             linear_dependence = True
+#         return linear_dependence
     
     cpdef orthonormal_downdate(ForwardPasser self):
-        for outcome in self.outcomes:
-            outcome.downdate()
+        self.outcome.downdate()
         
     def trace(self):
         return self.record
@@ -388,7 +387,7 @@ cdef class ForwardPasser:
                 # term in order to compare later.  Note that the mse with
                 # another term never increases, but the gcv may because it
                 # penalizes additional terms.
-                mse_ = sum([outcome.sse() for outcome in self.outcomes]) / np.sum(self.sample_weight ** 2)
+                mse_ = sum(self.outcome.sse()) / np.sum(self.sample_weight ** 2)
                 if missing_flag and not covered:
                     gcv_ = gcv_factor_k_plus_3 * mse_
                 else:
@@ -412,7 +411,7 @@ cdef class ForwardPasser:
                         # Find the best knot location for this parent and
                         # variable combination
                         # Assemble the knot search data structure
-                        constant = KnotSearchReadOnlyData(predictor, self.outcomes)
+                        constant = KnotSearchReadOnlyData(predictor, self.outcome)
                         search_data = KnotSearchData(constant, self.workings, q)
 
                         # Run knot search
