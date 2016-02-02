@@ -2,7 +2,7 @@
 # cython: cdivision = True
 # cython: boundscheck = False
 # cython: wraparound = False
-# cython: profile = True
+# cython: profile = False
 
 from ._record cimport PruningPassIteration
 from ._util cimport gcv, apply_weights_2d
@@ -30,7 +30,7 @@ cdef class PruningPasser:
             y_avg = np.average(self.y, weights=sample_weight[:,0], axis=0)
         else:
             y_avg = np.average(self.y, weights=sample_weight, axis=0)
-        self.sst = np.sum(sample_weight[:, np.newaxis] * (self.y - y_avg[np.newaxis, :]) ** 2) / self.m
+        self.sst = np.sum(sample_weight[:, np.newaxis] * (self.y - y_avg[np.newaxis, :]) ** 2) / np.sum(self.sample_weight)
 
     cpdef run(PruningPasser self):
         # This is a totally naive implementation and could potentially be made

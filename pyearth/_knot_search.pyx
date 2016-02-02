@@ -2,10 +2,7 @@
 # cython: cdivision = True
 # cython: boundscheck = False
 # cython: wraparound = False
-# cython: profile = True
-from statsmodels.sandbox.nonparametric.tests.ex_smoothers import weights
-
-
+# cython: profile = False
 cimport cython
 import numpy as np
 import scipy as sp

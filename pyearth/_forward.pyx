@@ -2,7 +2,7 @@
 # cython: cdivision = True
 # cython: boundscheck = False
 # cython: wraparound = False
-# cython: profile = True
+# cython: profile = False
 
 from ._util cimport gcv_adjust, log2, apply_weights_1d, apply_weights_slice
 from ._basis cimport (Basis, BasisFunction, ConstantBasisFunction,
@@ -86,6 +86,7 @@ cdef class ForwardPasser:
             self.has_missing = np.any(self.missing, axis=0).astype(BOOL)
             
         self.last_fast_empty = False
+        self.last_fast_low_improvement = False
         self.fast_heap = []
 
         if self.xlabels is None:
@@ -195,8 +196,13 @@ cdef class ForwardPasser:
             return True
         previous_rsq = self.record.rsq(last - 1)
         if rsq - previous_rsq < self.thresh:
-            self.record.stopping_condition = NOIMPRV
-            return True
+            if self.use_fast and not self.last_fast_low_improvement:
+                self.last_fast_low_improvement = True
+            else:
+                self.record.stopping_condition = NOIMPRV
+                return True
+        elif self.use_fast:
+            self.last_fast_low_improvement = False
         if self.record.grsq(last) < -10:
             self.record.stopping_condition = LOWGRSQ
             return True
@@ -294,12 +300,12 @@ cdef class ForwardPasser:
         cdef cnp.ndarray[FLOAT_t, ndim = 1] b
         cdef cnp.ndarray[FLOAT_t, ndim = 1] p
         
-        if self.use_fast and not self.last_fast_empty:
+        if self.use_fast and not (self.last_fast_empty or self.last_fast_low_improvement):
             # choose only among the top "fast_K" basis functions
             # as parents
             nb_basis = min(self.fast_K, k, len(self.fast_heap))
         else:
-            nb_basis = k
+            nb_basis = min(k, len(self.fast_heap))
 
         content_to_be_repushed = []
         for idx in range(nb_basis):

@@ -1392,203 +1392,6 @@ static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
 
 static CYTHON_INLINE int __Pyx_CheckKeywordStrings(PyObject *kwdict, const char* function_name, int kw_allowed);
 
-#ifndef CYTHON_PROFILE
-  #define CYTHON_PROFILE 1
-#endif
-#ifndef CYTHON_TRACE_NOGIL
-  #define CYTHON_TRACE_NOGIL 0
-#else
-  #if CYTHON_TRACE_NOGIL && !defined(CYTHON_TRACE)
-    #define CYTHON_TRACE 1
-  #endif
-#endif
-#ifndef CYTHON_TRACE
-  #define CYTHON_TRACE 0
-#endif
-#if CYTHON_TRACE
-  #undef CYTHON_PROFILE_REUSE_FRAME
-#endif
-#ifndef CYTHON_PROFILE_REUSE_FRAME
-  #define CYTHON_PROFILE_REUSE_FRAME 0
-#endif
-#if CYTHON_PROFILE || CYTHON_TRACE
-  #include "compile.h"
-  #include "frameobject.h"
-  #include "traceback.h"
-  #if CYTHON_PROFILE_REUSE_FRAME
-    #define CYTHON_FRAME_MODIFIER static
-    #define CYTHON_FRAME_DEL(frame)
-  #else
-    #define CYTHON_FRAME_MODIFIER
-    #define CYTHON_FRAME_DEL(frame) Py_CLEAR(frame)
-  #endif
-  #define __Pyx_TraceDeclarations\
-  static PyCodeObject *__pyx_frame_code = NULL;\
-  CYTHON_FRAME_MODIFIER PyFrameObject *__pyx_frame = NULL;\
-  int __Pyx_use_tracing = 0;
-  #define __Pyx_TraceFrameInit(codeobj)\
-  if (codeobj) __pyx_frame_code = (PyCodeObject*) codeobj;
-  #ifdef WITH_THREAD
-  #define __Pyx_TraceCall(funcname, srcfile, firstlineno, nogil, goto_error)\
-  if (nogil) {\
-      if (CYTHON_TRACE_NOGIL) {\
-          PyThreadState *tstate;\
-          PyGILState_STATE state = PyGILState_Ensure();\
-          tstate = PyThreadState_GET();\
-          if (unlikely(tstate->use_tracing) && !tstate->tracing &&\
-                  (tstate->c_profilefunc || (CYTHON_TRACE && tstate->c_tracefunc))) {\
-              __Pyx_use_tracing = __Pyx_TraceSetupAndCall(&__pyx_frame_code, &__pyx_frame, funcname, srcfile, firstlineno);\
-          }\
-          PyGILState_Release(state);\
-          if (unlikely(__Pyx_use_tracing < 0)) goto_error;\
-      }\
-  } else {\
-      PyThreadState* tstate = PyThreadState_GET();\
-      if (unlikely(tstate->use_tracing) && !tstate->tracing &&\
-              (tstate->c_profilefunc || (CYTHON_TRACE && tstate->c_tracefunc))) {\
-          __Pyx_use_tracing = __Pyx_TraceSetupAndCall(&__pyx_frame_code, &__pyx_frame, funcname, srcfile, firstlineno);\
-          if (unlikely(__Pyx_use_tracing < 0)) goto_error;\
-      }\
-  }
-  #else
-  #define __Pyx_TraceCall(funcname, srcfile, firstlineno, nogil, goto_error)\
-  {   PyThreadState* tstate = PyThreadState_GET();\
-      if (unlikely(tstate->use_tracing) && !tstate->tracing &&\
-              (tstate->c_profilefunc || (CYTHON_TRACE && tstate->c_tracefunc))) {\
-          __Pyx_use_tracing = __Pyx_TraceSetupAndCall(&__pyx_frame_code, &__pyx_frame, funcname, srcfile, firstlineno);\
-          if (unlikely(__Pyx_use_tracing < 0)) goto_error;\
-      }\
-  }
-  #endif
-  #define __Pyx_TraceException()\
-  if (likely(!__Pyx_use_tracing)); else {\
-      PyThreadState* tstate = PyThreadState_GET();\
-      if (tstate->use_tracing &&\
-              (tstate->c_profilefunc || (CYTHON_TRACE && tstate->c_tracefunc))) {\
-          tstate->tracing++;\
-          tstate->use_tracing = 0;\
-          PyObject *exc_info = __Pyx_GetExceptionTuple();\
-          if (exc_info) {\
-              if (CYTHON_TRACE && tstate->c_tracefunc)\
-                  tstate->c_tracefunc(\
-                      tstate->c_traceobj, __pyx_frame, PyTrace_EXCEPTION, exc_info);\
-              tstate->c_profilefunc(\
-                  tstate->c_profileobj, __pyx_frame, PyTrace_EXCEPTION, exc_info);\
-              Py_DECREF(exc_info);\
-          }\
-          tstate->use_tracing = 1;\
-          tstate->tracing--;\
-      }\
-  }
-  static void __Pyx_call_return_trace_func(PyThreadState *tstate, PyFrameObject *frame, PyObject *result) {
-      PyObject *type, *value, *traceback;
-      PyErr_Fetch(&type, &value, &traceback);
-      tstate->tracing++;
-      tstate->use_tracing = 0;
-      if (CYTHON_TRACE && tstate->c_tracefunc)
-          tstate->c_tracefunc(tstate->c_traceobj, frame, PyTrace_RETURN, result);
-      if (tstate->c_profilefunc)
-          tstate->c_profilefunc(tstate->c_profileobj, frame, PyTrace_RETURN, result);
-      CYTHON_FRAME_DEL(frame);
-      tstate->use_tracing = 1;
-      tstate->tracing--;
-      PyErr_Restore(type, value, traceback);
-  }
-  #ifdef WITH_THREAD
-  #define __Pyx_TraceReturn(result, nogil)\
-  if (likely(!__Pyx_use_tracing)); else {\
-      if (nogil) {\
-          if (CYTHON_TRACE_NOGIL) {\
-              PyThreadState *tstate;\
-              PyGILState_STATE state = PyGILState_Ensure();\
-              tstate = PyThreadState_GET();\
-              if (tstate->use_tracing) {\
-                  __Pyx_call_return_trace_func(tstate, __pyx_frame, (PyObject*)result);\
-              }\
-              PyGILState_Release(state);\
-          }\
-      } else {\
-          PyThreadState* tstate = PyThreadState_GET();\
-          if (tstate->use_tracing) {\
-              __Pyx_call_return_trace_func(tstate, __pyx_frame, (PyObject*)result);\
-          }\
-      }\
-  }
-  #else
-  #define __Pyx_TraceReturn(result, nogil)\
-  if (likely(!__Pyx_use_tracing)); else {\
-      PyThreadState* tstate = PyThreadState_GET();\
-      if (tstate->use_tracing) {\
-          __Pyx_call_return_trace_func(tstate, __pyx_frame, (PyObject*)result);\
-      }\
-  }
-  #endif
-  static PyCodeObject *__Pyx_createFrameCodeObject(const char *funcname, const char *srcfile, int firstlineno);
-  static int __Pyx_TraceSetupAndCall(PyCodeObject** code, PyFrameObject** frame, const char *funcname, const char *srcfile, int firstlineno);
-#else
-  #define __Pyx_TraceDeclarations
-  #define __Pyx_TraceFrameInit(codeobj)
-  #define __Pyx_TraceCall(funcname, srcfile, firstlineno, nogil, goto_error)   if (1); else goto_error;
-  #define __Pyx_TraceException()
-  #define __Pyx_TraceReturn(result, nogil)
-#endif
-#if CYTHON_TRACE
-  static int __Pyx_call_line_trace_func(PyThreadState *tstate, PyFrameObject *frame, int lineno) {
-      int ret;
-      PyObject *type, *value, *traceback;
-      PyErr_Fetch(&type, &value, &traceback);
-      frame->f_lineno = lineno;
-      tstate->tracing++;
-      tstate->use_tracing = 0;
-      ret = tstate->c_tracefunc(tstate->c_traceobj, frame, PyTrace_LINE, NULL);
-      tstate->use_tracing = 1;
-      tstate->tracing--;
-      if (likely(!ret)) {
-          PyErr_Restore(type, value, traceback);
-      } else {
-          Py_XDECREF(type);
-          Py_XDECREF(value);
-          Py_XDECREF(traceback);
-      }
-      return ret;
-  }
-  #ifdef WITH_THREAD
-  #define __Pyx_TraceLine(lineno, nogil, goto_error)\
-  if (likely(!__Pyx_use_tracing)); else {\
-      if (nogil) {\
-          if (CYTHON_TRACE_NOGIL) {\
-              int ret = 0;\
-              PyThreadState *tstate;\
-              PyGILState_STATE state = PyGILState_Ensure();\
-              tstate = PyThreadState_GET();\
-              if (unlikely(tstate->use_tracing && tstate->c_tracefunc)) {\
-                  ret = __Pyx_call_line_trace_func(tstate, __pyx_frame, lineno);\
-              }\
-              PyGILState_Release(state);\
-              if (unlikely(ret)) goto_error;\
-          }\
-      } else {\
-          PyThreadState* tstate = PyThreadState_GET();\
-          if (unlikely(tstate->use_tracing && tstate->c_tracefunc)) {\
-              int ret = __Pyx_call_line_trace_func(tstate, __pyx_frame, lineno);\
-              if (unlikely(ret)) goto_error;\
-          }\
-      }\
-  }
-  #else
-  #define __Pyx_TraceLine(lineno, nogil, goto_error)\
-  if (likely(!__Pyx_use_tracing)); else {\
-      PyThreadState* tstate = PyThreadState_GET();\
-      if (unlikely(tstate->use_tracing && tstate->c_tracefunc)) {\
-          int ret = __Pyx_call_line_trace_func(tstate, __pyx_frame, lineno);\
-          if (unlikely(ret)) goto_error;\
-      }\
-  }
-  #endif
-#else
-  #define __Pyx_TraceLine(lineno, nogil, goto_error)   if (1); else goto_error;
-#endif
-
 #if CYTHON_COMPILING_IN_CPYTHON
 static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw);
 #else
@@ -2906,14 +2709,12 @@ static int __pyx_pw_7pyearth_6_basis_13BasisFunction_1__cinit__(PyObject *__pyx_
 
 static int __pyx_pf_7pyearth_6_basis_13BasisFunction___cinit__(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__cinit__", 0);
-  __Pyx_TraceCall("__cinit__", __pyx_f[0], 22, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 22; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":23
  * 
@@ -2988,7 +2789,6 @@ static int __pyx_pf_7pyearth_6_basis_13BasisFunction___cinit__(struct __pyx_obj_
   __Pyx_AddTraceback("pyearth._basis.BasisFunction.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -3016,7 +2816,6 @@ static Py_hash_t __pyx_pw_7pyearth_6_basis_13BasisFunction_3__hash__(PyObject *_
 
 static Py_hash_t __pyx_pf_7pyearth_6_basis_13BasisFunction_2__hash__(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self) {
   Py_hash_t __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -3026,7 +2825,6 @@ static Py_hash_t __pyx_pf_7pyearth_6_basis_13BasisFunction_2__hash__(struct __py
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__hash__", 0);
-  __Pyx_TraceCall("__hash__", __pyx_f[0], 29, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":30
  * 
@@ -3071,7 +2869,6 @@ static Py_hash_t __pyx_pf_7pyearth_6_basis_13BasisFunction_2__hash__(struct __py
   __pyx_r = -1;
   __pyx_L0:;
   if (unlikely(__pyx_r == -1) && !PyErr_Occurred()) __pyx_r = -2;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -3089,7 +2886,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction_smooth(struct __pyx_ob
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_i;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_n;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -3103,7 +2899,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction_smooth(struct __pyx_ob
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("smooth", 0);
-  __Pyx_TraceCall("smooth", __pyx_f[0], 33, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 33; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -3304,7 +3099,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction_smooth(struct __pyx_ob
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -3379,14 +3173,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_5smooth(PyObject *__p
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_4smooth(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, PyObject *__pyx_v_knot_dict, PyObject *__pyx_v_translation) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("smooth", 0);
-  __Pyx_TraceCall("smooth", __pyx_f[0], 33, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 33; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_13BasisFunction_smooth(__pyx_v_self, __pyx_v_knot_dict, __pyx_v_translation, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 33; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -3401,7 +3193,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_4smooth(struct __pyx_
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -3429,7 +3220,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_7__reduce__(PyObject 
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_6__reduce__(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -3439,7 +3229,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_6__reduce__(struct __
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__reduce__", 0);
-  __Pyx_TraceCall("__reduce__", __pyx_f[0], 43, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 43; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":44
  * 
@@ -3504,7 +3293,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_6__reduce__(struct __
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -3532,7 +3320,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_9_get_root(PyObject *
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_8_get_root(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -3541,7 +3328,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_8_get_root(struct __p
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_get_root", 0);
-  __Pyx_TraceCall("_get_root", __pyx_f[0], 46, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 46; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":47
  * 
@@ -3592,7 +3378,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_8_get_root(struct __p
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -3621,7 +3406,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_11_getstate(PyObject 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_10_getstate(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self) {
   PyObject *__pyx_v_result = NULL;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -3632,7 +3416,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_10_getstate(struct __
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_getstate", 0);
-  __Pyx_TraceCall("_getstate", __pyx_f[0], 49, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":50
  * 
@@ -3781,7 +3564,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_10_getstate(struct __
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_result);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -3809,14 +3591,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_13_get_parent_state(P
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_12_get_parent_state(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_get_parent_state", 0);
-  __Pyx_TraceCall("_get_parent_state", __pyx_f[0], 58, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 58; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":59
  * 
@@ -3848,7 +3628,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_12_get_parent_state(s
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -3876,14 +3655,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_15_set_parent_state(P
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_14_set_parent_state(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, PyObject *__pyx_v_state) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_set_parent_state", 0);
-  __Pyx_TraceCall("_set_parent_state", __pyx_f[0], 61, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 61; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":62
  * 
@@ -3918,7 +3695,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_14_set_parent_state(s
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -3946,7 +3722,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_17__setstate__(PyObje
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_16__setstate__(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, PyObject *__pyx_v_state) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_t_2;
@@ -3957,7 +3732,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_16__setstate__(struct
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__setstate__", 0);
-  __Pyx_TraceCall("__setstate__", __pyx_f[0], 64, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 64; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":65
  * 
@@ -4086,7 +3860,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_16__setstate__(struct
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -4116,7 +3889,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_18_eq(struct __pyx_ob
   PyObject *__pyx_v_self_state = NULL;
   PyObject *__pyx_v_other_state = NULL;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -4128,7 +3900,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_18_eq(struct __pyx_ob
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_eq", 0);
-  __Pyx_TraceCall("_eq", __pyx_f[0], 72, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 72; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":73
  * 
@@ -4359,7 +4130,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_18_eq(struct __pyx_ob
   __Pyx_XDECREF(__pyx_v_self_state);
   __Pyx_XDECREF(__pyx_v_other_state);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -4405,7 +4175,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_21__richcmp__(PyObjec
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_20__richcmp__(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, PyObject *__pyx_v_other, PyObject *__pyx_v_method) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_t_2;
@@ -4416,7 +4185,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_20__richcmp__(struct 
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__richcmp__", 0);
-  __Pyx_TraceCall("__richcmp__", __pyx_f[0], 83, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":84
  * 
@@ -4576,7 +4344,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_20__richcmp__(struct 
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -4592,7 +4359,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_20__richcmp__(struct 
 static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_23has_knot(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static int __pyx_f_7pyearth_6_basis_13BasisFunction_has_knot(CYTHON_UNUSED struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, int __pyx_skip_dispatch) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -4603,7 +4369,6 @@ static int __pyx_f_7pyearth_6_basis_13BasisFunction_has_knot(CYTHON_UNUSED struc
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("has_knot", 0);
-  __Pyx_TraceCall("has_knot", __pyx_f[0], 91, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -4666,7 +4431,6 @@ static int __pyx_f_7pyearth_6_basis_13BasisFunction_has_knot(CYTHON_UNUSED struc
   __Pyx_WriteUnraisable("pyearth._basis.BasisFunction.has_knot", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -4686,14 +4450,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_23has_knot(PyObject *
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_22has_knot(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("has_knot", 0);
-  __Pyx_TraceCall("has_knot", __pyx_f[0], 91, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_f_7pyearth_6_basis_13BasisFunction_has_knot(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -4708,7 +4470,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_22has_knot(struct __p
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -4724,7 +4485,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_22has_knot(struct __p
 static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_25is_prunable(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static int __pyx_f_7pyearth_6_basis_13BasisFunction_is_prunable(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, int __pyx_skip_dispatch) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -4735,7 +4495,6 @@ static int __pyx_f_7pyearth_6_basis_13BasisFunction_is_prunable(struct __pyx_obj
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("is_prunable", 0);
-  __Pyx_TraceCall("is_prunable", __pyx_f[0], 94, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -4798,7 +4557,6 @@ static int __pyx_f_7pyearth_6_basis_13BasisFunction_is_prunable(struct __pyx_obj
   __Pyx_WriteUnraisable("pyearth._basis.BasisFunction.is_prunable", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -4818,14 +4576,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_25is_prunable(PyObjec
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_24is_prunable(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("is_prunable", 0);
-  __Pyx_TraceCall("is_prunable", __pyx_f[0], 94, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_f_7pyearth_6_basis_13BasisFunction_is_prunable(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -4840,7 +4596,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_24is_prunable(struct 
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -4856,7 +4611,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_24is_prunable(struct 
 static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_27is_pruned(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static int __pyx_f_7pyearth_6_basis_13BasisFunction_is_pruned(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, int __pyx_skip_dispatch) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -4867,7 +4621,6 @@ static int __pyx_f_7pyearth_6_basis_13BasisFunction_is_pruned(struct __pyx_obj_7
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("is_pruned", 0);
-  __Pyx_TraceCall("is_pruned", __pyx_f[0], 97, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -4930,7 +4683,6 @@ static int __pyx_f_7pyearth_6_basis_13BasisFunction_is_pruned(struct __pyx_obj_7
   __Pyx_WriteUnraisable("pyearth._basis.BasisFunction.is_pruned", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -4950,14 +4702,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_27is_pruned(PyObject 
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_26is_pruned(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("is_pruned", 0);
-  __Pyx_TraceCall("is_pruned", __pyx_f[0], 97, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_f_7pyearth_6_basis_13BasisFunction_is_pruned(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -4972,7 +4722,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_26is_pruned(struct __
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -4988,7 +4737,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_26is_pruned(struct __
 static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_29is_splittable(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static int __pyx_f_7pyearth_6_basis_13BasisFunction_is_splittable(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, int __pyx_skip_dispatch) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -4999,7 +4747,6 @@ static int __pyx_f_7pyearth_6_basis_13BasisFunction_is_splittable(struct __pyx_o
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("is_splittable", 0);
-  __Pyx_TraceCall("is_splittable", __pyx_f[0], 100, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 100; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -5062,7 +4809,6 @@ static int __pyx_f_7pyearth_6_basis_13BasisFunction_is_splittable(struct __pyx_o
   __Pyx_WriteUnraisable("pyearth._basis.BasisFunction.is_splittable", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -5082,14 +4828,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_29is_splittable(PyObj
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_28is_splittable(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("is_splittable", 0);
-  __Pyx_TraceCall("is_splittable", __pyx_f[0], 100, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 100; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_f_7pyearth_6_basis_13BasisFunction_is_splittable(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 100; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -5104,7 +4848,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_28is_splittable(struc
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -5120,7 +4863,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_28is_splittable(struc
 static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_31make_splittable(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static int __pyx_f_7pyearth_6_basis_13BasisFunction_make_splittable(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, int __pyx_skip_dispatch) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -5131,7 +4873,6 @@ static int __pyx_f_7pyearth_6_basis_13BasisFunction_make_splittable(struct __pyx
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("make_splittable", 0);
-  __Pyx_TraceCall("make_splittable", __pyx_f[0], 103, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 103; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -5195,7 +4936,6 @@ static int __pyx_f_7pyearth_6_basis_13BasisFunction_make_splittable(struct __pyx
   __Pyx_WriteUnraisable("pyearth._basis.BasisFunction.make_splittable", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -5215,14 +4955,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_31make_splittable(PyO
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_30make_splittable(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("make_splittable", 0);
-  __Pyx_TraceCall("make_splittable", __pyx_f[0], 103, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 103; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_f_7pyearth_6_basis_13BasisFunction_make_splittable(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 103; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -5237,7 +4975,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_30make_splittable(str
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -5253,7 +4990,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_30make_splittable(str
 static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_33make_unsplittable(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static int __pyx_f_7pyearth_6_basis_13BasisFunction_make_unsplittable(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, int __pyx_skip_dispatch) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -5264,7 +5000,6 @@ static int __pyx_f_7pyearth_6_basis_13BasisFunction_make_unsplittable(struct __p
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("make_unsplittable", 0);
-  __Pyx_TraceCall("make_unsplittable", __pyx_f[0], 106, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 106; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -5328,7 +5063,6 @@ static int __pyx_f_7pyearth_6_basis_13BasisFunction_make_unsplittable(struct __p
   __Pyx_WriteUnraisable("pyearth._basis.BasisFunction.make_unsplittable", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -5348,14 +5082,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_33make_unsplittable(P
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_32make_unsplittable(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("make_unsplittable", 0);
-  __Pyx_TraceCall("make_unsplittable", __pyx_f[0], 106, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 106; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_f_7pyearth_6_basis_13BasisFunction_make_unsplittable(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 106; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -5370,7 +5102,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_32make_unsplittable(s
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -5386,7 +5117,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_32make_unsplittable(s
 static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_35get_children(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction_get_children(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -5396,7 +5126,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction_get_children(struct __
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_children", 0);
-  __Pyx_TraceCall("get_children", __pyx_f[0], 109, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 109; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -5463,7 +5192,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction_get_children(struct __
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -5483,14 +5211,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_35get_children(PyObje
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_34get_children(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_children", 0);
-  __Pyx_TraceCall("get_children", __pyx_f[0], 109, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 109; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_13BasisFunction_get_children(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 109; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -5505,7 +5231,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_34get_children(struct
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -5522,7 +5247,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_37get_coverage(PyObje
 static struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_f_7pyearth_6_basis_13BasisFunction_get_coverage(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable, int __pyx_skip_dispatch) {
   struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_child = 0;
   struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -5536,7 +5260,6 @@ static struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_f_7pyearth_6_basis
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_coverage", 0);
-  __Pyx_TraceCall("get_coverage", __pyx_f[0], 112, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -5716,7 +5439,6 @@ static struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_f_7pyearth_6_basis
   __pyx_L0:;
   __Pyx_XDECREF((PyObject *)__pyx_v_child);
   __Pyx_XGIVEREF((PyObject *)__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -5749,14 +5471,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_37get_coverage(PyObje
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_36get_coverage(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_coverage", 0);
-  __Pyx_TraceCall("get_coverage", __pyx_f[0], 112, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = ((PyObject *)__pyx_f_7pyearth_6_basis_13BasisFunction_get_coverage(__pyx_v_self, __pyx_v_variable, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -5771,7 +5491,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_36get_coverage(struct
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -5787,7 +5506,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_36get_coverage(struct
 static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_39_set_parent(PyObject *__pyx_v_self, PyObject *__pyx_v_parent); /*proto*/
 static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction__set_parent(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_parent, int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -5798,7 +5516,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction__set_parent(struct __p
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_set_parent", 0);
-  __Pyx_TraceCall("_set_parent", __pyx_f[0], 119, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 119; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -5886,7 +5603,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction__set_parent(struct __p
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -5915,14 +5631,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_39_set_parent(PyObjec
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_38_set_parent(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_parent) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_set_parent", 0);
-  __Pyx_TraceCall("_set_parent", __pyx_f[0], 119, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 119; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_13BasisFunction__set_parent(__pyx_v_self, __pyx_v_parent, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 119; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -5937,7 +5651,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_38_set_parent(struct 
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -5955,7 +5668,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction__add_child(struct __py
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_n;
   int __pyx_v_var;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -5971,7 +5683,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction__add_child(struct __py
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_add_child", 0);
-  __Pyx_TraceCall("_add_child", __pyx_f[0], 124, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 124; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -6173,7 +5884,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction__add_child(struct __py
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -6202,14 +5912,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_41_add_child(PyObject
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_40_add_child(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_child) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_add_child", 0);
-  __Pyx_TraceCall("_add_child", __pyx_f[0], 124, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 124; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_13BasisFunction__add_child(__pyx_v_self, __pyx_v_child, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 124; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -6224,7 +5932,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_40_add_child(struct _
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -6240,7 +5947,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_40_add_child(struct _
 static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_43get_parent(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_f_7pyearth_6_basis_13BasisFunction_get_parent(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, int __pyx_skip_dispatch) {
   struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -6250,7 +5956,6 @@ static struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_f_7pyearth_6_basis
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_parent", 0);
-  __Pyx_TraceCall("get_parent", __pyx_f[0], 134, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 134; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -6317,7 +6022,6 @@ static struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_f_7pyearth_6_basis
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF((PyObject *)__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -6337,14 +6041,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_43get_parent(PyObject
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_42get_parent(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_parent", 0);
-  __Pyx_TraceCall("get_parent", __pyx_f[0], 134, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 134; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = ((PyObject *)__pyx_f_7pyearth_6_basis_13BasisFunction_get_parent(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 134; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -6359,7 +6061,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_42get_parent(struct _
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -6375,7 +6076,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_42get_parent(struct _
 static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_45prune(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction_prune(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -6385,7 +6085,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction_prune(struct __pyx_obj
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("prune", 0);
-  __Pyx_TraceCall("prune", __pyx_f[0], 137, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 137; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -6450,7 +6149,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction_prune(struct __pyx_obj
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -6470,14 +6168,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_45prune(PyObject *__p
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_44prune(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("prune", 0);
-  __Pyx_TraceCall("prune", __pyx_f[0], 137, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 137; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_13BasisFunction_prune(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 137; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -6492,7 +6188,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_44prune(struct __pyx_
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -6508,7 +6203,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_44prune(struct __pyx_
 static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_47unprune(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction_unprune(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -6518,7 +6212,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction_unprune(struct __pyx_o
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("unprune", 0);
-  __Pyx_TraceCall("unprune", __pyx_f[0], 140, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -6583,7 +6276,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction_unprune(struct __pyx_o
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -6603,14 +6295,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_47unprune(PyObject *_
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_46unprune(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("unprune", 0);
-  __Pyx_TraceCall("unprune", __pyx_f[0], 140, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_13BasisFunction_unprune(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -6625,7 +6315,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_46unprune(struct __py
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -6647,7 +6336,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction_knots(struct __pyx_obj
   PyObject *__pyx_v_result = 0;
   int __pyx_v_idx;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -6666,7 +6354,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction_knots(struct __pyx_obj
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("knots", 0);
-  __Pyx_TraceCall("knots", __pyx_f[0], 143, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -6933,7 +6620,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction_knots(struct __pyx_obj
   __Pyx_XDECREF((PyObject *)__pyx_v_child);
   __Pyx_XDECREF(__pyx_v_result);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -6966,14 +6652,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_49knots(PyObject *__p
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_48knots(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("knots", 0);
-  __Pyx_TraceCall("knots", __pyx_f[0], 143, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_13BasisFunction_knots(__pyx_v_self, __pyx_v_variable, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -6988,7 +6672,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_48knots(struct __pyx_
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -7008,7 +6691,6 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_6_basis_13BasisFunction
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_k;
   CYTHON_UNUSED __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_v;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -7026,7 +6708,6 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_6_basis_13BasisFunction
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("effective_degree", 0);
-  __Pyx_TraceCall("effective_degree", __pyx_f[0], 162, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 162; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -7354,7 +7035,6 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_6_basis_13BasisFunction
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_data_dict);
   __Pyx_XDECREF(__pyx_v_missing_dict);
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -7374,14 +7054,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_51effective_degree(Py
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_50effective_degree(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("effective_degree", 0);
-  __Pyx_TraceCall("effective_degree", __pyx_f[0], 162, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 162; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_f_7pyearth_6_basis_13BasisFunction_effective_degree(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 162; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -7396,7 +7074,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_50effective_degree(st
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -7427,7 +7104,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction_apply(CYTHON_UNUSED st
   __Pyx_LocalBuf_ND __pyx_pybuffernd_missing;
   __Pyx_Buffer __pyx_pybuffer_missing;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -7440,7 +7116,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction_apply(CYTHON_UNUSED st
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("apply", 0);
-  __Pyx_TraceCall("apply", __pyx_f[0], 174, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 174; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   if (__pyx_optional_args) {
     if (__pyx_optional_args->__pyx_n > 0) {
       __pyx_v_recurse = __pyx_optional_args->recurse;
@@ -7566,7 +7241,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction_apply(CYTHON_UNUSED st
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_missing.rcbuffer->pybuffer);
   __pyx_L2:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -7696,7 +7370,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_52apply(struct __pyx_
   __Pyx_LocalBuf_ND __pyx_pybuffernd_missing;
   __Pyx_Buffer __pyx_pybuffer_missing;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   struct __pyx_opt_args_7pyearth_6_basis_13BasisFunction_apply __pyx_t_2;
@@ -7704,7 +7377,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_52apply(struct __pyx_
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("apply", 0);
-  __Pyx_TraceCall("apply", __pyx_f[0], 174, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 174; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_pybuffer_X.pybuffer.buf = NULL;
   __pyx_pybuffer_X.refcount = 0;
   __pyx_pybuffernd_X.data = NULL;
@@ -7759,7 +7431,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_52apply(struct __pyx_
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_missing.rcbuffer->pybuffer);
   __pyx_L2:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -7798,7 +7469,6 @@ static PyArrayObject *__pyx_f_7pyearth_6_basis_13BasisFunction_valid_knots(struc
   __Pyx_LocalBuf_ND __pyx_pybuffernd_workspace;
   __Pyx_Buffer __pyx_pybuffer_workspace;
   PyArrayObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -7853,7 +7523,6 @@ static PyArrayObject *__pyx_f_7pyearth_6_basis_13BasisFunction_valid_knots(struc
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("valid_knots", 0);
-  __Pyx_TraceCall("valid_knots", __pyx_f[0], 184, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 184; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_pybuffer_result.pybuffer.buf = NULL;
   __pyx_pybuffer_result.refcount = 0;
   __pyx_pybuffernd_result.data = NULL;
@@ -9115,7 +8784,6 @@ static PyArrayObject *__pyx_f_7pyearth_6_basis_13BasisFunction_valid_knots(struc
   __Pyx_XDECREF((PyObject *)__pyx_v_result);
   __Pyx_XDECREF(__pyx_v_used_knots);
   __Pyx_XGIVEREF((PyObject *)__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -9260,14 +8928,12 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_54valid_knots(struct 
   __Pyx_LocalBuf_ND __pyx_pybuffernd_workspace;
   __Pyx_Buffer __pyx_pybuffer_workspace;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("valid_knots", 0);
-  __Pyx_TraceCall("valid_knots", __pyx_f[0], 184, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 184; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_pybuffer_values.pybuffer.buf = NULL;
   __pyx_pybuffer_values.refcount = 0;
   __pyx_pybuffernd_values.data = NULL;
@@ -9320,7 +8986,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_54valid_knots(struct 
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_workspace.rcbuffer->pybuffer);
   __pyx_L2:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -9348,7 +9013,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_13BasisFunction_57func_factory(PyObje
 
 static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_56func_factory(struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_self, PyObject *__pyx_v_coef) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -9358,7 +9022,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_56func_factory(struct
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("func_factory", 0);
-  __Pyx_TraceCall("func_factory", __pyx_f[0], 329, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 329; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":330
  * 
@@ -9441,7 +9104,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_13BasisFunction_56func_factory(struct
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -9472,13 +9134,8 @@ static int __pyx_pw_7pyearth_6_basis_17RootBasisFunction_1__init__(PyObject *__p
 
 static int __pyx_pf_7pyearth_6_basis_17RootBasisFunction___init__(struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
-  __Pyx_TraceCall("__init__", __pyx_f[0], 338, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 338; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":339
  * cdef class RootBasisFunction(BasisFunction):
@@ -9499,12 +9156,6 @@ static int __pyx_pf_7pyearth_6_basis_17RootBasisFunction___init__(struct __pyx_o
 
   /* function exit code */
   __pyx_r = 0;
-  goto __pyx_L0;
-  __pyx_L1_error:;
-  __Pyx_AddTraceback("pyearth._basis.RootBasisFunction.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = -1;
-  __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -9520,7 +9171,6 @@ static int __pyx_pf_7pyearth_6_basis_17RootBasisFunction___init__(struct __pyx_o
 static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_3covered(PyObject *__pyx_v_self, PyObject *__pyx_arg_variable); /*proto*/
 static int __pyx_f_7pyearth_6_basis_17RootBasisFunction_covered(CYTHON_UNUSED struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self, CYTHON_UNUSED __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable, int __pyx_skip_dispatch) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -9533,7 +9183,6 @@ static int __pyx_f_7pyearth_6_basis_17RootBasisFunction_covered(CYTHON_UNUSED st
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("covered", 0);
-  __Pyx_TraceCall("covered", __pyx_f[0], 341, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 341; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -9608,7 +9257,6 @@ static int __pyx_f_7pyearth_6_basis_17RootBasisFunction_covered(CYTHON_UNUSED st
   __Pyx_WriteUnraisable("pyearth._basis.RootBasisFunction.covered", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -9642,14 +9290,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_3covered(PyObject
 
 static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_2covered(struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("covered", 0);
-  __Pyx_TraceCall("covered", __pyx_f[0], 341, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 341; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_f_7pyearth_6_basis_17RootBasisFunction_covered(__pyx_v_self, __pyx_v_variable, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 341; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -9664,7 +9310,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_2covered(struct _
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -9680,7 +9325,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_2covered(struct _
 static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_5eligible(PyObject *__pyx_v_self, PyObject *__pyx_arg_variable); /*proto*/
 static int __pyx_f_7pyearth_6_basis_17RootBasisFunction_eligible(CYTHON_UNUSED struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self, CYTHON_UNUSED __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable, int __pyx_skip_dispatch) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -9693,7 +9337,6 @@ static int __pyx_f_7pyearth_6_basis_17RootBasisFunction_eligible(CYTHON_UNUSED s
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("eligible", 0);
-  __Pyx_TraceCall("eligible", __pyx_f[0], 349, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 349; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -9768,7 +9411,6 @@ static int __pyx_f_7pyearth_6_basis_17RootBasisFunction_eligible(CYTHON_UNUSED s
   __Pyx_WriteUnraisable("pyearth._basis.RootBasisFunction.eligible", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -9802,14 +9444,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_5eligible(PyObjec
 
 static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_4eligible(struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("eligible", 0);
-  __Pyx_TraceCall("eligible", __pyx_f[0], 349, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 349; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_f_7pyearth_6_basis_17RootBasisFunction_eligible(__pyx_v_self, __pyx_v_variable, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 349; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -9824,7 +9464,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_4eligible(struct 
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -9852,7 +9491,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_7copy(PyObject *_
 
 static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_6copy(struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -9861,7 +9499,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_6copy(struct __py
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("copy", 0);
-  __Pyx_TraceCall("copy", __pyx_f[0], 355, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 355; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":356
  * 
@@ -9912,7 +9549,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_6copy(struct __py
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -9940,13 +9576,8 @@ static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_9_get_root(PyObje
 
 static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_8_get_root(struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_get_root", 0);
-  __Pyx_TraceCall("_get_root", __pyx_f[0], 358, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 358; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":359
  * 
@@ -9969,12 +9600,8 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_8_get_root(struct
  */
 
   /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_AddTraceback("pyearth._basis.RootBasisFunction._get_root", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -10002,14 +9629,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_11_get_parent_sta
 
 static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_10_get_parent_state(CYTHON_UNUSED struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_get_parent_state", 0);
-  __Pyx_TraceCall("_get_parent_state", __pyx_f[0], 361, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 361; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":362
  * 
@@ -10040,7 +9665,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_10_get_parent_sta
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -10068,23 +9692,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_13_set_parent_sta
 
 static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_12_set_parent_state(CYTHON_UNUSED struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v_state) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_set_parent_state", 0);
-  __Pyx_TraceCall("_set_parent_state", __pyx_f[0], 364, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 364; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* function exit code */
   __pyx_r = Py_None; __Pyx_INCREF(Py_None);
-  goto __pyx_L0;
-  __pyx_L1_error:;
-  __Pyx_AddTraceback("pyearth._basis.RootBasisFunction._set_parent_state", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
-  __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -10100,7 +9713,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_12_set_parent_sta
 static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_15variables(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static PyObject *__pyx_f_7pyearth_6_basis_17RootBasisFunction_variables(CYTHON_UNUSED struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self, int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -10110,7 +9722,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_17RootBasisFunction_variables(CYTHON_U
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("variables", 0);
-  __Pyx_TraceCall("variables", __pyx_f[0], 367, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 367; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -10179,7 +9790,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_17RootBasisFunction_variables(CYTHON_U
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -10199,14 +9809,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_15variables(PyObj
 
 static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_14variables(struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("variables", 0);
-  __Pyx_TraceCall("variables", __pyx_f[0], 367, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 367; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_17RootBasisFunction_variables(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 367; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -10221,7 +9829,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_14variables(struc
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -10238,7 +9845,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_17_smoothed_versi
 static PyObject *__pyx_f_7pyearth_6_basis_17RootBasisFunction__smoothed_version(struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self, CYTHON_UNUSED struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_parent, CYTHON_UNUSED PyObject *__pyx_v_knot_dict, CYTHON_UNUSED PyObject *__pyx_v_translation, int __pyx_skip_dispatch) {
   PyObject *__pyx_v_result = NULL;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -10251,7 +9857,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_17RootBasisFunction__smoothed_version(
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_smoothed_version", 0);
-  __Pyx_TraceCall("_smoothed_version", __pyx_f[0], 370, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 370; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -10409,7 +10014,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_17RootBasisFunction__smoothed_version(
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_result);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -10493,14 +10097,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_17_smoothed_versi
 
 static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_16_smoothed_version(struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_parent, PyObject *__pyx_v_knot_dict, PyObject *__pyx_v_translation) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_smoothed_version", 0);
-  __Pyx_TraceCall("_smoothed_version", __pyx_f[0], 370, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 370; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_17RootBasisFunction__smoothed_version(__pyx_v_self, __pyx_v_parent, __pyx_v_knot_dict, __pyx_v_translation, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 370; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -10515,7 +10117,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_16_smoothed_versi
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -10531,7 +10132,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_16_smoothed_versi
 static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_19degree(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_6_basis_17RootBasisFunction_degree(CYTHON_UNUSED struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self, int __pyx_skip_dispatch) {
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -10542,7 +10142,6 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_6_basis_17RootBasisFunc
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("degree", 0);
-  __Pyx_TraceCall("degree", __pyx_f[0], 377, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 377; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -10605,7 +10204,6 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_6_basis_17RootBasisFunc
   __Pyx_WriteUnraisable("pyearth._basis.RootBasisFunction.degree", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -10625,14 +10223,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_19degree(PyObject
 
 static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_18degree(struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("degree", 0);
-  __Pyx_TraceCall("degree", __pyx_f[0], 377, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 377; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_f_7pyearth_6_basis_17RootBasisFunction_degree(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 377; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -10647,7 +10243,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_18degree(struct _
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -10663,7 +10258,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_18degree(struct _
 static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_21_effective_degree(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
 static PyObject *__pyx_f_7pyearth_6_basis_17RootBasisFunction__effective_degree(CYTHON_UNUSED struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v_data_dict, CYTHON_UNUSED PyObject *__pyx_v_missing_dict, int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -10675,7 +10269,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_17RootBasisFunction__effective_degree(
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_effective_degree", 0);
-  __Pyx_TraceCall("_effective_degree", __pyx_f[0], 380, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 380; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -10741,7 +10334,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_17RootBasisFunction__effective_degree(
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -10823,14 +10415,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_21_effective_degr
 
 static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_20_effective_degree(struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self, PyObject *__pyx_v_data_dict, PyObject *__pyx_v_missing_dict) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_effective_degree", 0);
-  __Pyx_TraceCall("_effective_degree", __pyx_f[0], 380, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 380; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_17RootBasisFunction__effective_degree(__pyx_v_self, __pyx_v_data_dict, __pyx_v_missing_dict, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 380; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -10845,7 +10435,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_20_effective_degr
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -10861,7 +10450,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_20_effective_degr
 static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_23_set_parent(PyObject *__pyx_v_self, PyObject *__pyx_v_parent); /*proto*/
 static PyObject *__pyx_f_7pyearth_6_basis_17RootBasisFunction__set_parent(CYTHON_UNUSED struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self, CYTHON_UNUSED struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_parent, int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -10872,7 +10460,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_17RootBasisFunction__set_parent(CYTHON
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_set_parent", 0);
-  __Pyx_TraceCall("_set_parent", __pyx_f[0], 383, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 383; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -10944,7 +10531,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_17RootBasisFunction__set_parent(CYTHON
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -10972,14 +10558,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_23_set_parent(PyO
 
 static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_22_set_parent(struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_parent) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_set_parent", 0);
-  __Pyx_TraceCall("_set_parent", __pyx_f[0], 383, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 383; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_17RootBasisFunction__set_parent(__pyx_v_self, __pyx_v_parent, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 383; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -10994,7 +10578,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_22_set_parent(str
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -11010,7 +10593,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_22_set_parent(str
 static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_25get_parent(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_f_7pyearth_6_basis_17RootBasisFunction_get_parent(CYTHON_UNUSED struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self, int __pyx_skip_dispatch) {
   struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -11020,7 +10602,6 @@ static struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_f_7pyearth_6_basis
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_parent", 0);
-  __Pyx_TraceCall("get_parent", __pyx_f[0], 386, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 386; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -11087,7 +10668,6 @@ static struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_f_7pyearth_6_basis
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF((PyObject *)__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -11107,14 +10687,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_17RootBasisFunction_25get_parent(PyOb
 
 static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_24get_parent(struct __pyx_obj_7pyearth_6_basis_RootBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_parent", 0);
-  __Pyx_TraceCall("get_parent", __pyx_f[0], 386, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 386; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = ((PyObject *)__pyx_f_7pyearth_6_basis_17RootBasisFunction_get_parent(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 386; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -11129,7 +10707,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_24get_parent(stru
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -11160,7 +10737,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_17RootBasisFunction_apply(struct __pyx
   __Pyx_LocalBuf_ND __pyx_pybuffernd_missing;
   __Pyx_Buffer __pyx_pybuffer_missing;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -11173,7 +10749,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_17RootBasisFunction_apply(struct __pyx
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("apply", 0);
-  __Pyx_TraceCall("apply", __pyx_f[0], 389, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 389; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   if (__pyx_optional_args) {
     if (__pyx_optional_args->__pyx_n > 0) {
       __pyx_v_recurse = __pyx_optional_args->recurse;
@@ -11329,7 +10904,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_17RootBasisFunction_apply(struct __pyx
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_missing.rcbuffer->pybuffer);
   __pyx_L2:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -11451,7 +11025,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_26apply(struct __
   __Pyx_LocalBuf_ND __pyx_pybuffernd_missing;
   __Pyx_Buffer __pyx_pybuffer_missing;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   struct __pyx_opt_args_7pyearth_6_basis_13BasisFunction_apply __pyx_t_2;
@@ -11459,7 +11032,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_26apply(struct __
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("apply", 0);
-  __Pyx_TraceCall("apply", __pyx_f[0], 389, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 389; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_pybuffer_X.pybuffer.buf = NULL;
   __pyx_pybuffer_X.refcount = 0;
   __pyx_pybuffernd_X.data = NULL;
@@ -11514,7 +11086,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_26apply(struct __
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_missing.rcbuffer->pybuffer);
   __pyx_L2:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -11538,7 +11109,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_17RootBasisFunction_apply_deriv(struct
   __Pyx_LocalBuf_ND __pyx_pybuffernd_missing;
   __Pyx_Buffer __pyx_pybuffer_missing;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -11551,7 +11121,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_17RootBasisFunction_apply_deriv(struct
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("apply_deriv", 0);
-  __Pyx_TraceCall("apply_deriv", __pyx_f[0], 402, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 402; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_pybuffer_X.pybuffer.buf = NULL;
   __pyx_pybuffer_X.refcount = 0;
   __pyx_pybuffernd_X.data = NULL;
@@ -11738,7 +11307,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_17RootBasisFunction_apply_deriv(struct
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_missing.rcbuffer->pybuffer);
   __pyx_L2:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -11850,14 +11418,12 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_28apply_deriv(str
   __Pyx_LocalBuf_ND __pyx_pybuffernd_missing;
   __Pyx_Buffer __pyx_pybuffer_missing;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("apply_deriv", 0);
-  __Pyx_TraceCall("apply_deriv", __pyx_f[0], 402, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 402; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_pybuffer_X.pybuffer.buf = NULL;
   __pyx_pybuffer_X.refcount = 0;
   __pyx_pybuffernd_X.data = NULL;
@@ -11921,7 +11487,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_28apply_deriv(str
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_missing.rcbuffer->pybuffer);
   __pyx_L2:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -11937,13 +11502,8 @@ static PyObject *__pyx_pf_7pyearth_6_basis_17RootBasisFunction_28apply_deriv(str
 static PyObject *__pyx_pw_7pyearth_6_basis_21ConstantBasisFunction_1eval(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static CYTHON_INLINE __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_6_basis_21ConstantBasisFunction_eval(CYTHON_UNUSED struct __pyx_obj_7pyearth_6_basis_ConstantBasisFunction *__pyx_v_self, CYTHON_UNUSED int __pyx_skip_dispatch) {
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("eval", 0);
-  __Pyx_TraceCall("eval", __pyx_f[0], 418, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 418; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":419
  * 
@@ -11964,11 +11524,7 @@ static CYTHON_INLINE __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_6_basis_2
  */
 
   /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_WriteUnraisable("pyearth._basis.ConstantBasisFunction.eval", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
-  __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -11988,14 +11544,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_21ConstantBasisFunction_1eval(PyObjec
 
 static PyObject *__pyx_pf_7pyearth_6_basis_21ConstantBasisFunction_eval(struct __pyx_obj_7pyearth_6_basis_ConstantBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("eval", 0);
-  __Pyx_TraceCall("eval", __pyx_f[0], 418, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 418; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7pyearth_6_basis_21ConstantBasisFunction_eval(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 418; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -12010,7 +11564,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_21ConstantBasisFunction_eval(struct _
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -12026,13 +11579,8 @@ static PyObject *__pyx_pf_7pyearth_6_basis_21ConstantBasisFunction_eval(struct _
 static PyObject *__pyx_pw_7pyearth_6_basis_21ConstantBasisFunction_3eval_deriv(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static CYTHON_INLINE __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_6_basis_21ConstantBasisFunction_eval_deriv(CYTHON_UNUSED struct __pyx_obj_7pyearth_6_basis_ConstantBasisFunction *__pyx_v_self, CYTHON_UNUSED int __pyx_skip_dispatch) {
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("eval_deriv", 0);
-  __Pyx_TraceCall("eval_deriv", __pyx_f[0], 421, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 421; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":422
  * 
@@ -12053,11 +11601,7 @@ static CYTHON_INLINE __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_6_basis_2
  */
 
   /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_WriteUnraisable("pyearth._basis.ConstantBasisFunction.eval_deriv", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
-  __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -12077,14 +11621,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_21ConstantBasisFunction_3eval_deriv(P
 
 static PyObject *__pyx_pf_7pyearth_6_basis_21ConstantBasisFunction_2eval_deriv(struct __pyx_obj_7pyearth_6_basis_ConstantBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("eval_deriv", 0);
-  __Pyx_TraceCall("eval_deriv", __pyx_f[0], 421, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 421; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7pyearth_6_basis_21ConstantBasisFunction_eval_deriv(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 421; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -12099,7 +11641,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_21ConstantBasisFunction_2eval_deriv(s
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -12127,13 +11668,8 @@ static PyObject *__pyx_pw_7pyearth_6_basis_21ConstantBasisFunction_5__str__(PyOb
 
 static PyObject *__pyx_pf_7pyearth_6_basis_21ConstantBasisFunction_4__str__(CYTHON_UNUSED struct __pyx_obj_7pyearth_6_basis_ConstantBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__str__", 0);
-  __Pyx_TraceCall("__str__", __pyx_f[0], 424, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 424; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":425
  * 
@@ -12156,12 +11692,8 @@ static PyObject *__pyx_pf_7pyearth_6_basis_21ConstantBasisFunction_4__str__(CYTH
  */
 
   /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_AddTraceback("pyearth._basis.ConstantBasisFunction.__str__", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -12189,7 +11721,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_21ConstantBasisFunction_7func_string_
 
 static PyObject *__pyx_pf_7pyearth_6_basis_21ConstantBasisFunction_6func_string_factory(CYTHON_UNUSED struct __pyx_obj_7pyearth_6_basis_ConstantBasisFunction *__pyx_v_self, PyObject *__pyx_v_coef) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   int __pyx_t_2;
@@ -12202,7 +11733,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_21ConstantBasisFunction_6func_string_
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("func_string_factory", 0);
-  __Pyx_TraceCall("func_string_factory", __pyx_f[0], 427, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 427; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":428
  * 
@@ -12305,7 +11835,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_21ConstantBasisFunction_6func_string_
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -12321,7 +11850,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_21ConstantBasisFunction_6func_string_
 static PyObject *__pyx_pw_7pyearth_6_basis_21VariableBasisFunction_1degree(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_6_basis_21VariableBasisFunction_degree(struct __pyx_obj_7pyearth_6_basis_VariableBasisFunction *__pyx_v_self, int __pyx_skip_dispatch) {
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -12332,7 +11860,6 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_6_basis_21VariableBasis
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("degree", 0);
-  __Pyx_TraceCall("degree", __pyx_f[0], 434, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -12420,7 +11947,6 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_6_basis_21VariableBasis
   __Pyx_WriteUnraisable("pyearth._basis.VariableBasisFunction.degree", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -12440,14 +11966,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_21VariableBasisFunction_1degree(PyObj
 
 static PyObject *__pyx_pf_7pyearth_6_basis_21VariableBasisFunction_degree(struct __pyx_obj_7pyearth_6_basis_VariableBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("degree", 0);
-  __Pyx_TraceCall("degree", __pyx_f[0], 434, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_f_7pyearth_6_basis_21VariableBasisFunction_degree(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 434; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -12462,7 +11986,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_21VariableBasisFunction_degree(struct
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -12479,7 +12002,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_21VariableBasisFunction_3variables(Py
 static PyObject *__pyx_f_7pyearth_6_basis_21VariableBasisFunction_variables(struct __pyx_obj_7pyearth_6_basis_VariableBasisFunction *__pyx_v_self, int __pyx_skip_dispatch) {
   PyObject *__pyx_v_result = 0;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -12490,7 +12012,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_21VariableBasisFunction_variables(stru
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("variables", 0);
-  __Pyx_TraceCall("variables", __pyx_f[0], 437, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 437; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -12605,7 +12126,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_21VariableBasisFunction_variables(stru
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_result);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -12625,14 +12145,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_21VariableBasisFunction_3variables(Py
 
 static PyObject *__pyx_pf_7pyearth_6_basis_21VariableBasisFunction_2variables(struct __pyx_obj_7pyearth_6_basis_VariableBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("variables", 0);
-  __Pyx_TraceCall("variables", __pyx_f[0], 437, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 437; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_21VariableBasisFunction_variables(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 437; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -12647,7 +12165,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_21VariableBasisFunction_2variables(st
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -12663,7 +12180,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_21VariableBasisFunction_2variables(st
 static PyObject *__pyx_pw_7pyearth_6_basis_21VariableBasisFunction_5get_variable(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_6_basis_21VariableBasisFunction_get_variable(struct __pyx_obj_7pyearth_6_basis_VariableBasisFunction *__pyx_v_self, int __pyx_skip_dispatch) {
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -12674,7 +12190,6 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_6_basis_21VariableBasis
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_variable", 0);
-  __Pyx_TraceCall("get_variable", __pyx_f[0], 442, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 442; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -12737,7 +12252,6 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_6_basis_21VariableBasis
   __Pyx_WriteUnraisable("pyearth._basis.VariableBasisFunction.get_variable", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -12757,14 +12271,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_21VariableBasisFunction_5get_variable
 
 static PyObject *__pyx_pf_7pyearth_6_basis_21VariableBasisFunction_4get_variable(struct __pyx_obj_7pyearth_6_basis_VariableBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_variable", 0);
-  __Pyx_TraceCall("get_variable", __pyx_f[0], 442, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 442; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_f_7pyearth_6_basis_21VariableBasisFunction_get_variable(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 442; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -12779,7 +12291,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_21VariableBasisFunction_4get_variable
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -12795,7 +12306,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_21VariableBasisFunction_4get_variable
 static PyObject *__pyx_pw_7pyearth_6_basis_25DataVariableBasisFunction_1_effective_degree(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
 static PyObject *__pyx_f_7pyearth_6_basis_25DataVariableBasisFunction__effective_degree(struct __pyx_obj_7pyearth_6_basis_DataVariableBasisFunction *__pyx_v_self, PyObject *__pyx_v_data_dict, PyObject *__pyx_v_missing_dict, int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -12811,7 +12321,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_25DataVariableBasisFunction__effective
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_effective_degree", 0);
-  __Pyx_TraceCall("_effective_degree", __pyx_f[0], 446, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 446; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -13039,7 +12548,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_25DataVariableBasisFunction__effective
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -13113,14 +12621,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_25DataVariableBasisFunction_1_effecti
 
 static PyObject *__pyx_pf_7pyearth_6_basis_25DataVariableBasisFunction__effective_degree(struct __pyx_obj_7pyearth_6_basis_DataVariableBasisFunction *__pyx_v_self, PyObject *__pyx_v_data_dict, PyObject *__pyx_v_missing_dict) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_effective_degree", 0);
-  __Pyx_TraceCall("_effective_degree", __pyx_f[0], 446, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 446; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_25DataVariableBasisFunction__effective_degree(__pyx_v_self, __pyx_v_data_dict, __pyx_v_missing_dict, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 446; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -13135,7 +12641,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_25DataVariableBasisFunction__effectiv
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -13151,7 +12656,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_25DataVariableBasisFunction__effectiv
 static PyObject *__pyx_pw_7pyearth_6_basis_25DataVariableBasisFunction_3covered(PyObject *__pyx_v_self, PyObject *__pyx_arg_variable); /*proto*/
 static int __pyx_f_7pyearth_6_basis_25DataVariableBasisFunction_covered(struct __pyx_obj_7pyearth_6_basis_DataVariableBasisFunction *__pyx_v_self, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable, int __pyx_skip_dispatch) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -13164,7 +12668,6 @@ static int __pyx_f_7pyearth_6_basis_25DataVariableBasisFunction_covered(struct _
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("covered", 0);
-  __Pyx_TraceCall("covered", __pyx_f[0], 453, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 453; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -13271,7 +12774,6 @@ static int __pyx_f_7pyearth_6_basis_25DataVariableBasisFunction_covered(struct _
   __Pyx_WriteUnraisable("pyearth._basis.DataVariableBasisFunction.covered", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -13305,14 +12807,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_25DataVariableBasisFunction_3covered(
 
 static PyObject *__pyx_pf_7pyearth_6_basis_25DataVariableBasisFunction_2covered(struct __pyx_obj_7pyearth_6_basis_DataVariableBasisFunction *__pyx_v_self, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("covered", 0);
-  __Pyx_TraceCall("covered", __pyx_f[0], 453, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 453; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_f_7pyearth_6_basis_25DataVariableBasisFunction_covered(__pyx_v_self, __pyx_v_variable, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 453; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -13327,7 +12827,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_25DataVariableBasisFunction_2covered(
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -13343,7 +12842,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_25DataVariableBasisFunction_2covered(
 static PyObject *__pyx_pw_7pyearth_6_basis_25DataVariableBasisFunction_5eligible(PyObject *__pyx_v_self, PyObject *__pyx_arg_variable); /*proto*/
 static int __pyx_f_7pyearth_6_basis_25DataVariableBasisFunction_eligible(struct __pyx_obj_7pyearth_6_basis_DataVariableBasisFunction *__pyx_v_self, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable, int __pyx_skip_dispatch) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -13356,7 +12854,6 @@ static int __pyx_f_7pyearth_6_basis_25DataVariableBasisFunction_eligible(struct 
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("eligible", 0);
-  __Pyx_TraceCall("eligible", __pyx_f[0], 461, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 461; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -13463,7 +12960,6 @@ static int __pyx_f_7pyearth_6_basis_25DataVariableBasisFunction_eligible(struct 
   __Pyx_WriteUnraisable("pyearth._basis.DataVariableBasisFunction.eligible", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -13497,14 +12993,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_25DataVariableBasisFunction_5eligible
 
 static PyObject *__pyx_pf_7pyearth_6_basis_25DataVariableBasisFunction_4eligible(struct __pyx_obj_7pyearth_6_basis_DataVariableBasisFunction *__pyx_v_self, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("eligible", 0);
-  __Pyx_TraceCall("eligible", __pyx_f[0], 461, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 461; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_f_7pyearth_6_basis_25DataVariableBasisFunction_eligible(__pyx_v_self, __pyx_v_variable, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 461; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -13519,7 +13013,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_25DataVariableBasisFunction_4eligible
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -13556,7 +13049,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_25DataVariableBasisFunction_apply(stru
   __Pyx_LocalBuf_ND __pyx_pybuffernd_val;
   __Pyx_Buffer __pyx_pybuffer_val;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -13582,7 +13074,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_25DataVariableBasisFunction_apply(stru
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("apply", 0);
-  __Pyx_TraceCall("apply", __pyx_f[0], 467, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 467; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   if (__pyx_optional_args) {
     if (__pyx_optional_args->__pyx_n > 0) {
       __pyx_v_recurse = __pyx_optional_args->recurse;
@@ -13931,7 +13422,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_25DataVariableBasisFunction_apply(stru
   __Pyx_XDECREF((PyObject *)__pyx_v_val);
   __Pyx_XDECREF(__pyx_v_here);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -14053,7 +13543,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_25DataVariableBasisFunction_6apply(st
   __Pyx_LocalBuf_ND __pyx_pybuffernd_missing;
   __Pyx_Buffer __pyx_pybuffer_missing;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   struct __pyx_opt_args_7pyearth_6_basis_13BasisFunction_apply __pyx_t_2;
@@ -14061,7 +13550,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_25DataVariableBasisFunction_6apply(st
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("apply", 0);
-  __Pyx_TraceCall("apply", __pyx_f[0], 467, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 467; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_pybuffer_X.pybuffer.buf = NULL;
   __pyx_pybuffer_X.refcount = 0;
   __pyx_pybuffernd_X.data = NULL;
@@ -14116,7 +13604,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_25DataVariableBasisFunction_6apply(st
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_missing.rcbuffer->pybuffer);
   __pyx_L2:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -14147,7 +13634,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_25DataVariableBasisFunction_apply_deri
   __Pyx_LocalBuf_ND __pyx_pybuffernd_missing;
   __Pyx_Buffer __pyx_pybuffer_missing;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -14173,7 +13659,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_25DataVariableBasisFunction_apply_deri
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("apply_deriv", 0);
-  __Pyx_TraceCall("apply_deriv", __pyx_f[0], 489, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 489; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_pybuffer_X.pybuffer.buf = NULL;
   __pyx_pybuffer_X.refcount = 0;
   __pyx_pybuffernd_X.data = NULL;
@@ -14694,7 +14179,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_25DataVariableBasisFunction_apply_deri
   __Pyx_XDECREF(__pyx_v_this_val);
   __Pyx_XDECREF(__pyx_v_this_deriv);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -14806,14 +14290,12 @@ static PyObject *__pyx_pf_7pyearth_6_basis_25DataVariableBasisFunction_8apply_de
   __Pyx_LocalBuf_ND __pyx_pybuffernd_missing;
   __Pyx_Buffer __pyx_pybuffer_missing;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("apply_deriv", 0);
-  __Pyx_TraceCall("apply_deriv", __pyx_f[0], 489, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 489; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_pybuffer_X.pybuffer.buf = NULL;
   __pyx_pybuffer_X.refcount = 0;
   __pyx_pybuffernd_X.data = NULL;
@@ -14877,7 +14359,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_25DataVariableBasisFunction_8apply_de
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_missing.rcbuffer->pybuffer);
   __pyx_L2:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -14995,7 +14476,6 @@ static int __pyx_pw_7pyearth_6_basis_24MissingnessBasisFunction_1__init__(PyObje
 
 static int __pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction___init__(struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_parent, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable, int __pyx_v_complement, PyObject *__pyx_v_label) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_t_2;
@@ -15005,7 +14485,6 @@ static int __pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction___init__(struct 
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
-  __Pyx_TraceCall("__init__", __pyx_f[0], 519, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 519; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":522
  *                  INDEX_t variable, bint complement,
@@ -15090,7 +14569,6 @@ static int __pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction___init__(struct 
   __Pyx_AddTraceback("pyearth._basis.MissingnessBasisFunction.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -15106,7 +14584,6 @@ static int __pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction___init__(struct 
 static PyObject *__pyx_pw_7pyearth_6_basis_24MissingnessBasisFunction_3_effective_degree(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
 static PyObject *__pyx_f_7pyearth_6_basis_24MissingnessBasisFunction__effective_degree(struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *__pyx_v_self, PyObject *__pyx_v_data_dict, PyObject *__pyx_v_missing_dict, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -15121,7 +14598,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_24MissingnessBasisFunction__effective_
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_effective_degree", 0);
-  __Pyx_TraceCall("_effective_degree", __pyx_f[0], 527, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 527; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":528
  * 
@@ -15303,7 +14779,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_24MissingnessBasisFunction__effective_
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -15377,14 +14852,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_24MissingnessBasisFunction_3_effectiv
 
 static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_2_effective_degree(struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *__pyx_v_self, PyObject *__pyx_v_data_dict, PyObject *__pyx_v_missing_dict) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_effective_degree", 0);
-  __Pyx_TraceCall("_effective_degree", __pyx_f[0], 527, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 527; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_24MissingnessBasisFunction__effective_degree(__pyx_v_self, __pyx_v_data_dict, __pyx_v_missing_dict, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 527; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -15399,7 +14872,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_2_effectiv
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -15415,7 +14887,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_2_effectiv
 static PyObject *__pyx_pw_7pyearth_6_basis_24MissingnessBasisFunction_5covered(PyObject *__pyx_v_self, PyObject *__pyx_arg_variable); /*proto*/
 static int __pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_covered(struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *__pyx_v_self, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   int __pyx_t_2;
@@ -15428,7 +14899,6 @@ static int __pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_covered(struct __
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("covered", 0);
-  __Pyx_TraceCall("covered", __pyx_f[0], 534, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 534; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":540
  *         be used).
@@ -15536,7 +15006,6 @@ static int __pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_covered(struct __
   __Pyx_WriteUnraisable("pyearth._basis.MissingnessBasisFunction.covered", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -15570,14 +15039,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_24MissingnessBasisFunction_5covered(P
 
 static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_4covered(struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *__pyx_v_self, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("covered", 0);
-  __Pyx_TraceCall("covered", __pyx_f[0], 534, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 534; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_covered(__pyx_v_self, __pyx_v_variable, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 534; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -15592,7 +15059,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_4covered(s
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -15608,7 +15074,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_4covered(s
 static PyObject *__pyx_pw_7pyearth_6_basis_24MissingnessBasisFunction_7eligible(PyObject *__pyx_v_self, PyObject *__pyx_arg_variable); /*proto*/
 static int __pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_eligible(struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *__pyx_v_self, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   int __pyx_t_2;
@@ -15621,7 +15086,6 @@ static int __pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_eligible(struct _
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("eligible", 0);
-  __Pyx_TraceCall("eligible", __pyx_f[0], 545, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 545; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":549
  *         Is this an eligible parent for variable?
@@ -15729,7 +15193,6 @@ static int __pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_eligible(struct _
   __Pyx_WriteUnraisable("pyearth._basis.MissingnessBasisFunction.eligible", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -15763,14 +15226,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_24MissingnessBasisFunction_7eligible(
 
 static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_6eligible(struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *__pyx_v_self, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("eligible", 0);
-  __Pyx_TraceCall("eligible", __pyx_f[0], 545, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 545; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_eligible(__pyx_v_self, __pyx_v_variable, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 545; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -15785,7 +15246,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_6eligible(
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -15816,7 +15276,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_apply(struc
   __Pyx_LocalBuf_ND __pyx_pybuffernd_missing;
   __Pyx_Buffer __pyx_pybuffer_missing;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   PyObject *__pyx_t_2 = NULL;
@@ -15831,7 +15290,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_apply(struc
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("apply", 0);
-  __Pyx_TraceCall("apply", __pyx_f[0], 554, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 554; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   if (__pyx_optional_args) {
     if (__pyx_optional_args->__pyx_n > 0) {
       __pyx_v_recurse = __pyx_optional_args->recurse;
@@ -16044,7 +15502,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_apply(struc
   __pyx_L2:;
   __Pyx_XDECREF((PyObject *)__pyx_v_b);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -16166,7 +15623,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_8apply(str
   __Pyx_LocalBuf_ND __pyx_pybuffernd_missing;
   __Pyx_Buffer __pyx_pybuffer_missing;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   struct __pyx_opt_args_7pyearth_6_basis_13BasisFunction_apply __pyx_t_2;
@@ -16174,7 +15630,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_8apply(str
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("apply", 0);
-  __Pyx_TraceCall("apply", __pyx_f[0], 554, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 554; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_pybuffer_X.pybuffer.buf = NULL;
   __pyx_pybuffer_X.refcount = 0;
   __pyx_pybuffernd_X.data = NULL;
@@ -16229,7 +15684,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_8apply(str
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_missing.rcbuffer->pybuffer);
   __pyx_L2:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -16259,7 +15713,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_apply_deriv
   __Pyx_LocalBuf_ND __pyx_pybuffernd_missing;
   __Pyx_Buffer __pyx_pybuffer_missing;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   Py_ssize_t __pyx_t_1;
   PyObject *__pyx_t_2 = NULL;
@@ -16279,7 +15732,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_apply_deriv
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("apply_deriv", 0);
-  __Pyx_TraceCall("apply_deriv", __pyx_f[0], 570, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 570; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_pybuffer_X.pybuffer.buf = NULL;
   __pyx_pybuffer_X.refcount = 0;
   __pyx_pybuffernd_X.data = NULL;
@@ -16555,7 +16007,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_24MissingnessBasisFunction_apply_deriv
   __pyx_L2:;
   __Pyx_XDECREF(__pyx_v_this_val);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -16667,14 +16118,12 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_10apply_de
   __Pyx_LocalBuf_ND __pyx_pybuffernd_missing;
   __Pyx_Buffer __pyx_pybuffer_missing;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("apply_deriv", 0);
-  __Pyx_TraceCall("apply_deriv", __pyx_f[0], 570, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 570; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_pybuffer_X.pybuffer.buf = NULL;
   __pyx_pybuffer_X.refcount = 0;
   __pyx_pybuffernd_X.data = NULL;
@@ -16738,7 +16187,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_10apply_de
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_missing.rcbuffer->pybuffer);
   __pyx_L2:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -16755,7 +16203,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_24MissingnessBasisFunction_13_smoothe
 static PyObject *__pyx_f_7pyearth_6_basis_24MissingnessBasisFunction__smoothed_version(struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_parent, CYTHON_UNUSED PyObject *__pyx_v_knot_dict, PyObject *__pyx_v_translation, CYTHON_UNUSED int __pyx_skip_dispatch) {
   struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *__pyx_v_result = NULL;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -16766,7 +16213,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_24MissingnessBasisFunction__smoothed_v
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_smoothed_version", 0);
-  __Pyx_TraceCall("_smoothed_version", __pyx_f[0], 593, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 593; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":595
  *     cpdef _smoothed_version(MissingnessBasisFunction self, BasisFunction parent,
@@ -16882,7 +16328,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_24MissingnessBasisFunction__smoothed_v
   __pyx_L0:;
   __Pyx_XDECREF((PyObject *)__pyx_v_result);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -16966,14 +16411,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_24MissingnessBasisFunction_13_smoothe
 
 static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_12_smoothed_version(struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_parent, PyObject *__pyx_v_knot_dict, PyObject *__pyx_v_translation) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_smoothed_version", 0);
-  __Pyx_TraceCall("_smoothed_version", __pyx_f[0], 593, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 593; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_24MissingnessBasisFunction__smoothed_version(__pyx_v_self, __pyx_v_parent, __pyx_v_knot_dict, __pyx_v_translation, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 593; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -16988,7 +16431,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_12_smoothe
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -17016,7 +16458,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_24MissingnessBasisFunction_15__reduce
 
 static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_14__reduce__(struct __pyx_obj_7pyearth_6_basis_MissingnessBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -17027,7 +16468,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_14__reduce
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__reduce__", 0);
-  __Pyx_TraceCall("__reduce__", __pyx_f[0], 601, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 601; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":602
  * 
@@ -17145,7 +16585,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_14__reduce
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -17175,7 +16614,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_16__str__(
   PyObject *__pyx_v_result = NULL;
   PyObject *__pyx_v_parent = NULL;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   PyObject *__pyx_t_2 = NULL;
@@ -17185,7 +16623,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_16__str__(
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__str__", 0);
-  __Pyx_TraceCall("__str__", __pyx_f[0], 607, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 607; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":608
  * 
@@ -17366,7 +16803,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_16__str__(
   __Pyx_XDECREF(__pyx_v_result);
   __Pyx_XDECREF(__pyx_v_parent);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -17396,7 +16832,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_18func_str
   PyObject *__pyx_v_parent = NULL;
   PyObject *__pyx_v_result = NULL;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -17410,7 +16845,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_18func_str
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("func_string_factory", 0);
-  __Pyx_TraceCall("func_string_factory", __pyx_f[0], 619, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 619; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":620
  * 
@@ -17684,7 +17118,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_18func_str
   __Pyx_XDECREF(__pyx_v_parent);
   __Pyx_XDECREF(__pyx_v_result);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -17700,7 +17133,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_18func_str
 static PyObject *__pyx_pw_7pyearth_6_basis_22HingeBasisFunctionBase_1has_knot(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static int __pyx_f_7pyearth_6_basis_22HingeBasisFunctionBase_has_knot(CYTHON_UNUSED struct __pyx_obj_7pyearth_6_basis_HingeBasisFunctionBase *__pyx_v_self, int __pyx_skip_dispatch) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -17711,7 +17143,6 @@ static int __pyx_f_7pyearth_6_basis_22HingeBasisFunctionBase_has_knot(CYTHON_UNU
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("has_knot", 0);
-  __Pyx_TraceCall("has_knot", __pyx_f[0], 635, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 635; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -17774,7 +17205,6 @@ static int __pyx_f_7pyearth_6_basis_22HingeBasisFunctionBase_has_knot(CYTHON_UNU
   __Pyx_WriteUnraisable("pyearth._basis.HingeBasisFunctionBase.has_knot", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -17794,14 +17224,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_22HingeBasisFunctionBase_1has_knot(Py
 
 static PyObject *__pyx_pf_7pyearth_6_basis_22HingeBasisFunctionBase_has_knot(struct __pyx_obj_7pyearth_6_basis_HingeBasisFunctionBase *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("has_knot", 0);
-  __Pyx_TraceCall("has_knot", __pyx_f[0], 635, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 635; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_f_7pyearth_6_basis_22HingeBasisFunctionBase_has_knot(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 635; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -17816,7 +17244,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_22HingeBasisFunctionBase_has_knot(str
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -17832,7 +17259,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_22HingeBasisFunctionBase_has_knot(str
 static PyObject *__pyx_pw_7pyearth_6_basis_22HingeBasisFunctionBase_3get_knot(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_6_basis_22HingeBasisFunctionBase_get_knot(struct __pyx_obj_7pyearth_6_basis_HingeBasisFunctionBase *__pyx_v_self, int __pyx_skip_dispatch) {
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -17843,7 +17269,6 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_6_basis_22HingeBasisFun
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_knot", 0);
-  __Pyx_TraceCall("get_knot", __pyx_f[0], 638, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 638; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -17906,7 +17331,6 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_6_basis_22HingeBasisFun
   __Pyx_WriteUnraisable("pyearth._basis.HingeBasisFunctionBase.get_knot", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -17926,14 +17350,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_22HingeBasisFunctionBase_3get_knot(Py
 
 static PyObject *__pyx_pf_7pyearth_6_basis_22HingeBasisFunctionBase_2get_knot(struct __pyx_obj_7pyearth_6_basis_HingeBasisFunctionBase *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_knot", 0);
-  __Pyx_TraceCall("get_knot", __pyx_f[0], 638, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 638; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7pyearth_6_basis_22HingeBasisFunctionBase_get_knot(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 638; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -17948,7 +17370,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_22HingeBasisFunctionBase_2get_knot(st
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -17964,7 +17385,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_22HingeBasisFunctionBase_2get_knot(st
 static PyObject *__pyx_pw_7pyearth_6_basis_22HingeBasisFunctionBase_5get_reverse(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static int __pyx_f_7pyearth_6_basis_22HingeBasisFunctionBase_get_reverse(struct __pyx_obj_7pyearth_6_basis_HingeBasisFunctionBase *__pyx_v_self, int __pyx_skip_dispatch) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -17975,7 +17395,6 @@ static int __pyx_f_7pyearth_6_basis_22HingeBasisFunctionBase_get_reverse(struct 
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_reverse", 0);
-  __Pyx_TraceCall("get_reverse", __pyx_f[0], 641, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 641; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -18038,7 +17457,6 @@ static int __pyx_f_7pyearth_6_basis_22HingeBasisFunctionBase_get_reverse(struct 
   __Pyx_WriteUnraisable("pyearth._basis.HingeBasisFunctionBase.get_reverse", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -18058,14 +17476,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_22HingeBasisFunctionBase_5get_reverse
 
 static PyObject *__pyx_pf_7pyearth_6_basis_22HingeBasisFunctionBase_4get_reverse(struct __pyx_obj_7pyearth_6_basis_HingeBasisFunctionBase *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_reverse", 0);
-  __Pyx_TraceCall("get_reverse", __pyx_f[0], 641, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 641; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_f_7pyearth_6_basis_22HingeBasisFunctionBase_get_reverse(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 641; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -18080,7 +17496,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_22HingeBasisFunctionBase_4get_reverse
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -18096,7 +17511,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_22HingeBasisFunctionBase_4get_reverse
 static PyObject *__pyx_pw_7pyearth_6_basis_22HingeBasisFunctionBase_7get_knot_idx(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_6_basis_22HingeBasisFunctionBase_get_knot_idx(struct __pyx_obj_7pyearth_6_basis_HingeBasisFunctionBase *__pyx_v_self, int __pyx_skip_dispatch) {
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -18107,7 +17521,6 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_6_basis_22HingeBasisFun
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_knot_idx", 0);
-  __Pyx_TraceCall("get_knot_idx", __pyx_f[0], 644, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 644; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -18170,7 +17583,6 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_6_basis_22HingeBasisFun
   __Pyx_WriteUnraisable("pyearth._basis.HingeBasisFunctionBase.get_knot_idx", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -18190,14 +17602,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_22HingeBasisFunctionBase_7get_knot_id
 
 static PyObject *__pyx_pf_7pyearth_6_basis_22HingeBasisFunctionBase_6get_knot_idx(struct __pyx_obj_7pyearth_6_basis_HingeBasisFunctionBase *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_knot_idx", 0);
-  __Pyx_TraceCall("get_knot_idx", __pyx_f[0], 644, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 644; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_f_7pyearth_6_basis_22HingeBasisFunctionBase_get_knot_idx(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 644; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -18212,7 +17622,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_22HingeBasisFunctionBase_6get_knot_id
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -18366,7 +17775,6 @@ static int __pyx_pw_7pyearth_6_basis_26SmoothedHingeBasisFunction_1__init__(PyOb
 
 static int __pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction___init__(struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_parent, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_knot, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_knot_minus, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_knot_plus, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_knot_idx, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable, int __pyx_v_reverse, PyObject *__pyx_v_label) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_t_2;
@@ -18376,7 +17784,6 @@ static int __pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction___init__(struc
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
-  __Pyx_TraceCall("__init__", __pyx_f[0], 650, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 650; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":655
  *                  INDEX_t variable, bint reverse,
@@ -18508,7 +17915,6 @@ static int __pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction___init__(struc
   __Pyx_AddTraceback("pyearth._basis.SmoothedHingeBasisFunction.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -18524,14 +17930,12 @@ static int __pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction___init__(struc
 static PyObject *__pyx_pw_7pyearth_6_basis_26SmoothedHingeBasisFunction_3get_knot_minus(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static PyObject *__pyx_f_7pyearth_6_basis_26SmoothedHingeBasisFunction_get_knot_minus(struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction *__pyx_v_self, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_knot_minus", 0);
-  __Pyx_TraceCall("get_knot_minus", __pyx_f[0], 665, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 665; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":666
  * 
@@ -18562,7 +17966,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_26SmoothedHingeBasisFunction_get_knot_
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -18582,14 +17985,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_26SmoothedHingeBasisFunction_3get_kno
 
 static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_2get_knot_minus(struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_knot_minus", 0);
-  __Pyx_TraceCall("get_knot_minus", __pyx_f[0], 665, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 665; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_26SmoothedHingeBasisFunction_get_knot_minus(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 665; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -18604,7 +18005,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_2get_kno
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -18620,14 +18020,12 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_2get_kno
 static PyObject *__pyx_pw_7pyearth_6_basis_26SmoothedHingeBasisFunction_5get_knot_plus(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static PyObject *__pyx_f_7pyearth_6_basis_26SmoothedHingeBasisFunction_get_knot_plus(struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction *__pyx_v_self, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_knot_plus", 0);
-  __Pyx_TraceCall("get_knot_plus", __pyx_f[0], 668, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 668; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":669
  * 
@@ -18658,7 +18056,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_26SmoothedHingeBasisFunction_get_knot_
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -18678,14 +18075,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_26SmoothedHingeBasisFunction_5get_kno
 
 static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_4get_knot_plus(struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_knot_plus", 0);
-  __Pyx_TraceCall("get_knot_plus", __pyx_f[0], 668, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 668; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_26SmoothedHingeBasisFunction_get_knot_plus(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 668; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -18700,7 +18095,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_4get_kno
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -18717,7 +18111,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_26SmoothedHingeBasisFunction_7_smooth
 static PyObject *__pyx_f_7pyearth_6_basis_26SmoothedHingeBasisFunction__smoothed_version(struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_parent, CYTHON_UNUSED PyObject *__pyx_v_knot_dict, PyObject *__pyx_v_translation, CYTHON_UNUSED int __pyx_skip_dispatch) {
   struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction *__pyx_v_result = NULL;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -18732,7 +18125,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_26SmoothedHingeBasisFunction__smoothed
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_smoothed_version", 0);
-  __Pyx_TraceCall("_smoothed_version", __pyx_f[0], 671, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 671; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":674
  *                             BasisFunction parent, dict knot_dict,
@@ -18888,7 +18280,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_26SmoothedHingeBasisFunction__smoothed
   __pyx_L0:;
   __Pyx_XDECREF((PyObject *)__pyx_v_result);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -18972,14 +18363,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_26SmoothedHingeBasisFunction_7_smooth
 
 static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_6_smoothed_version(struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_parent, PyObject *__pyx_v_knot_dict, PyObject *__pyx_v_translation) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_smoothed_version", 0);
-  __Pyx_TraceCall("_smoothed_version", __pyx_f[0], 671, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 671; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_26SmoothedHingeBasisFunction__smoothed_version(__pyx_v_self, __pyx_v_parent, __pyx_v_knot_dict, __pyx_v_translation, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 671; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -18994,7 +18383,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_6_smooth
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -19012,14 +18400,9 @@ static PyObject *__pyx_f_7pyearth_6_basis_26SmoothedHingeBasisFunction__init_p_r
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_p_denom;
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_r_denom;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_init_p_r", 0);
-  __Pyx_TraceCall("_init_p_r", __pyx_f[0], 682, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 682; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":684
  *     cpdef _init_p_r(SmoothedHingeBasisFunction self):
@@ -19126,13 +18509,7 @@ static PyObject *__pyx_f_7pyearth_6_basis_26SmoothedHingeBasisFunction__init_p_r
 
   /* function exit code */
   __pyx_r = Py_None; __Pyx_INCREF(Py_None);
-  goto __pyx_L0;
-  __pyx_L1_error:;
-  __Pyx_AddTraceback("pyearth._basis.SmoothedHingeBasisFunction._init_p_r", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = 0;
-  __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -19152,14 +18529,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_26SmoothedHingeBasisFunction_9_init_p
 
 static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_8_init_p_r(struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_init_p_r", 0);
-  __Pyx_TraceCall("_init_p_r", __pyx_f[0], 682, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 682; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_26SmoothedHingeBasisFunction__init_p_r(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 682; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -19174,7 +18549,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_8_init_p
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -19190,14 +18564,12 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_8_init_p
 static PyObject *__pyx_pw_7pyearth_6_basis_26SmoothedHingeBasisFunction_11get_p(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static PyObject *__pyx_f_7pyearth_6_basis_26SmoothedHingeBasisFunction_get_p(struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction *__pyx_v_self, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_p", 0);
-  __Pyx_TraceCall("get_p", __pyx_f[0], 695, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 695; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":696
  * 
@@ -19228,7 +18600,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_26SmoothedHingeBasisFunction_get_p(str
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -19248,14 +18619,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_26SmoothedHingeBasisFunction_11get_p(
 
 static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_10get_p(struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_p", 0);
-  __Pyx_TraceCall("get_p", __pyx_f[0], 695, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 695; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_26SmoothedHingeBasisFunction_get_p(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 695; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -19270,7 +18639,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_10get_p(
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -19286,14 +18654,12 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_10get_p(
 static PyObject *__pyx_pw_7pyearth_6_basis_26SmoothedHingeBasisFunction_13get_r(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static PyObject *__pyx_f_7pyearth_6_basis_26SmoothedHingeBasisFunction_get_r(struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction *__pyx_v_self, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_r", 0);
-  __Pyx_TraceCall("get_r", __pyx_f[0], 698, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 698; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":699
  * 
@@ -19324,7 +18690,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_26SmoothedHingeBasisFunction_get_r(str
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -19344,14 +18709,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_26SmoothedHingeBasisFunction_13get_r(
 
 static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_12get_r(struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_r", 0);
-  __Pyx_TraceCall("get_r", __pyx_f[0], 698, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 698; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_26SmoothedHingeBasisFunction_get_r(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 698; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -19366,7 +18729,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_12get_r(
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -19396,7 +18758,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_14__str_
   PyObject *__pyx_v_result = NULL;
   PyObject *__pyx_v_parent = NULL;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_t_2;
@@ -19408,7 +18769,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_14__str_
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__str__", 0);
-  __Pyx_TraceCall("__str__", __pyx_f[0], 701, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 701; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":702
  * 
@@ -19697,7 +19057,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_14__str_
   __Pyx_XDECREF(__pyx_v_result);
   __Pyx_XDECREF(__pyx_v_parent);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -19725,7 +19084,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_26SmoothedHingeBasisFunction_17__redu
 
 static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_16__reduce__(struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -19740,7 +19098,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_16__redu
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__reduce__", 0);
-  __Pyx_TraceCall("__reduce__", __pyx_f[0], 717, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 717; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":718
  * 
@@ -19898,7 +19255,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_16__redu
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -19927,7 +19283,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_26SmoothedHingeBasisFunction_19eval(P
 static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_18eval(struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction *__pyx_v_self, PyObject *__pyx_v_x) {
   PyObject *__pyx_v_tmp2 = NULL;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   PyObject *__pyx_t_2 = NULL;
@@ -19946,7 +19301,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_18eval(s
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("eval", 0);
-  __Pyx_TraceCall("eval", __pyx_f[0], 724, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 724; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":726
  *     def eval(SmoothedHingeBasisFunction self, x):
@@ -20303,7 +19657,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_18eval(s
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_tmp2);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -20332,7 +19685,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_26SmoothedHingeBasisFunction_21eval_d
 static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_20eval_deriv(struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction *__pyx_v_self, PyObject *__pyx_v_x) {
   PyObject *__pyx_v_tmp2 = NULL;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   PyObject *__pyx_t_2 = NULL;
@@ -20350,7 +19702,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_20eval_d
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("eval_deriv", 0);
-  __Pyx_TraceCall("eval_deriv", __pyx_f[0], 737, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 737; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":739
  *     def eval_deriv(SmoothedHingeBasisFunction self, x):
@@ -20690,7 +20041,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_20eval_d
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_tmp2);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -20721,7 +20071,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_22func_s
   PyObject *__pyx_v_args = NULL;
   PyObject *__pyx_v_result = NULL;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -20735,7 +20084,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_22func_s
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("func_string_factory", 0);
-  __Pyx_TraceCall("func_string_factory", __pyx_f[0], 750, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 750; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":751
  * 
@@ -21011,7 +20359,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_22func_s
   __Pyx_XDECREF(__pyx_v_args);
   __Pyx_XDECREF(__pyx_v_result);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -21147,7 +20494,6 @@ static int __pyx_pw_7pyearth_6_basis_18HingeBasisFunction_1__init__(PyObject *__
 
 static int __pyx_pf_7pyearth_6_basis_18HingeBasisFunction___init__(struct __pyx_obj_7pyearth_6_basis_HingeBasisFunction *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_parent, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_knot, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_knot_idx, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable, int __pyx_v_reverse, PyObject *__pyx_v_label) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_t_2;
@@ -21157,7 +20503,6 @@ static int __pyx_pf_7pyearth_6_basis_18HingeBasisFunction___init__(struct __pyx_
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
-  __Pyx_TraceCall("__init__", __pyx_f[0], 772, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 772; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":774
  *     def __init__(HingeBasisFunction self, BasisFunction parent, FLOAT_t knot,
@@ -21260,7 +20605,6 @@ static int __pyx_pf_7pyearth_6_basis_18HingeBasisFunction___init__(struct __pyx_
   __Pyx_AddTraceback("pyearth._basis.HingeBasisFunction.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -21279,7 +20623,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_18HingeBasisFunction__smoothed_version
   PyObject *__pyx_v_knot_plus = NULL;
   struct __pyx_obj_7pyearth_6_basis_SmoothedHingeBasisFunction *__pyx_v_result = NULL;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -21293,7 +20636,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_18HingeBasisFunction__smoothed_version
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_smoothed_version", 0);
-  __Pyx_TraceCall("_smoothed_version", __pyx_f[0], 781, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 781; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":783
  *     cpdef _smoothed_version(HingeBasisFunction self, BasisFunction parent,
@@ -21505,7 +20847,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_18HingeBasisFunction__smoothed_version
   __Pyx_XDECREF(__pyx_v_knot_plus);
   __Pyx_XDECREF((PyObject *)__pyx_v_result);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -21589,14 +20930,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_18HingeBasisFunction_3_smoothed_versi
 
 static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_2_smoothed_version(struct __pyx_obj_7pyearth_6_basis_HingeBasisFunction *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_parent, PyObject *__pyx_v_knot_dict, PyObject *__pyx_v_translation) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_smoothed_version", 0);
-  __Pyx_TraceCall("_smoothed_version", __pyx_f[0], 781, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 781; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_18HingeBasisFunction__smoothed_version(__pyx_v_self, __pyx_v_parent, __pyx_v_knot_dict, __pyx_v_translation, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 781; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -21611,7 +20950,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_2_smoothed_versi
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -21639,7 +20977,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_18HingeBasisFunction_5__reduce__(PyOb
 
 static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_4__reduce__(struct __pyx_obj_7pyearth_6_basis_HingeBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -21652,7 +20989,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_4__reduce__(stru
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__reduce__", 0);
-  __Pyx_TraceCall("__reduce__", __pyx_f[0], 792, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 792; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":793
  * 
@@ -21790,7 +21126,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_4__reduce__(stru
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -21820,7 +21155,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_6__str__(struct 
   PyObject *__pyx_v_result = NULL;
   PyObject *__pyx_v_parent = NULL;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_t_2;
@@ -21831,7 +21165,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_6__str__(struct 
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__str__", 0);
-  __Pyx_TraceCall("__str__", __pyx_f[0], 798, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 798; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":799
  * 
@@ -22113,7 +21446,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_6__str__(struct 
   __Pyx_XDECREF(__pyx_v_result);
   __Pyx_XDECREF(__pyx_v_parent);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -22141,7 +21473,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_18HingeBasisFunction_9eval(PyObject *
 
 static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_8eval(struct __pyx_obj_7pyearth_6_basis_HingeBasisFunction *__pyx_v_self, PyObject *__pyx_v_x) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   PyObject *__pyx_t_2 = NULL;
@@ -22155,7 +21486,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_8eval(struct __p
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("eval", 0);
-  __Pyx_TraceCall("eval", __pyx_f[0], 815, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 815; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":816
  * 
@@ -22310,7 +21640,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_8eval(struct __p
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -22338,7 +21667,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_18HingeBasisFunction_11eval_deriv(PyO
 
 static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_10eval_deriv(struct __pyx_obj_7pyearth_6_basis_HingeBasisFunction *__pyx_v_self, PyObject *__pyx_v_x) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   PyObject *__pyx_t_2 = NULL;
@@ -22351,7 +21679,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_10eval_deriv(str
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("eval_deriv", 0);
-  __Pyx_TraceCall("eval_deriv", __pyx_f[0], 821, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 821; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":822
  * 
@@ -22495,7 +21822,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_10eval_deriv(str
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -22525,7 +21851,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_12func_string_fa
   PyObject *__pyx_v_parent = NULL;
   PyObject *__pyx_v_result = NULL;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -22540,7 +21865,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_12func_string_fa
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("func_string_factory", 0);
-  __Pyx_TraceCall("func_string_factory", __pyx_f[0], 827, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 827; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":828
  * 
@@ -22857,7 +22181,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_12func_string_fa
   __Pyx_XDECREF(__pyx_v_parent);
   __Pyx_XDECREF(__pyx_v_result);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -22966,7 +22289,6 @@ static int __pyx_pw_7pyearth_6_basis_19LinearBasisFunction_1__init__(PyObject *_
 
 static int __pyx_pf_7pyearth_6_basis_19LinearBasisFunction___init__(struct __pyx_obj_7pyearth_6_basis_LinearBasisFunction *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_parent, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_variable, PyObject *__pyx_v_label) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_t_2;
@@ -22976,7 +22298,6 @@ static int __pyx_pf_7pyearth_6_basis_19LinearBasisFunction___init__(struct __pyx
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
-  __Pyx_TraceCall("__init__", __pyx_f[0], 847, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 847; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":849
  *     def __init__(LinearBasisFunction self, BasisFunction parent,
@@ -23052,7 +22373,6 @@ static int __pyx_pf_7pyearth_6_basis_19LinearBasisFunction___init__(struct __pyx
   __Pyx_AddTraceback("pyearth._basis.LinearBasisFunction.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -23069,7 +22389,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_19LinearBasisFunction_3_smoothed_vers
 static PyObject *__pyx_f_7pyearth_6_basis_19LinearBasisFunction__smoothed_version(struct __pyx_obj_7pyearth_6_basis_LinearBasisFunction *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_parent, CYTHON_UNUSED PyObject *__pyx_v_knot_dict, PyObject *__pyx_v_translation, CYTHON_UNUSED int __pyx_skip_dispatch) {
   struct __pyx_obj_7pyearth_6_basis_LinearBasisFunction *__pyx_v_result = NULL;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -23079,7 +22398,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_19LinearBasisFunction__smoothed_versio
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_smoothed_version", 0);
-  __Pyx_TraceCall("_smoothed_version", __pyx_f[0], 853, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 853; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":855
  *     cpdef _smoothed_version(LinearBasisFunction self, BasisFunction parent,
@@ -23189,7 +22507,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_19LinearBasisFunction__smoothed_versio
   __pyx_L0:;
   __Pyx_XDECREF((PyObject *)__pyx_v_result);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -23273,14 +22590,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_19LinearBasisFunction_3_smoothed_vers
 
 static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_2_smoothed_version(struct __pyx_obj_7pyearth_6_basis_LinearBasisFunction *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_parent, PyObject *__pyx_v_knot_dict, PyObject *__pyx_v_translation) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_smoothed_version", 0);
-  __Pyx_TraceCall("_smoothed_version", __pyx_f[0], 853, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 853; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_19LinearBasisFunction__smoothed_version(__pyx_v_self, __pyx_v_parent, __pyx_v_knot_dict, __pyx_v_translation, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 853; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -23295,7 +22610,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_2_smoothed_vers
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -23323,7 +22637,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_19LinearBasisFunction_5__reduce__(PyO
 
 static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_4__reduce__(struct __pyx_obj_7pyearth_6_basis_LinearBasisFunction *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -23334,7 +22647,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_4__reduce__(str
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__reduce__", 0);
-  __Pyx_TraceCall("__reduce__", __pyx_f[0], 861, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 861; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":862
  * 
@@ -23439,7 +22751,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_4__reduce__(str
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -23469,7 +22780,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_6__str__(struct
   PyObject *__pyx_v_result = NULL;
   PyObject *__pyx_v_parent = NULL;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_t_2;
@@ -23479,7 +22789,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_6__str__(struct
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__str__", 0);
-  __Pyx_TraceCall("__str__", __pyx_f[0], 866, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 866; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":867
  * 
@@ -23579,7 +22888,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_6__str__(struct
   __Pyx_XDECREF(__pyx_v_result);
   __Pyx_XDECREF(__pyx_v_parent);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -23607,13 +22915,8 @@ static PyObject *__pyx_pw_7pyearth_6_basis_19LinearBasisFunction_9eval(PyObject 
 
 static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_8eval(CYTHON_UNUSED struct __pyx_obj_7pyearth_6_basis_LinearBasisFunction *__pyx_v_self, PyObject *__pyx_v_x) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("eval", 0);
-  __Pyx_TraceCall("eval", __pyx_f[0], 873, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 873; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":874
  * 
@@ -23636,12 +22939,8 @@ static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_8eval(CYTHON_UN
  */
 
   /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_AddTraceback("pyearth._basis.LinearBasisFunction.eval", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -23669,7 +22968,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_19LinearBasisFunction_11eval_deriv(Py
 
 static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_10eval_deriv(CYTHON_UNUSED struct __pyx_obj_7pyearth_6_basis_LinearBasisFunction *__pyx_v_self, PyObject *__pyx_v_x) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -23681,7 +22979,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_10eval_deriv(CY
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("eval_deriv", 0);
-  __Pyx_TraceCall("eval_deriv", __pyx_f[0], 876, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 876; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":877
  * 
@@ -23748,7 +23045,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_10eval_deriv(CY
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -23778,7 +23074,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_12func_string_f
   PyObject *__pyx_v_parent = NULL;
   PyObject *__pyx_v_result = NULL;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -23792,7 +23087,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_12func_string_f
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("func_string_factory", 0);
-  __Pyx_TraceCall("func_string_factory", __pyx_f[0], 879, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 879; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":880
  * 
@@ -23986,7 +23280,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_12func_string_f
   __Pyx_XDECREF(__pyx_v_parent);
   __Pyx_XDECREF(__pyx_v_result);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -24053,7 +23346,6 @@ static int __pyx_pw_7pyearth_6_basis_5Basis_1__init__(PyObject *__pyx_v_self, Py
 
 static int __pyx_pf_7pyearth_6_basis_5Basis___init__(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self, PyObject *__pyx_v_num_variables) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_2;
@@ -24061,7 +23353,6 @@ static int __pyx_pf_7pyearth_6_basis_5Basis___init__(struct __pyx_obj_7pyearth_6
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
-  __Pyx_TraceCall("__init__", __pyx_f[0], 894, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 894; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":895
  * 
@@ -24104,7 +23395,6 @@ static int __pyx_pf_7pyearth_6_basis_5Basis___init__(struct __pyx_obj_7pyearth_6
   __Pyx_AddTraceback("pyearth._basis.Basis.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -24132,7 +23422,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_3__reduce__(PyObject *__pyx_v_
 
 static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_2__reduce__(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -24143,7 +23432,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_2__reduce__(struct __pyx_obj_7
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__reduce__", 0);
-  __Pyx_TraceCall("__reduce__", __pyx_f[0], 914, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 914; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":915
  * 
@@ -24216,7 +23504,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_2__reduce__(struct __pyx_obj_7
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -24244,14 +23531,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_5_getstate(PyObject *__pyx_v_s
 
 static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_4_getstate(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_getstate", 0);
-  __Pyx_TraceCall("_getstate", __pyx_f[0], 917, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 917; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":918
  * 
@@ -24283,7 +23568,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_4_getstate(struct __pyx_obj_7p
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -24311,14 +23595,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_7__setstate__(PyObject *__pyx_
 
 static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_6__setstate__(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self, PyObject *__pyx_v_state) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__setstate__", 0);
-  __Pyx_TraceCall("__setstate__", __pyx_f[0], 920, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 920; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":921
  * 
@@ -24353,7 +23635,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_6__setstate__(struct __pyx_obj
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -24399,7 +23680,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_9__richcmp__(PyObject *__pyx_v
 
 static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_8__richcmp__(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self, PyObject *__pyx_v_other, PyObject *__pyx_v_method) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_t_2;
@@ -24410,7 +23690,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_8__richcmp__(struct __pyx_obj_
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__richcmp__", 0);
-  __Pyx_TraceCall("__richcmp__", __pyx_f[0], 923, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 923; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":924
  * 
@@ -24570,7 +23849,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_8__richcmp__(struct __pyx_obj_
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -24598,7 +23876,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_11_eq(PyObject *__pyx_v_self, 
 
 static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_10_eq(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self, PyObject *__pyx_v_other) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -24610,7 +23887,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_10_eq(struct __pyx_obj_7pyeart
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_eq", 0);
-  __Pyx_TraceCall("_eq", __pyx_f[0], 931, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 931; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":932
  * 
@@ -24713,7 +23989,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_10_eq(struct __pyx_obj_7pyeart
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -24743,7 +24018,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_13piter(PyObject *__pyx_v_self
 static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_12piter(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self) {
   struct __pyx_obj_7pyearth_6_basis___pyx_scope_struct__piter *__pyx_cur_scope;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
@@ -24755,7 +24029,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_12piter(struct __pyx_obj_7pyea
     return NULL;
   }
   __Pyx_GOTREF(__pyx_cur_scope);
-  __Pyx_TraceCall("piter", __pyx_f[0], 935, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 935; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_cur_scope->__pyx_v_self = __pyx_v_self;
   __Pyx_INCREF((PyObject *)__pyx_cur_scope->__pyx_v_self);
   __Pyx_GIVEREF((PyObject *)__pyx_cur_scope->__pyx_v_self);
@@ -24772,7 +24045,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_12piter(struct __pyx_obj_7pyea
   __pyx_r = NULL;
   __Pyx_DECREF(((PyObject *)__pyx_cur_scope));
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -24954,7 +24226,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_15__str__(struct __pyx_obj_7py
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_n;
   PyObject *__pyx_v_result = NULL;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   Py_ssize_t __pyx_t_1;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_2;
@@ -24965,7 +24236,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_15__str__(struct __pyx_obj_7py
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__str__", 0);
-  __Pyx_TraceCall("__str__", __pyx_f[0], 940, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 940; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":942
  *     def __str__(Basis self):
@@ -25063,7 +24333,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_15__str__(struct __pyx_obj_7py
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_result);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -25079,7 +24348,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_15__str__(struct __pyx_obj_7py
 static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_18get_num_variables(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static int __pyx_f_7pyearth_6_basis_5Basis_get_num_variables(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self, int __pyx_skip_dispatch) {
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -25090,7 +24358,6 @@ static int __pyx_f_7pyearth_6_basis_5Basis_get_num_variables(struct __pyx_obj_7p
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_num_variables", 0);
-  __Pyx_TraceCall("get_num_variables", __pyx_f[0], 949, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 949; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -25153,7 +24420,6 @@ static int __pyx_f_7pyearth_6_basis_5Basis_get_num_variables(struct __pyx_obj_7p
   __Pyx_WriteUnraisable("pyearth._basis.Basis.get_num_variables", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -25173,14 +24439,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_18get_num_variables(PyObject *
 
 static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_17get_num_variables(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_num_variables", 0);
-  __Pyx_TraceCall("get_num_variables", __pyx_f[0], 949, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 949; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_7pyearth_6_basis_5Basis_get_num_variables(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 949; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -25195,7 +24459,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_17get_num_variables(struct __p
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -25216,7 +24479,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_anova_decomp(struct __pyx_obj_7
   PyObject *__pyx_v_vars = 0;
   struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_bf = 0;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -25232,7 +24494,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_anova_decomp(struct __pyx_obj_7
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("anova_decomp", 0);
-  __Pyx_TraceCall("anova_decomp", __pyx_f[0], 952, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 952; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -25437,7 +24698,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_anova_decomp(struct __pyx_obj_7
   __Pyx_XDECREF(__pyx_v_vars);
   __Pyx_XDECREF((PyObject *)__pyx_v_bf);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -25458,14 +24718,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_20anova_decomp(PyObject *__pyx
 
 static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_19anova_decomp(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("anova_decomp", 0);
-  __Pyx_TraceCall("anova_decomp", __pyx_f[0], 952, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 952; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_5Basis_anova_decomp(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 952; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -25480,7 +24738,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_19anova_decomp(struct __pyx_ob
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -25579,14 +24836,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_12smooth_knots_lambda(PyObject
 
 static PyObject *__pyx_lambda_funcdef_lambda(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_x) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("lambda", 0);
-  __Pyx_TraceCall("lambda", __pyx_f[0], 987, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 987; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_x, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 987; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_GOTREF(__pyx_t_1);
@@ -25601,7 +24856,6 @@ static PyObject *__pyx_lambda_funcdef_lambda(CYTHON_UNUSED PyObject *__pyx_self,
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -25634,7 +24888,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_21smooth_knots(struct __pyx_ob
   Py_ssize_t __pyx_v_n_bfs;
   PyObject *__pyx_v_next = NULL;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   Py_ssize_t __pyx_t_2;
@@ -25659,7 +24912,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_21smooth_knots(struct __pyx_ob
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("smooth_knots", 0);
-  __Pyx_TraceCall("smooth_knots", __pyx_f[0], 969, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 969; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":973
  *         Used to find the side knots in the smoothed representation.
@@ -26510,7 +25762,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_21smooth_knots(struct __pyx_ob
   __Pyx_XDECREF(__pyx_v_i);
   __Pyx_XDECREF(__pyx_v_next);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -26536,7 +25787,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_smooth(struct __pyx_obj_7pyeart
   __Pyx_LocalBuf_ND __pyx_pybuffernd_X;
   __Pyx_Buffer __pyx_pybuffer_X;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -26549,7 +25799,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_smooth(struct __pyx_obj_7pyeart
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("smooth", 0);
-  __Pyx_TraceCall("smooth", __pyx_f[0], 1014, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1014; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_pybuffer_X.pybuffer.buf = NULL;
   __pyx_pybuffer_X.refcount = 0;
   __pyx_pybuffernd_X.data = NULL;
@@ -26925,7 +26174,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_smooth(struct __pyx_obj_7pyeart
   __Pyx_XDECREF((PyObject *)__pyx_v_result);
   __Pyx_XDECREF(__pyx_v_bf);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -26955,14 +26203,12 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_23smooth(struct __pyx_obj_7pye
   __Pyx_LocalBuf_ND __pyx_pybuffernd_X;
   __Pyx_Buffer __pyx_pybuffer_X;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("smooth", 0);
-  __Pyx_TraceCall("smooth", __pyx_f[0], 1014, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1014; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_pybuffer_X.pybuffer.buf = NULL;
   __pyx_pybuffer_X.refcount = 0;
   __pyx_pybuffernd_X.data = NULL;
@@ -26993,7 +26239,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_23smooth(struct __pyx_obj_7pye
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_X.rcbuffer->pybuffer);
   __pyx_L2:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -27009,7 +26254,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_23smooth(struct __pyx_obj_7pye
 static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_26append(PyObject *__pyx_v_self, PyObject *__pyx_v_basis_function); /*proto*/
 static PyObject *__pyx_f_7pyearth_6_basis_5Basis_append(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_basis_function, int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -27021,7 +26265,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_append(struct __pyx_obj_7pyeart
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("append", 0);
-  __Pyx_TraceCall("append", __pyx_f[0], 1027, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1027; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -27098,7 +26341,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_append(struct __pyx_obj_7pyeart
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -27126,14 +26368,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_26append(PyObject *__pyx_v_sel
 
 static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_25append(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_basis_function) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("append", 0);
-  __Pyx_TraceCall("append", __pyx_f[0], 1027, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1027; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __pyx_f_7pyearth_6_basis_5Basis_append(__pyx_v_self, __pyx_v_basis_function, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1027; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -27148,7 +26388,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_25append(struct __pyx_obj_7pye
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -27176,7 +26415,6 @@ static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_28__iter__(PyObject *__pyx_v_s
 
 static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_27__iter__(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -27185,7 +26423,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_27__iter__(struct __pyx_obj_7p
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__iter__", 0);
-  __Pyx_TraceCall("__iter__", __pyx_f[0], 1030, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1030; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":1031
  * 
@@ -27236,7 +26473,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_27__iter__(struct __pyx_obj_7p
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -27264,7 +26500,6 @@ static Py_ssize_t __pyx_pw_7pyearth_6_basis_5Basis_30__len__(PyObject *__pyx_v_s
 
 static Py_ssize_t __pyx_pf_7pyearth_6_basis_5Basis_29__len__(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self) {
   Py_ssize_t __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -27274,7 +26509,6 @@ static Py_ssize_t __pyx_pf_7pyearth_6_basis_5Basis_29__len__(struct __pyx_obj_7p
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__len__", 0);
-  __Pyx_TraceCall("__len__", __pyx_f[0], 1033, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1033; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":1034
  * 
@@ -27324,7 +26558,6 @@ static Py_ssize_t __pyx_pf_7pyearth_6_basis_5Basis_29__len__(struct __pyx_obj_7p
   __Pyx_AddTraceback("pyearth._basis.Basis.__len__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -27340,7 +26573,6 @@ static Py_ssize_t __pyx_pf_7pyearth_6_basis_5Basis_29__len__(struct __pyx_obj_7p
 static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_32get(PyObject *__pyx_v_self, PyObject *__pyx_arg_i); /*proto*/
 static struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_f_7pyearth_6_basis_5Basis_get(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_i, int __pyx_skip_dispatch) {
   struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -27352,7 +26584,6 @@ static struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_f_7pyearth_6_basis
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get", 0);
-  __Pyx_TraceCall("get", __pyx_f[0], 1036, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1036; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -27436,7 +26667,6 @@ static struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_f_7pyearth_6_basis
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF((PyObject *)__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -27469,14 +26699,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_32get(PyObject *__pyx_v_self, 
 
 static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_31get(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_i) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get", 0);
-  __Pyx_TraceCall("get", __pyx_f[0], 1036, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1036; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = ((PyObject *)__pyx_f_7pyearth_6_basis_5Basis_get(__pyx_v_self, __pyx_v_i, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1036; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -27491,7 +26719,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_31get(struct __pyx_obj_7pyeart
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -27532,14 +26759,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_34__getitem__(PyObject *__pyx_
 
 static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_33__getitem__(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_i) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__getitem__", 0);
-  __Pyx_TraceCall("__getitem__", __pyx_f[0], 1039, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1039; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":1040
  * 
@@ -27570,7 +26795,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_33__getitem__(struct __pyx_obj
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -27588,7 +26812,6 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_6_basis_5Basis_plen(str
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_length;
   PyObject *__pyx_v_bf = NULL;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -27602,7 +26825,6 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_6_basis_5Basis_plen(str
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("plen", 0);
-  __Pyx_TraceCall("plen", __pyx_f[0], 1042, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1042; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -27758,7 +26980,6 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_6_basis_5Basis_plen(str
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_bf);
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -27778,14 +26999,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_36plen(PyObject *__pyx_v_self,
 
 static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_35plen(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("plen", 0);
-  __Pyx_TraceCall("plen", __pyx_f[0], 1042, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1042; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_f_7pyearth_6_basis_5Basis_plen(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1042; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -27800,7 +27019,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_35plen(struct __pyx_obj_7pyear
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -27824,7 +27042,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_transform(struct __pyx_obj_7pye
   __Pyx_LocalBuf_ND __pyx_pybuffernd_missing;
   __Pyx_Buffer __pyx_pybuffer_missing;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -27838,7 +27055,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_transform(struct __pyx_obj_7pye
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("transform", 0);
-  __Pyx_TraceCall("transform", __pyx_f[0], 1049, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1049; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_pybuffer_X.pybuffer.buf = NULL;
   __pyx_pybuffer_X.refcount = 0;
   __pyx_pybuffernd_X.data = NULL;
@@ -28045,7 +27261,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_transform(struct __pyx_obj_7pye
   __pyx_L2:;
   __Pyx_XDECREF((PyObject *)__pyx_v_bf);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -28135,14 +27350,12 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_37transform(struct __pyx_obj_7
   __Pyx_LocalBuf_ND __pyx_pybuffernd_missing;
   __Pyx_Buffer __pyx_pybuffer_missing;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("transform", 0);
-  __Pyx_TraceCall("transform", __pyx_f[0], 1049, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1049; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_pybuffer_X.pybuffer.buf = NULL;
   __pyx_pybuffer_X.refcount = 0;
   __pyx_pybuffernd_X.data = NULL;
@@ -28195,7 +27408,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_37transform(struct __pyx_obj_7
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_missing.rcbuffer->pybuffer);
   __pyx_L2:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -28219,7 +27431,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_weighted_transform(struct __pyx
   __Pyx_LocalBuf_ND __pyx_pybuffernd_weights;
   __Pyx_Buffer __pyx_pybuffer_weights;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -28231,7 +27442,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_weighted_transform(struct __pyx
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("weighted_transform", 0);
-  __Pyx_TraceCall("weighted_transform", __pyx_f[0], 1059, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1059; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_pybuffer_X.pybuffer.buf = NULL;
   __pyx_pybuffer_X.refcount = 0;
   __pyx_pybuffernd_X.data = NULL;
@@ -28374,7 +27584,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_weighted_transform(struct __pyx
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_weights.rcbuffer->pybuffer);
   __pyx_L2:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -28476,14 +27685,12 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_39weighted_transform(struct __
   __Pyx_LocalBuf_ND __pyx_pybuffernd_weights;
   __Pyx_Buffer __pyx_pybuffer_weights;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("weighted_transform", 0);
-  __Pyx_TraceCall("weighted_transform", __pyx_f[0], 1059, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1059; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_pybuffer_X.pybuffer.buf = NULL;
   __pyx_pybuffer_X.refcount = 0;
   __pyx_pybuffernd_X.data = NULL;
@@ -28547,7 +27754,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_39weighted_transform(struct __
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_weights.rcbuffer->pybuffer);
   __pyx_L2:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -28596,7 +27802,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_transform_deriv(struct __pyx_ob
   __Pyx_LocalBuf_ND __pyx_pybuffernd_missing;
   __Pyx_Buffer __pyx_pybuffer_missing;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -28629,7 +27834,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_transform_deriv(struct __pyx_ob
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("transform_deriv", 0);
-  __Pyx_TraceCall("transform_deriv", __pyx_f[0], 1066, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1066; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   if (__pyx_optional_args) {
     if (__pyx_optional_args->__pyx_n > 0) {
       __pyx_v_prezeroed_j = __pyx_optional_args->prezeroed_j;
@@ -29148,7 +28352,6 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_transform_deriv(struct __pyx_ob
   __Pyx_XDECREF((PyObject *)__pyx_v_bf);
   __Pyx_XDECREF(__pyx_v_variables);
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -29313,7 +28516,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_41transform_deriv(struct __pyx
   __Pyx_LocalBuf_ND __pyx_pybuffernd_missing;
   __Pyx_Buffer __pyx_pybuffer_missing;
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   struct __pyx_opt_args_7pyearth_6_basis_5Basis_transform_deriv __pyx_t_2;
@@ -29321,7 +28523,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_41transform_deriv(struct __pyx
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("transform_deriv", 0);
-  __Pyx_TraceCall("transform_deriv", __pyx_f[0], 1066, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1066; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __pyx_pybuffer_X.pybuffer.buf = NULL;
   __pyx_pybuffer_X.refcount = 0;
   __pyx_pybuffernd_X.data = NULL;
@@ -29409,7 +28610,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_41transform_deriv(struct __pyx
   __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_missing.rcbuffer->pybuffer);
   __pyx_L2:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -29437,14 +28637,12 @@ static PyObject *__pyx_pw_7pyearth_6_basis_5Basis_13num_variables_1__get__(PyObj
 
 static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_13num_variables___get__(struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
-  __Pyx_TraceCall("__get__", __pyx_f[1], 196, 0, {__pyx_filename = __pyx_f[1]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->num_variables); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -29459,7 +28657,6 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_13num_variables___get__(struct
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -29497,7 +28694,6 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
   int __pyx_v_offset;
   int __pyx_v_hasfields;
   int __pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   int __pyx_t_2;
@@ -29514,7 +28710,6 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
     __pyx_v_info->obj = Py_None; __Pyx_INCREF(Py_None);
     __Pyx_GIVEREF(__pyx_v_info->obj);
   }
-  __Pyx_TraceCall("__getbuffer__", __pyx_f[2], 197, 0, {__pyx_filename = __pyx_f[2]; __pyx_lineno = 197; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "../../anaconda/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":203
  *             # of flags
@@ -30337,7 +29532,6 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
   }
   __pyx_L2:;
   __Pyx_XDECREF((PyObject *)__pyx_v_descr);
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -30362,14 +29556,9 @@ static CYTHON_UNUSED void __pyx_pw_5numpy_7ndarray_3__releasebuffer__(PyObject *
 }
 
 static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info) {
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__releasebuffer__", 0);
-  __Pyx_TraceCall("__releasebuffer__", __pyx_f[2], 290, 0, {__pyx_filename = __pyx_f[2]; __pyx_lineno = 290; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "../../anaconda/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":291
  * 
@@ -30436,11 +29625,6 @@ static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_s
  */
 
   /* function exit code */
-  goto __pyx_L0;
-  __pyx_L1_error:;
-  __Pyx_WriteUnraisable("numpy.ndarray.__releasebuffer__", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
-  __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
 }
 
@@ -30454,14 +29638,12 @@ static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_s
 
 static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew1(PyObject *__pyx_v_a) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew1", 0);
-  __Pyx_TraceCall("PyArray_MultiIterNew1", __pyx_f[2], 770, 0, {__pyx_filename = __pyx_f[2]; __pyx_lineno = 770; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "../../anaconda/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":771
  * 
@@ -30492,7 +29674,6 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew1(PyObject *__
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -30507,14 +29688,12 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew1(PyObject *__
 
 static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew2(PyObject *__pyx_v_a, PyObject *__pyx_v_b) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew2", 0);
-  __Pyx_TraceCall("PyArray_MultiIterNew2", __pyx_f[2], 773, 0, {__pyx_filename = __pyx_f[2]; __pyx_lineno = 773; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "../../anaconda/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":774
  * 
@@ -30545,7 +29724,6 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew2(PyObject *__
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -30560,14 +29738,12 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew2(PyObject *__
 
 static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew3(PyObject *__pyx_v_a, PyObject *__pyx_v_b, PyObject *__pyx_v_c) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew3", 0);
-  __Pyx_TraceCall("PyArray_MultiIterNew3", __pyx_f[2], 776, 0, {__pyx_filename = __pyx_f[2]; __pyx_lineno = 776; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "../../anaconda/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":777
  * 
@@ -30598,7 +29774,6 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew3(PyObject *__
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -30613,14 +29788,12 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew3(PyObject *__
 
 static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew4(PyObject *__pyx_v_a, PyObject *__pyx_v_b, PyObject *__pyx_v_c, PyObject *__pyx_v_d) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew4", 0);
-  __Pyx_TraceCall("PyArray_MultiIterNew4", __pyx_f[2], 779, 0, {__pyx_filename = __pyx_f[2]; __pyx_lineno = 779; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "../../anaconda/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":780
  * 
@@ -30651,7 +29824,6 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew4(PyObject *__
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -30666,14 +29838,12 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew4(PyObject *__
 
 static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew5(PyObject *__pyx_v_a, PyObject *__pyx_v_b, PyObject *__pyx_v_c, PyObject *__pyx_v_d, PyObject *__pyx_v_e) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew5", 0);
-  __Pyx_TraceCall("PyArray_MultiIterNew5", __pyx_f[2], 782, 0, {__pyx_filename = __pyx_f[2]; __pyx_lineno = 782; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "../../anaconda/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":783
  * 
@@ -30704,7 +29874,6 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew5(PyObject *__
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -30726,7 +29895,6 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
   PyObject *__pyx_v_new_offset = NULL;
   PyObject *__pyx_v_t = NULL;
   char *__pyx_r;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   Py_ssize_t __pyx_t_2;
@@ -30741,7 +29909,6 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_util_dtypestring", 0);
-  __Pyx_TraceCall("_util_dtypestring", __pyx_f[2], 785, 0, {__pyx_filename = __pyx_f[2]; __pyx_lineno = 785; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "../../anaconda/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":790
  * 
@@ -31465,7 +30632,6 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
   __Pyx_XDECREF(__pyx_v_childname);
   __Pyx_XDECREF(__pyx_v_new_offset);
   __Pyx_XDECREF(__pyx_v_t);
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -31480,15 +30646,10 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
 
 static CYTHON_INLINE void __pyx_f_5numpy_set_array_base(PyArrayObject *__pyx_v_arr, PyObject *__pyx_v_base) {
   PyObject *__pyx_v_baseptr;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   int __pyx_t_2;
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("set_array_base", 0);
-  __Pyx_TraceCall("set_array_base", __pyx_f[2], 966, 0, {__pyx_filename = __pyx_f[2]; __pyx_lineno = 966; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "../../anaconda/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":968
  * cdef inline void set_array_base(ndarray arr, object base):
@@ -31568,11 +30729,6 @@ static CYTHON_INLINE void __pyx_f_5numpy_set_array_base(PyArrayObject *__pyx_v_a
  */
 
   /* function exit code */
-  goto __pyx_L0;
-  __pyx_L1_error:;
-  __Pyx_WriteUnraisable("numpy.set_array_base", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
-  __pyx_L0:;
-  __Pyx_TraceReturn(Py_None, 0);
   __Pyx_RefNannyFinishContext();
 }
 
@@ -31586,14 +30742,9 @@ static CYTHON_INLINE void __pyx_f_5numpy_set_array_base(PyArrayObject *__pyx_v_a
 
 static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__pyx_v_arr) {
   PyObject *__pyx_r = NULL;
-  __Pyx_TraceDeclarations
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_array_base", 0);
-  __Pyx_TraceCall("get_array_base", __pyx_f[2], 976, 0, {__pyx_filename = __pyx_f[2]; __pyx_lineno = 976; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "../../anaconda/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":977
  * 
@@ -31647,12 +30798,8 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
  */
 
   /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_AddTraceback("numpy.get_array_base", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_TraceReturn(__pyx_r, 0);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -33368,7 +32515,6 @@ PyMODINIT_FUNC PyInit__basis(void); /*proto*/
 PyMODINIT_FUNC PyInit__basis(void)
 #endif
 {
-  __Pyx_TraceDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
@@ -33636,7 +32782,6 @@ PyMODINIT_FUNC PyInit__basis(void)
   #if defined(__Pyx_Generator_USED) || defined(__Pyx_Coroutine_USED)
   if (__Pyx_patch_abc() < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   #endif
-  __Pyx_TraceCall("PyMODINIT_FUNC PyInit__basis(void)", __pyx_f[0], 1, 0, {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;});
 
   /* "pyearth/_basis.pyx":11
  * from libc.math cimport abs
@@ -33767,7 +32912,6 @@ PyMODINIT_FUNC PyInit__basis(void)
  *     if arr.base is NULL:
  *         return None
  */
-  __Pyx_TraceReturn(Py_None, 0);
 
   /*--- Wrapped vars code ---*/
 
@@ -33887,98 +33031,6 @@ invalid_keyword:
     #endif
     return 0;
 }
-
-#if CYTHON_PROFILE
-static int __Pyx_TraceSetupAndCall(PyCodeObject** code,
-                                   PyFrameObject** frame,
-                                   const char *funcname,
-                                   const char *srcfile,
-                                   int firstlineno) {
-    PyObject *type, *value, *traceback;
-    int retval;
-    PyThreadState* tstate = PyThreadState_GET();
-    if (*frame == NULL || !CYTHON_PROFILE_REUSE_FRAME) {
-        if (*code == NULL) {
-            *code = __Pyx_createFrameCodeObject(funcname, srcfile, firstlineno);
-            if (*code == NULL) return 0;
-        }
-        *frame = PyFrame_New(
-            tstate,                          /*PyThreadState *tstate*/
-            *code,                           /*PyCodeObject *code*/
-            __pyx_d,                  /*PyObject *globals*/
-            0                                /*PyObject *locals*/
-        );
-        if (*frame == NULL) return 0;
-        if (CYTHON_TRACE && (*frame)->f_trace == NULL) {
-            Py_INCREF(Py_None);
-            (*frame)->f_trace = Py_None;
-        }
-#if PY_VERSION_HEX < 0x030400B1
-    } else {
-        (*frame)->f_tstate = tstate;
-#endif
-    }
-    (*frame)->f_lineno = firstlineno;
-    retval = 1;
-    tstate->tracing++;
-    tstate->use_tracing = 0;
-    PyErr_Fetch(&type, &value, &traceback);
-    #if CYTHON_TRACE
-    if (tstate->c_tracefunc)
-        retval = tstate->c_tracefunc(tstate->c_traceobj, *frame, PyTrace_CALL, NULL) == 0;
-    if (retval && tstate->c_profilefunc)
-    #endif
-        retval = tstate->c_profilefunc(tstate->c_profileobj, *frame, PyTrace_CALL, NULL) == 0;
-    tstate->use_tracing = (tstate->c_profilefunc ||
-                           (CYTHON_TRACE && tstate->c_tracefunc));
-    tstate->tracing--;
-    if (retval) {
-        PyErr_Restore(type, value, traceback);
-        return tstate->use_tracing && retval;
-    } else {
-        Py_XDECREF(type);
-        Py_XDECREF(value);
-        Py_XDECREF(traceback);
-        return -1;
-    }
-}
-static PyCodeObject *__Pyx_createFrameCodeObject(const char *funcname, const char *srcfile, int firstlineno) {
-    PyObject *py_srcfile = 0;
-    PyObject *py_funcname = 0;
-    PyCodeObject *py_code = 0;
-    #if PY_MAJOR_VERSION < 3
-    py_funcname = PyString_FromString(funcname);
-    py_srcfile = PyString_FromString(srcfile);
-    #else
-    py_funcname = PyUnicode_FromString(funcname);
-    py_srcfile = PyUnicode_FromString(srcfile);
-    #endif
-    if (!py_funcname | !py_srcfile) goto bad;
-    py_code = PyCode_New(
-        0,
-        #if PY_MAJOR_VERSION >= 3
-        0,
-        #endif
-        0,
-        0,
-        0,
-        __pyx_empty_bytes,     /*PyObject *code,*/
-        __pyx_empty_tuple,     /*PyObject *consts,*/
-        __pyx_empty_tuple,     /*PyObject *names,*/
-        __pyx_empty_tuple,     /*PyObject *varnames,*/
-        __pyx_empty_tuple,     /*PyObject *freevars,*/
-        __pyx_empty_tuple,     /*PyObject *cellvars,*/
-        py_srcfile,       /*PyObject *filename,*/
-        py_funcname,      /*PyObject *name,*/
-        firstlineno,
-        __pyx_empty_bytes      /*PyObject *lnotab*/
-    );
-bad:
-    Py_XDECREF(py_srcfile);
-    Py_XDECREF(py_funcname);
-    return py_code;
-}
-#endif
 
 #if CYTHON_COMPILING_IN_CPYTHON
 static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw) {
