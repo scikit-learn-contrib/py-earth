@@ -14,26 +14,23 @@ from libc.math cimport log
 cimport numpy as cnp
 from _types import INDEX, FLOAT
 from _util cimport log2
-from _qr import Householder
-
 
 
 @cython.final
 cdef class SingleWeightDependentData:
-    def __init__(SingleWeightDependentData self, FLOAT_t[:,:] Q_t, FLOAT_t[:] w, INDEX_t m, 
-                 INDEX_t k, INDEX_t max_terms, householder):
-        self.Q_t = Q_t
+    def __init__(SingleWeightDependentData self, UpdatingQT updating_qt, FLOAT_t[:] w, INDEX_t m, 
+                 INDEX_t k, INDEX_t max_terms):
+        self.updating_qt = updating_qt
         self.w = w
         self.m = m
         self.k = k
         self.max_terms = max_terms
-        self.householder = householder
+        self.Q_t = self.updating_qt.Q_t
     
     @classmethod
     def alloc(cls, FLOAT_t[:] w, INDEX_t m, INDEX_t max_terms):
-        cdef FLOAT_t[:,:] Q_t = np.empty(shape=(max_terms, m), dtype=np.float)
-        householder = Householder(m, max_terms)
-        return cls(Q_t, w, m, 0, max_terms, householder)
+        cdef UpdatingQT updating_qt = UpdatingQT.alloc(m, max_terms)
+        return cls(updating_qt, w, m, 0, max_terms)
     
     cpdef int update_from_basis_function(SingleWeightDependentData self, BasisFunction bf, FLOAT_t[:,:] X, 
                                          BOOL_t[:,:] missing, FLOAT_t zero_tol) except *:
@@ -46,26 +43,28 @@ cdef class SingleWeightDependentData:
         if self.k >= self.max_terms:
             return -1
         
-        cdef INDEX_t j
-        for j in range(self.m):
-            self.Q_t[self.k,j] = self.w[j] * b[j]
-        return self._update(zero_tol)
-    
-    cpdef int _update(SingleWeightDependentData self, FLOAT_t zero_tol):
-        # Compute the new householder reflection
-        np.asarray(self.Q_t)[self.k, :] = self.householder.apply_transpose(self.Q_t[self.k, :])
-        self.householder.push_from_column(self.Q_t[self.k, self.k], self.Q_t[self.k,(self.k + 1):])
-        
-        # Create the new row in Q_t and apply all existing householder reflections
-        # including the new one
-        self.Q_t[self.k, :] = 0.
-        self.Q_t[self.k, self.k] = 1.
-        np.asarray(self.Q_t)[self.k, :] = self.householder.apply(self.Q_t[self.k, :])
-        
+        self.updating_qt.update(b)
         self.k += 1
+#         cdef INDEX_t j
+#         for j in range(self.m):
+#             self.Q_t[self.k,j] = self.w[j] * b[j]
+#         return self._update(zero_tol)
+#     
+#     cpdef int _update(SingleWeightDependentData self, FLOAT_t zero_tol):
+#         # Compute the new householder reflection
+#         np.asarray(self.Q_t)[self.k, :] = self.householder.apply_transpose(self.Q_t[self.k, :])
+#         self.householder.push_from_column(self.Q_t[self.k, self.k], self.Q_t[self.k,(self.k + 1):])
+#         
+#         # Create the new row in Q_t and apply all existing householder reflections
+#         # including the new one
+#         self.Q_t[self.k, :] = 0.
+#         self.Q_t[self.k, self.k] = 1.
+#         np.asarray(self.Q_t)[self.k, :] = self.householder.apply(self.Q_t[self.k, :])
+#         
+#         self.k += 1
         
     cpdef downdate(SingleWeightDependentData self):
-        self.householder.pop_elementary_reflection()
+        self.updating_qt.downdate()
         self.k -= 1
     
     cpdef reweight(SingleWeightDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k, 
@@ -73,7 +72,7 @@ cdef class SingleWeightDependentData:
         cdef INDEX_t i
         self.w = w
         self.k = 0
-        self.householder.reset()
+        self.updating_qt.reset()
         for i in range(k):
             self.update_from_array(B[:, i], zero_tol)
         

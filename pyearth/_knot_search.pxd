@@ -1,19 +1,20 @@
 cimport cython
 from _types cimport FLOAT_t, INT_t, INDEX_t, BOOL_t
 from _basis cimport BasisFunction
+from _qr cimport UpdatingQT
 
 @cython.final
 cdef class SingleWeightDependentData:
-    cdef readonly FLOAT_t[:, :] Q_t
+    cdef readonly UpdatingQT updating_qt
     cdef readonly FLOAT_t[:] w
     cdef readonly INDEX_t m
     cdef readonly INDEX_t k
     cdef readonly INDEX_t max_terms
-    cdef readonly object householder
+    cdef readonly FLOAT_t[:, :] Q_t
     cpdef int update_from_basis_function(SingleWeightDependentData self, BasisFunction bf, FLOAT_t[:,:] X, 
                                          BOOL_t[:,:] missing, FLOAT_t zero_tol) except *
     cpdef int update_from_array(SingleWeightDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *
-    cpdef int _update(SingleWeightDependentData self, FLOAT_t zero_tol)
+#     cpdef int _update(SingleWeightDependentData self, FLOAT_t zero_tol)
     cpdef downdate(SingleWeightDependentData self)
     cpdef reweight(SingleWeightDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k, 
                    FLOAT_t zero_tol)
