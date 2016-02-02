@@ -370,7 +370,7 @@ cdef wdot(FLOAT_t[:] w, FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q):
     return result
 
 @cython.profile(False)
-cdef void fast_update(PredictorDependentData predictor, SingleOutcomeDependentData outcome, 
+cdef inline void fast_update(PredictorDependentData predictor, SingleOutcomeDependentData outcome, 
                         KnotSearchWorkingData working, FLOAT_t[:] p, INDEX_t q, INDEX_t m, INDEX_t r) except *:
     
     # Calculate all quantities depending on the rows such that
@@ -394,27 +394,41 @@ cdef void fast_update(PredictorDependentData predictor, SingleOutcomeDependentDa
     cdef FLOAT_t delta_lambda = 0.
     cdef FLOAT_t delta_mu = 0.
     cdef FLOAT_t delta_upsilon = 0.
+    cdef FLOAT_t pidx, xidx, widx, yidx, qidx, delta_nu, \
+        delta_xi, delta_rho, delta_sigma, delta_tau, delta_psi, delta_chi
     
     while predictor.x[working.state.idx] > working.state.phi_next:
         idx = working.state.idx
+        pidx = p[idx]
+        xidx = predictor.x[idx]
+        widx = outcome.weight.w[idx]
+        yidx = outcome.y[idx]
         
         # In predictor.x[idx] is missing, p[idx] will be zeroed out for protection
         # (because there will be a present(x[idx]) factor in it)..
         # Skipping such indices prevents problems if x[idx] is a nan of some kind.
         if p[idx] != 0.:
-            nu += (outcome.weight.w[idx] ** 2) * (p[idx] ** 2)
-            xi += (outcome.weight.w[idx] ** 2) * (p[idx] ** 2) * predictor.x[idx]
-            rho += (outcome.weight.w[idx] ** 2) * (p[idx] ** 2) * (predictor.x[idx] ** 2)
-            sigma += (outcome.weight.w[idx] ** 2) * outcome.y[idx] * p[idx] * predictor.x[idx]
-            tau += (outcome.weight.w[idx] ** 2) * outcome.y[idx] * p[idx]
-            delta_lambda += (outcome.weight.w[idx] ** 2) * (p[idx] ** 2) * predictor.x[idx]
-            delta_mu += (outcome.weight.w[idx] ** 2) * (p[idx] ** 2)
-            delta_upsilon += (outcome.weight.w[idx] ** 2) * outcome.y[idx] * p[idx]
+            delta_nu = (widx ** 2) * (pidx ** 2)
+            nu += delta_nu
+            delta_xi = delta_nu * xidx
+            xi += delta_xi # (outcome.weight.w[idx] ** 2) * (p[idx] ** 2) * predictor.x[idx]
+            delta_rho = delta_xi * xidx
+            rho += delta_rho # (outcome.weight.w[idx] ** 2) * (p[idx] ** 2) * (predictor.x[idx] ** 2)
+            delta_tau = (widx ** 2) * yidx * pidx
+            tau += delta_tau
+            delta_sigma = delta_tau * xidx
+            sigma += delta_sigma # (outcome.weight.w[idx] ** 2) * outcome.y[idx] * p[idx] * predictor.x[idx]
+            delta_lambda += delta_xi # (outcome.weight.w[idx] ** 2) * (p[idx] ** 2) * predictor.x[idx]
+            delta_mu += delta_nu #(outcome.weight.w[idx] ** 2) * (p[idx] ** 2)
+            delta_upsilon += delta_tau # (outcome.weight.w[idx] ** 2) * outcome.y[idx] * p[idx]
             for j in range(q):
-                working.chi[j] += outcome.weight.Q_t[j,idx] * outcome.weight.w[idx] * p[idx] * predictor.x[idx]
-                working.psi[j] += outcome.weight.Q_t[j,idx] * outcome.weight.w[idx] * p[idx]
-                working.delta_kappa[j] += outcome.weight.Q_t[j,idx] * outcome.weight.w[idx] * p[idx]
-            
+                qidx = outcome.weight.Q_t[j,idx]
+                delta_psi = qidx * widx * pidx
+                delta_chi = delta_psi * xidx
+                working.chi[j] += delta_chi # outcome.weight.Q_t[j,idx] * widx * pidx * xidx
+                working.psi[j] += delta_psi # outcome.weight.Q_t[j,idx] * outcome.weight.w[idx] * p[idx]
+                working.delta_kappa[j] += delta_psi # outcome.weight.Q_t[j,idx] * outcome.weight.w[idx] * p[idx]
+        
         # Update idx for next iteration
         working.state.ord_idx += 1
         if working.state.ord_idx >= m:
