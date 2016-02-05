@@ -1167,10 +1167,11 @@ struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData {
   __pyx_t_7pyearth_6_types_INDEX_t k;
   __pyx_t_7pyearth_6_types_INDEX_t max_terms;
   __Pyx_memviewslice Q_t;
+  __pyx_t_7pyearth_6_types_FLOAT_t total_weight;
 };
 
 
-/* "pyearth/_knot_search.pxd":23
+/* "pyearth/_knot_search.pxd":24
  * 
  * @cython.final
  * cdef class MultipleOutcomeDependentData:             # <<<<<<<<<<<<<<
@@ -1185,7 +1186,7 @@ struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData {
 };
 
 
-/* "pyearth/_knot_search.pxd":31
+/* "pyearth/_knot_search.pxd":33
  * 
  * @cython.final
  * cdef class SingleOutcomeDependentData:             # <<<<<<<<<<<<<<
@@ -1199,6 +1200,7 @@ struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData {
   struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *weight;
   __Pyx_memviewslice theta;
   __pyx_t_7pyearth_6_types_FLOAT_t omega;
+  __pyx_t_7pyearth_6_types_FLOAT_t sse_;
   __pyx_t_7pyearth_6_types_INDEX_t m;
   __pyx_t_7pyearth_6_types_INDEX_t k;
   __pyx_t_7pyearth_6_types_INDEX_t max_terms;
@@ -1206,7 +1208,7 @@ struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData {
 };
 
 
-/* "pyearth/_knot_search.pxd":47
+/* "pyearth/_knot_search.pxd":50
  * 
  * @cython.final
  * cdef class PredictorDependentData:             # <<<<<<<<<<<<<<
@@ -1222,7 +1224,7 @@ struct __pyx_obj_7pyearth_12_knot_search_PredictorDependentData {
 };
 
 
-/* "pyearth/_knot_search.pxd":54
+/* "pyearth/_knot_search.pxd":57
  * 
  * @cython.final
  * cdef class KnotSearchReadOnlyData:             # <<<<<<<<<<<<<<
@@ -1236,7 +1238,7 @@ struct __pyx_obj_7pyearth_12_knot_search_KnotSearchReadOnlyData {
 };
 
 
-/* "pyearth/_knot_search.pxd":59
+/* "pyearth/_knot_search.pxd":62
  * 
  * @cython.final
  * cdef class KnotSearchState:             # <<<<<<<<<<<<<<
@@ -1258,7 +1260,7 @@ struct __pyx_obj_7pyearth_12_knot_search_KnotSearchState {
 };
 
 
-/* "pyearth/_knot_search.pxd":72
+/* "pyearth/_knot_search.pxd":75
  * 
  * @cython.final
  * cdef class KnotSearchWorkingData:             # <<<<<<<<<<<<<<
@@ -1276,7 +1278,7 @@ struct __pyx_obj_7pyearth_12_knot_search_KnotSearchWorkingData {
 };
 
 
-/* "pyearth/_knot_search.pxd":81
+/* "pyearth/_knot_search.pxd":84
  * 
  * @cython.final
  * cdef class KnotSearchData:             # <<<<<<<<<<<<<<
@@ -1622,7 +1624,7 @@ static struct __pyx_vtabstruct_7pyearth_3_qr_Householder *__pyx_vtabptr_7pyearth
  * @cython.final
  * cdef class SingleWeightDependentData:             # <<<<<<<<<<<<<<
  *     def __init__(SingleWeightDependentData self, UpdatingQT updating_qt, FLOAT_t[:] w, INDEX_t m,
- *                  INDEX_t k, INDEX_t max_terms):
+ *                  INDEX_t k, INDEX_t max_terms, FLOAT_t total_weight):
  */
 
 struct __pyx_vtabstruct_7pyearth_12_knot_search_SingleWeightDependentData {
@@ -1638,7 +1640,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_dow
 static PyObject *__pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_reweight(struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *, __Pyx_memviewslice, __Pyx_memviewslice, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch);
 
 
-/* "pyearth/_knot_search.pyx":77
+/* "pyearth/_knot_search.pyx":80
  * 
  * @cython.final
  * cdef class MultipleOutcomeDependentData:             # <<<<<<<<<<<<<<
@@ -1650,19 +1652,21 @@ struct __pyx_vtabstruct_7pyearth_12_knot_search_MultipleOutcomeDependentData {
   PyObject *(*update_from_array)(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *, __Pyx_memviewslice, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch);
   PyObject *(*downdate)(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *, int __pyx_skip_dispatch);
   PyObject *(*sse)(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *, int __pyx_skip_dispatch);
+  __pyx_t_7pyearth_6_types_FLOAT_t (*mse)(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *, int __pyx_skip_dispatch);
 };
 static struct __pyx_vtabstruct_7pyearth_12_knot_search_MultipleOutcomeDependentData *__pyx_vtabptr_7pyearth_12_knot_search_MultipleOutcomeDependentData;
 static PyObject *__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_update_from_array(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *, __Pyx_memviewslice, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch);
 static PyObject *__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_downdate(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *, int __pyx_skip_dispatch);
 static PyObject *__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_sse(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *, int __pyx_skip_dispatch);
+static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_mse(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *, int __pyx_skip_dispatch);
 
 
-/* "pyearth/_knot_search.pyx":128
+/* "pyearth/_knot_search.pyx":138
  * 
  * @cython.final
  * cdef class SingleOutcomeDependentData:             # <<<<<<<<<<<<<<
  *     def __init__(SingleOutcomeDependentData self, FLOAT_t[:] y, SingleWeightDependentData weight,
- *                  FLOAT_t[:] theta, FLOAT_t omega, INDEX_t m, INDEX_t k, INDEX_t max_terms):
+ *                  FLOAT_t[:] theta, FLOAT_t omega, INDEX_t m, INDEX_t k, INDEX_t max_terms, FLOAT_t sse_):
  */
 
 struct __pyx_vtabstruct_7pyearth_12_knot_search_SingleOutcomeDependentData {
@@ -1840,6 +1844,8 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg
 
 static CYTHON_INLINE int __Pyx_TypeTest(PyObject *obj, PyTypeObject *type);
 
+static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name);
+
 #if CYTHON_COMPILING_IN_CPYTHON
 static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg);
 #endif
@@ -1918,8 +1924,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func);
 #else
 #define __Pyx_PyObject_CallNoArg(func) __Pyx_PyObject_Call(func, __pyx_empty_tuple, NULL)
 #endif
-
-static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name);
 
 static void __Pyx_WriteUnraisable(const char *name, int clineno,
                                   int lineno, const char *filename,
@@ -2121,6 +2125,14 @@ static CYTHON_INLINE npy_long __Pyx_PyInt_As_npy_long(PyObject *);
 static PyObject *__pyx_memview_get_nn___pyx_t_7pyearth_6_types_INT_t(const char *itemp);
 static int __pyx_memview_set_nn___pyx_t_7pyearth_6_types_INT_t(const char *itemp, PyObject *obj);
 
+static int __Pyx_Print(PyObject*, PyObject *, int);
+#if CYTHON_COMPILING_IN_PYPY || PY_MAJOR_VERSION >= 3
+static PyObject* __pyx_print = 0;
+static PyObject* __pyx_print_kwargs = 0;
+#endif
+
+static int __Pyx_PrintOne(PyObject* stream, PyObject *o);
+
 static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *);
 
 #include "descrobject.h"
@@ -2270,6 +2282,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_rew
 static PyObject *__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_update_from_array(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *__pyx_v_self, __Pyx_memviewslice __pyx_v_b, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_zero_tol, CYTHON_UNUSED int __pyx_skip_dispatch); /* proto*/
 static PyObject *__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_downdate(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *__pyx_v_self, CYTHON_UNUSED int __pyx_skip_dispatch); /* proto*/
 static PyObject *__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_sse(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *__pyx_v_self, CYTHON_UNUSED int __pyx_skip_dispatch); /* proto*/
+static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_mse(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *__pyx_v_self, CYTHON_UNUSED int __pyx_skip_dispatch); /* proto*/
 static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_sse(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self, CYTHON_UNUSED int __pyx_skip_dispatch); /* proto*/
 static int __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_synchronize(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self, CYTHON_UNUSED __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_zero_tol, CYTHON_UNUSED int __pyx_skip_dispatch); /* proto*/
 static int __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_update(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self, CYTHON_UNUSED __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_zero_tol, CYTHON_UNUSED int __pyx_skip_dispatch); /* proto*/
@@ -2510,14 +2523,18 @@ static char __pyx_k_np[] = "np";
 static char __pyx_k_sp[] = "sp";
 static char __pyx_k_chi[] = "chi";
 static char __pyx_k_dot[] = "dot";
+static char __pyx_k_end[] = "end";
 static char __pyx_k_idx[] = "idx";
 static char __pyx_k_obj[] = "obj";
 static char __pyx_k_phi[] = "phi";
 static char __pyx_k_psi[] = "psi";
 static char __pyx_k_sse[] = "sse";
+static char __pyx_k_sum[] = "sum";
+static char __pyx_k_ELSE[] = "ELSE!!!!!!!!!";
 static char __pyx_k_base[] = "base";
 static char __pyx_k_beta[] = "beta";
 static char __pyx_k_data[] = "data";
+static char __pyx_k_file[] = "file";
 static char __pyx_k_main[] = "__main__";
 static char __pyx_k_mode[] = "mode";
 static char __pyx_k_name[] = "name";
@@ -2544,13 +2561,16 @@ static char __pyx_k_kappa[] = "kappa";
 static char __pyx_k_numpy[] = "numpy";
 static char __pyx_k_omega[] = "omega";
 static char __pyx_k_order[] = "order";
+static char __pyx_k_print[] = "print";
 static char __pyx_k_range[] = "range";
 static char __pyx_k_scipy[] = "scipy";
 static char __pyx_k_shape[] = "shape";
+static char __pyx_k_sse_2[] = "sse_";
 static char __pyx_k_start[] = "start";
 static char __pyx_k_state[] = "state";
 static char __pyx_k_theta[] = "theta";
 static char __pyx_k_types[] = "_types";
+static char __pyx_k_beta_2[] = "beta =";
 static char __pyx_k_encode[] = "encode";
 static char __pyx_k_format[] = "format";
 static char __pyx_k_import[] = "__import__";
@@ -2560,10 +2580,12 @@ static char __pyx_k_struct[] = "struct";
 static char __pyx_k_unpack[] = "unpack";
 static char __pyx_k_update[] = "_update";
 static char __pyx_k_weight[] = "weight";
+static char __pyx_k_alpha_2[] = "alpha =";
 static char __pyx_k_argsort[] = "argsort";
 static char __pyx_k_asarray[] = "asarray";
 static char __pyx_k_endspan[] = "endspan";
 static char __pyx_k_fortran[] = "fortran";
+static char __pyx_k_gamma_2[] = "gamma^2 = ";
 static char __pyx_k_memview[] = "memview";
 static char __pyx_k_minspan[] = "minspan";
 static char __pyx_k_missing[] = "missing";
@@ -2590,13 +2612,18 @@ static char __pyx_k_n_outcomes[] = "n_outcomes";
 static char __pyx_k_pyx_vtable[] = "__pyx_vtable__";
 static char __pyx_k_MemoryError[] = "MemoryError";
 static char __pyx_k_delta_kappa[] = "delta_kappa";
+static char __pyx_k_gamma_theta[] = "gamma * theta =";
 static char __pyx_k_updating_qt[] = "updating_qt";
 static char __pyx_k_RuntimeError[] = "RuntimeError";
+static char __pyx_k_total_weight[] = "total_weight";
 static char __pyx_k_zeta_squared[] = "zeta_squared";
 static char __pyx_k_minspan_alpha[] = "minspan_alpha";
 static char __pyx_k_pyx_getbuffer[] = "__pyx_getbuffer";
+static char __pyx_k_zeta_squared_2[] = "zeta_squared =";
 static char __pyx_k_allocate_buffer[] = "allocate_buffer";
 static char __pyx_k_dtype_is_object[] = "dtype_is_object";
+static char __pyx_k_epsilon_squared[] = "epsilon_squared =";
+static char __pyx_k_this_is_a_problem[] = "this is a problem!";
 static char __pyx_k_strided_and_direct[] = "<strided and direct>";
 static char __pyx_k_strided_and_indirect[] = "<strided and indirect>";
 static char __pyx_k_contiguous_and_direct[] = "<contiguous and direct>";
@@ -2607,6 +2634,7 @@ static char __pyx_k_Cannot_index_with_type_s[] = "Cannot index with type '%s'";
 static char __pyx_k_getbuffer_obj_view_flags[] = "getbuffer(obj, view, flags)";
 static char __pyx_k_Dimension_d_is_not_direct[] = "Dimension %d is not direct";
 static char __pyx_k_Invalid_shape_in_axis_d_d[] = "Invalid shape in axis %d: %d.";
+static char __pyx_k_omega_minus_theta_squared[] = "omega_minus_theta_squared =";
 static char __pyx_k_Index_out_of_bounds_axis_d[] = "Index out of bounds (axis %d)";
 static char __pyx_k_Step_may_not_be_zero_axis_d[] = "Step may not be zero (axis %d)";
 static char __pyx_k_itemsize_0_for_cython_array[] = "itemsize <= 0 for cython.array";
@@ -2635,6 +2663,7 @@ static PyObject *__pyx_n_s_B;
 static PyObject *__pyx_kp_s_Buffer_view_does_not_expose_stri;
 static PyObject *__pyx_kp_s_Can_only_create_a_buffer_that_is;
 static PyObject *__pyx_kp_s_Cannot_index_with_type_s;
+static PyObject *__pyx_kp_s_ELSE;
 static PyObject *__pyx_n_s_Ellipsis;
 static PyObject *__pyx_kp_s_Empty_shape_tuple_for_cython_arr;
 static PyObject *__pyx_n_s_FLOAT;
@@ -2660,12 +2689,14 @@ static PyObject *__pyx_n_s_X;
 static PyObject *__pyx_n_s_alloc;
 static PyObject *__pyx_n_s_allocate_buffer;
 static PyObject *__pyx_n_s_alpha;
+static PyObject *__pyx_kp_s_alpha_2;
 static PyObject *__pyx_n_s_argsort;
 static PyObject *__pyx_n_s_array;
 static PyObject *__pyx_n_s_asarray;
 static PyObject *__pyx_n_s_b;
 static PyObject *__pyx_n_s_base;
 static PyObject *__pyx_n_s_beta;
+static PyObject *__pyx_kp_s_beta_2;
 static PyObject *__pyx_n_s_bf;
 static PyObject *__pyx_n_s_c;
 static PyObject *__pyx_n_u_c;
@@ -2682,15 +2713,20 @@ static PyObject *__pyx_n_s_dtype;
 static PyObject *__pyx_n_s_dtype_is_object;
 static PyObject *__pyx_n_s_empty;
 static PyObject *__pyx_n_s_encode;
+static PyObject *__pyx_n_s_end;
 static PyObject *__pyx_n_s_endspan;
 static PyObject *__pyx_n_s_enumerate;
+static PyObject *__pyx_kp_s_epsilon_squared;
 static PyObject *__pyx_n_s_error;
+static PyObject *__pyx_n_s_file;
 static PyObject *__pyx_n_s_flags;
 static PyObject *__pyx_n_s_float;
 static PyObject *__pyx_n_s_format;
 static PyObject *__pyx_n_s_fortran;
 static PyObject *__pyx_n_u_fortran;
 static PyObject *__pyx_n_s_gamma;
+static PyObject *__pyx_kp_s_gamma_2;
+static PyObject *__pyx_kp_s_gamma_theta;
 static PyObject *__pyx_kp_s_got_differing_extents_in_dimensi;
 static PyObject *__pyx_n_s_id;
 static PyObject *__pyx_n_s_idx;
@@ -2721,6 +2757,7 @@ static PyObject *__pyx_n_s_np;
 static PyObject *__pyx_n_s_numpy;
 static PyObject *__pyx_n_s_obj;
 static PyObject *__pyx_n_s_omega;
+static PyObject *__pyx_kp_s_omega_minus_theta_squared;
 static PyObject *__pyx_n_s_ord_idx;
 static PyObject *__pyx_n_s_order;
 static PyObject *__pyx_n_s_outcome;
@@ -2730,6 +2767,7 @@ static PyObject *__pyx_n_s_pack;
 static PyObject *__pyx_n_s_phi;
 static PyObject *__pyx_n_s_phi_next;
 static PyObject *__pyx_n_s_predictor;
+static PyObject *__pyx_n_s_print;
 static PyObject *__pyx_n_s_psi;
 static PyObject *__pyx_n_s_pyx_getbuffer;
 static PyObject *__pyx_n_s_pyx_vtable;
@@ -2741,6 +2779,7 @@ static PyObject *__pyx_n_s_shape;
 static PyObject *__pyx_n_s_size;
 static PyObject *__pyx_n_s_sp;
 static PyObject *__pyx_n_s_sse;
+static PyObject *__pyx_n_s_sse_2;
 static PyObject *__pyx_n_s_start;
 static PyObject *__pyx_n_s_state;
 static PyObject *__pyx_n_s_step;
@@ -2749,8 +2788,11 @@ static PyObject *__pyx_kp_s_strided_and_direct;
 static PyObject *__pyx_kp_s_strided_and_direct_or_indirect;
 static PyObject *__pyx_kp_s_strided_and_indirect;
 static PyObject *__pyx_n_s_struct;
+static PyObject *__pyx_n_s_sum;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_theta;
+static PyObject *__pyx_kp_s_this_is_a_problem;
+static PyObject *__pyx_n_s_total_weight;
 static PyObject *__pyx_n_s_types;
 static PyObject *__pyx_kp_s_unable_to_allocate_array_data;
 static PyObject *__pyx_kp_s_unable_to_allocate_shape_and_str;
@@ -2767,7 +2809,8 @@ static PyObject *__pyx_n_s_x;
 static PyObject *__pyx_n_s_y;
 static PyObject *__pyx_n_s_zero_tol;
 static PyObject *__pyx_n_s_zeta_squared;
-static int __pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData___init__(struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *__pyx_v_self, struct __pyx_obj_7pyearth_3_qr_UpdatingQT *__pyx_v_updating_qt, __Pyx_memviewslice __pyx_v_w, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_m, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_k, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_max_terms); /* proto */
+static PyObject *__pyx_kp_s_zeta_squared_2;
+static int __pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData___init__(struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *__pyx_v_self, struct __pyx_obj_7pyearth_3_qr_UpdatingQT *__pyx_v_updating_qt, __Pyx_memviewslice __pyx_v_w, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_m, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_k, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_max_terms, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_total_weight); /* proto */
 static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_2alloc(PyTypeObject *__pyx_v_cls, __Pyx_memviewslice __pyx_v_w, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_m, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_max_terms); /* proto */
 static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_4update_from_basis_function(struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_BasisFunction *__pyx_v_bf, __Pyx_memviewslice __pyx_v_X, __Pyx_memviewslice __pyx_v_missing, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_zero_tol); /* proto */
 static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_6update_from_array(struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *__pyx_v_self, __Pyx_memviewslice __pyx_v_b, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_zero_tol); /* proto */
@@ -2779,12 +2822,14 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_1m
 static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_1k___get__(struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_9max_terms___get__(struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_3Q_t___get__(struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_12total_weight___get__(struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *__pyx_v_self); /* proto */
 static int __pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData___init__(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *__pyx_v_self, PyObject *__pyx_v_outcomes, PyObject *__pyx_v_weights); /* proto */
 static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData_2alloc(PyTypeObject *__pyx_v_cls, __Pyx_memviewslice __pyx_v_y, PyObject *__pyx_v_w, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_m, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_n_outcomes, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_max_terms); /* proto */
 static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData_4update_from_array(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *__pyx_v_self, __Pyx_memviewslice __pyx_v_b, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_zero_tol); /* proto */
 static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData_6downdate(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData_8sse(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *__pyx_v_self); /* proto */
-static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData___init__(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self, __Pyx_memviewslice __pyx_v_y, struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *__pyx_v_weight, __Pyx_memviewslice __pyx_v_theta, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_omega, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_m, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_k, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_max_terms); /* proto */
+static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData_10mse(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *__pyx_v_self); /* proto */
+static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData___init__(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self, __Pyx_memviewslice __pyx_v_y, struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *__pyx_v_weight, __Pyx_memviewslice __pyx_v_theta, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_omega, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_m, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_k, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_max_terms, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_sse_); /* proto */
 static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_2alloc(PyTypeObject *__pyx_v_cls, __Pyx_memviewslice __pyx_v_y, struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *__pyx_v_weight, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_m, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_max_terms); /* proto */
 static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_4sse(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_6synchronize(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_zero_tol); /* proto */
@@ -2795,6 +2840,8 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_6
 static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_5theta___get__(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_5omega___get__(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self); /* proto */
 static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_5omega_2__set__(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_4sse____get__(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self); /* proto */
+static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_4sse__2__set__(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
 static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_1m___get__(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self); /* proto */
 static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_1m_2__set__(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
 static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_1k___get__(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self); /* proto */
@@ -2936,7 +2983,7 @@ static PyObject *__pyx_tuple__30;
  * @cython.final
  * cdef class SingleWeightDependentData:
  *     def __init__(SingleWeightDependentData self, UpdatingQT updating_qt, FLOAT_t[:] w, INDEX_t m,             # <<<<<<<<<<<<<<
- *                  INDEX_t k, INDEX_t max_terms):
+ *                  INDEX_t k, INDEX_t max_terms, FLOAT_t total_weight):
  *         self.updating_qt = updating_qt
  */
 
@@ -2948,6 +2995,7 @@ static int __pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_1__init_
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_m;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_k;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_max_terms;
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_total_weight;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -2955,12 +3003,13 @@ static int __pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_1__init_
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__init__ (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_updating_qt,&__pyx_n_s_w,&__pyx_n_s_m,&__pyx_n_s_k,&__pyx_n_s_max_terms,0};
-    PyObject* values[5] = {0,0,0,0,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_updating_qt,&__pyx_n_s_w,&__pyx_n_s_m,&__pyx_n_s_k,&__pyx_n_s_max_terms,&__pyx_n_s_total_weight,0};
+    PyObject* values[6] = {0,0,0,0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
       const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
       switch (pos_args) {
+        case  6: values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
         case  5: values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
         case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
         case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
@@ -2977,28 +3026,33 @@ static int __pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_1__init_
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_w)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_m)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_k)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_max_terms)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 4); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 4); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        }
+        case  5:
+        if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_total_weight)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 5); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
         if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
-    } else if (PyTuple_GET_SIZE(__pyx_args) != 5) {
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 6) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
@@ -3006,23 +3060,25 @@ static int __pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_1__init_
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
       values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+      values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
     }
     __pyx_v_updating_qt = ((struct __pyx_obj_7pyearth_3_qr_UpdatingQT *)values[0]);
     __pyx_v_w = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[1]); if (unlikely(!__pyx_v_w.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
     __pyx_v_m = __Pyx_PyInt_As_npy_ulonglong(values[2]); if (unlikely((__pyx_v_m == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
     __pyx_v_k = __Pyx_PyInt_As_npy_ulonglong(values[3]); if (unlikely((__pyx_v_k == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
     __pyx_v_max_terms = __Pyx_PyInt_As_npy_ulonglong(values[4]); if (unlikely((__pyx_v_max_terms == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_total_weight = __pyx_PyFloat_AsDouble(values[5]); if (unlikely((__pyx_v_total_weight == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 19; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._knot_search.SingleWeightDependentData.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_updating_qt), __pyx_ptype_7pyearth_3_qr_UpdatingQT, 1, "updating_qt", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 18; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_r = __pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData___init__(((struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *)__pyx_v_self), __pyx_v_updating_qt, __pyx_v_w, __pyx_v_m, __pyx_v_k, __pyx_v_max_terms);
+  __pyx_r = __pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData___init__(((struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *)__pyx_v_self), __pyx_v_updating_qt, __pyx_v_w, __pyx_v_m, __pyx_v_k, __pyx_v_max_terms, __pyx_v_total_weight);
 
   /* function exit code */
   goto __pyx_L0;
@@ -3033,7 +3089,7 @@ static int __pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_1__init_
   return __pyx_r;
 }
 
-static int __pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData___init__(struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *__pyx_v_self, struct __pyx_obj_7pyearth_3_qr_UpdatingQT *__pyx_v_updating_qt, __Pyx_memviewslice __pyx_v_w, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_m, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_k, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_max_terms) {
+static int __pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData___init__(struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *__pyx_v_self, struct __pyx_obj_7pyearth_3_qr_UpdatingQT *__pyx_v_updating_qt, __Pyx_memviewslice __pyx_v_w, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_m, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_k, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_max_terms, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_total_weight) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_memviewslice __pyx_t_1 = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -3044,7 +3100,7 @@ static int __pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData___init__
 
   /* "pyearth/_knot_search.pyx":20
  *     def __init__(SingleWeightDependentData self, UpdatingQT updating_qt, FLOAT_t[:] w, INDEX_t m,
- *                  INDEX_t k, INDEX_t max_terms):
+ *                  INDEX_t k, INDEX_t max_terms, FLOAT_t total_weight):
  *         self.updating_qt = updating_qt             # <<<<<<<<<<<<<<
  *         self.w = w
  *         self.m = m
@@ -3056,7 +3112,7 @@ static int __pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData___init__
   __pyx_v_self->updating_qt = __pyx_v_updating_qt;
 
   /* "pyearth/_knot_search.pyx":21
- *                  INDEX_t k, INDEX_t max_terms):
+ *                  INDEX_t k, INDEX_t max_terms, FLOAT_t total_weight):
  *         self.updating_qt = updating_qt
  *         self.w = w             # <<<<<<<<<<<<<<
  *         self.m = m
@@ -3089,7 +3145,7 @@ static int __pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData___init__
  *         self.k = k
  *         self.max_terms = max_terms             # <<<<<<<<<<<<<<
  *         self.Q_t = self.updating_qt.Q_t
- * 
+ *         self.total_weight = total_weight
  */
   __pyx_v_self->max_terms = __pyx_v_max_terms;
 
@@ -3097,8 +3153,8 @@ static int __pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData___init__
  *         self.k = k
  *         self.max_terms = max_terms
  *         self.Q_t = self.updating_qt.Q_t             # <<<<<<<<<<<<<<
+ *         self.total_weight = total_weight
  * 
- *     @classmethod
  */
   if (unlikely(!__pyx_v_self->updating_qt->Q_t.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 25; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
   __pyx_t_1 = __pyx_v_self->updating_qt->Q_t;
@@ -3108,11 +3164,20 @@ static int __pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData___init__
   __pyx_t_1.memview = NULL;
   __pyx_t_1.data = NULL;
 
+  /* "pyearth/_knot_search.pyx":26
+ *         self.max_terms = max_terms
+ *         self.Q_t = self.updating_qt.Q_t
+ *         self.total_weight = total_weight             # <<<<<<<<<<<<<<
+ * 
+ *     @classmethod
+ */
+  __pyx_v_self->total_weight = __pyx_v_total_weight;
+
   /* "pyearth/_knot_search.pyx":18
  * @cython.final
  * cdef class SingleWeightDependentData:
  *     def __init__(SingleWeightDependentData self, UpdatingQT updating_qt, FLOAT_t[:] w, INDEX_t m,             # <<<<<<<<<<<<<<
- *                  INDEX_t k, INDEX_t max_terms):
+ *                  INDEX_t k, INDEX_t max_terms, FLOAT_t total_weight):
  *         self.updating_qt = updating_qt
  */
 
@@ -3129,12 +3194,12 @@ static int __pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData___init__
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":28
+/* "pyearth/_knot_search.pyx":29
  * 
  *     @classmethod
  *     def alloc(cls, FLOAT_t[:] w, INDEX_t m, INDEX_t max_terms):             # <<<<<<<<<<<<<<
  *         cdef UpdatingQT updating_qt = UpdatingQT.alloc(m, max_terms)
- *         return cls(updating_qt, w, m, 0, max_terms)
+ *         cdef FLOAT_t total_weight = np.sum(w[:m])
  */
 
 /* Python wrapper */
@@ -3170,16 +3235,16 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_3a
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_m)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("alloc", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("alloc", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_max_terms)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("alloc", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("alloc", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "alloc") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "alloc") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -3188,13 +3253,13 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_3a
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
     }
-    __pyx_v_w = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[0]); if (unlikely(!__pyx_v_w.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_m = __Pyx_PyInt_As_npy_ulonglong(values[1]); if (unlikely((__pyx_v_m == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_max_terms = __Pyx_PyInt_As_npy_ulonglong(values[2]); if (unlikely((__pyx_v_max_terms == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_w = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[0]); if (unlikely(!__pyx_v_w.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_m = __Pyx_PyInt_As_npy_ulonglong(values[1]); if (unlikely((__pyx_v_m == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_max_terms = __Pyx_PyInt_As_npy_ulonglong(values[2]); if (unlikely((__pyx_v_max_terms == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("alloc", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("alloc", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._knot_search.SingleWeightDependentData.alloc", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3209,6 +3274,7 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_3a
 
 static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_2alloc(PyTypeObject *__pyx_v_cls, __Pyx_memviewslice __pyx_v_w, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_m, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_max_terms) {
   struct __pyx_obj_7pyearth_3_qr_UpdatingQT *__pyx_v_updating_qt = 0;
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_total_weight;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3218,23 +3284,26 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_2a
   PyObject *__pyx_t_5 = NULL;
   Py_ssize_t __pyx_t_6;
   PyObject *__pyx_t_7 = NULL;
+  __Pyx_memviewslice __pyx_t_8 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  int __pyx_t_9;
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_10;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("alloc", 0);
 
-  /* "pyearth/_knot_search.pyx":29
+  /* "pyearth/_knot_search.pyx":30
  *     @classmethod
  *     def alloc(cls, FLOAT_t[:] w, INDEX_t m, INDEX_t max_terms):
  *         cdef UpdatingQT updating_qt = UpdatingQT.alloc(m, max_terms)             # <<<<<<<<<<<<<<
- *         return cls(updating_qt, w, m, 0, max_terms)
- * 
+ *         cdef FLOAT_t total_weight = np.sum(w[:m])
+ *         return cls(updating_qt, w, m, 0, max_terms, total_weight)
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7pyearth_3_qr_UpdatingQT), __pyx_n_s_alloc); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7pyearth_3_qr_UpdatingQT), __pyx_n_s_alloc); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_m); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_m); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_max_terms); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_max_terms); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_5 = NULL;
   __pyx_t_6 = 0;
@@ -3248,7 +3317,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_2a
       __pyx_t_6 = 1;
     }
   }
-  __pyx_t_7 = PyTuple_New(2+__pyx_t_6); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_7 = PyTuple_New(2+__pyx_t_6); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_7);
   if (__pyx_t_5) {
     __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_5); __pyx_t_5 = NULL;
@@ -3259,58 +3328,129 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_2a
   PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_6, __pyx_t_4);
   __pyx_t_3 = 0;
   __pyx_t_4 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_7, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_7, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_7pyearth_3_qr_UpdatingQT))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_7pyearth_3_qr_UpdatingQT))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_updating_qt = ((struct __pyx_obj_7pyearth_3_qr_UpdatingQT *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_knot_search.pyx":30
+  /* "pyearth/_knot_search.pyx":31
  *     def alloc(cls, FLOAT_t[:] w, INDEX_t m, INDEX_t max_terms):
  *         cdef UpdatingQT updating_qt = UpdatingQT.alloc(m, max_terms)
- *         return cls(updating_qt, w, m, 0, max_terms)             # <<<<<<<<<<<<<<
+ *         cdef FLOAT_t total_weight = np.sum(w[:m])             # <<<<<<<<<<<<<<
+ *         return cls(updating_qt, w, m, 0, max_terms, total_weight)
+ * 
+ */
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_sum); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_7);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_8.data = __pyx_v_w.data;
+  __pyx_t_8.memview = __pyx_v_w.memview;
+  __PYX_INC_MEMVIEW(&__pyx_t_8, 0);
+  __pyx_t_9 = -1;
+  if (unlikely(__pyx_memoryview_slice_memviewslice(
+    &__pyx_t_8,
+    __pyx_v_w.shape[0], __pyx_v_w.strides[0], __pyx_v_w.suboffsets[0],
+    0,
+    0,
+    &__pyx_t_9,
+    0,
+    __pyx_v_m,
+    0,
+    0,
+    1,
+    0,
+    1) < 0))
+{
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+}
+
+__pyx_t_2 = __pyx_memoryview_fromslice(__pyx_t_8, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_2);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_8, 1);
+  __pyx_t_4 = NULL;
+  if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_7))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_7);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_7, function);
+    }
+  }
+  if (!__pyx_t_4) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+  } else {
+    __pyx_t_3 = PyTuple_New(1+1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_4); __pyx_t_4 = NULL;
+    __Pyx_GIVEREF(__pyx_t_2);
+    PyTuple_SET_ITEM(__pyx_t_3, 0+1, __pyx_t_2);
+    __pyx_t_2 = 0;
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_3, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  }
+  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+  __pyx_t_10 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_10 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 31; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_total_weight = __pyx_t_10;
+
+  /* "pyearth/_knot_search.pyx":32
+ *         cdef UpdatingQT updating_qt = UpdatingQT.alloc(m, max_terms)
+ *         cdef FLOAT_t total_weight = np.sum(w[:m])
+ *         return cls(updating_qt, w, m, 0, max_terms, total_weight)             # <<<<<<<<<<<<<<
  * 
  *     cpdef int update_from_basis_function(SingleWeightDependentData self, BasisFunction bf, FLOAT_t[:,:] X,
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_w, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_w, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_m); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_7 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_max_terms); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_7 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_m); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_4 = PyTuple_New(5); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_max_terms); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_total_weight); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = PyTuple_New(6); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_INCREF(((PyObject *)__pyx_v_updating_qt));
   __Pyx_GIVEREF(((PyObject *)__pyx_v_updating_qt));
   PyTuple_SET_ITEM(__pyx_t_4, 0, ((PyObject *)__pyx_v_updating_qt));
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_1);
-  __Pyx_GIVEREF(__pyx_t_2);
-  PyTuple_SET_ITEM(__pyx_t_4, 2, __pyx_t_2);
+  __Pyx_GIVEREF(__pyx_t_7);
+  PyTuple_SET_ITEM(__pyx_t_4, 2, __pyx_t_7);
   __Pyx_INCREF(__pyx_int_0);
   __Pyx_GIVEREF(__pyx_int_0);
   PyTuple_SET_ITEM(__pyx_t_4, 3, __pyx_int_0);
-  __Pyx_GIVEREF(__pyx_t_7);
-  PyTuple_SET_ITEM(__pyx_t_4, 4, __pyx_t_7);
+  __Pyx_GIVEREF(__pyx_t_3);
+  PyTuple_SET_ITEM(__pyx_t_4, 4, __pyx_t_3);
+  __Pyx_GIVEREF(__pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_4, 5, __pyx_t_2);
   __pyx_t_1 = 0;
+  __pyx_t_7 = 0;
+  __pyx_t_3 = 0;
   __pyx_t_2 = 0;
-  __pyx_t_7 = 0;
-  __pyx_t_7 = __Pyx_PyObject_Call(((PyObject *)__pyx_v_cls), __pyx_t_4, NULL); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 30; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_7);
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_v_cls), __pyx_t_4, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_r = __pyx_t_7;
-  __pyx_t_7 = 0;
+  __pyx_r = __pyx_t_2;
+  __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_knot_search.pyx":28
+  /* "pyearth/_knot_search.pyx":29
  * 
  *     @classmethod
  *     def alloc(cls, FLOAT_t[:] w, INDEX_t m, INDEX_t max_terms):             # <<<<<<<<<<<<<<
  *         cdef UpdatingQT updating_qt = UpdatingQT.alloc(m, max_terms)
- *         return cls(updating_qt, w, m, 0, max_terms)
+ *         cdef FLOAT_t total_weight = np.sum(w[:m])
  */
 
   /* function exit code */
@@ -3321,6 +3461,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_2a
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_7);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_8, 1);
   __Pyx_AddTraceback("pyearth._knot_search.SingleWeightDependentData.alloc", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
@@ -3331,8 +3472,8 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_2a
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":32
- *         return cls(updating_qt, w, m, 0, max_terms)
+/* "pyearth/_knot_search.pyx":34
+ *         return cls(updating_qt, w, m, 0, max_terms, total_weight)
  * 
  *     cpdef int update_from_basis_function(SingleWeightDependentData self, BasisFunction bf, FLOAT_t[:,:] X,             # <<<<<<<<<<<<<<
  *                                          BOOL_t[:,:] missing, FLOAT_t zero_tol) except *:
@@ -3357,7 +3498,7 @@ static int __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_fr
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("update_from_basis_function", 0);
 
-  /* "pyearth/_knot_search.pyx":34
+  /* "pyearth/_knot_search.pyx":36
  *     cpdef int update_from_basis_function(SingleWeightDependentData self, BasisFunction bf, FLOAT_t[:,:] X,
  *                                          BOOL_t[:,:] missing, FLOAT_t zero_tol) except *:
  *         if self.k >= self.max_terms:             # <<<<<<<<<<<<<<
@@ -3367,7 +3508,7 @@ static int __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_fr
   __pyx_t_1 = ((__pyx_v_self->k >= __pyx_v_self->max_terms) != 0);
   if (__pyx_t_1) {
 
-    /* "pyearth/_knot_search.pyx":35
+    /* "pyearth/_knot_search.pyx":37
  *                                          BOOL_t[:,:] missing, FLOAT_t zero_tol) except *:
  *         if self.k >= self.max_terms:
  *             return -1             # <<<<<<<<<<<<<<
@@ -3377,7 +3518,7 @@ static int __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_fr
     __pyx_r = -1;
     goto __pyx_L0;
 
-    /* "pyearth/_knot_search.pyx":34
+    /* "pyearth/_knot_search.pyx":36
  *     cpdef int update_from_basis_function(SingleWeightDependentData self, BasisFunction bf, FLOAT_t[:,:] X,
  *                                          BOOL_t[:,:] missing, FLOAT_t zero_tol) except *:
  *         if self.k >= self.max_terms:             # <<<<<<<<<<<<<<
@@ -3386,20 +3527,20 @@ static int __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_fr
  */
   }
 
-  /* "pyearth/_knot_search.pyx":36
+  /* "pyearth/_knot_search.pyx":38
  *         if self.k >= self.max_terms:
  *             return -1
  *         bf.apply(X, missing, self.Q_t[self.k, :])             # <<<<<<<<<<<<<<
  *         return self._update(zero_tol)
  * 
  */
-  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_X, 2, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_X, 2, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  if (!(likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray)))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_missing, 2, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_BOOL_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_BOOL_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (!(likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray)))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_missing, 2, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_BOOL_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_BOOL_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  if (!(likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray)))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  if (unlikely(!__pyx_v_self->Q_t.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  if (!(likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray)))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->Q_t.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
   __pyx_t_4 = __pyx_v_self->Q_t;
   __PYX_INC_MEMVIEW(&__pyx_t_4, 1);
   __pyx_t_5.data = __pyx_t_4.data;
@@ -3413,7 +3554,7 @@ static int __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_fr
         __pyx_tmp_idx += __pyx_tmp_shape;
     if (0 && (__pyx_tmp_idx < 0 || __pyx_tmp_idx >= __pyx_tmp_shape)) {
         PyErr_SetString(PyExc_IndexError, "Index out of bounds (axis 0)");
-        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
         __pyx_t_5.data += __pyx_tmp_idx * __pyx_tmp_stride;
 }
@@ -3423,27 +3564,27 @@ __pyx_t_5.strides[0] = __pyx_t_4.strides[1];
     __pyx_t_5.suboffsets[0] = -1;
 
 __PYX_XDEC_MEMVIEW(&__pyx_t_4, 1);
-  __pyx_t_6 = __pyx_memoryview_fromslice(__pyx_t_5, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = __pyx_memoryview_fromslice(__pyx_t_5, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_6);
   __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
-  if (!(likely(__Pyx_TypeTest(__pyx_t_6, __pyx_ptype_5numpy_ndarray)))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_7 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf->__pyx_vtab)->apply(__pyx_v_bf, ((PyArrayObject *)__pyx_t_2), ((PyArrayObject *)__pyx_t_3), ((PyArrayObject *)__pyx_t_6), 0, NULL); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (!(likely(__Pyx_TypeTest(__pyx_t_6, __pyx_ptype_5numpy_ndarray)))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_7 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_bf->__pyx_vtab)->apply(__pyx_v_bf, ((PyArrayObject *)__pyx_t_2), ((PyArrayObject *)__pyx_t_3), ((PyArrayObject *)__pyx_t_6), 0, NULL); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-  /* "pyearth/_knot_search.pyx":37
+  /* "pyearth/_knot_search.pyx":39
  *             return -1
  *         bf.apply(X, missing, self.Q_t[self.k, :])
  *         return self._update(zero_tol)             # <<<<<<<<<<<<<<
  * 
  *     cpdef int update_from_array(SingleWeightDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *:
  */
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_update); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 37; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_update); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_zero_tol); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 37; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_zero_tol); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_2 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_6))) {
@@ -3456,28 +3597,28 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_4, 1);
     }
   }
   if (!__pyx_t_2) {
-    __pyx_t_7 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_3); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 37; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_7 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_3); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_GOTREF(__pyx_t_7);
   } else {
-    __pyx_t_8 = PyTuple_New(1+1); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 37; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_8 = PyTuple_New(1+1); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_2); __pyx_t_2 = NULL;
     __Pyx_GIVEREF(__pyx_t_3);
     PyTuple_SET_ITEM(__pyx_t_8, 0+1, __pyx_t_3);
     __pyx_t_3 = 0;
-    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_8, NULL); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 37; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_8, NULL); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   }
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_9 = __Pyx_PyInt_As_int(__pyx_t_7); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 37; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_9 = __Pyx_PyInt_As_int(__pyx_t_7); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __pyx_r = __pyx_t_9;
   goto __pyx_L0;
 
-  /* "pyearth/_knot_search.pyx":32
- *         return cls(updating_qt, w, m, 0, max_terms)
+  /* "pyearth/_knot_search.pyx":34
+ *         return cls(updating_qt, w, m, 0, max_terms, total_weight)
  * 
  *     cpdef int update_from_basis_function(SingleWeightDependentData self, BasisFunction bf, FLOAT_t[:,:] X,             # <<<<<<<<<<<<<<
  *                                          BOOL_t[:,:] missing, FLOAT_t zero_tol) except *:
@@ -3535,21 +3676,21 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_5u
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_X)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("update_from_basis_function", 1, 4, 4, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("update_from_basis_function", 1, 4, 4, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_missing)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("update_from_basis_function", 1, 4, 4, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("update_from_basis_function", 1, 4, 4, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_zero_tol)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("update_from_basis_function", 1, 4, 4, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("update_from_basis_function", 1, 4, 4, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "update_from_basis_function") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "update_from_basis_function") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -3560,19 +3701,19 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_5u
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
     }
     __pyx_v_bf = ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)values[0]);
-    __pyx_v_X = __Pyx_PyObject_to_MemoryviewSlice_dsds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[1]); if (unlikely(!__pyx_v_X.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_missing = __Pyx_PyObject_to_MemoryviewSlice_dsds_nn___pyx_t_7pyearth_6_types_BOOL_t(values[2]); if (unlikely(!__pyx_v_missing.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 33; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_zero_tol = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_zero_tol == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 33; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_X = __Pyx_PyObject_to_MemoryviewSlice_dsds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[1]); if (unlikely(!__pyx_v_X.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_missing = __Pyx_PyObject_to_MemoryviewSlice_dsds_nn___pyx_t_7pyearth_6_types_BOOL_t(values[2]); if (unlikely(!__pyx_v_missing.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_zero_tol = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_zero_tol == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("update_from_basis_function", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("update_from_basis_function", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._knot_search.SingleWeightDependentData.update_from_basis_function", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_bf), __pyx_ptype_7pyearth_6_basis_BasisFunction, 1, "bf", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_bf), __pyx_ptype_7pyearth_6_basis_BasisFunction, 1, "bf", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_r = __pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_4update_from_basis_function(((struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *)__pyx_v_self), __pyx_v_bf, __pyx_v_X, __pyx_v_missing, __pyx_v_zero_tol);
 
   /* function exit code */
@@ -3594,10 +3735,10 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_4u
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("update_from_basis_function", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_X.memview)) { __Pyx_RaiseUnboundLocalError("X"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-  if (unlikely(!__pyx_v_missing.memview)) { __Pyx_RaiseUnboundLocalError("missing"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_from_basis_function(__pyx_v_self, __pyx_v_bf, __pyx_v_X, __pyx_v_missing, __pyx_v_zero_tol, 1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_t_1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_X.memview)) { __Pyx_RaiseUnboundLocalError("X"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+  if (unlikely(!__pyx_v_missing.memview)) { __Pyx_RaiseUnboundLocalError("missing"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_from_basis_function(__pyx_v_self, __pyx_v_bf, __pyx_v_X, __pyx_v_missing, __pyx_v_zero_tol, 1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_t_1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
@@ -3616,7 +3757,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_4u
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":39
+/* "pyearth/_knot_search.pyx":41
  *         return self._update(zero_tol)
  * 
  *     cpdef int update_from_array(SingleWeightDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *:             # <<<<<<<<<<<<<<
@@ -3631,7 +3772,7 @@ static int __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_fr
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("update_from_array", 0);
 
-  /* "pyearth/_knot_search.pyx":40
+  /* "pyearth/_knot_search.pyx":42
  * 
  *     cpdef int update_from_array(SingleWeightDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *:
  *         if self.k >= self.max_terms:             # <<<<<<<<<<<<<<
@@ -3641,7 +3782,7 @@ static int __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_fr
   __pyx_t_1 = ((__pyx_v_self->k >= __pyx_v_self->max_terms) != 0);
   if (__pyx_t_1) {
 
-    /* "pyearth/_knot_search.pyx":41
+    /* "pyearth/_knot_search.pyx":43
  *     cpdef int update_from_array(SingleWeightDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *:
  *         if self.k >= self.max_terms:
  *             return -1             # <<<<<<<<<<<<<<
@@ -3651,7 +3792,7 @@ static int __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_fr
     __pyx_r = -1;
     goto __pyx_L0;
 
-    /* "pyearth/_knot_search.pyx":40
+    /* "pyearth/_knot_search.pyx":42
  * 
  *     cpdef int update_from_array(SingleWeightDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *:
  *         if self.k >= self.max_terms:             # <<<<<<<<<<<<<<
@@ -3660,7 +3801,7 @@ static int __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_fr
  */
   }
 
-  /* "pyearth/_knot_search.pyx":43
+  /* "pyearth/_knot_search.pyx":45
  *             return -1
  * 
  *         self.updating_qt.update(b)             # <<<<<<<<<<<<<<
@@ -3669,7 +3810,7 @@ static int __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_fr
  */
   ((struct __pyx_vtabstruct_7pyearth_3_qr_UpdatingQT *)__pyx_v_self->updating_qt->__pyx_vtab)->update(__pyx_v_self->updating_qt, __pyx_v_b, 0);
 
-  /* "pyearth/_knot_search.pyx":44
+  /* "pyearth/_knot_search.pyx":46
  * 
  *         self.updating_qt.update(b)
  *         self.k += 1             # <<<<<<<<<<<<<<
@@ -3678,7 +3819,7 @@ static int __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_fr
  */
   __pyx_v_self->k = (__pyx_v_self->k + 1);
 
-  /* "pyearth/_knot_search.pyx":39
+  /* "pyearth/_knot_search.pyx":41
  *         return self._update(zero_tol)
  * 
  *     cpdef int update_from_array(SingleWeightDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *:             # <<<<<<<<<<<<<<
@@ -3724,11 +3865,11 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_7u
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_zero_tol)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("update_from_array", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("update_from_array", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "update_from_array") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "update_from_array") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -3736,12 +3877,12 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_7u
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_b = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[0]); if (unlikely(!__pyx_v_b.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_zero_tol = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_zero_tol == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_b = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[0]); if (unlikely(!__pyx_v_b.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_zero_tol = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_zero_tol == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("update_from_array", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("update_from_array", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._knot_search.SingleWeightDependentData.update_from_array", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3764,9 +3905,9 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_6u
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("update_from_array", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_b.memview)) { __Pyx_RaiseUnboundLocalError("b"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_from_array(__pyx_v_self, __pyx_v_b, __pyx_v_zero_tol, 1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_t_1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_b.memview)) { __Pyx_RaiseUnboundLocalError("b"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_from_array(__pyx_v_self, __pyx_v_b, __pyx_v_zero_tol, 1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_t_1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
@@ -3784,7 +3925,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_6u
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":63
+/* "pyearth/_knot_search.pyx":65
  * #         self.k += 1
  * 
  *     cpdef downdate(SingleWeightDependentData self):             # <<<<<<<<<<<<<<
@@ -3798,7 +3939,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_dow
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("downdate", 0);
 
-  /* "pyearth/_knot_search.pyx":64
+  /* "pyearth/_knot_search.pyx":66
  * 
  *     cpdef downdate(SingleWeightDependentData self):
  *         self.updating_qt.downdate()             # <<<<<<<<<<<<<<
@@ -3807,7 +3948,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_dow
  */
   ((struct __pyx_vtabstruct_7pyearth_3_qr_UpdatingQT *)__pyx_v_self->updating_qt->__pyx_vtab)->downdate(__pyx_v_self->updating_qt, 0);
 
-  /* "pyearth/_knot_search.pyx":65
+  /* "pyearth/_knot_search.pyx":67
  *     cpdef downdate(SingleWeightDependentData self):
  *         self.updating_qt.downdate()
  *         self.k -= 1             # <<<<<<<<<<<<<<
@@ -3816,7 +3957,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_dow
  */
   __pyx_v_self->k = (__pyx_v_self->k - 1);
 
-  /* "pyearth/_knot_search.pyx":63
+  /* "pyearth/_knot_search.pyx":65
  * #         self.k += 1
  * 
  *     cpdef downdate(SingleWeightDependentData self):             # <<<<<<<<<<<<<<
@@ -3853,7 +3994,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_8d
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("downdate", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_downdate(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 63; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_downdate(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 65; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3870,7 +4011,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_8d
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":67
+/* "pyearth/_knot_search.pyx":69
  *         self.k -= 1
  * 
  *     cpdef reweight(SingleWeightDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k,             # <<<<<<<<<<<<<<
@@ -3883,36 +4024,114 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_rew
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_i;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_1;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_2;
-  __Pyx_memviewslice __pyx_t_3 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  __Pyx_memviewslice __pyx_t_4 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_5 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  int __pyx_t_6;
+  PyObject *__pyx_t_7 = NULL;
+  PyObject *__pyx_t_8 = NULL;
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_9;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_10;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_11;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("reweight", 0);
 
-  /* "pyearth/_knot_search.pyx":70
+  /* "pyearth/_knot_search.pyx":72
  *                    FLOAT_t zero_tol):
  *         cdef INDEX_t i
  *         self.w = w             # <<<<<<<<<<<<<<
+ *         self.total_weight = np.sum(self.w[:self.m])
  *         self.k = 0
- *         self.updating_qt.reset()
  */
   __PYX_XDEC_MEMVIEW(&__pyx_v_self->w, 0);
   __PYX_INC_MEMVIEW(&__pyx_v_w, 0);
   __pyx_v_self->w = __pyx_v_w;
 
-  /* "pyearth/_knot_search.pyx":71
+  /* "pyearth/_knot_search.pyx":73
  *         cdef INDEX_t i
  *         self.w = w
+ *         self.total_weight = np.sum(self.w[:self.m])             # <<<<<<<<<<<<<<
+ *         self.k = 0
+ *         self.updating_qt.reset()
+ */
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_sum); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (unlikely(!__pyx_v_self->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_4 = __pyx_v_self->w;
+  __PYX_INC_MEMVIEW(&__pyx_t_4, 1);
+  __pyx_t_5.data = __pyx_t_4.data;
+  __pyx_t_5.memview = __pyx_t_4.memview;
+  __PYX_INC_MEMVIEW(&__pyx_t_5, 0);
+  __pyx_t_6 = -1;
+  if (unlikely(__pyx_memoryview_slice_memviewslice(
+    &__pyx_t_5,
+    __pyx_t_4.shape[0], __pyx_t_4.strides[0], __pyx_t_4.suboffsets[0],
+    0,
+    0,
+    &__pyx_t_6,
+    0,
+    __pyx_v_self->m,
+    0,
+    0,
+    1,
+    0,
+    1) < 0))
+{
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+}
+
+__PYX_XDEC_MEMVIEW(&__pyx_t_4, 1);
+  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_t_5, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_2);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
+  __pyx_t_7 = NULL;
+  if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_7)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_7);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  if (!__pyx_t_7) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+  } else {
+    __pyx_t_8 = PyTuple_New(1+1); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_8);
+    __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_7); __pyx_t_7 = NULL;
+    __Pyx_GIVEREF(__pyx_t_2);
+    PyTuple_SET_ITEM(__pyx_t_8, 0+1, __pyx_t_2);
+    __pyx_t_2 = 0;
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_8, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+  }
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_9 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_self->total_weight = __pyx_t_9;
+
+  /* "pyearth/_knot_search.pyx":74
+ *         self.w = w
+ *         self.total_weight = np.sum(self.w[:self.m])
  *         self.k = 0             # <<<<<<<<<<<<<<
  *         self.updating_qt.reset()
  *         for i in range(k):
  */
   __pyx_v_self->k = 0;
 
-  /* "pyearth/_knot_search.pyx":72
- *         self.w = w
+  /* "pyearth/_knot_search.pyx":75
+ *         self.total_weight = np.sum(self.w[:self.m])
  *         self.k = 0
  *         self.updating_qt.reset()             # <<<<<<<<<<<<<<
  *         for i in range(k):
@@ -3920,30 +4139,30 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_rew
  */
   ((struct __pyx_vtabstruct_7pyearth_3_qr_UpdatingQT *)__pyx_v_self->updating_qt->__pyx_vtab)->reset(__pyx_v_self->updating_qt, 0);
 
-  /* "pyearth/_knot_search.pyx":73
+  /* "pyearth/_knot_search.pyx":76
  *         self.k = 0
  *         self.updating_qt.reset()
  *         for i in range(k):             # <<<<<<<<<<<<<<
  *             self.update_from_array(B[:, i], zero_tol)
  * 
  */
-  __pyx_t_1 = __pyx_v_k;
-  for (__pyx_t_2 = 0; __pyx_t_2 < __pyx_t_1; __pyx_t_2+=1) {
-    __pyx_v_i = __pyx_t_2;
+  __pyx_t_10 = __pyx_v_k;
+  for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_10; __pyx_t_11+=1) {
+    __pyx_v_i = __pyx_t_11;
 
-    /* "pyearth/_knot_search.pyx":74
+    /* "pyearth/_knot_search.pyx":77
  *         self.updating_qt.reset()
  *         for i in range(k):
  *             self.update_from_array(B[:, i], zero_tol)             # <<<<<<<<<<<<<<
  * 
  * @cython.final
  */
-    __pyx_t_3.data = __pyx_v_B.data;
-    __pyx_t_3.memview = __pyx_v_B.memview;
-    __PYX_INC_MEMVIEW(&__pyx_t_3, 0);
-    __pyx_t_3.shape[0] = __pyx_v_B.shape[0];
-__pyx_t_3.strides[0] = __pyx_v_B.strides[0];
-    __pyx_t_3.suboffsets[0] = -1;
+    __pyx_t_5.data = __pyx_v_B.data;
+    __pyx_t_5.memview = __pyx_v_B.memview;
+    __PYX_INC_MEMVIEW(&__pyx_t_5, 0);
+    __pyx_t_5.shape[0] = __pyx_v_B.shape[0];
+__pyx_t_5.strides[0] = __pyx_v_B.strides[0];
+    __pyx_t_5.suboffsets[0] = -1;
 
 {
     Py_ssize_t __pyx_tmp_idx = __pyx_v_i;
@@ -3953,16 +4172,16 @@ __pyx_t_3.strides[0] = __pyx_v_B.strides[0];
         __pyx_tmp_idx += __pyx_tmp_shape;
     if (0 && (__pyx_tmp_idx < 0 || __pyx_tmp_idx >= __pyx_tmp_shape)) {
         PyErr_SetString(PyExc_IndexError, "Index out of bounds (axis 1)");
-        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 74; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 77; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
-        __pyx_t_3.data += __pyx_tmp_idx * __pyx_tmp_stride;
+        __pyx_t_5.data += __pyx_tmp_idx * __pyx_tmp_stride;
 }
 
-__pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_from_array(__pyx_v_self, __pyx_t_3, __pyx_v_zero_tol, 0); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 74; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __PYX_XDEC_MEMVIEW(&__pyx_t_3, 1);
+__pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_from_array(__pyx_v_self, __pyx_t_5, __pyx_v_zero_tol, 0); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 77; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
   }
 
-  /* "pyearth/_knot_search.pyx":67
+  /* "pyearth/_knot_search.pyx":69
  *         self.k -= 1
  * 
  *     cpdef reweight(SingleWeightDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k,             # <<<<<<<<<<<<<<
@@ -3974,7 +4193,13 @@ __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_from_array(__
   __pyx_r = Py_None; __Pyx_INCREF(Py_None);
   goto __pyx_L0;
   __pyx_L1_error:;
-  __PYX_XDEC_MEMVIEW(&__pyx_t_3, 1);
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_4, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
+  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_8);
   __Pyx_AddTraceback("pyearth._knot_search.SingleWeightDependentData.reweight", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
@@ -4018,21 +4243,21 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_11
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_B)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("reweight", 1, 4, 4, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("reweight", 1, 4, 4, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_k)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("reweight", 1, 4, 4, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("reweight", 1, 4, 4, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_zero_tol)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("reweight", 1, 4, 4, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("reweight", 1, 4, 4, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "reweight") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "reweight") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -4042,14 +4267,14 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_11
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
     }
-    __pyx_v_w = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[0]); if (unlikely(!__pyx_v_w.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_B = __Pyx_PyObject_to_MemoryviewSlice_dsds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[1]); if (unlikely(!__pyx_v_B.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_k = __Pyx_PyInt_As_npy_ulonglong(values[2]); if (unlikely((__pyx_v_k == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_zero_tol = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_zero_tol == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_w = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[0]); if (unlikely(!__pyx_v_w.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_B = __Pyx_PyObject_to_MemoryviewSlice_dsds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[1]); if (unlikely(!__pyx_v_B.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_k = __Pyx_PyInt_As_npy_ulonglong(values[2]); if (unlikely((__pyx_v_k == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_zero_tol = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_zero_tol == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 70; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("reweight", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("reweight", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._knot_search.SingleWeightDependentData.reweight", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4071,9 +4296,9 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_10
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("reweight", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_w.memview)) { __Pyx_RaiseUnboundLocalError("w"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-  if (unlikely(!__pyx_v_B.memview)) { __Pyx_RaiseUnboundLocalError("B"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_reweight(__pyx_v_self, __pyx_v_w, __pyx_v_B, __pyx_v_k, __pyx_v_zero_tol, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_w.memview)) { __Pyx_RaiseUnboundLocalError("w"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+  if (unlikely(!__pyx_v_B.memview)) { __Pyx_RaiseUnboundLocalError("B"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_reweight(__pyx_v_self, __pyx_v_w, __pyx_v_B, __pyx_v_k, __pyx_v_zero_tol, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4276,7 +4501,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_1k
  *     cdef readonly INDEX_t k
  *     cdef readonly INDEX_t max_terms             # <<<<<<<<<<<<<<
  *     cdef readonly FLOAT_t[:, :] Q_t
- *     cpdef int update_from_basis_function(SingleWeightDependentData self, BasisFunction bf, FLOAT_t[:,:] X,
+ *     cdef readonly FLOAT_t total_weight
  */
 
 /* Python wrapper */
@@ -4322,8 +4547,8 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_9m
  *     cdef readonly INDEX_t k
  *     cdef readonly INDEX_t max_terms
  *     cdef readonly FLOAT_t[:, :] Q_t             # <<<<<<<<<<<<<<
+ *     cdef readonly FLOAT_t total_weight
  *     cpdef int update_from_basis_function(SingleWeightDependentData self, BasisFunction bf, FLOAT_t[:,:] X,
- *                                          BOOL_t[:,:] missing, FLOAT_t zero_tol) except *
  */
 
 /* Python wrapper */
@@ -4366,7 +4591,54 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_3Q
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":78
+/* "pyearth/_knot_search.pxd":14
+ *     cdef readonly INDEX_t max_terms
+ *     cdef readonly FLOAT_t[:, :] Q_t
+ *     cdef readonly FLOAT_t total_weight             # <<<<<<<<<<<<<<
+ *     cpdef int update_from_basis_function(SingleWeightDependentData self, BasisFunction bf, FLOAT_t[:,:] X,
+ *                                          BOOL_t[:,:] missing, FLOAT_t zero_tol) except *
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_12total_weight_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_12total_weight_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_12total_weight___get__(((struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_7pyearth_12_knot_search_25SingleWeightDependentData_12total_weight___get__(struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__get__", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->total_weight); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 14; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("pyearth._knot_search.SingleWeightDependentData.total_weight.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "pyearth/_knot_search.pyx":81
  * @cython.final
  * cdef class MultipleOutcomeDependentData:
  *     def __init__(MultipleOutcomeDependentData self, list outcomes, list weights):             # <<<<<<<<<<<<<<
@@ -4405,11 +4677,11 @@ static int __pyx_pw_7pyearth_12_knot_search_28MultipleOutcomeDependentData_1__in
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_weights)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 78; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 78; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -4422,14 +4694,14 @@ static int __pyx_pw_7pyearth_12_knot_search_28MultipleOutcomeDependentData_1__in
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 78; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._knot_search.MultipleOutcomeDependentData.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_outcomes), (&PyList_Type), 1, "outcomes", 1))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 78; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_weights), (&PyList_Type), 1, "weights", 1))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 78; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_outcomes), (&PyList_Type), 1, "outcomes", 1))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_weights), (&PyList_Type), 1, "weights", 1))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_r = __pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData___init__(((struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *)__pyx_v_self), __pyx_v_outcomes, __pyx_v_weights);
 
   /* function exit code */
@@ -4446,7 +4718,7 @@ static int __pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData___ini
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "pyearth/_knot_search.pyx":79
+  /* "pyearth/_knot_search.pyx":82
  * cdef class MultipleOutcomeDependentData:
  *     def __init__(MultipleOutcomeDependentData self, list outcomes, list weights):
  *         self.outcomes = outcomes             # <<<<<<<<<<<<<<
@@ -4459,7 +4731,7 @@ static int __pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData___ini
   __Pyx_DECREF(__pyx_v_self->outcomes);
   __pyx_v_self->outcomes = __pyx_v_outcomes;
 
-  /* "pyearth/_knot_search.pyx":80
+  /* "pyearth/_knot_search.pyx":83
  *     def __init__(MultipleOutcomeDependentData self, list outcomes, list weights):
  *         self.outcomes = outcomes
  *         self.weights = weights             # <<<<<<<<<<<<<<
@@ -4472,7 +4744,7 @@ static int __pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData___ini
   __Pyx_DECREF(__pyx_v_self->weights);
   __pyx_v_self->weights = __pyx_v_weights;
 
-  /* "pyearth/_knot_search.pyx":78
+  /* "pyearth/_knot_search.pyx":81
  * @cython.final
  * cdef class MultipleOutcomeDependentData:
  *     def __init__(MultipleOutcomeDependentData self, list outcomes, list weights):             # <<<<<<<<<<<<<<
@@ -4486,7 +4758,7 @@ static int __pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData___ini
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":83
+/* "pyearth/_knot_search.pyx":86
  * 
  *     @classmethod
  *     def alloc(cls, FLOAT_t[:,:] y, w, INDEX_t m, INDEX_t n_outcomes, INDEX_t max_terms):             # <<<<<<<<<<<<<<
@@ -4531,26 +4803,26 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_28MultipleOutcomeDependentData
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_w)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("alloc", 1, 5, 5, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("alloc", 1, 5, 5, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 86; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_m)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("alloc", 1, 5, 5, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("alloc", 1, 5, 5, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 86; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_n_outcomes)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("alloc", 1, 5, 5, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("alloc", 1, 5, 5, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 86; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_max_terms)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("alloc", 1, 5, 5, 4); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("alloc", 1, 5, 5, 4); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 86; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "alloc") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "alloc") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 86; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 5) {
       goto __pyx_L5_argtuple_error;
@@ -4561,15 +4833,15 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_28MultipleOutcomeDependentData
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
       values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
     }
-    __pyx_v_y = __Pyx_PyObject_to_MemoryviewSlice_dsds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[0]); if (unlikely(!__pyx_v_y.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_y = __Pyx_PyObject_to_MemoryviewSlice_dsds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[0]); if (unlikely(!__pyx_v_y.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 86; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
     __pyx_v_w = values[1];
-    __pyx_v_m = __Pyx_PyInt_As_npy_ulonglong(values[2]); if (unlikely((__pyx_v_m == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_n_outcomes = __Pyx_PyInt_As_npy_ulonglong(values[3]); if (unlikely((__pyx_v_n_outcomes == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_max_terms = __Pyx_PyInt_As_npy_ulonglong(values[4]); if (unlikely((__pyx_v_max_terms == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_m = __Pyx_PyInt_As_npy_ulonglong(values[2]); if (unlikely((__pyx_v_m == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 86; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_n_outcomes = __Pyx_PyInt_As_npy_ulonglong(values[3]); if (unlikely((__pyx_v_n_outcomes == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 86; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_max_terms = __Pyx_PyInt_As_npy_ulonglong(values[4]); if (unlikely((__pyx_v_max_terms == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 86; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("alloc", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("alloc", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 86; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._knot_search.MultipleOutcomeDependentData.alloc", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4610,16 +4882,16 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("alloc", 0);
 
-  /* "pyearth/_knot_search.pyx":88
+  /* "pyearth/_knot_search.pyx":91
  *         cdef int i, n_weights
  *         # w is a numpy array of weights
  *         if len(w.shape) == 2 and w.shape[1] == n_outcomes:             # <<<<<<<<<<<<<<
  *             n_weights = w.shape[1]
  *             weights = []
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_w, __pyx_n_s_shape); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 88; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_w, __pyx_n_s_shape); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_3 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 88; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_3 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_4 = ((__pyx_t_3 == 2) != 0);
   if (__pyx_t_4) {
@@ -4627,79 +4899,79 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
     __pyx_t_1 = __pyx_t_4;
     goto __pyx_L4_bool_binop_done;
   }
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_w, __pyx_n_s_shape); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 88; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_w, __pyx_n_s_shape); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_5 = __Pyx_GetItemInt(__pyx_t_2, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(__pyx_t_5 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 88; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+  __pyx_t_5 = __Pyx_GetItemInt(__pyx_t_2, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(__pyx_t_5 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_n_outcomes); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 88; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_n_outcomes); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_6 = PyObject_RichCompare(__pyx_t_5, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 88; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = PyObject_RichCompare(__pyx_t_5, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely(__pyx_t_4 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 88; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely(__pyx_t_4 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __pyx_t_1 = __pyx_t_4;
   __pyx_L4_bool_binop_done:;
   if (__pyx_t_1) {
 
-    /* "pyearth/_knot_search.pyx":89
+    /* "pyearth/_knot_search.pyx":92
  *         # w is a numpy array of weights
  *         if len(w.shape) == 2 and w.shape[1] == n_outcomes:
  *             n_weights = w.shape[1]             # <<<<<<<<<<<<<<
  *             weights = []
  *             for i in range(w.shape[1]):
  */
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_w, __pyx_n_s_shape); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 89; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_w, __pyx_n_s_shape); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_6, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 89; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_6, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 89; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_v_n_weights = __pyx_t_7;
 
-    /* "pyearth/_knot_search.pyx":90
+    /* "pyearth/_knot_search.pyx":93
  *         if len(w.shape) == 2 and w.shape[1] == n_outcomes:
  *             n_weights = w.shape[1]
  *             weights = []             # <<<<<<<<<<<<<<
  *             for i in range(w.shape[1]):
  *                 weights.append(SingleWeightDependentData.alloc(w[:, i], m, max_terms))
  */
-    __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 90; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_v_weights = ((PyObject*)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "pyearth/_knot_search.pyx":91
+    /* "pyearth/_knot_search.pyx":94
  *             n_weights = w.shape[1]
  *             weights = []
  *             for i in range(w.shape[1]):             # <<<<<<<<<<<<<<
  *                 weights.append(SingleWeightDependentData.alloc(w[:, i], m, max_terms))
  *         elif len(w.shape) == 1 or w.shape[1] == 1:
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_w, __pyx_n_s_shape); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_w, __pyx_n_s_shape); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_6 = __Pyx_GetItemInt(__pyx_t_2, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(__pyx_t_6 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __pyx_t_6 = __Pyx_GetItemInt(__pyx_t_2, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(__pyx_t_6 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_8 = __Pyx_PyInt_As_long(__pyx_t_6); if (unlikely((__pyx_t_8 == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_8 = __Pyx_PyInt_As_long(__pyx_t_6); if (unlikely((__pyx_t_8 == (long)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_8; __pyx_t_7+=1) {
       __pyx_v_i = __pyx_t_7;
 
-      /* "pyearth/_knot_search.pyx":92
+      /* "pyearth/_knot_search.pyx":95
  *             weights = []
  *             for i in range(w.shape[1]):
  *                 weights.append(SingleWeightDependentData.alloc(w[:, i], m, max_terms))             # <<<<<<<<<<<<<<
  *         elif len(w.shape) == 1 or w.shape[1] == 1:
  *             n_weights = 1
  */
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_SingleWeightDependentData), __pyx_n_s_alloc); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_SingleWeightDependentData), __pyx_n_s_alloc); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_i); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_i); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_INCREF(__pyx_slice_);
       __Pyx_GIVEREF(__pyx_slice_);
@@ -4707,12 +4979,12 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
       __Pyx_GIVEREF(__pyx_t_5);
       PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_5);
       __pyx_t_5 = 0;
-      __pyx_t_5 = PyObject_GetItem(__pyx_v_w, __pyx_t_9); if (unlikely(__pyx_t_5 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+      __pyx_t_5 = PyObject_GetItem(__pyx_v_w, __pyx_t_9); if (unlikely(__pyx_t_5 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      __pyx_t_9 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_m); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_9 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_m); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_9);
-      __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_max_terms); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_max_terms); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_10);
       __pyx_t_11 = NULL;
       __pyx_t_3 = 0;
@@ -4726,7 +4998,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
           __pyx_t_3 = 1;
         }
       }
-      __pyx_t_12 = PyTuple_New(3+__pyx_t_3); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_12 = PyTuple_New(3+__pyx_t_3); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_12);
       if (__pyx_t_11) {
         __Pyx_GIVEREF(__pyx_t_11); PyTuple_SET_ITEM(__pyx_t_12, 0, __pyx_t_11); __pyx_t_11 = NULL;
@@ -4740,15 +5012,15 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
       __pyx_t_5 = 0;
       __pyx_t_9 = 0;
       __pyx_t_10 = 0;
-      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_12, NULL); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_12, NULL); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_weights, __pyx_t_6); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_weights, __pyx_t_6); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     }
 
-    /* "pyearth/_knot_search.pyx":88
+    /* "pyearth/_knot_search.pyx":91
  *         cdef int i, n_weights
  *         # w is a numpy array of weights
  *         if len(w.shape) == 2 and w.shape[1] == n_outcomes:             # <<<<<<<<<<<<<<
@@ -4758,16 +5030,16 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
     goto __pyx_L3;
   }
 
-  /* "pyearth/_knot_search.pyx":93
+  /* "pyearth/_knot_search.pyx":96
  *             for i in range(w.shape[1]):
  *                 weights.append(SingleWeightDependentData.alloc(w[:, i], m, max_terms))
  *         elif len(w.shape) == 1 or w.shape[1] == 1:             # <<<<<<<<<<<<<<
  *             n_weights = 1
  *             if len(w.shape) == 1:
  */
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_w, __pyx_n_s_shape); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_w, __pyx_n_s_shape); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_3 = PyObject_Length(__pyx_t_6); if (unlikely(__pyx_t_3 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = PyObject_Length(__pyx_t_6); if (unlikely(__pyx_t_3 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __pyx_t_4 = ((__pyx_t_3 == 1) != 0);
   if (!__pyx_t_4) {
@@ -4775,21 +5047,21 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
     __pyx_t_1 = __pyx_t_4;
     goto __pyx_L8_bool_binop_done;
   }
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_w, __pyx_n_s_shape); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_w, __pyx_n_s_shape); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_6, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+  __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_6, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_6 = __Pyx_PyInt_EqObjC(__pyx_t_2, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = __Pyx_PyInt_EqObjC(__pyx_t_2, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely(__pyx_t_4 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely(__pyx_t_4 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __pyx_t_1 = __pyx_t_4;
   __pyx_L8_bool_binop_done:;
   if (__pyx_t_1) {
 
-    /* "pyearth/_knot_search.pyx":94
+    /* "pyearth/_knot_search.pyx":97
  *                 weights.append(SingleWeightDependentData.alloc(w[:, i], m, max_terms))
  *         elif len(w.shape) == 1 or w.shape[1] == 1:
  *             n_weights = 1             # <<<<<<<<<<<<<<
@@ -4798,32 +5070,32 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
  */
     __pyx_v_n_weights = 1;
 
-    /* "pyearth/_knot_search.pyx":95
+    /* "pyearth/_knot_search.pyx":98
  *         elif len(w.shape) == 1 or w.shape[1] == 1:
  *             n_weights = 1
  *             if len(w.shape) == 1:             # <<<<<<<<<<<<<<
  *                 weights = [SingleWeightDependentData.alloc(w, m, max_terms)]
  *             else:
  */
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_w, __pyx_n_s_shape); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_w, __pyx_n_s_shape); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_3 = PyObject_Length(__pyx_t_6); if (unlikely(__pyx_t_3 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyObject_Length(__pyx_t_6); if (unlikely(__pyx_t_3 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __pyx_t_1 = ((__pyx_t_3 == 1) != 0);
     if (__pyx_t_1) {
 
-      /* "pyearth/_knot_search.pyx":96
+      /* "pyearth/_knot_search.pyx":99
  *             n_weights = 1
  *             if len(w.shape) == 1:
  *                 weights = [SingleWeightDependentData.alloc(w, m, max_terms)]             # <<<<<<<<<<<<<<
  *             else:
  *                 weights = [SingleWeightDependentData.alloc(w[:, 0], m, max_terms)]
  */
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_SingleWeightDependentData), __pyx_n_s_alloc); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_SingleWeightDependentData), __pyx_n_s_alloc); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 99; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_12 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_m); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_12 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_m); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 99; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_12);
-      __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_max_terms); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_max_terms); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 99; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_10);
       __pyx_t_9 = NULL;
       __pyx_t_3 = 0;
@@ -4837,7 +5109,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
           __pyx_t_3 = 1;
         }
       }
-      __pyx_t_5 = PyTuple_New(3+__pyx_t_3); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_5 = PyTuple_New(3+__pyx_t_3); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 99; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_5);
       if (__pyx_t_9) {
         __Pyx_GIVEREF(__pyx_t_9); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_9); __pyx_t_9 = NULL;
@@ -4851,11 +5123,11 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
       PyTuple_SET_ITEM(__pyx_t_5, 2+__pyx_t_3, __pyx_t_10);
       __pyx_t_12 = 0;
       __pyx_t_10 = 0;
-      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_5, NULL); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_5, NULL); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 99; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 99; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_GIVEREF(__pyx_t_6);
       PyList_SET_ITEM(__pyx_t_2, 0, __pyx_t_6);
@@ -4863,7 +5135,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
       __pyx_v_weights = ((PyObject*)__pyx_t_2);
       __pyx_t_2 = 0;
 
-      /* "pyearth/_knot_search.pyx":95
+      /* "pyearth/_knot_search.pyx":98
  *         elif len(w.shape) == 1 or w.shape[1] == 1:
  *             n_weights = 1
  *             if len(w.shape) == 1:             # <<<<<<<<<<<<<<
@@ -4873,7 +5145,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
       goto __pyx_L10;
     }
 
-    /* "pyearth/_knot_search.pyx":98
+    /* "pyearth/_knot_search.pyx":101
  *                 weights = [SingleWeightDependentData.alloc(w, m, max_terms)]
  *             else:
  *                 weights = [SingleWeightDependentData.alloc(w[:, 0], m, max_terms)]             # <<<<<<<<<<<<<<
@@ -4881,13 +5153,13 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
  *             raise ValueError('Shape of weights does not match shape of outcomes.')
  */
     /*else*/ {
-      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_SingleWeightDependentData), __pyx_n_s_alloc); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_SingleWeightDependentData), __pyx_n_s_alloc); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_5 = PyObject_GetItem(__pyx_v_w, __pyx_tuple__3); if (unlikely(__pyx_t_5 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+      __pyx_t_5 = PyObject_GetItem(__pyx_v_w, __pyx_tuple__3); if (unlikely(__pyx_t_5 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_m); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_m); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_12 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_max_terms); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_12 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_max_terms); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_12);
       __pyx_t_9 = NULL;
       __pyx_t_3 = 0;
@@ -4901,7 +5173,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
           __pyx_t_3 = 1;
         }
       }
-      __pyx_t_11 = PyTuple_New(3+__pyx_t_3); if (unlikely(!__pyx_t_11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_11 = PyTuple_New(3+__pyx_t_3); if (unlikely(!__pyx_t_11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_11);
       if (__pyx_t_9) {
         __Pyx_GIVEREF(__pyx_t_9); PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_9); __pyx_t_9 = NULL;
@@ -4915,11 +5187,11 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
       __pyx_t_5 = 0;
       __pyx_t_10 = 0;
       __pyx_t_12 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_11, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_11, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __pyx_t_6 = PyList_New(1); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_6 = PyList_New(1); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_GIVEREF(__pyx_t_2);
       PyList_SET_ITEM(__pyx_t_6, 0, __pyx_t_2);
@@ -4929,7 +5201,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
     }
     __pyx_L10:;
 
-    /* "pyearth/_knot_search.pyx":93
+    /* "pyearth/_knot_search.pyx":96
  *             for i in range(w.shape[1]):
  *                 weights.append(SingleWeightDependentData.alloc(w[:, i], m, max_terms))
  *         elif len(w.shape) == 1 or w.shape[1] == 1:             # <<<<<<<<<<<<<<
@@ -4939,7 +5211,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
     goto __pyx_L3;
   }
 
-  /* "pyearth/_knot_search.pyx":100
+  /* "pyearth/_knot_search.pyx":103
  *                 weights = [SingleWeightDependentData.alloc(w[:, 0], m, max_terms)]
  *         else:
  *             raise ValueError('Shape of weights does not match shape of outcomes.')             # <<<<<<<<<<<<<<
@@ -4947,27 +5219,27 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
  *         outcomes = []
  */
   /*else*/ {
-    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 100; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 103; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_Raise(__pyx_t_6, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 100; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 103; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __pyx_L3:;
 
-  /* "pyearth/_knot_search.pyx":102
+  /* "pyearth/_knot_search.pyx":105
  *             raise ValueError('Shape of weights does not match shape of outcomes.')
  * 
  *         outcomes = []             # <<<<<<<<<<<<<<
  *         for i in range(n_outcomes):
  *             outcomes.append(SingleOutcomeDependentData.alloc(y[:, i], weights[i % n_weights], m, max_terms))
  */
-  __pyx_t_6 = PyList_New(0); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = PyList_New(0); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 105; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_6);
   __pyx_v_outcomes = ((PyObject*)__pyx_t_6);
   __pyx_t_6 = 0;
 
-  /* "pyearth/_knot_search.pyx":103
+  /* "pyearth/_knot_search.pyx":106
  * 
  *         outcomes = []
  *         for i in range(n_outcomes):             # <<<<<<<<<<<<<<
@@ -4978,14 +5250,14 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
   for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_14; __pyx_t_7+=1) {
     __pyx_v_i = __pyx_t_7;
 
-    /* "pyearth/_knot_search.pyx":104
+    /* "pyearth/_knot_search.pyx":107
  *         outcomes = []
  *         for i in range(n_outcomes):
  *             outcomes.append(SingleOutcomeDependentData.alloc(y[:, i], weights[i % n_weights], m, max_terms))             # <<<<<<<<<<<<<<
  * 
  *         return cls(outcomes, weights)
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_SingleOutcomeDependentData), __pyx_n_s_alloc); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 104; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_SingleOutcomeDependentData), __pyx_n_s_alloc); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_15.data = __pyx_v_y.data;
     __pyx_t_15.memview = __pyx_v_y.memview;
@@ -5002,18 +5274,18 @@ __pyx_t_15.strides[0] = __pyx_v_y.strides[0];
         __pyx_tmp_idx += __pyx_tmp_shape;
     if (0 && (__pyx_tmp_idx < 0 || __pyx_tmp_idx >= __pyx_tmp_shape)) {
         PyErr_SetString(PyExc_IndexError, "Index out of bounds (axis 1)");
-        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 104; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
         __pyx_t_15.data += __pyx_tmp_idx * __pyx_tmp_stride;
 }
 
-__pyx_t_11 = __pyx_memoryview_fromslice(__pyx_t_15, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 104; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+__pyx_t_11 = __pyx_memoryview_fromslice(__pyx_t_15, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_11);
     __PYX_XDEC_MEMVIEW(&__pyx_t_15, 1);
     __pyx_t_16 = (__pyx_v_i % __pyx_v_n_weights);
-    __pyx_t_12 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_m); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 104; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_12 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_m); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_12);
-    __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_max_terms); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 104; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_max_terms); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_10);
     __pyx_t_5 = NULL;
     __pyx_t_3 = 0;
@@ -5027,7 +5299,7 @@ __pyx_t_11 = __pyx_memoryview_fromslice(__pyx_t_15, 1, (PyObject *(*)(char *)) _
         __pyx_t_3 = 1;
       }
     }
-    __pyx_t_9 = PyTuple_New(4+__pyx_t_3); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 104; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_9 = PyTuple_New(4+__pyx_t_3); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_9);
     if (__pyx_t_5) {
       __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_5); __pyx_t_5 = NULL;
@@ -5044,15 +5316,15 @@ __pyx_t_11 = __pyx_memoryview_fromslice(__pyx_t_15, 1, (PyObject *(*)(char *)) _
     __pyx_t_11 = 0;
     __pyx_t_12 = 0;
     __pyx_t_10 = 0;
-    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_9, NULL); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 104; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_9, NULL); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_outcomes, __pyx_t_6); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 104; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_outcomes, __pyx_t_6); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   }
 
-  /* "pyearth/_knot_search.pyx":106
+  /* "pyearth/_knot_search.pyx":109
  *             outcomes.append(SingleOutcomeDependentData.alloc(y[:, i], weights[i % n_weights], m, max_terms))
  * 
  *         return cls(outcomes, weights)             # <<<<<<<<<<<<<<
@@ -5060,7 +5332,7 @@ __pyx_t_11 = __pyx_memoryview_fromslice(__pyx_t_15, 1, (PyObject *(*)(char *)) _
  *     cpdef update_from_array(MultipleOutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 106; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 109; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_INCREF(__pyx_v_outcomes);
   __Pyx_GIVEREF(__pyx_v_outcomes);
@@ -5068,14 +5340,14 @@ __pyx_t_11 = __pyx_memoryview_fromslice(__pyx_t_15, 1, (PyObject *(*)(char *)) _
   __Pyx_INCREF(__pyx_v_weights);
   __Pyx_GIVEREF(__pyx_v_weights);
   PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_v_weights);
-  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_v_cls), __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 106; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_v_cls), __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 109; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_knot_search.pyx":83
+  /* "pyearth/_knot_search.pyx":86
  * 
  *     @classmethod
  *     def alloc(cls, FLOAT_t[:,:] y, w, INDEX_t m, INDEX_t n_outcomes, INDEX_t max_terms):             # <<<<<<<<<<<<<<
@@ -5104,7 +5376,7 @@ __pyx_t_11 = __pyx_memoryview_fromslice(__pyx_t_15, 1, (PyObject *(*)(char *)) _
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":108
+/* "pyearth/_knot_search.pyx":111
  *         return cls(outcomes, weights)
  * 
  *     cpdef update_from_array(MultipleOutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol):             # <<<<<<<<<<<<<<
@@ -5126,7 +5398,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("update_from_array", 0);
 
-  /* "pyearth/_knot_search.pyx":111
+  /* "pyearth/_knot_search.pyx":114
  *         cdef SingleWeightDependentData weight
  *         cdef SingleOutcomeDependentData outcome
  *         for weight in self.weights:             # <<<<<<<<<<<<<<
@@ -5135,31 +5407,31 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_
  */
   if (unlikely(__pyx_v_self->weights == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __pyx_t_1 = __pyx_v_self->weights; __Pyx_INCREF(__pyx_t_1); __pyx_t_2 = 0;
   for (;;) {
     if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
     #if CYTHON_COMPILING_IN_CPYTHON
-    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     #else
-    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     #endif
-    if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_7pyearth_12_knot_search_SingleWeightDependentData))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_7pyearth_12_knot_search_SingleWeightDependentData))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_XDECREF_SET(__pyx_v_weight, ((struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *)__pyx_t_3));
     __pyx_t_3 = 0;
 
-    /* "pyearth/_knot_search.pyx":112
+    /* "pyearth/_knot_search.pyx":115
  *         cdef SingleOutcomeDependentData outcome
  *         for weight in self.weights:
  *             weight.update_from_array(b, zero_tol)             # <<<<<<<<<<<<<<
  *         for outcome in self.outcomes:
  *             outcome.update(zero_tol)
  */
-    __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_from_array(__pyx_v_weight, __pyx_v_b, __pyx_v_zero_tol, 0); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_update_from_array(__pyx_v_weight, __pyx_v_b, __pyx_v_zero_tol, 0); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 115; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-    /* "pyearth/_knot_search.pyx":111
+    /* "pyearth/_knot_search.pyx":114
  *         cdef SingleWeightDependentData weight
  *         cdef SingleOutcomeDependentData outcome
  *         for weight in self.weights:             # <<<<<<<<<<<<<<
@@ -5169,7 +5441,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "pyearth/_knot_search.pyx":113
+  /* "pyearth/_knot_search.pyx":116
  *         for weight in self.weights:
  *             weight.update_from_array(b, zero_tol)
  *         for outcome in self.outcomes:             # <<<<<<<<<<<<<<
@@ -5178,31 +5450,31 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_
  */
   if (unlikely(__pyx_v_self->outcomes == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 113; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 116; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __pyx_t_1 = __pyx_v_self->outcomes; __Pyx_INCREF(__pyx_t_1); __pyx_t_2 = 0;
   for (;;) {
     if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
     #if CYTHON_COMPILING_IN_CPYTHON
-    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 113; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 116; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     #else
-    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 113; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 116; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     #endif
-    if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_7pyearth_12_knot_search_SingleOutcomeDependentData))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 113; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_7pyearth_12_knot_search_SingleOutcomeDependentData))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 116; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_XDECREF_SET(__pyx_v_outcome, ((struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *)__pyx_t_3));
     __pyx_t_3 = 0;
 
-    /* "pyearth/_knot_search.pyx":114
+    /* "pyearth/_knot_search.pyx":117
  *             weight.update_from_array(b, zero_tol)
  *         for outcome in self.outcomes:
  *             outcome.update(zero_tol)             # <<<<<<<<<<<<<<
  * 
  *     cpdef downdate(MultipleOutcomeDependentData self):
  */
-    __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_update(__pyx_v_outcome, __pyx_v_zero_tol, 0); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_update(__pyx_v_outcome, __pyx_v_zero_tol, 0); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 117; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-    /* "pyearth/_knot_search.pyx":113
+    /* "pyearth/_knot_search.pyx":116
  *         for weight in self.weights:
  *             weight.update_from_array(b, zero_tol)
  *         for outcome in self.outcomes:             # <<<<<<<<<<<<<<
@@ -5212,7 +5484,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "pyearth/_knot_search.pyx":108
+  /* "pyearth/_knot_search.pyx":111
  *         return cls(outcomes, weights)
  * 
  *     cpdef update_from_array(MultipleOutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol):             # <<<<<<<<<<<<<<
@@ -5267,11 +5539,11 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_28MultipleOutcomeDependentData
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_zero_tol)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("update_from_array", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 108; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("update_from_array", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "update_from_array") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 108; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "update_from_array") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -5279,12 +5551,12 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_28MultipleOutcomeDependentData
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_b = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[0]); if (unlikely(!__pyx_v_b.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 108; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_zero_tol = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_zero_tol == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 108; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_b = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[0]); if (unlikely(!__pyx_v_b.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_zero_tol = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_zero_tol == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("update_from_array", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 108; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("update_from_array", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._knot_search.MultipleOutcomeDependentData.update_from_array", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -5306,8 +5578,8 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("update_from_array", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_b.memview)) { __Pyx_RaiseUnboundLocalError("b"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 108; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_update_from_array(__pyx_v_self, __pyx_v_b, __pyx_v_zero_tol, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 108; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_b.memview)) { __Pyx_RaiseUnboundLocalError("b"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_update_from_array(__pyx_v_self, __pyx_v_b, __pyx_v_zero_tol, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -5325,7 +5597,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":116
+/* "pyearth/_knot_search.pyx":119
  *             outcome.update(zero_tol)
  * 
  *     cpdef downdate(MultipleOutcomeDependentData self):             # <<<<<<<<<<<<<<
@@ -5347,7 +5619,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("downdate", 0);
 
-  /* "pyearth/_knot_search.pyx":119
+  /* "pyearth/_knot_search.pyx":122
  *         cdef SingleWeightDependentData weight
  *         cdef SingleOutcomeDependentData outcome
  *         for weight in self.weights:             # <<<<<<<<<<<<<<
@@ -5356,33 +5628,33 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_
  */
   if (unlikely(__pyx_v_self->weights == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 119; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __pyx_t_1 = __pyx_v_self->weights; __Pyx_INCREF(__pyx_t_1); __pyx_t_2 = 0;
   for (;;) {
     if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
     #if CYTHON_COMPILING_IN_CPYTHON
-    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 119; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     #else
-    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 119; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     #endif
-    if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_7pyearth_12_knot_search_SingleWeightDependentData))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 119; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_7pyearth_12_knot_search_SingleWeightDependentData))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_XDECREF_SET(__pyx_v_weight, ((struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *)__pyx_t_3));
     __pyx_t_3 = 0;
 
-    /* "pyearth/_knot_search.pyx":120
+    /* "pyearth/_knot_search.pyx":123
  *         cdef SingleOutcomeDependentData outcome
  *         for weight in self.weights:
  *             weight.downdate()             # <<<<<<<<<<<<<<
  *         for outcome in self.outcomes:
  *             outcome.downdate()
  */
-    __pyx_t_3 = __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_downdate(__pyx_v_weight, 0); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 120; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __pyx_f_7pyearth_12_knot_search_25SingleWeightDependentData_downdate(__pyx_v_weight, 0); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 123; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-    /* "pyearth/_knot_search.pyx":119
+    /* "pyearth/_knot_search.pyx":122
  *         cdef SingleWeightDependentData weight
  *         cdef SingleOutcomeDependentData outcome
  *         for weight in self.weights:             # <<<<<<<<<<<<<<
@@ -5392,7 +5664,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "pyearth/_knot_search.pyx":121
+  /* "pyearth/_knot_search.pyx":124
  *         for weight in self.weights:
  *             weight.downdate()
  *         for outcome in self.outcomes:             # <<<<<<<<<<<<<<
@@ -5401,33 +5673,33 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_
  */
   if (unlikely(__pyx_v_self->outcomes == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 124; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __pyx_t_1 = __pyx_v_self->outcomes; __Pyx_INCREF(__pyx_t_1); __pyx_t_2 = 0;
   for (;;) {
     if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
     #if CYTHON_COMPILING_IN_CPYTHON
-    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 124; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     #else
-    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 124; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     #endif
-    if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_7pyearth_12_knot_search_SingleOutcomeDependentData))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_7pyearth_12_knot_search_SingleOutcomeDependentData))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 124; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_XDECREF_SET(__pyx_v_outcome, ((struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *)__pyx_t_3));
     __pyx_t_3 = 0;
 
-    /* "pyearth/_knot_search.pyx":122
+    /* "pyearth/_knot_search.pyx":125
  *             weight.downdate()
  *         for outcome in self.outcomes:
  *             outcome.downdate()             # <<<<<<<<<<<<<<
  * 
  *     cpdef list sse(MultipleOutcomeDependentData self):
  */
-    __pyx_t_3 = __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_downdate(__pyx_v_outcome, 0); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_downdate(__pyx_v_outcome, 0); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-    /* "pyearth/_knot_search.pyx":121
+    /* "pyearth/_knot_search.pyx":124
  *         for weight in self.weights:
  *             weight.downdate()
  *         for outcome in self.outcomes:             # <<<<<<<<<<<<<<
@@ -5437,7 +5709,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "pyearth/_knot_search.pyx":116
+  /* "pyearth/_knot_search.pyx":119
  *             outcome.update(zero_tol)
  * 
  *     cpdef downdate(MultipleOutcomeDependentData self):             # <<<<<<<<<<<<<<
@@ -5483,7 +5755,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("downdate", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_downdate(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 116; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_downdate(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 119; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -5500,7 +5772,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":124
+/* "pyearth/_knot_search.pyx":127
  *             outcome.downdate()
  * 
  *     cpdef list sse(MultipleOutcomeDependentData self):             # <<<<<<<<<<<<<<
@@ -5524,32 +5796,32 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("sse", 0);
 
-  /* "pyearth/_knot_search.pyx":125
+  /* "pyearth/_knot_search.pyx":128
  * 
  *     cpdef list sse(MultipleOutcomeDependentData self):
  *         return [outcome.sse() for outcome in self.outcomes]             # <<<<<<<<<<<<<<
  * 
- * @cython.final
+ *     cpdef FLOAT_t mse(MultipleOutcomeDependentData self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 128; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   if (unlikely(__pyx_v_self->outcomes == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 128; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __pyx_t_2 = __pyx_v_self->outcomes; __Pyx_INCREF(__pyx_t_2); __pyx_t_3 = 0;
   for (;;) {
     if (__pyx_t_3 >= PyList_GET_SIZE(__pyx_t_2)) break;
     #if CYTHON_COMPILING_IN_CPYTHON
-    __pyx_t_4 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_4); __pyx_t_3++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_4); __pyx_t_3++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 128; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     #else
-    __pyx_t_4 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 128; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     #endif
     __Pyx_XDECREF_SET(__pyx_v_outcome, __pyx_t_4);
     __pyx_t_4 = 0;
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_outcome, __pyx_n_s_sse); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_outcome, __pyx_n_s_sse); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 128; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_5);
     __pyx_t_6 = NULL;
     if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_5))) {
@@ -5562,14 +5834,14 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_
       }
     }
     if (__pyx_t_6) {
-      __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_6); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_6); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 128; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     } else {
-      __pyx_t_4 = __Pyx_PyObject_CallNoArg(__pyx_t_5); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_4 = __Pyx_PyObject_CallNoArg(__pyx_t_5); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 128; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_4))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_4))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 128; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -5577,7 +5849,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_knot_search.pyx":124
+  /* "pyearth/_knot_search.pyx":127
  *             outcome.downdate()
  * 
  *     cpdef list sse(MultipleOutcomeDependentData self):             # <<<<<<<<<<<<<<
@@ -5623,7 +5895,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("sse", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_sse(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 124; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_sse(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -5640,11 +5912,170 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":129
+/* "pyearth/_knot_search.pyx":130
+ *         return [outcome.sse() for outcome in self.outcomes]
+ * 
+ *     cpdef FLOAT_t mse(MultipleOutcomeDependentData self):             # <<<<<<<<<<<<<<
+ *         cdef FLOAT_t result
+ *         for outcome in self.outcomes:
+ */
+
+static PyObject *__pyx_pw_7pyearth_12_knot_search_28MultipleOutcomeDependentData_11mse(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_mse(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *__pyx_v_self, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_result;
+  PyObject *__pyx_v_outcome = NULL;
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_r;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  Py_ssize_t __pyx_t_2;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_7;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("mse", 0);
+
+  /* "pyearth/_knot_search.pyx":132
+ *     cpdef FLOAT_t mse(MultipleOutcomeDependentData self):
+ *         cdef FLOAT_t result
+ *         for outcome in self.outcomes:             # <<<<<<<<<<<<<<
+ *             result += outcome.sse_ / outcome.weight.total_weight
+ *         return result
+ */
+  if (unlikely(__pyx_v_self->outcomes == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 132; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  }
+  __pyx_t_1 = __pyx_v_self->outcomes; __Pyx_INCREF(__pyx_t_1); __pyx_t_2 = 0;
+  for (;;) {
+    if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
+    #if CYTHON_COMPILING_IN_CPYTHON
+    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 132; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    #else
+    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 132; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_3);
+    #endif
+    __Pyx_XDECREF_SET(__pyx_v_outcome, __pyx_t_3);
+    __pyx_t_3 = 0;
+
+    /* "pyearth/_knot_search.pyx":133
+ *         cdef FLOAT_t result
+ *         for outcome in self.outcomes:
+ *             result += outcome.sse_ / outcome.weight.total_weight             # <<<<<<<<<<<<<<
+ *         return result
+ * #         return [outcome.sse_ / outcome.weight.total_weight for outcome in self.outcomes]
+ */
+    __pyx_t_3 = PyFloat_FromDouble(__pyx_v_result); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 133; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_outcome, __pyx_n_s_sse_2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 133; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_outcome, __pyx_n_s_weight); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 133; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_total_weight); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 133; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __pyx_t_5 = __Pyx_PyNumber_Divide(__pyx_t_4, __pyx_t_6); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 133; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __pyx_t_6 = PyNumber_InPlaceAdd(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 133; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_6); if (unlikely((__pyx_t_7 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 133; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __pyx_v_result = __pyx_t_7;
+
+    /* "pyearth/_knot_search.pyx":132
+ *     cpdef FLOAT_t mse(MultipleOutcomeDependentData self):
+ *         cdef FLOAT_t result
+ *         for outcome in self.outcomes:             # <<<<<<<<<<<<<<
+ *             result += outcome.sse_ / outcome.weight.total_weight
+ *         return result
+ */
+  }
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "pyearth/_knot_search.pyx":134
+ *         for outcome in self.outcomes:
+ *             result += outcome.sse_ / outcome.weight.total_weight
+ *         return result             # <<<<<<<<<<<<<<
+ * #         return [outcome.sse_ / outcome.weight.total_weight for outcome in self.outcomes]
+ * 
+ */
+  __pyx_r = __pyx_v_result;
+  goto __pyx_L0;
+
+  /* "pyearth/_knot_search.pyx":130
+ *         return [outcome.sse() for outcome in self.outcomes]
+ * 
+ *     cpdef FLOAT_t mse(MultipleOutcomeDependentData self):             # <<<<<<<<<<<<<<
+ *         cdef FLOAT_t result
+ *         for outcome in self.outcomes:
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_WriteUnraisable("pyearth._knot_search.MultipleOutcomeDependentData.mse", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_outcome);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_7pyearth_12_knot_search_28MultipleOutcomeDependentData_11mse(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_7pyearth_12_knot_search_28MultipleOutcomeDependentData_11mse(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("mse (wrapper)", 0);
+  __pyx_r = __pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData_10mse(((struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData_10mse(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("mse", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_mse(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("pyearth._knot_search.MultipleOutcomeDependentData.mse", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "pyearth/_knot_search.pyx":139
  * @cython.final
  * cdef class SingleOutcomeDependentData:
  *     def __init__(SingleOutcomeDependentData self, FLOAT_t[:] y, SingleWeightDependentData weight,             # <<<<<<<<<<<<<<
- *                  FLOAT_t[:] theta, FLOAT_t omega, INDEX_t m, INDEX_t k, INDEX_t max_terms):
+ *                  FLOAT_t[:] theta, FLOAT_t omega, INDEX_t m, INDEX_t k, INDEX_t max_terms, FLOAT_t sse_):
  *         self.y = y
  */
 
@@ -5658,6 +6089,7 @@ static int __pyx_pw_7pyearth_12_knot_search_26SingleOutcomeDependentData_1__init
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_m;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_k;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_max_terms;
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_sse_;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -5665,12 +6097,13 @@ static int __pyx_pw_7pyearth_12_knot_search_26SingleOutcomeDependentData_1__init
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__init__ (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_y,&__pyx_n_s_weight,&__pyx_n_s_theta,&__pyx_n_s_omega,&__pyx_n_s_m,&__pyx_n_s_k,&__pyx_n_s_max_terms,0};
-    PyObject* values[7] = {0,0,0,0,0,0,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_y,&__pyx_n_s_weight,&__pyx_n_s_theta,&__pyx_n_s_omega,&__pyx_n_s_m,&__pyx_n_s_k,&__pyx_n_s_max_terms,&__pyx_n_s_sse_2,0};
+    PyObject* values[8] = {0,0,0,0,0,0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
       const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
       switch (pos_args) {
+        case  8: values[7] = PyTuple_GET_ITEM(__pyx_args, 7);
         case  7: values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
         case  6: values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
         case  5: values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
@@ -5689,38 +6122,43 @@ static int __pyx_pw_7pyearth_12_knot_search_26SingleOutcomeDependentData_1__init
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_weight)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 7, 7, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 8, 8, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 7, 7, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 8, 8, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_omega)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 7, 7, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 8, 8, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_m)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 7, 7, 4); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 8, 8, 4); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  5:
         if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_k)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 7, 7, 5); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 8, 8, 5); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  6:
         if (likely((values[6] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_max_terms)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 7, 7, 6); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 8, 8, 6); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        }
+        case  7:
+        if (likely((values[7] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_sse_2)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 8, 8, 7); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
-    } else if (PyTuple_GET_SIZE(__pyx_args) != 7) {
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 8) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
@@ -5730,25 +6168,27 @@ static int __pyx_pw_7pyearth_12_knot_search_26SingleOutcomeDependentData_1__init
       values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
       values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
       values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
+      values[7] = PyTuple_GET_ITEM(__pyx_args, 7);
     }
-    __pyx_v_y = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[0]); if (unlikely(!__pyx_v_y.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_y = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[0]); if (unlikely(!__pyx_v_y.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
     __pyx_v_weight = ((struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *)values[1]);
-    __pyx_v_theta = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[2]); if (unlikely(!__pyx_v_theta.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_omega = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_omega == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_m = __Pyx_PyInt_As_npy_ulonglong(values[4]); if (unlikely((__pyx_v_m == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_k = __Pyx_PyInt_As_npy_ulonglong(values[5]); if (unlikely((__pyx_v_k == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_max_terms = __Pyx_PyInt_As_npy_ulonglong(values[6]); if (unlikely((__pyx_v_max_terms == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_theta = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[2]); if (unlikely(!__pyx_v_theta.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_omega = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_omega == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_m = __Pyx_PyInt_As_npy_ulonglong(values[4]); if (unlikely((__pyx_v_m == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_k = __Pyx_PyInt_As_npy_ulonglong(values[5]); if (unlikely((__pyx_v_k == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_max_terms = __Pyx_PyInt_As_npy_ulonglong(values[6]); if (unlikely((__pyx_v_max_terms == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_sse_ = __pyx_PyFloat_AsDouble(values[7]); if (unlikely((__pyx_v_sse_ == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 7, 7, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 8, 8, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._knot_search.SingleOutcomeDependentData.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_weight), __pyx_ptype_7pyearth_12_knot_search_SingleWeightDependentData, 1, "weight", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_r = __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData___init__(((struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *)__pyx_v_self), __pyx_v_y, __pyx_v_weight, __pyx_v_theta, __pyx_v_omega, __pyx_v_m, __pyx_v_k, __pyx_v_max_terms);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_weight), __pyx_ptype_7pyearth_12_knot_search_SingleWeightDependentData, 1, "weight", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_r = __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData___init__(((struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *)__pyx_v_self), __pyx_v_y, __pyx_v_weight, __pyx_v_theta, __pyx_v_omega, __pyx_v_m, __pyx_v_k, __pyx_v_max_terms, __pyx_v_sse_);
 
   /* function exit code */
   goto __pyx_L0;
@@ -5759,14 +6199,14 @@ static int __pyx_pw_7pyearth_12_knot_search_26SingleOutcomeDependentData_1__init
   return __pyx_r;
 }
 
-static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData___init__(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self, __Pyx_memviewslice __pyx_v_y, struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *__pyx_v_weight, __Pyx_memviewslice __pyx_v_theta, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_omega, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_m, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_k, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_max_terms) {
+static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData___init__(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self, __Pyx_memviewslice __pyx_v_y, struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *__pyx_v_weight, __Pyx_memviewslice __pyx_v_theta, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_omega, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_m, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_k, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_max_terms, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_sse_) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "pyearth/_knot_search.pyx":131
+  /* "pyearth/_knot_search.pyx":141
  *     def __init__(SingleOutcomeDependentData self, FLOAT_t[:] y, SingleWeightDependentData weight,
- *                  FLOAT_t[:] theta, FLOAT_t omega, INDEX_t m, INDEX_t k, INDEX_t max_terms):
+ *                  FLOAT_t[:] theta, FLOAT_t omega, INDEX_t m, INDEX_t k, INDEX_t max_terms, FLOAT_t sse_):
  *         self.y = y             # <<<<<<<<<<<<<<
  *         self.weight = weight
  *         self.theta = theta
@@ -5775,8 +6215,8 @@ static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData___init_
   __PYX_INC_MEMVIEW(&__pyx_v_y, 0);
   __pyx_v_self->y = __pyx_v_y;
 
-  /* "pyearth/_knot_search.pyx":132
- *                  FLOAT_t[:] theta, FLOAT_t omega, INDEX_t m, INDEX_t k, INDEX_t max_terms):
+  /* "pyearth/_knot_search.pyx":142
+ *                  FLOAT_t[:] theta, FLOAT_t omega, INDEX_t m, INDEX_t k, INDEX_t max_terms, FLOAT_t sse_):
  *         self.y = y
  *         self.weight = weight             # <<<<<<<<<<<<<<
  *         self.theta = theta
@@ -5788,7 +6228,7 @@ static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData___init_
   __Pyx_DECREF(((PyObject *)__pyx_v_self->weight));
   __pyx_v_self->weight = __pyx_v_weight;
 
-  /* "pyearth/_knot_search.pyx":133
+  /* "pyearth/_knot_search.pyx":143
  *         self.y = y
  *         self.weight = weight
  *         self.theta = theta             # <<<<<<<<<<<<<<
@@ -5799,7 +6239,7 @@ static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData___init_
   __PYX_INC_MEMVIEW(&__pyx_v_theta, 0);
   __pyx_v_self->theta = __pyx_v_theta;
 
-  /* "pyearth/_knot_search.pyx":134
+  /* "pyearth/_knot_search.pyx":144
  *         self.weight = weight
  *         self.theta = theta
  *         self.omega = omega             # <<<<<<<<<<<<<<
@@ -5808,7 +6248,7 @@ static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData___init_
  */
   __pyx_v_self->omega = __pyx_v_omega;
 
-  /* "pyearth/_knot_search.pyx":135
+  /* "pyearth/_knot_search.pyx":145
  *         self.theta = theta
  *         self.omega = omega
  *         self.m = m             # <<<<<<<<<<<<<<
@@ -5817,29 +6257,38 @@ static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData___init_
  */
   __pyx_v_self->m = __pyx_v_m;
 
-  /* "pyearth/_knot_search.pyx":136
+  /* "pyearth/_knot_search.pyx":146
  *         self.omega = omega
  *         self.m = m
  *         self.k = k             # <<<<<<<<<<<<<<
  *         self.max_terms = max_terms
- * 
+ *         self.sse_ = sse_
  */
   __pyx_v_self->k = __pyx_v_k;
 
-  /* "pyearth/_knot_search.pyx":137
+  /* "pyearth/_knot_search.pyx":147
  *         self.m = m
  *         self.k = k
  *         self.max_terms = max_terms             # <<<<<<<<<<<<<<
+ *         self.sse_ = sse_
  * 
- *     @classmethod
  */
   __pyx_v_self->max_terms = __pyx_v_max_terms;
 
-  /* "pyearth/_knot_search.pyx":129
+  /* "pyearth/_knot_search.pyx":148
+ *         self.k = k
+ *         self.max_terms = max_terms
+ *         self.sse_ = sse_             # <<<<<<<<<<<<<<
+ * 
+ *     @classmethod
+ */
+  __pyx_v_self->sse_ = __pyx_v_sse_;
+
+  /* "pyearth/_knot_search.pyx":139
  * @cython.final
  * cdef class SingleOutcomeDependentData:
  *     def __init__(SingleOutcomeDependentData self, FLOAT_t[:] y, SingleWeightDependentData weight,             # <<<<<<<<<<<<<<
- *                  FLOAT_t[:] theta, FLOAT_t omega, INDEX_t m, INDEX_t k, INDEX_t max_terms):
+ *                  FLOAT_t[:] theta, FLOAT_t omega, INDEX_t m, INDEX_t k, INDEX_t max_terms, FLOAT_t sse_):
  *         self.y = y
  */
 
@@ -5851,7 +6300,7 @@ static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData___init_
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":140
+/* "pyearth/_knot_search.pyx":151
  * 
  *     @classmethod
  *     def alloc(cls, FLOAT_t[:] y, SingleWeightDependentData weight, INDEX_t m, INDEX_t max_terms):             # <<<<<<<<<<<<<<
@@ -5894,21 +6343,21 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_26SingleOutcomeDependentData_3
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_weight)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("alloc", 1, 4, 4, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("alloc", 1, 4, 4, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 151; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_m)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("alloc", 1, 4, 4, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("alloc", 1, 4, 4, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 151; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_max_terms)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("alloc", 1, 4, 4, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("alloc", 1, 4, 4, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 151; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "alloc") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "alloc") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 151; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -5918,20 +6367,20 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_26SingleOutcomeDependentData_3
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
     }
-    __pyx_v_y = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[0]); if (unlikely(!__pyx_v_y.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_y = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[0]); if (unlikely(!__pyx_v_y.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 151; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
     __pyx_v_weight = ((struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *)values[1]);
-    __pyx_v_m = __Pyx_PyInt_As_npy_ulonglong(values[2]); if (unlikely((__pyx_v_m == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_max_terms = __Pyx_PyInt_As_npy_ulonglong(values[3]); if (unlikely((__pyx_v_max_terms == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_m = __Pyx_PyInt_As_npy_ulonglong(values[2]); if (unlikely((__pyx_v_m == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 151; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_max_terms = __Pyx_PyInt_As_npy_ulonglong(values[3]); if (unlikely((__pyx_v_max_terms == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 151; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("alloc", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("alloc", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 151; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._knot_search.SingleOutcomeDependentData.alloc", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_weight), __pyx_ptype_7pyearth_12_knot_search_SingleWeightDependentData, 1, "weight", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_weight), __pyx_ptype_7pyearth_12_knot_search_SingleWeightDependentData, 1, "weight", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 151; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_r = __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_2alloc(((PyTypeObject*)__pyx_v_cls), __pyx_v_y, __pyx_v_weight, __pyx_v_m, __pyx_v_max_terms);
 
   /* function exit code */
@@ -5946,6 +6395,7 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_26SingleOutcomeDependentData_3
 static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_2alloc(PyTypeObject *__pyx_v_cls, __Pyx_memviewslice __pyx_v_y, struct __pyx_obj_7pyearth_12_knot_search_SingleWeightDependentData *__pyx_v_weight, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_m, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_max_terms) {
   __Pyx_memviewslice __pyx_v_theta = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_wy = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_sse_;
   int __pyx_v_i;
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_omega;
   PyObject *__pyx_r = NULL;
@@ -5964,49 +6414,59 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_2
   Py_ssize_t __pyx_t_12;
   PyObject *__pyx_t_13 = NULL;
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_14;
+  PyObject *__pyx_t_15 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("alloc", 0);
 
-  /* "pyearth/_knot_search.pyx":142
+  /* "pyearth/_knot_search.pyx":153
  *     def alloc(cls, FLOAT_t[:] y, SingleWeightDependentData weight, INDEX_t m, INDEX_t max_terms):
  *         cdef FLOAT_t[:] theta
  *         cdef FLOAT_t[:] wy = np.empty(shape=m, dtype=np.float)             # <<<<<<<<<<<<<<
+ *         cdef FLOAT_t sse_ = 0.
  *         cdef int i
- *         for i in range(m):
  */
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 142; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 142; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 142; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_m); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 142; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_m); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_shape, __pyx_t_3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 142; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_shape, __pyx_t_3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 142; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_float); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 142; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_float); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_dtype, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 142; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_dtype, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 142; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(__pyx_t_4);
-  if (unlikely(!__pyx_t_5.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 142; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_t_5.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_v_wy = __pyx_t_5;
   __pyx_t_5.memview = NULL;
   __pyx_t_5.data = NULL;
 
-  /* "pyearth/_knot_search.pyx":144
+  /* "pyearth/_knot_search.pyx":154
+ *         cdef FLOAT_t[:] theta
  *         cdef FLOAT_t[:] wy = np.empty(shape=m, dtype=np.float)
+ *         cdef FLOAT_t sse_ = 0.             # <<<<<<<<<<<<<<
+ *         cdef int i
+ *         for i in range(m):
+ */
+  __pyx_v_sse_ = 0.;
+
+  /* "pyearth/_knot_search.pyx":156
+ *         cdef FLOAT_t sse_ = 0.
  *         cdef int i
  *         for i in range(m):             # <<<<<<<<<<<<<<
  *             wy[i] = weight.w[i] * y[i]
@@ -6016,35 +6476,35 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_2
   for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
     __pyx_v_i = __pyx_t_7;
 
-    /* "pyearth/_knot_search.pyx":145
+    /* "pyearth/_knot_search.pyx":157
  *         cdef int i
  *         for i in range(m):
  *             wy[i] = weight.w[i] * y[i]             # <<<<<<<<<<<<<<
  *         cdef FLOAT_t omega = np.dot(wy, wy)
  *         theta = np.dot(weight.Q_t, wy)
  */
-    if (unlikely(!__pyx_v_weight->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_weight->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_8 = __pyx_v_i;
     __pyx_t_9 = __pyx_v_i;
     __pyx_t_10 = __pyx_v_i;
     *((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_wy.data + __pyx_t_10 * __pyx_v_wy.strides[0]) )) = ((*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_weight->w.data + __pyx_t_8 * __pyx_v_weight->w.strides[0]) ))) * (*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_y.data + __pyx_t_9 * __pyx_v_y.strides[0]) ))));
   }
 
-  /* "pyearth/_knot_search.pyx":146
+  /* "pyearth/_knot_search.pyx":158
  *         for i in range(m):
  *             wy[i] = weight.w[i] * y[i]
  *         cdef FLOAT_t omega = np.dot(wy, wy)             # <<<<<<<<<<<<<<
  *         theta = np.dot(weight.Q_t, wy)
- *         return cls(y, weight, theta, omega, m, 0, max_terms)
+ *         return cls(y, weight, theta, omega, m, 0, max_terms, sse_)
  */
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_dot); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_dot); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_wy, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_wy, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_wy, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_wy, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_11 = NULL;
   __pyx_t_12 = 0;
@@ -6058,7 +6518,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_2
       __pyx_t_12 = 1;
     }
   }
-  __pyx_t_13 = PyTuple_New(2+__pyx_t_12); if (unlikely(!__pyx_t_13)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_13 = PyTuple_New(2+__pyx_t_12); if (unlikely(!__pyx_t_13)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_13);
   if (__pyx_t_11) {
     __Pyx_GIVEREF(__pyx_t_11); PyTuple_SET_ITEM(__pyx_t_13, 0, __pyx_t_11); __pyx_t_11 = NULL;
@@ -6069,30 +6529,30 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_2
   PyTuple_SET_ITEM(__pyx_t_13, 1+__pyx_t_12, __pyx_t_3);
   __pyx_t_1 = 0;
   __pyx_t_3 = 0;
-  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_13, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_13, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_14 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_14 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_14 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_14 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_v_omega = __pyx_t_14;
 
-  /* "pyearth/_knot_search.pyx":147
+  /* "pyearth/_knot_search.pyx":159
  *             wy[i] = weight.w[i] * y[i]
  *         cdef FLOAT_t omega = np.dot(wy, wy)
  *         theta = np.dot(weight.Q_t, wy)             # <<<<<<<<<<<<<<
- *         return cls(y, weight, theta, omega, m, 0, max_terms)
+ *         return cls(y, weight, theta, omega, m, 0, max_terms, sse_)
  * 
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_13 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_dot); if (unlikely(!__pyx_t_13)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_13 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_dot); if (unlikely(!__pyx_t_13)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_13);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_v_weight->Q_t.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_weight->Q_t, 2, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_weight->Q_t.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_weight->Q_t, 2, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_wy, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_wy, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_1 = NULL;
   __pyx_t_12 = 0;
@@ -6106,7 +6566,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_2
       __pyx_t_12 = 1;
     }
   }
-  __pyx_t_11 = PyTuple_New(2+__pyx_t_12); if (unlikely(!__pyx_t_11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_11 = PyTuple_New(2+__pyx_t_12); if (unlikely(!__pyx_t_11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_11);
   if (__pyx_t_1) {
     __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_1); __pyx_t_1 = NULL;
@@ -6117,66 +6577,71 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_2
   PyTuple_SET_ITEM(__pyx_t_11, 1+__pyx_t_12, __pyx_t_3);
   __pyx_t_2 = 0;
   __pyx_t_3 = 0;
-  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_t_11, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_t_11, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
   __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
   __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(__pyx_t_4);
-  if (unlikely(!__pyx_t_5.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_t_5.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_v_theta = __pyx_t_5;
   __pyx_t_5.memview = NULL;
   __pyx_t_5.data = NULL;
 
-  /* "pyearth/_knot_search.pyx":148
+  /* "pyearth/_knot_search.pyx":160
  *         cdef FLOAT_t omega = np.dot(wy, wy)
  *         theta = np.dot(weight.Q_t, wy)
- *         return cls(y, weight, theta, omega, m, 0, max_terms)             # <<<<<<<<<<<<<<
+ *         return cls(y, weight, theta, omega, m, 0, max_terms, sse_)             # <<<<<<<<<<<<<<
  * 
  *     cpdef FLOAT_t sse(SingleOutcomeDependentData self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_4 = __pyx_memoryview_fromslice(__pyx_v_y, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __pyx_memoryview_fromslice(__pyx_v_y, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_13 = __pyx_memoryview_fromslice(__pyx_v_theta, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_13)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_13 = __pyx_memoryview_fromslice(__pyx_v_theta, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_13)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_13);
-  __pyx_t_11 = PyFloat_FromDouble(__pyx_v_omega); if (unlikely(!__pyx_t_11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_11 = PyFloat_FromDouble(__pyx_v_omega); if (unlikely(!__pyx_t_11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_11);
-  __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_m); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_m); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_max_terms); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_max_terms); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = PyTuple_New(7); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_sse_); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_15 = PyTuple_New(8); if (unlikely(!__pyx_t_15)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_15);
   __Pyx_GIVEREF(__pyx_t_4);
-  PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_4);
+  PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_4);
   __Pyx_INCREF(((PyObject *)__pyx_v_weight));
   __Pyx_GIVEREF(((PyObject *)__pyx_v_weight));
-  PyTuple_SET_ITEM(__pyx_t_1, 1, ((PyObject *)__pyx_v_weight));
+  PyTuple_SET_ITEM(__pyx_t_15, 1, ((PyObject *)__pyx_v_weight));
   __Pyx_GIVEREF(__pyx_t_13);
-  PyTuple_SET_ITEM(__pyx_t_1, 2, __pyx_t_13);
+  PyTuple_SET_ITEM(__pyx_t_15, 2, __pyx_t_13);
   __Pyx_GIVEREF(__pyx_t_11);
-  PyTuple_SET_ITEM(__pyx_t_1, 3, __pyx_t_11);
+  PyTuple_SET_ITEM(__pyx_t_15, 3, __pyx_t_11);
   __Pyx_GIVEREF(__pyx_t_3);
-  PyTuple_SET_ITEM(__pyx_t_1, 4, __pyx_t_3);
+  PyTuple_SET_ITEM(__pyx_t_15, 4, __pyx_t_3);
   __Pyx_INCREF(__pyx_int_0);
   __Pyx_GIVEREF(__pyx_int_0);
-  PyTuple_SET_ITEM(__pyx_t_1, 5, __pyx_int_0);
+  PyTuple_SET_ITEM(__pyx_t_15, 5, __pyx_int_0);
   __Pyx_GIVEREF(__pyx_t_2);
-  PyTuple_SET_ITEM(__pyx_t_1, 6, __pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_15, 6, __pyx_t_2);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_15, 7, __pyx_t_1);
   __pyx_t_4 = 0;
   __pyx_t_13 = 0;
   __pyx_t_11 = 0;
   __pyx_t_3 = 0;
   __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_v_cls), __pyx_t_1, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_r = __pyx_t_2;
-  __pyx_t_2 = 0;
+  __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_v_cls), __pyx_t_15, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_knot_search.pyx":140
+  /* "pyearth/_knot_search.pyx":151
  * 
  *     @classmethod
  *     def alloc(cls, FLOAT_t[:] y, SingleWeightDependentData weight, INDEX_t m, INDEX_t max_terms):             # <<<<<<<<<<<<<<
@@ -6193,6 +6658,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_2
   __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
   __Pyx_XDECREF(__pyx_t_11);
   __Pyx_XDECREF(__pyx_t_13);
+  __Pyx_XDECREF(__pyx_t_15);
   __Pyx_AddTraceback("pyearth._knot_search.SingleOutcomeDependentData.alloc", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
@@ -6204,8 +6670,8 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_2
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":150
- *         return cls(y, weight, theta, omega, m, 0, max_terms)
+/* "pyearth/_knot_search.pyx":162
+ *         return cls(y, weight, theta, omega, m, 0, max_terms, sse_)
  * 
  *     cpdef FLOAT_t sse(SingleOutcomeDependentData self):             # <<<<<<<<<<<<<<
  *         '''
@@ -6230,25 +6696,25 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_12_knot_search_26Single
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("sse", 0);
 
-  /* "pyearth/_knot_search.pyx":155
- *         represented by Q_t, y, and w.
+  /* "pyearth/_knot_search.pyx":168
  *         '''
+ *         # TODO: Why is this squared?
  *         return ((self.omega - np.dot(self.theta, self.theta)) ** 2)# / np.sum(self.w)             # <<<<<<<<<<<<<<
  * 
  * #     cpdef int update_from_basis_function(OutcomeDependentData self, BasisFunction bf, FLOAT_t[:,:] X,
  */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->omega); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->omega); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_dot); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_dot); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_v_self->theta.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_self->theta, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->theta.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_self->theta, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  if (unlikely(!__pyx_v_self->theta.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_5 = __pyx_memoryview_fromslice(__pyx_v_self->theta, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->theta.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_5 = __pyx_memoryview_fromslice(__pyx_v_self->theta, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_6 = NULL;
   __pyx_t_7 = 0;
@@ -6262,7 +6728,7 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_12_knot_search_26Single
       __pyx_t_7 = 1;
     }
   }
-  __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_8);
   if (__pyx_t_6) {
     __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -6273,24 +6739,24 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_12_knot_search_26Single
   PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_5);
   __pyx_t_3 = 0;
   __pyx_t_5 = 0;
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = PyNumber_Subtract(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = PyNumber_Subtract(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyNumber_Power(__pyx_t_4, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = PyNumber_Power(__pyx_t_4, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 168; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_r = __pyx_t_9;
   goto __pyx_L0;
 
-  /* "pyearth/_knot_search.pyx":150
- *         return cls(y, weight, theta, omega, m, 0, max_terms)
+  /* "pyearth/_knot_search.pyx":162
+ *         return cls(y, weight, theta, omega, m, 0, max_terms, sse_)
  * 
  *     cpdef FLOAT_t sse(SingleOutcomeDependentData self):             # <<<<<<<<<<<<<<
  *         '''
@@ -6336,7 +6802,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_4
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("sse", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_sse(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_sse(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 162; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -6353,7 +6819,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_4
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":173
+/* "pyearth/_knot_search.pyx":186
  * #             self.Q_t[self.k,j] = self.w[j] * b[j]
  * #         return self._update(zero_tol)
  *     cpdef int synchronize(SingleOutcomeDependentData self, FLOAT_t zero_tol) except *:             # <<<<<<<<<<<<<<
@@ -6384,7 +6850,7 @@ static int __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_synchron
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("synchronize", 0);
 
-  /* "pyearth/_knot_search.pyx":174
+  /* "pyearth/_knot_search.pyx":187
  * #         return self._update(zero_tol)
  *     cpdef int synchronize(SingleOutcomeDependentData self, FLOAT_t zero_tol) except *:
  *         self.k = self.weight.k             # <<<<<<<<<<<<<<
@@ -6394,19 +6860,19 @@ static int __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_synchron
   __pyx_t_1 = __pyx_v_self->weight->k;
   __pyx_v_self->k = __pyx_t_1;
 
-  /* "pyearth/_knot_search.pyx":175
+  /* "pyearth/_knot_search.pyx":188
  *     cpdef int synchronize(SingleOutcomeDependentData self, FLOAT_t zero_tol) except *:
  *         self.k = self.weight.k
  *         self.theta = np.dot(self.weight.Q_t[:self.k, :], np.asarray(self.y) * self.weight.w)             # <<<<<<<<<<<<<<
  *         return 0
  * 
  */
-  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_dot); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_dot); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_v_self->weight->Q_t.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  if (unlikely(!__pyx_v_self->weight->Q_t.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
   __pyx_t_5 = __pyx_v_self->weight->Q_t;
   __PYX_INC_MEMVIEW(&__pyx_t_5, 1);
   __pyx_t_6.data = __pyx_t_5.data;
@@ -6427,7 +6893,7 @@ static int __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_synchron
     0,
     1) < 0))
 {
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 }
 
 __pyx_t_6.shape[1] = __pyx_t_5.shape[1];
@@ -6435,16 +6901,16 @@ __pyx_t_6.strides[1] = __pyx_t_5.strides[1];
     __pyx_t_6.suboffsets[1] = -1;
 
 __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
-  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_t_6, 2, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_t_6, 2, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
-  __pyx_t_9 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_9 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_9);
-  __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_asarray); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_asarray); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_10);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  if (unlikely(!__pyx_v_self->y.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_9 = __pyx_memoryview_fromslice(__pyx_v_self->y, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->y.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_9 = __pyx_memoryview_fromslice(__pyx_v_self->y, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_9);
   __pyx_t_11 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_10))) {
@@ -6457,25 +6923,25 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
     }
   }
   if (!__pyx_t_11) {
-    __pyx_t_8 = __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_t_9); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_8 = __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_t_9); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __Pyx_GOTREF(__pyx_t_8);
   } else {
-    __pyx_t_12 = PyTuple_New(1+1); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_12 = PyTuple_New(1+1); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_12);
     __Pyx_GIVEREF(__pyx_t_11); PyTuple_SET_ITEM(__pyx_t_12, 0, __pyx_t_11); __pyx_t_11 = NULL;
     __Pyx_GIVEREF(__pyx_t_9);
     PyTuple_SET_ITEM(__pyx_t_12, 0+1, __pyx_t_9);
     __pyx_t_9 = 0;
-    __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_12, NULL); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_12, NULL); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
   }
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-  if (unlikely(!__pyx_v_self->weight->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_10 = __pyx_memoryview_fromslice(__pyx_v_self->weight->w, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->weight->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_10 = __pyx_memoryview_fromslice(__pyx_v_self->weight->w, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_10);
-  __pyx_t_12 = PyNumber_Multiply(__pyx_t_8, __pyx_t_10); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_12 = PyNumber_Multiply(__pyx_t_8, __pyx_t_10); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_12);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
@@ -6491,7 +6957,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
       __pyx_t_13 = 1;
     }
   }
-  __pyx_t_8 = PyTuple_New(2+__pyx_t_13); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_8 = PyTuple_New(2+__pyx_t_13); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_8);
   if (__pyx_t_10) {
     __Pyx_GIVEREF(__pyx_t_10); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_10); __pyx_t_10 = NULL;
@@ -6502,19 +6968,19 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
   PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_13, __pyx_t_12);
   __pyx_t_3 = 0;
   __pyx_t_12 = 0;
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_t_14 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(__pyx_t_2);
-  if (unlikely(!__pyx_t_14.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_t_14.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __PYX_XDEC_MEMVIEW(&__pyx_v_self->theta, 0);
   __pyx_v_self->theta = __pyx_t_14;
   __pyx_t_14.memview = NULL;
   __pyx_t_14.data = NULL;
 
-  /* "pyearth/_knot_search.pyx":176
+  /* "pyearth/_knot_search.pyx":189
  *         self.k = self.weight.k
  *         self.theta = np.dot(self.weight.Q_t[:self.k, :], np.asarray(self.y) * self.weight.w)
  *         return 0             # <<<<<<<<<<<<<<
@@ -6524,7 +6990,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
   __pyx_r = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_knot_search.pyx":173
+  /* "pyearth/_knot_search.pyx":186
  * #             self.Q_t[self.k,j] = self.w[j] * b[j]
  * #         return self._update(zero_tol)
  *     cpdef int synchronize(SingleOutcomeDependentData self, FLOAT_t zero_tol) except *:             # <<<<<<<<<<<<<<
@@ -6563,7 +7029,7 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_26SingleOutcomeDependentData_7
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("synchronize (wrapper)", 0);
   assert(__pyx_arg_zero_tol); {
-    __pyx_v_zero_tol = __pyx_PyFloat_AsDouble(__pyx_arg_zero_tol); if (unlikely((__pyx_v_zero_tol == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 173; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_zero_tol = __pyx_PyFloat_AsDouble(__pyx_arg_zero_tol); if (unlikely((__pyx_v_zero_tol == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 186; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -6588,8 +7054,8 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_6
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("synchronize", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_synchronize(__pyx_v_self, __pyx_v_zero_tol, 1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 173; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_t_1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 173; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_synchronize(__pyx_v_self, __pyx_v_zero_tol, 1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 186; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_t_1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 186; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
@@ -6606,7 +7072,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_6
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":178
+/* "pyearth/_knot_search.pyx":191
  *         return 0
  * 
  *     cpdef int update(SingleOutcomeDependentData self, FLOAT_t zero_tol) except *:             # <<<<<<<<<<<<<<
@@ -6632,12 +7098,14 @@ static int __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_update(s
   PyObject *__pyx_t_12 = NULL;
   Py_ssize_t __pyx_t_13;
   __Pyx_memviewslice __pyx_t_14 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_15 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_16;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("update", 0);
 
-  /* "pyearth/_knot_search.pyx":180
+  /* "pyearth/_knot_search.pyx":193
  *     cpdef int update(SingleOutcomeDependentData self, FLOAT_t zero_tol) except *:
  *         # Assume weight has already been updated.
  *         if self.k >= self.max_terms:             # <<<<<<<<<<<<<<
@@ -6647,7 +7115,7 @@ static int __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_update(s
   __pyx_t_1 = ((__pyx_v_self->k >= __pyx_v_self->max_terms) != 0);
   if (__pyx_t_1) {
 
-    /* "pyearth/_knot_search.pyx":181
+    /* "pyearth/_knot_search.pyx":194
  *         # Assume weight has already been updated.
  *         if self.k >= self.max_terms:
  *             return -1             # <<<<<<<<<<<<<<
@@ -6657,7 +7125,7 @@ static int __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_update(s
     __pyx_r = -1;
     goto __pyx_L0;
 
-    /* "pyearth/_knot_search.pyx":180
+    /* "pyearth/_knot_search.pyx":193
  *     cpdef int update(SingleOutcomeDependentData self, FLOAT_t zero_tol) except *:
  *         # Assume weight has already been updated.
  *         if self.k >= self.max_terms:             # <<<<<<<<<<<<<<
@@ -6666,28 +7134,28 @@ static int __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_update(s
  */
   }
 
-  /* "pyearth/_knot_search.pyx":182
+  /* "pyearth/_knot_search.pyx":195
  *         if self.k >= self.max_terms:
  *             return -1
  *         self.k += 1             # <<<<<<<<<<<<<<
  *         self.theta = np.dot(self.weight.Q_t[:self.k, :], np.asarray(self.y) * self.weight.w)
- * 
+ *         self.sse_ = self.omega - np.dot(self.theta[:self.k], self.theta[:self.k])
  */
   __pyx_v_self->k = (__pyx_v_self->k + 1);
 
-  /* "pyearth/_knot_search.pyx":183
+  /* "pyearth/_knot_search.pyx":196
  *             return -1
  *         self.k += 1
  *         self.theta = np.dot(self.weight.Q_t[:self.k, :], np.asarray(self.y) * self.weight.w)             # <<<<<<<<<<<<<<
+ *         self.sse_ = self.omega - np.dot(self.theta[:self.k], self.theta[:self.k])
  * 
- *         return 0
  */
-  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_dot); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_dot); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_v_self->weight->Q_t.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  if (unlikely(!__pyx_v_self->weight->Q_t.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
   __pyx_t_5 = __pyx_v_self->weight->Q_t;
   __PYX_INC_MEMVIEW(&__pyx_t_5, 1);
   __pyx_t_6.data = __pyx_t_5.data;
@@ -6708,7 +7176,7 @@ static int __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_update(s
     0,
     1) < 0))
 {
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 }
 
 __pyx_t_6.shape[1] = __pyx_t_5.shape[1];
@@ -6716,16 +7184,16 @@ __pyx_t_6.strides[1] = __pyx_t_5.strides[1];
     __pyx_t_6.suboffsets[1] = -1;
 
 __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
-  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_t_6, 2, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_t_6, 2, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
-  __pyx_t_9 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_9 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_9);
-  __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_asarray); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_asarray); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_10);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  if (unlikely(!__pyx_v_self->y.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_9 = __pyx_memoryview_fromslice(__pyx_v_self->y, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->y.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_9 = __pyx_memoryview_fromslice(__pyx_v_self->y, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_9);
   __pyx_t_11 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_10))) {
@@ -6738,25 +7206,25 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
     }
   }
   if (!__pyx_t_11) {
-    __pyx_t_8 = __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_t_9); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_8 = __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_t_9); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __Pyx_GOTREF(__pyx_t_8);
   } else {
-    __pyx_t_12 = PyTuple_New(1+1); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_12 = PyTuple_New(1+1); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_12);
     __Pyx_GIVEREF(__pyx_t_11); PyTuple_SET_ITEM(__pyx_t_12, 0, __pyx_t_11); __pyx_t_11 = NULL;
     __Pyx_GIVEREF(__pyx_t_9);
     PyTuple_SET_ITEM(__pyx_t_12, 0+1, __pyx_t_9);
     __pyx_t_9 = 0;
-    __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_12, NULL); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_12, NULL); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
   }
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-  if (unlikely(!__pyx_v_self->weight->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_10 = __pyx_memoryview_fromslice(__pyx_v_self->weight->w, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->weight->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_10 = __pyx_memoryview_fromslice(__pyx_v_self->weight->w, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_10);
-  __pyx_t_12 = PyNumber_Multiply(__pyx_t_8, __pyx_t_10); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_12 = PyNumber_Multiply(__pyx_t_8, __pyx_t_10); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_12);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
@@ -6772,7 +7240,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
       __pyx_t_13 = 1;
     }
   }
-  __pyx_t_8 = PyTuple_New(2+__pyx_t_13); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_8 = PyTuple_New(2+__pyx_t_13); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_8);
   if (__pyx_t_10) {
     __Pyx_GIVEREF(__pyx_t_10); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_10); __pyx_t_10 = NULL;
@@ -6783,20 +7251,125 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
   PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_13, __pyx_t_12);
   __pyx_t_3 = 0;
   __pyx_t_12 = 0;
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_t_14 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(__pyx_t_2);
-  if (unlikely(!__pyx_t_14.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_t_14.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 196; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __PYX_XDEC_MEMVIEW(&__pyx_v_self->theta, 0);
   __pyx_v_self->theta = __pyx_t_14;
   __pyx_t_14.memview = NULL;
   __pyx_t_14.data = NULL;
 
-  /* "pyearth/_knot_search.pyx":185
+  /* "pyearth/_knot_search.pyx":197
+ *         self.k += 1
  *         self.theta = np.dot(self.weight.Q_t[:self.k, :], np.asarray(self.y) * self.weight.w)
+ *         self.sse_ = self.omega - np.dot(self.theta[:self.k], self.theta[:self.k])             # <<<<<<<<<<<<<<
+ * 
+ *         return 0
+ */
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->omega); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 197; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 197; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_8);
+  __pyx_t_12 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_dot); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 197; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_12);
+  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+  if (unlikely(!__pyx_v_self->theta.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 197; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_14 = __pyx_v_self->theta;
+  __PYX_INC_MEMVIEW(&__pyx_t_14, 1);
+  __pyx_t_15.data = __pyx_t_14.data;
+  __pyx_t_15.memview = __pyx_t_14.memview;
+  __PYX_INC_MEMVIEW(&__pyx_t_15, 0);
+  __pyx_t_7 = -1;
+  if (unlikely(__pyx_memoryview_slice_memviewslice(
+    &__pyx_t_15,
+    __pyx_t_14.shape[0], __pyx_t_14.strides[0], __pyx_t_14.suboffsets[0],
+    0,
+    0,
+    &__pyx_t_7,
+    0,
+    __pyx_v_self->k,
+    0,
+    0,
+    1,
+    0,
+    1) < 0))
+{
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 197; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+}
+
+__PYX_XDEC_MEMVIEW(&__pyx_t_14, 1);
+  __pyx_t_8 = __pyx_memoryview_fromslice(__pyx_t_15, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 197; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_8);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_15, 1);
+  if (unlikely(!__pyx_v_self->theta.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 197; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_15 = __pyx_v_self->theta;
+  __PYX_INC_MEMVIEW(&__pyx_t_15, 1);
+  __pyx_t_14.data = __pyx_t_15.data;
+  __pyx_t_14.memview = __pyx_t_15.memview;
+  __PYX_INC_MEMVIEW(&__pyx_t_14, 0);
+  __pyx_t_7 = -1;
+  if (unlikely(__pyx_memoryview_slice_memviewslice(
+    &__pyx_t_14,
+    __pyx_t_15.shape[0], __pyx_t_15.strides[0], __pyx_t_15.suboffsets[0],
+    0,
+    0,
+    &__pyx_t_7,
+    0,
+    __pyx_v_self->k,
+    0,
+    0,
+    1,
+    0,
+    1) < 0))
+{
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 197; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+}
+
+__PYX_XDEC_MEMVIEW(&__pyx_t_15, 1);
+  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_t_14, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 197; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_3);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_14, 1);
+  __pyx_t_10 = NULL;
+  __pyx_t_13 = 0;
+  if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_12))) {
+    __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_12);
+    if (likely(__pyx_t_10)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_12);
+      __Pyx_INCREF(__pyx_t_10);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_12, function);
+      __pyx_t_13 = 1;
+    }
+  }
+  __pyx_t_9 = PyTuple_New(2+__pyx_t_13); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 197; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_9);
+  if (__pyx_t_10) {
+    __Pyx_GIVEREF(__pyx_t_10); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_10); __pyx_t_10 = NULL;
+  }
+  __Pyx_GIVEREF(__pyx_t_8);
+  PyTuple_SET_ITEM(__pyx_t_9, 0+__pyx_t_13, __pyx_t_8);
+  __Pyx_GIVEREF(__pyx_t_3);
+  PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_13, __pyx_t_3);
+  __pyx_t_8 = 0;
+  __pyx_t_3 = 0;
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_t_9, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 197; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+  __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+  __pyx_t_12 = PyNumber_Subtract(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 197; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_12);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_t_16 = __pyx_PyFloat_AsDouble(__pyx_t_12); if (unlikely((__pyx_t_16 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 197; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+  __pyx_v_self->sse_ = __pyx_t_16;
+
+  /* "pyearth/_knot_search.pyx":199
+ *         self.sse_ = self.omega - np.dot(self.theta[:self.k], self.theta[:self.k])
  * 
  *         return 0             # <<<<<<<<<<<<<<
  * 
@@ -6805,7 +7378,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
   __pyx_r = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_knot_search.pyx":178
+  /* "pyearth/_knot_search.pyx":191
  *         return 0
  * 
  *     cpdef int update(SingleOutcomeDependentData self, FLOAT_t zero_tol) except *:             # <<<<<<<<<<<<<<
@@ -6826,6 +7399,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
   __Pyx_XDECREF(__pyx_t_11);
   __Pyx_XDECREF(__pyx_t_12);
   __PYX_XDEC_MEMVIEW(&__pyx_t_14, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_15, 1);
   __Pyx_AddTraceback("pyearth._knot_search.SingleOutcomeDependentData.update", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
@@ -6844,7 +7418,7 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_26SingleOutcomeDependentData_9
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("update (wrapper)", 0);
   assert(__pyx_arg_zero_tol); {
-    __pyx_v_zero_tol = __pyx_PyFloat_AsDouble(__pyx_arg_zero_tol); if (unlikely((__pyx_v_zero_tol == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 178; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_zero_tol = __pyx_PyFloat_AsDouble(__pyx_arg_zero_tol); if (unlikely((__pyx_v_zero_tol == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 191; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -6869,8 +7443,8 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_8
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("update", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_update(__pyx_v_self, __pyx_v_zero_tol, 1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 178; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_t_1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 178; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_update(__pyx_v_self, __pyx_v_zero_tol, 1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 191; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_t_1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 191; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
@@ -6887,39 +7461,173 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_8
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":187
+/* "pyearth/_knot_search.pyx":201
  *         return 0
  * 
  *     cpdef downdate(SingleOutcomeDependentData self):             # <<<<<<<<<<<<<<
  *         self.k -= 1
- * 
+ *         self.sse_ = self.omega - np.dot(self.theta[:self.k], self.theta[:self.k])
  */
 
 static PyObject *__pyx_pw_7pyearth_12_knot_search_26SingleOutcomeDependentData_11downdate(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static PyObject *__pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_downdate(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  __Pyx_memviewslice __pyx_t_5 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_6 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  int __pyx_t_7;
+  PyObject *__pyx_t_8 = NULL;
+  PyObject *__pyx_t_9 = NULL;
+  Py_ssize_t __pyx_t_10;
+  PyObject *__pyx_t_11 = NULL;
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_12;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("downdate", 0);
 
-  /* "pyearth/_knot_search.pyx":188
+  /* "pyearth/_knot_search.pyx":202
  * 
  *     cpdef downdate(SingleOutcomeDependentData self):
  *         self.k -= 1             # <<<<<<<<<<<<<<
+ *         self.sse_ = self.omega - np.dot(self.theta[:self.k], self.theta[:self.k])
  * 
- * #     cpdef reweight(OutcomeDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k, FLOAT_t zero_tol):
  */
   __pyx_v_self->k = (__pyx_v_self->k - 1);
 
-  /* "pyearth/_knot_search.pyx":187
+  /* "pyearth/_knot_search.pyx":203
+ *     cpdef downdate(SingleOutcomeDependentData self):
+ *         self.k -= 1
+ *         self.sse_ = self.omega - np.dot(self.theta[:self.k], self.theta[:self.k])             # <<<<<<<<<<<<<<
+ * 
+ * #     cpdef reweight(OutcomeDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k, FLOAT_t zero_tol):
+ */
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->omega); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_dot); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (unlikely(!__pyx_v_self->theta.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_5 = __pyx_v_self->theta;
+  __PYX_INC_MEMVIEW(&__pyx_t_5, 1);
+  __pyx_t_6.data = __pyx_t_5.data;
+  __pyx_t_6.memview = __pyx_t_5.memview;
+  __PYX_INC_MEMVIEW(&__pyx_t_6, 0);
+  __pyx_t_7 = -1;
+  if (unlikely(__pyx_memoryview_slice_memviewslice(
+    &__pyx_t_6,
+    __pyx_t_5.shape[0], __pyx_t_5.strides[0], __pyx_t_5.suboffsets[0],
+    0,
+    0,
+    &__pyx_t_7,
+    0,
+    __pyx_v_self->k,
+    0,
+    0,
+    1,
+    0,
+    1) < 0))
+{
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+}
+
+__PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
+  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_t_6, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_3);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
+  if (unlikely(!__pyx_v_self->theta.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_6 = __pyx_v_self->theta;
+  __PYX_INC_MEMVIEW(&__pyx_t_6, 1);
+  __pyx_t_5.data = __pyx_t_6.data;
+  __pyx_t_5.memview = __pyx_t_6.memview;
+  __PYX_INC_MEMVIEW(&__pyx_t_5, 0);
+  __pyx_t_7 = -1;
+  if (unlikely(__pyx_memoryview_slice_memviewslice(
+    &__pyx_t_5,
+    __pyx_t_6.shape[0], __pyx_t_6.strides[0], __pyx_t_6.suboffsets[0],
+    0,
+    0,
+    &__pyx_t_7,
+    0,
+    __pyx_v_self->k,
+    0,
+    0,
+    1,
+    0,
+    1) < 0))
+{
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+}
+
+__PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
+  __pyx_t_8 = __pyx_memoryview_fromslice(__pyx_t_5, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_8);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
+  __pyx_t_9 = NULL;
+  __pyx_t_10 = 0;
+  if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_4))) {
+    __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_4);
+    if (likely(__pyx_t_9)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
+      __Pyx_INCREF(__pyx_t_9);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_4, function);
+      __pyx_t_10 = 1;
+    }
+  }
+  __pyx_t_11 = PyTuple_New(2+__pyx_t_10); if (unlikely(!__pyx_t_11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_11);
+  if (__pyx_t_9) {
+    __Pyx_GIVEREF(__pyx_t_9); PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_9); __pyx_t_9 = NULL;
+  }
+  __Pyx_GIVEREF(__pyx_t_3);
+  PyTuple_SET_ITEM(__pyx_t_11, 0+__pyx_t_10, __pyx_t_3);
+  __Pyx_GIVEREF(__pyx_t_8);
+  PyTuple_SET_ITEM(__pyx_t_11, 1+__pyx_t_10, __pyx_t_8);
+  __pyx_t_3 = 0;
+  __pyx_t_8 = 0;
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_11, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_t_4 = PyNumber_Subtract(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_12 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_12 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __pyx_v_self->sse_ = __pyx_t_12;
+
+  /* "pyearth/_knot_search.pyx":201
  *         return 0
  * 
  *     cpdef downdate(SingleOutcomeDependentData self):             # <<<<<<<<<<<<<<
  *         self.k -= 1
- * 
+ *         self.sse_ = self.omega - np.dot(self.theta[:self.k], self.theta[:self.k])
  */
 
   /* function exit code */
   __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
+  __Pyx_XDECREF(__pyx_t_8);
+  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_XDECREF(__pyx_t_11);
+  __Pyx_AddTraceback("pyearth._knot_search.SingleOutcomeDependentData.downdate", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
@@ -6947,7 +7655,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_1
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("downdate", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_downdate(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 187; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_downdate(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 201; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -6964,7 +7672,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_1
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":32
+/* "pyearth/_knot_search.pxd":34
  * @cython.final
  * cdef class SingleOutcomeDependentData:
  *     cdef readonly FLOAT_t[:] y             # <<<<<<<<<<<<<<
@@ -6994,8 +7702,8 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_1
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_self->y.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->y, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 32; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->y.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->y, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -7012,7 +7720,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_1
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":33
+/* "pyearth/_knot_search.pxd":35
  * cdef class SingleOutcomeDependentData:
  *     cdef readonly FLOAT_t[:] y
  *     cdef readonly SingleWeightDependentData weight             # <<<<<<<<<<<<<<
@@ -7049,12 +7757,12 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_6
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":34
+/* "pyearth/_knot_search.pxd":36
  *     cdef readonly FLOAT_t[:] y
  *     cdef readonly SingleWeightDependentData weight
  *     cdef readonly FLOAT_t[:] theta             # <<<<<<<<<<<<<<
  *     cdef public FLOAT_t omega
- *     cdef public INDEX_t m
+ *     cdef public FLOAT_t sse_
  */
 
 /* Python wrapper */
@@ -7079,8 +7787,8 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_5
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_self->theta.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->theta, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 34; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->theta.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->theta, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -7097,12 +7805,12 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_5
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":35
+/* "pyearth/_knot_search.pxd":37
  *     cdef readonly SingleWeightDependentData weight
  *     cdef readonly FLOAT_t[:] theta
  *     cdef public FLOAT_t omega             # <<<<<<<<<<<<<<
+ *     cdef public FLOAT_t sse_
  *     cdef public INDEX_t m
- *     cdef public INDEX_t k
  */
 
 /* Python wrapper */
@@ -7127,7 +7835,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_5
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->omega); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->omega); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 37; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -7165,7 +7873,7 @@ static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_5omega_
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 35; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 37; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->omega = __pyx_t_1;
 
   /* function exit code */
@@ -7179,9 +7887,91 @@ static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_5omega_
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":36
+/* "pyearth/_knot_search.pxd":38
  *     cdef readonly FLOAT_t[:] theta
  *     cdef public FLOAT_t omega
+ *     cdef public FLOAT_t sse_             # <<<<<<<<<<<<<<
+ *     cdef public INDEX_t m
+ *     cdef public INDEX_t k
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_7pyearth_12_knot_search_26SingleOutcomeDependentData_4sse__1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_7pyearth_12_knot_search_26SingleOutcomeDependentData_4sse__1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_4sse____get__(((struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_4sse____get__(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__get__", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->sse_); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("pyearth._knot_search.SingleOutcomeDependentData.sse_.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static int __pyx_pw_7pyearth_12_knot_search_26SingleOutcomeDependentData_4sse__3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
+static int __pyx_pw_7pyearth_12_knot_search_26SingleOutcomeDependentData_4sse__3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_4sse__2__set__(((struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *)__pyx_v_self), ((PyObject *)__pyx_v_value));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_4sse__2__set__(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *__pyx_v_self, PyObject *__pyx_v_value) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_1;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__set__", 0);
+  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_v_self->sse_ = __pyx_t_1;
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_AddTraceback("pyearth._knot_search.SingleOutcomeDependentData.sse_.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "pyearth/_knot_search.pxd":39
+ *     cdef public FLOAT_t omega
+ *     cdef public FLOAT_t sse_
  *     cdef public INDEX_t m             # <<<<<<<<<<<<<<
  *     cdef public INDEX_t k
  *     cdef public INDEX_t max_terms
@@ -7209,7 +7999,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_1
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->m); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->m); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -7247,7 +8037,7 @@ static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_1m_2__s
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 36; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 39; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->m = __pyx_t_1;
 
   /* function exit code */
@@ -7261,8 +8051,8 @@ static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_1m_2__s
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":37
- *     cdef public FLOAT_t omega
+/* "pyearth/_knot_search.pxd":40
+ *     cdef public FLOAT_t sse_
  *     cdef public INDEX_t m
  *     cdef public INDEX_t k             # <<<<<<<<<<<<<<
  *     cdef public INDEX_t max_terms
@@ -7291,7 +8081,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_1
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->k); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 37; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->k); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 40; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -7329,7 +8119,7 @@ static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_1k_2__s
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 37; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 40; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->k = __pyx_t_1;
 
   /* function exit code */
@@ -7343,7 +8133,7 @@ static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_1k_2__s
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":38
+/* "pyearth/_knot_search.pxd":41
  *     cdef public INDEX_t m
  *     cdef public INDEX_t k
  *     cdef public INDEX_t max_terms             # <<<<<<<<<<<<<<
@@ -7373,7 +8163,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_9
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->max_terms); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->max_terms); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -7411,7 +8201,7 @@ static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_9max_te
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 38; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->max_terms = __pyx_t_1;
 
   /* function exit code */
@@ -7425,7 +8215,7 @@ static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_9max_te
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":39
+/* "pyearth/_knot_search.pxd":42
  *     cdef public INDEX_t k
  *     cdef public INDEX_t max_terms
  *     cdef public object householder             # <<<<<<<<<<<<<<
@@ -7520,7 +8310,7 @@ static int __pyx_pf_7pyearth_12_knot_search_26SingleOutcomeDependentData_11house
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":203
+/* "pyearth/_knot_search.pyx":218
  * @cython.final
  * cdef class PredictorDependentData:
  *     def __init__(PredictorDependentData self, FLOAT_t[:] x,             # <<<<<<<<<<<<<<
@@ -7559,11 +8349,11 @@ static int __pyx_pw_7pyearth_12_knot_search_22PredictorDependentData_1__init__(P
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_order)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 218; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 218; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -7571,12 +8361,12 @@ static int __pyx_pw_7pyearth_12_knot_search_22PredictorDependentData_1__init__(P
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_x = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[0]); if (unlikely(!__pyx_v_x.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_order = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_INT_t(values[1]); if (unlikely(!__pyx_v_order.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 204; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_x = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[0]); if (unlikely(!__pyx_v_x.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 218; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_order = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_INT_t(values[1]); if (unlikely(!__pyx_v_order.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 219; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 203; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 218; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._knot_search.PredictorDependentData.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -7594,7 +8384,7 @@ static int __pyx_pf_7pyearth_12_knot_search_22PredictorDependentData___init__(st
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "pyearth/_knot_search.pyx":205
+  /* "pyearth/_knot_search.pyx":220
  *     def __init__(PredictorDependentData self, FLOAT_t[:] x,
  *                 INT_t[:] order):
  *         self.x = x             # <<<<<<<<<<<<<<
@@ -7605,7 +8395,7 @@ static int __pyx_pf_7pyearth_12_knot_search_22PredictorDependentData___init__(st
   __PYX_INC_MEMVIEW(&__pyx_v_x, 0);
   __pyx_v_self->x = __pyx_v_x;
 
-  /* "pyearth/_knot_search.pyx":206
+  /* "pyearth/_knot_search.pyx":221
  *                 INT_t[:] order):
  *         self.x = x
  *         self.order = order             # <<<<<<<<<<<<<<
@@ -7616,7 +8406,7 @@ static int __pyx_pf_7pyearth_12_knot_search_22PredictorDependentData___init__(st
   __PYX_INC_MEMVIEW(&__pyx_v_order, 0);
   __pyx_v_self->order = __pyx_v_order;
 
-  /* "pyearth/_knot_search.pyx":203
+  /* "pyearth/_knot_search.pyx":218
  * @cython.final
  * cdef class PredictorDependentData:
  *     def __init__(PredictorDependentData self, FLOAT_t[:] x,             # <<<<<<<<<<<<<<
@@ -7632,7 +8422,7 @@ static int __pyx_pf_7pyearth_12_knot_search_22PredictorDependentData___init__(st
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":208
+/* "pyearth/_knot_search.pyx":223
  *         self.order = order
  * 
  *     def knot_candidates(PredictorDependentData self, cnp.ndarray[FLOAT_t, ndim = 1] p, int endspan,             # <<<<<<<<<<<<<<
@@ -7679,31 +8469,31 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_22PredictorDependentData_3knot
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_endspan)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("knot_candidates", 1, 6, 6, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("knot_candidates", 1, 6, 6, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 223; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_minspan)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("knot_candidates", 1, 6, 6, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("knot_candidates", 1, 6, 6, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 223; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_minspan_alpha)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("knot_candidates", 1, 6, 6, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("knot_candidates", 1, 6, 6, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 223; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_n)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("knot_candidates", 1, 6, 6, 4); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("knot_candidates", 1, 6, 6, 4); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 223; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  5:
         if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_knot_set)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("knot_candidates", 1, 6, 6, 5); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("knot_candidates", 1, 6, 6, 5); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 223; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "knot_candidates") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "knot_candidates") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 223; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 6) {
       goto __pyx_L5_argtuple_error;
@@ -7716,22 +8506,22 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_22PredictorDependentData_3knot
       values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
     }
     __pyx_v_p = ((PyArrayObject *)values[0]);
-    __pyx_v_endspan = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_endspan == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_minspan = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_minspan == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_minspan_alpha = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_minspan_alpha == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_n = __Pyx_PyInt_As_npy_ulonglong(values[4]); if (unlikely((__pyx_v_n == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_endspan = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_endspan == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 223; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_minspan = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_minspan == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 224; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_minspan_alpha = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_minspan_alpha == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 224; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_n = __Pyx_PyInt_As_npy_ulonglong(values[4]); if (unlikely((__pyx_v_n == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 224; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
     __pyx_v_knot_set = ((PyObject*)values[5]);
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("knot_candidates", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("knot_candidates", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 223; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._knot_search.PredictorDependentData.knot_candidates", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_p), __pyx_ptype_5numpy_ndarray, 1, "p", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_knot_set), (&PySet_Type), 1, "knot_set", 1))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_p), __pyx_ptype_5numpy_ndarray, 1, "p", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 223; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_knot_set), (&PySet_Type), 1, "knot_set", 1))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 224; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_r = __pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot_candidates(((struct __pyx_obj_7pyearth_12_knot_search_PredictorDependentData *)__pyx_v_self), __pyx_v_p, __pyx_v_endspan, __pyx_v_minspan, __pyx_v_minspan_alpha, __pyx_v_n, __pyx_v_knot_set);
 
   /* function exit code */
@@ -7783,35 +8573,35 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
   __pyx_pybuffernd_p.rcbuffer = &__pyx_pybuffer_p;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_p.rcbuffer->pybuffer, (PyObject*)__pyx_v_p, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_p.rcbuffer->pybuffer, (PyObject*)__pyx_v_p, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 223; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __pyx_pybuffernd_p.diminfo[0].strides = __pyx_pybuffernd_p.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_p.diminfo[0].shape = __pyx_pybuffernd_p.rcbuffer->pybuffer.shape[0];
 
-  /* "pyearth/_knot_search.pyx":213
+  /* "pyearth/_knot_search.pyx":228
  *         cdef FLOAT_t last, knot
  *         cdef bint first, skip
  *         cdef list candidates = []             # <<<<<<<<<<<<<<
  *         cdef list candidates_idx = []
  *         m = p.shape[0]
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 213; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 228; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_candidates = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_knot_search.pyx":214
+  /* "pyearth/_knot_search.pyx":229
  *         cdef bint first, skip
  *         cdef list candidates = []
  *         cdef list candidates_idx = []             # <<<<<<<<<<<<<<
  *         m = p.shape[0]
  *         count = 0
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 214; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 229; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_candidates_idx = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_knot_search.pyx":215
+  /* "pyearth/_knot_search.pyx":230
  *         cdef list candidates = []
  *         cdef list candidates_idx = []
  *         m = p.shape[0]             # <<<<<<<<<<<<<<
@@ -7820,7 +8610,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  */
   __pyx_v_m = (__pyx_v_p->dimensions[0]);
 
-  /* "pyearth/_knot_search.pyx":216
+  /* "pyearth/_knot_search.pyx":231
  *         cdef list candidates_idx = []
  *         m = p.shape[0]
  *         count = 0             # <<<<<<<<<<<<<<
@@ -7829,7 +8619,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  */
   __pyx_v_count = 0;
 
-  /* "pyearth/_knot_search.pyx":217
+  /* "pyearth/_knot_search.pyx":232
  *         m = p.shape[0]
  *         count = 0
  *         for i in range(m):             # <<<<<<<<<<<<<<
@@ -7840,7 +8630,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "pyearth/_knot_search.pyx":218
+    /* "pyearth/_knot_search.pyx":233
  *         count = 0
  *         for i in range(m):
  *             if p[i] != 0:             # <<<<<<<<<<<<<<
@@ -7851,7 +8641,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
     __pyx_t_5 = (((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_FLOAT_t *, __pyx_pybuffernd_p.rcbuffer->pybuffer.buf, __pyx_t_4, __pyx_pybuffernd_p.diminfo[0].strides)) != 0.0) != 0);
     if (__pyx_t_5) {
 
-      /* "pyearth/_knot_search.pyx":219
+      /* "pyearth/_knot_search.pyx":234
  *         for i in range(m):
  *             if p[i] != 0:
  *                 count += 1             # <<<<<<<<<<<<<<
@@ -7860,7 +8650,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  */
       __pyx_v_count = (__pyx_v_count + 1);
 
-      /* "pyearth/_knot_search.pyx":218
+      /* "pyearth/_knot_search.pyx":233
  *         count = 0
  *         for i in range(m):
  *             if p[i] != 0:             # <<<<<<<<<<<<<<
@@ -7870,7 +8660,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
     }
   }
 
-  /* "pyearth/_knot_search.pyx":221
+  /* "pyearth/_knot_search.pyx":236
  *                 count += 1
  * 
  *         if n * count == 0:             # <<<<<<<<<<<<<<
@@ -7880,7 +8670,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
   __pyx_t_5 = (((__pyx_v_n * __pyx_v_count) == 0) != 0);
   if (__pyx_t_5) {
 
-    /* "pyearth/_knot_search.pyx":222
+    /* "pyearth/_knot_search.pyx":237
  * 
  *         if n * count == 0:
  *             return np.array(candidates, dtype=FLOAT), np.array(candidates_idx, dtype=INDEX)             # <<<<<<<<<<<<<<
@@ -7888,49 +8678,49 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  *         if minspan < 0:
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_INCREF(__pyx_v_candidates);
     __Pyx_GIVEREF(__pyx_v_candidates);
     PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_candidates);
-    __pyx_t_7 = PyDict_New(); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_7 = PyDict_New(); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_FLOAT); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_FLOAT); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_8);
-    if (PyDict_SetItem(__pyx_t_7, __pyx_n_s_dtype, __pyx_t_8) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (PyDict_SetItem(__pyx_t_7, __pyx_n_s_dtype, __pyx_t_8) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_1, __pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_1, __pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_array); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_array); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = PyTuple_New(1); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_7 = PyTuple_New(1); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_INCREF(__pyx_v_candidates_idx);
     __Pyx_GIVEREF(__pyx_v_candidates_idx);
     PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_v_candidates_idx);
-    __pyx_t_6 = PyDict_New(); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_6 = PyDict_New(); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_9 = __Pyx_GetModuleGlobalName(__pyx_n_s_INDEX); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_9 = __Pyx_GetModuleGlobalName(__pyx_n_s_INDEX); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_9);
-    if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, __pyx_t_9) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, __pyx_t_9) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_7, __pyx_t_6); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_7, __pyx_t_6); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_GIVEREF(__pyx_t_8);
     PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_8);
@@ -7942,7 +8732,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
     __pyx_t_6 = 0;
     goto __pyx_L0;
 
-    /* "pyearth/_knot_search.pyx":221
+    /* "pyearth/_knot_search.pyx":236
  *                 count += 1
  * 
  *         if n * count == 0:             # <<<<<<<<<<<<<<
@@ -7951,7 +8741,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  */
   }
 
-  /* "pyearth/_knot_search.pyx":224
+  /* "pyearth/_knot_search.pyx":239
  *             return np.array(candidates, dtype=FLOAT), np.array(candidates_idx, dtype=INDEX)
  * 
  *         if minspan < 0:             # <<<<<<<<<<<<<<
@@ -7961,7 +8751,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
   __pyx_t_5 = ((__pyx_v_minspan < 0) != 0);
   if (__pyx_t_5) {
 
-    /* "pyearth/_knot_search.pyx":225
+    /* "pyearth/_knot_search.pyx":240
  * 
  *         if minspan < 0:
  *             minspan_ =  <int> (-log2(-(1.0 / (n * count)) *             # <<<<<<<<<<<<<<
@@ -7970,7 +8760,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  */
     __pyx_v_minspan_ = ((int)((-__pyx_f_7pyearth_5_util_log2(((-(1.0 / (__pyx_v_n * __pyx_v_count))) * log((1.0 - __pyx_v_minspan_alpha))))) / 2.5));
 
-    /* "pyearth/_knot_search.pyx":224
+    /* "pyearth/_knot_search.pyx":239
  *             return np.array(candidates, dtype=FLOAT), np.array(candidates_idx, dtype=INDEX)
  * 
  *         if minspan < 0:             # <<<<<<<<<<<<<<
@@ -7980,7 +8770,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
     goto __pyx_L7;
   }
 
-  /* "pyearth/_knot_search.pyx":228
+  /* "pyearth/_knot_search.pyx":243
  *                                 log(1.0 - minspan_alpha)) / 2.5)
  *         else:
  *             minspan_ = minspan             # <<<<<<<<<<<<<<
@@ -7992,7 +8782,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
   }
   __pyx_L7:;
 
-  /* "pyearth/_knot_search.pyx":230
+  /* "pyearth/_knot_search.pyx":245
  *             minspan_ = minspan
  * 
  *         i = endspan             # <<<<<<<<<<<<<<
@@ -8001,7 +8791,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  */
   __pyx_v_i = __pyx_v_endspan;
 
-  /* "pyearth/_knot_search.pyx":231
+  /* "pyearth/_knot_search.pyx":246
  * 
  *         i = endspan
  *         first = True             # <<<<<<<<<<<<<<
@@ -8010,7 +8800,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  */
   __pyx_v_first = 1;
 
-  /* "pyearth/_knot_search.pyx":232
+  /* "pyearth/_knot_search.pyx":247
  *         i = endspan
  *         first = True
  *         skip = False             # <<<<<<<<<<<<<<
@@ -8019,7 +8809,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  */
   __pyx_v_skip = 0;
 
-  /* "pyearth/_knot_search.pyx":233
+  /* "pyearth/_knot_search.pyx":248
  *         first = True
  *         skip = False
  *         countdown = 0             # <<<<<<<<<<<<<<
@@ -8028,7 +8818,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  */
   __pyx_v_countdown = 0;
 
-  /* "pyearth/_knot_search.pyx":234
+  /* "pyearth/_knot_search.pyx":249
  *         skip = False
  *         countdown = 0
  *         while True:             # <<<<<<<<<<<<<<
@@ -8037,7 +8827,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  */
   while (1) {
 
-    /* "pyearth/_knot_search.pyx":235
+    /* "pyearth/_knot_search.pyx":250
  *         countdown = 0
  *         while True:
  *             if m < endspan + i:             # <<<<<<<<<<<<<<
@@ -8047,7 +8837,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
     __pyx_t_5 = ((__pyx_v_m < (__pyx_v_endspan + __pyx_v_i)) != 0);
     if (__pyx_t_5) {
 
-      /* "pyearth/_knot_search.pyx":236
+      /* "pyearth/_knot_search.pyx":251
  *         while True:
  *             if m < endspan + i:
  *                 break             # <<<<<<<<<<<<<<
@@ -8056,7 +8846,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  */
       goto __pyx_L9_break;
 
-      /* "pyearth/_knot_search.pyx":235
+      /* "pyearth/_knot_search.pyx":250
  *         countdown = 0
  *         while True:
  *             if m < endspan + i:             # <<<<<<<<<<<<<<
@@ -8065,29 +8855,29 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  */
     }
 
-    /* "pyearth/_knot_search.pyx":237
+    /* "pyearth/_knot_search.pyx":252
  *             if m < endspan + i:
  *                 break
  *             idx = self.order[i]             # <<<<<<<<<<<<<<
  *             knot = self.x[idx]
  *             if ((not first) and knot == last) or p[idx] == 0 or knot in knot_set:
  */
-    if (unlikely(!__pyx_v_self->order.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_self->order.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 252; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_2 = __pyx_v_i;
     __pyx_v_idx = (*((__pyx_t_7pyearth_6_types_INT_t *) ( /* dim=0 */ (__pyx_v_self->order.data + __pyx_t_2 * __pyx_v_self->order.strides[0]) )));
 
-    /* "pyearth/_knot_search.pyx":238
+    /* "pyearth/_knot_search.pyx":253
  *                 break
  *             idx = self.order[i]
  *             knot = self.x[idx]             # <<<<<<<<<<<<<<
  *             if ((not first) and knot == last) or p[idx] == 0 or knot in knot_set:
  *                 countdown = minspan_
  */
-    if (unlikely(!__pyx_v_self->x.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 238; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_self->x.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 253; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_3 = __pyx_v_idx;
     __pyx_v_knot = (*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_self->x.data + __pyx_t_3 * __pyx_v_self->x.strides[0]) )));
 
-    /* "pyearth/_knot_search.pyx":239
+    /* "pyearth/_knot_search.pyx":254
  *             idx = self.order[i]
  *             knot = self.x[idx]
  *             if ((not first) and knot == last) or p[idx] == 0 or knot in knot_set:             # <<<<<<<<<<<<<<
@@ -8113,16 +8903,16 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
       __pyx_t_5 = __pyx_t_10;
       goto __pyx_L12_bool_binop_done;
     }
-    __pyx_t_6 = PyFloat_FromDouble(__pyx_v_knot); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 239; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_6 = PyFloat_FromDouble(__pyx_v_knot); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 254; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_10 = (__Pyx_PySequence_ContainsTF(__pyx_t_6, __pyx_v_knot_set, Py_EQ)); if (unlikely(__pyx_t_10 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 239; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_10 = (__Pyx_PySequence_ContainsTF(__pyx_t_6, __pyx_v_knot_set, Py_EQ)); if (unlikely(__pyx_t_10 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 254; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __pyx_t_12 = (__pyx_t_10 != 0);
     __pyx_t_5 = __pyx_t_12;
     __pyx_L12_bool_binop_done:;
     if (__pyx_t_5) {
 
-      /* "pyearth/_knot_search.pyx":240
+      /* "pyearth/_knot_search.pyx":255
  *             knot = self.x[idx]
  *             if ((not first) and knot == last) or p[idx] == 0 or knot in knot_set:
  *                 countdown = minspan_             # <<<<<<<<<<<<<<
@@ -8131,7 +8921,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  */
       __pyx_v_countdown = __pyx_v_minspan_;
 
-      /* "pyearth/_knot_search.pyx":241
+      /* "pyearth/_knot_search.pyx":256
  *             if ((not first) and knot == last) or p[idx] == 0 or knot in knot_set:
  *                 countdown = minspan_
  *                 skip = True             # <<<<<<<<<<<<<<
@@ -8140,7 +8930,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  */
       __pyx_v_skip = 1;
 
-      /* "pyearth/_knot_search.pyx":242
+      /* "pyearth/_knot_search.pyx":257
  *                 countdown = minspan_
  *                 skip = True
  *                 i += 1             # <<<<<<<<<<<<<<
@@ -8149,7 +8939,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  */
       __pyx_v_i = (__pyx_v_i + 1);
 
-      /* "pyearth/_knot_search.pyx":239
+      /* "pyearth/_knot_search.pyx":254
  *             idx = self.order[i]
  *             knot = self.x[idx]
  *             if ((not first) and knot == last) or p[idx] == 0 or knot in knot_set:             # <<<<<<<<<<<<<<
@@ -8159,7 +8949,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
       goto __pyx_L11;
     }
 
-    /* "pyearth/_knot_search.pyx":244
+    /* "pyearth/_knot_search.pyx":259
  *                 i += 1
  *             else:
  *                 if first or knot != last:             # <<<<<<<<<<<<<<
@@ -8178,7 +8968,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
       __pyx_L17_bool_binop_done:;
       if (__pyx_t_5) {
 
-        /* "pyearth/_knot_search.pyx":245
+        /* "pyearth/_knot_search.pyx":260
  *             else:
  *                 if first or knot != last:
  *                     last = knot             # <<<<<<<<<<<<<<
@@ -8187,7 +8977,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  */
         __pyx_v_last = __pyx_v_knot;
 
-        /* "pyearth/_knot_search.pyx":246
+        /* "pyearth/_knot_search.pyx":261
  *                 if first or knot != last:
  *                     last = knot
  *                     if countdown <= 0:             # <<<<<<<<<<<<<<
@@ -8197,31 +8987,31 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
         __pyx_t_5 = ((__pyx_v_countdown <= 0) != 0);
         if (__pyx_t_5) {
 
-          /* "pyearth/_knot_search.pyx":247
+          /* "pyearth/_knot_search.pyx":262
  *                     last = knot
  *                     if countdown <= 0:
  *                         candidates.append(knot)             # <<<<<<<<<<<<<<
  *                         candidates_idx.append(idx)
  *                         countdown = minspan_
  */
-          __pyx_t_6 = PyFloat_FromDouble(__pyx_v_knot); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 247; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_6 = PyFloat_FromDouble(__pyx_v_knot); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 262; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           __Pyx_GOTREF(__pyx_t_6);
-          __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_candidates, __pyx_t_6); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 247; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_candidates, __pyx_t_6); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 262; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-          /* "pyearth/_knot_search.pyx":248
+          /* "pyearth/_knot_search.pyx":263
  *                     if countdown <= 0:
  *                         candidates.append(knot)
  *                         candidates_idx.append(idx)             # <<<<<<<<<<<<<<
  *                         countdown = minspan_
  *                     else:
  */
-          __pyx_t_6 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_idx); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 248; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_6 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_idx); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 263; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           __Pyx_GOTREF(__pyx_t_6);
-          __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_candidates_idx, __pyx_t_6); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 248; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_candidates_idx, __pyx_t_6); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 263; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-          /* "pyearth/_knot_search.pyx":249
+          /* "pyearth/_knot_search.pyx":264
  *                         candidates.append(knot)
  *                         candidates_idx.append(idx)
  *                         countdown = minspan_             # <<<<<<<<<<<<<<
@@ -8230,7 +9020,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  */
           __pyx_v_countdown = __pyx_v_minspan_;
 
-          /* "pyearth/_knot_search.pyx":246
+          /* "pyearth/_knot_search.pyx":261
  *                 if first or knot != last:
  *                     last = knot
  *                     if countdown <= 0:             # <<<<<<<<<<<<<<
@@ -8240,7 +9030,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
           goto __pyx_L19;
         }
 
-        /* "pyearth/_knot_search.pyx":251
+        /* "pyearth/_knot_search.pyx":266
  *                         countdown = minspan_
  *                     else:
  *                         countdown -= 1             # <<<<<<<<<<<<<<
@@ -8252,7 +9042,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
         }
         __pyx_L19:;
 
-        /* "pyearth/_knot_search.pyx":244
+        /* "pyearth/_knot_search.pyx":259
  *                 i += 1
  *             else:
  *                 if first or knot != last:             # <<<<<<<<<<<<<<
@@ -8261,7 +9051,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  */
       }
 
-      /* "pyearth/_knot_search.pyx":252
+      /* "pyearth/_knot_search.pyx":267
  *                     else:
  *                         countdown -= 1
  *                 i += 1             # <<<<<<<<<<<<<<
@@ -8272,7 +9062,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
     }
     __pyx_L11:;
 
-    /* "pyearth/_knot_search.pyx":253
+    /* "pyearth/_knot_search.pyx":268
  *                         countdown -= 1
  *                 i += 1
  *             first = False             # <<<<<<<<<<<<<<
@@ -8283,7 +9073,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
   }
   __pyx_L9_break:;
 
-  /* "pyearth/_knot_search.pyx":255
+  /* "pyearth/_knot_search.pyx":270
  *             first = False
  * 
  *         return np.array(candidates, dtype=FLOAT), np.array(candidates_idx, dtype=INDEX)             # <<<<<<<<<<<<<<
@@ -8291,49 +9081,49 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
  *     def ordered(self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_6 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 270; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_array); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_array); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 270; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 270; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_INCREF(__pyx_v_candidates);
   __Pyx_GIVEREF(__pyx_v_candidates);
   PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_v_candidates);
-  __pyx_t_8 = PyDict_New(); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_8 = PyDict_New(); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 270; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_FLOAT); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_FLOAT); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 270; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_7);
-  if (PyDict_SetItem(__pyx_t_8, __pyx_n_s_dtype, __pyx_t_7) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_8, __pyx_n_s_dtype, __pyx_t_7) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 270; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_6, __pyx_t_8); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_6, __pyx_t_8); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 270; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 270; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_array); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_array); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 270; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_8 = PyTuple_New(1); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_8 = PyTuple_New(1); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 270; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_INCREF(__pyx_v_candidates_idx);
   __Pyx_GIVEREF(__pyx_v_candidates_idx);
   PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_v_candidates_idx);
-  __pyx_t_9 = PyDict_New(); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_9 = PyDict_New(); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 270; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_9);
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_INDEX); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_INDEX); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 270; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_9, __pyx_n_s_dtype, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_9, __pyx_n_s_dtype, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 270; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_8, __pyx_t_9); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_8, __pyx_t_9); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 270; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  __pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 270; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_GIVEREF(__pyx_t_7);
   PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_7);
@@ -8345,7 +9135,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
   __pyx_t_9 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_knot_search.pyx":208
+  /* "pyearth/_knot_search.pyx":223
  *         self.order = order
  * 
  *     def knot_candidates(PredictorDependentData self, cnp.ndarray[FLOAT_t, ndim = 1] p, int endspan,             # <<<<<<<<<<<<<<
@@ -8377,7 +9167,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_2knot
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":257
+/* "pyearth/_knot_search.pyx":272
  *         return np.array(candidates, dtype=FLOAT), np.array(candidates_idx, dtype=INDEX)
  * 
  *     def ordered(self):             # <<<<<<<<<<<<<<
@@ -8411,7 +9201,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_4orde
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("ordered", 0);
 
-  /* "pyearth/_knot_search.pyx":258
+  /* "pyearth/_knot_search.pyx":273
  * 
  *     def ordered(self):
  *         return np.array(self.x)[self.order]             # <<<<<<<<<<<<<<
@@ -8419,13 +9209,13 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_4orde
  *     @classmethod
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 258; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 273; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 258; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 273; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_v_self->x.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 258; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_self->x, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 258; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->x.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 273; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_self->x, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 273; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -8438,25 +9228,25 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_4orde
     }
   }
   if (!__pyx_t_4) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 258; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 273; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
-    __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 258; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 273; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 258; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 273; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_v_self->order.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 258; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_self->order, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_INT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_INT_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 258; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->order.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 273; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_self->order, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_INT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_INT_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 273; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_5 = PyObject_GetItem(__pyx_t_1, __pyx_t_3); if (unlikely(__pyx_t_5 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 258; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+  __pyx_t_5 = PyObject_GetItem(__pyx_t_1, __pyx_t_3); if (unlikely(__pyx_t_5 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 273; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -8464,7 +9254,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_4orde
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_knot_search.pyx":257
+  /* "pyearth/_knot_search.pyx":272
  *         return np.array(candidates, dtype=FLOAT), np.array(candidates_idx, dtype=INDEX)
  * 
  *     def ordered(self):             # <<<<<<<<<<<<<<
@@ -8487,7 +9277,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_4orde
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":261
+/* "pyearth/_knot_search.pyx":276
  * 
  *     @classmethod
  *     def alloc(cls, FLOAT_t[:] x):             # <<<<<<<<<<<<<<
@@ -8506,7 +9296,7 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_22PredictorDependentData_7allo
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("alloc (wrapper)", 0);
   assert(__pyx_arg_x); {
-    __pyx_v_x = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(__pyx_arg_x); if (unlikely(!__pyx_v_x.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 261; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_x = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(__pyx_arg_x); if (unlikely(!__pyx_v_x.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 276; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -8536,19 +9326,19 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_6allo
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("alloc", 0);
 
-  /* "pyearth/_knot_search.pyx":263
+  /* "pyearth/_knot_search.pyx":278
  *     def alloc(cls, FLOAT_t[:] x):
  *         cdef INT_t[:] order
  *         order = np.argsort(x)[::-1]             # <<<<<<<<<<<<<<
  *         return cls(x, order)
  * 
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 263; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 278; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_argsort); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 263; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_argsort); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 278; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_x, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 263; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_x, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 278; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -8561,32 +9351,32 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_6allo
     }
   }
   if (!__pyx_t_4) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 263; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 278; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
-    __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 263; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 278; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 263; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 278; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = PyObject_GetItem(__pyx_t_1, __pyx_slice__5); if (unlikely(__pyx_t_3 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 263; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+  __pyx_t_3 = PyObject_GetItem(__pyx_t_1, __pyx_slice__5); if (unlikely(__pyx_t_3 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 278; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_6 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_INT_t(__pyx_t_3);
-  if (unlikely(!__pyx_t_6.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 263; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_t_6.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 278; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_order = __pyx_t_6;
   __pyx_t_6.memview = NULL;
   __pyx_t_6.data = NULL;
 
-  /* "pyearth/_knot_search.pyx":264
+  /* "pyearth/_knot_search.pyx":279
  *         cdef INT_t[:] order
  *         order = np.argsort(x)[::-1]
  *         return cls(x, order)             # <<<<<<<<<<<<<<
@@ -8594,11 +9384,11 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_6allo
  * @cython.final
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_x, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 264; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_x, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 279; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_order, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_INT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_INT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 264; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_order, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_INT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_INT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 279; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 264; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 279; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_GIVEREF(__pyx_t_3);
   PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_3);
@@ -8606,14 +9396,14 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_6allo
   PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_1);
   __pyx_t_3 = 0;
   __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_v_cls), __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 264; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_v_cls), __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 279; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_knot_search.pyx":261
+  /* "pyearth/_knot_search.pyx":276
  * 
  *     @classmethod
  *     def alloc(cls, FLOAT_t[:] x):             # <<<<<<<<<<<<<<
@@ -8639,7 +9429,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_6allo
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":48
+/* "pyearth/_knot_search.pxd":51
  * @cython.final
  * cdef class PredictorDependentData:
  *     cdef readonly FLOAT_t[:] p             # <<<<<<<<<<<<<<
@@ -8669,8 +9459,8 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_1p___
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_self->p.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 48; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->p, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 48; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->p.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->p, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -8687,7 +9477,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_1p___
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":49
+/* "pyearth/_knot_search.pxd":52
  * cdef class PredictorDependentData:
  *     cdef readonly FLOAT_t[:] p
  *     cdef readonly FLOAT_t[:] x             # <<<<<<<<<<<<<<
@@ -8717,8 +9507,8 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_1x___
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_self->x.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->x, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->x.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->x, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -8735,7 +9525,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_1x___
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":50
+/* "pyearth/_knot_search.pxd":53
  *     cdef readonly FLOAT_t[:] p
  *     cdef readonly FLOAT_t[:] x
  *     cdef readonly FLOAT_t[:] candidates             # <<<<<<<<<<<<<<
@@ -8765,8 +9555,8 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_10can
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_self->candidates.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 50; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->candidates, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 50; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->candidates.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 53; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->candidates, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 53; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -8783,7 +9573,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_10can
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":51
+/* "pyearth/_knot_search.pxd":54
  *     cdef readonly FLOAT_t[:] x
  *     cdef readonly FLOAT_t[:] candidates
  *     cdef readonly INT_t[:] order             # <<<<<<<<<<<<<<
@@ -8813,8 +9603,8 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_5orde
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_self->order.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->order, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_INT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_INT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->order.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 54; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->order, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_INT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_INT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 54; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -8831,7 +9621,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22PredictorDependentData_5orde
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":268
+/* "pyearth/_knot_search.pyx":283
  * @cython.final
  * cdef class KnotSearchReadOnlyData:
  *     def __init__(KnotSearchReadOnlyData self, PredictorDependentData predictor, MultipleOutcomeDependentData outcome):             # <<<<<<<<<<<<<<
@@ -8870,11 +9660,11 @@ static int __pyx_pw_7pyearth_12_knot_search_22KnotSearchReadOnlyData_1__init__(P
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_outcome)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 268; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 283; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 268; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 283; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -8887,14 +9677,14 @@ static int __pyx_pw_7pyearth_12_knot_search_22KnotSearchReadOnlyData_1__init__(P
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 268; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 283; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._knot_search.KnotSearchReadOnlyData.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_predictor), __pyx_ptype_7pyearth_12_knot_search_PredictorDependentData, 1, "predictor", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 268; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_outcome), __pyx_ptype_7pyearth_12_knot_search_MultipleOutcomeDependentData, 1, "outcome", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 268; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_predictor), __pyx_ptype_7pyearth_12_knot_search_PredictorDependentData, 1, "predictor", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 283; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_outcome), __pyx_ptype_7pyearth_12_knot_search_MultipleOutcomeDependentData, 1, "outcome", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 283; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_r = __pyx_pf_7pyearth_12_knot_search_22KnotSearchReadOnlyData___init__(((struct __pyx_obj_7pyearth_12_knot_search_KnotSearchReadOnlyData *)__pyx_v_self), __pyx_v_predictor, __pyx_v_outcome);
 
   /* function exit code */
@@ -8911,7 +9701,7 @@ static int __pyx_pf_7pyearth_12_knot_search_22KnotSearchReadOnlyData___init__(st
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "pyearth/_knot_search.pyx":269
+  /* "pyearth/_knot_search.pyx":284
  * cdef class KnotSearchReadOnlyData:
  *     def __init__(KnotSearchReadOnlyData self, PredictorDependentData predictor, MultipleOutcomeDependentData outcome):
  *         self.predictor = predictor             # <<<<<<<<<<<<<<
@@ -8924,7 +9714,7 @@ static int __pyx_pf_7pyearth_12_knot_search_22KnotSearchReadOnlyData___init__(st
   __Pyx_DECREF(((PyObject *)__pyx_v_self->predictor));
   __pyx_v_self->predictor = __pyx_v_predictor;
 
-  /* "pyearth/_knot_search.pyx":270
+  /* "pyearth/_knot_search.pyx":285
  *     def __init__(KnotSearchReadOnlyData self, PredictorDependentData predictor, MultipleOutcomeDependentData outcome):
  *         self.predictor = predictor
  *         self.outcome = outcome             # <<<<<<<<<<<<<<
@@ -8937,7 +9727,7 @@ static int __pyx_pf_7pyearth_12_knot_search_22KnotSearchReadOnlyData___init__(st
   __Pyx_DECREF(((PyObject *)__pyx_v_self->outcome));
   __pyx_v_self->outcome = __pyx_v_outcome;
 
-  /* "pyearth/_knot_search.pyx":268
+  /* "pyearth/_knot_search.pyx":283
  * @cython.final
  * cdef class KnotSearchReadOnlyData:
  *     def __init__(KnotSearchReadOnlyData self, PredictorDependentData predictor, MultipleOutcomeDependentData outcome):             # <<<<<<<<<<<<<<
@@ -8951,7 +9741,7 @@ static int __pyx_pf_7pyearth_12_knot_search_22KnotSearchReadOnlyData___init__(st
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":55
+/* "pyearth/_knot_search.pxd":58
  * @cython.final
  * cdef class KnotSearchReadOnlyData:
  *     cdef readonly PredictorDependentData predictor             # <<<<<<<<<<<<<<
@@ -8988,7 +9778,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22KnotSearchReadOnlyData_9pred
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":56
+/* "pyearth/_knot_search.pxd":59
  * cdef class KnotSearchReadOnlyData:
  *     cdef readonly PredictorDependentData predictor
  *     cdef readonly MultipleOutcomeDependentData outcome             # <<<<<<<<<<<<<<
@@ -9025,7 +9815,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_22KnotSearchReadOnlyData_7outc
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":299
+/* "pyearth/_knot_search.pyx":314
  * #     INDEX_t idx
  * #     FLOAT_t zeta_squared
  *     def __init__(KnotSearchState self, FLOAT_t alpha, FLOAT_t beta, FLOAT_t lambda_,             # <<<<<<<<<<<<<<
@@ -9080,51 +9870,51 @@ static int __pyx_pw_7pyearth_12_knot_search_15KnotSearchState_1__init__(PyObject
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_beta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 299; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 314; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_lambda)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 299; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 314; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_mu)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 299; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 314; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_upsilon)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, 4); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 299; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, 4); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 314; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  5:
         if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_phi)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, 5); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 299; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, 5); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 314; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  6:
         if (likely((values[6] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_phi_next)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, 6); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 299; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, 6); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 314; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  7:
         if (likely((values[7] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_ord_idx)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, 7); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 299; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, 7); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 314; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  8:
         if (likely((values[8] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_idx)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, 8); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 299; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, 8); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 314; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  9:
         if (likely((values[9] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_zeta_squared)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, 9); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 299; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, 9); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 314; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 299; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 314; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 10) {
       goto __pyx_L5_argtuple_error;
@@ -9140,20 +9930,20 @@ static int __pyx_pw_7pyearth_12_knot_search_15KnotSearchState_1__init__(PyObject
       values[8] = PyTuple_GET_ITEM(__pyx_args, 8);
       values[9] = PyTuple_GET_ITEM(__pyx_args, 9);
     }
-    __pyx_v_alpha = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_alpha == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 299; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_beta = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_beta == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 299; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_lambda_ = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_lambda_ == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 299; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_mu = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_mu == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 300; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_upsilon = __pyx_PyFloat_AsDouble(values[4]); if (unlikely((__pyx_v_upsilon == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 300; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_phi = __pyx_PyFloat_AsDouble(values[5]); if (unlikely((__pyx_v_phi == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 300; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_phi_next = __pyx_PyFloat_AsDouble(values[6]); if (unlikely((__pyx_v_phi_next == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 300; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_ord_idx = __Pyx_PyInt_As_npy_ulonglong(values[7]); if (unlikely((__pyx_v_ord_idx == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 301; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_idx = __Pyx_PyInt_As_npy_ulonglong(values[8]); if (unlikely((__pyx_v_idx == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 301; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_zeta_squared = __pyx_PyFloat_AsDouble(values[9]); if (unlikely((__pyx_v_zeta_squared == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 301; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_alpha = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_alpha == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 314; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_beta = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_beta == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 314; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_lambda_ = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_lambda_ == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 314; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_mu = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_mu == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 315; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_upsilon = __pyx_PyFloat_AsDouble(values[4]); if (unlikely((__pyx_v_upsilon == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 315; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_phi = __pyx_PyFloat_AsDouble(values[5]); if (unlikely((__pyx_v_phi == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 315; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_phi_next = __pyx_PyFloat_AsDouble(values[6]); if (unlikely((__pyx_v_phi_next == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 315; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_ord_idx = __Pyx_PyInt_As_npy_ulonglong(values[7]); if (unlikely((__pyx_v_ord_idx == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 316; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_idx = __Pyx_PyInt_As_npy_ulonglong(values[8]); if (unlikely((__pyx_v_idx == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 316; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_zeta_squared = __pyx_PyFloat_AsDouble(values[9]); if (unlikely((__pyx_v_zeta_squared == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 316; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 299; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 10, 10, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 314; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._knot_search.KnotSearchState.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -9171,7 +9961,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState___init__(struct __
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "pyearth/_knot_search.pyx":302
+  /* "pyearth/_knot_search.pyx":317
  *                  FLOAT_t mu, FLOAT_t upsilon, FLOAT_t phi, FLOAT_t phi_next,
  *                  INDEX_t ord_idx, INDEX_t idx, FLOAT_t zeta_squared):
  *         self.alpha = alpha             # <<<<<<<<<<<<<<
@@ -9180,7 +9970,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState___init__(struct __
  */
   __pyx_v_self->alpha = __pyx_v_alpha;
 
-  /* "pyearth/_knot_search.pyx":303
+  /* "pyearth/_knot_search.pyx":318
  *                  INDEX_t ord_idx, INDEX_t idx, FLOAT_t zeta_squared):
  *         self.alpha = alpha
  *         self.beta = beta             # <<<<<<<<<<<<<<
@@ -9189,7 +9979,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState___init__(struct __
  */
   __pyx_v_self->beta = __pyx_v_beta;
 
-  /* "pyearth/_knot_search.pyx":304
+  /* "pyearth/_knot_search.pyx":319
  *         self.alpha = alpha
  *         self.beta = beta
  *         self.lambda_ = lambda_             # <<<<<<<<<<<<<<
@@ -9198,7 +9988,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState___init__(struct __
  */
   __pyx_v_self->lambda_ = __pyx_v_lambda_;
 
-  /* "pyearth/_knot_search.pyx":305
+  /* "pyearth/_knot_search.pyx":320
  *         self.beta = beta
  *         self.lambda_ = lambda_
  *         self.mu = mu             # <<<<<<<<<<<<<<
@@ -9207,7 +9997,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState___init__(struct __
  */
   __pyx_v_self->mu = __pyx_v_mu;
 
-  /* "pyearth/_knot_search.pyx":306
+  /* "pyearth/_knot_search.pyx":321
  *         self.lambda_ = lambda_
  *         self.mu = mu
  *         self.upsilon = upsilon             # <<<<<<<<<<<<<<
@@ -9216,7 +10006,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState___init__(struct __
  */
   __pyx_v_self->upsilon = __pyx_v_upsilon;
 
-  /* "pyearth/_knot_search.pyx":307
+  /* "pyearth/_knot_search.pyx":322
  *         self.mu = mu
  *         self.upsilon = upsilon
  *         self.phi = phi             # <<<<<<<<<<<<<<
@@ -9225,7 +10015,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState___init__(struct __
  */
   __pyx_v_self->phi = __pyx_v_phi;
 
-  /* "pyearth/_knot_search.pyx":308
+  /* "pyearth/_knot_search.pyx":323
  *         self.upsilon = upsilon
  *         self.phi = phi
  *         self.phi_next = phi_next             # <<<<<<<<<<<<<<
@@ -9234,7 +10024,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState___init__(struct __
  */
   __pyx_v_self->phi_next = __pyx_v_phi_next;
 
-  /* "pyearth/_knot_search.pyx":309
+  /* "pyearth/_knot_search.pyx":324
  *         self.phi = phi
  *         self.phi_next = phi_next
  *         self.ord_idx = ord_idx             # <<<<<<<<<<<<<<
@@ -9243,7 +10033,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState___init__(struct __
  */
   __pyx_v_self->ord_idx = __pyx_v_ord_idx;
 
-  /* "pyearth/_knot_search.pyx":310
+  /* "pyearth/_knot_search.pyx":325
  *         self.phi_next = phi_next
  *         self.ord_idx = ord_idx
  *         self.idx = idx             # <<<<<<<<<<<<<<
@@ -9252,7 +10042,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState___init__(struct __
  */
   __pyx_v_self->idx = __pyx_v_idx;
 
-  /* "pyearth/_knot_search.pyx":311
+  /* "pyearth/_knot_search.pyx":326
  *         self.ord_idx = ord_idx
  *         self.idx = idx
  *         self.zeta_squared = zeta_squared             # <<<<<<<<<<<<<<
@@ -9261,7 +10051,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState___init__(struct __
  */
   __pyx_v_self->zeta_squared = __pyx_v_zeta_squared;
 
-  /* "pyearth/_knot_search.pyx":299
+  /* "pyearth/_knot_search.pyx":314
  * #     INDEX_t idx
  * #     FLOAT_t zeta_squared
  *     def __init__(KnotSearchState self, FLOAT_t alpha, FLOAT_t beta, FLOAT_t lambda_,             # <<<<<<<<<<<<<<
@@ -9275,7 +10065,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState___init__(struct __
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":314
+/* "pyearth/_knot_search.pyx":329
  * 
  *     @classmethod
  *     def alloc(cls):             # <<<<<<<<<<<<<<
@@ -9305,7 +10095,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_15KnotSearchState_2alloc(PyTyp
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("alloc", 0);
 
-  /* "pyearth/_knot_search.pyx":315
+  /* "pyearth/_knot_search.pyx":330
  *     @classmethod
  *     def alloc(cls):
  *         return cls(0., 0., 0., 0., 0., 0., 0., 0, 0, 0.)             # <<<<<<<<<<<<<<
@@ -9313,13 +10103,13 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_15KnotSearchState_2alloc(PyTyp
  * @cython.final
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_v_cls), __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 315; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_v_cls), __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 330; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_knot_search.pyx":314
+  /* "pyearth/_knot_search.pyx":329
  * 
  *     @classmethod
  *     def alloc(cls):             # <<<<<<<<<<<<<<
@@ -9338,7 +10128,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_15KnotSearchState_2alloc(PyTyp
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":60
+/* "pyearth/_knot_search.pxd":63
  * @cython.final
  * cdef class KnotSearchState:
  *     cdef public FLOAT_t alpha             # <<<<<<<<<<<<<<
@@ -9368,7 +10158,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_15KnotSearchState_5alpha___get
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->alpha); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 60; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->alpha); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 63; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -9406,7 +10196,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_5alpha_2__set__(st
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 60; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 63; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->alpha = __pyx_t_1;
 
   /* function exit code */
@@ -9420,7 +10210,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_5alpha_2__set__(st
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":61
+/* "pyearth/_knot_search.pxd":64
  * cdef class KnotSearchState:
  *     cdef public FLOAT_t alpha
  *     cdef public FLOAT_t beta             # <<<<<<<<<<<<<<
@@ -9450,7 +10240,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_15KnotSearchState_4beta___get_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->beta); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 61; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->beta); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 64; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -9488,7 +10278,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_4beta_2__set__(str
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 61; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 64; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->beta = __pyx_t_1;
 
   /* function exit code */
@@ -9502,7 +10292,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_4beta_2__set__(str
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":62
+/* "pyearth/_knot_search.pxd":65
  *     cdef public FLOAT_t alpha
  *     cdef public FLOAT_t beta
  *     cdef public FLOAT_t lambda_             # <<<<<<<<<<<<<<
@@ -9532,7 +10322,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_15KnotSearchState_7lambda____g
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->lambda_); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 62; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->lambda_); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 65; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -9570,7 +10360,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_7lambda__2__set__(
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 62; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 65; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->lambda_ = __pyx_t_1;
 
   /* function exit code */
@@ -9584,7 +10374,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_7lambda__2__set__(
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":63
+/* "pyearth/_knot_search.pxd":66
  *     cdef public FLOAT_t beta
  *     cdef public FLOAT_t lambda_
  *     cdef public FLOAT_t mu             # <<<<<<<<<<<<<<
@@ -9614,7 +10404,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_15KnotSearchState_2mu___get__(
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->mu); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 63; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->mu); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 66; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -9652,7 +10442,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_2mu_2__set__(struc
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 63; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 66; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->mu = __pyx_t_1;
 
   /* function exit code */
@@ -9666,7 +10456,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_2mu_2__set__(struc
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":64
+/* "pyearth/_knot_search.pxd":67
  *     cdef public FLOAT_t lambda_
  *     cdef public FLOAT_t mu
  *     cdef public FLOAT_t upsilon             # <<<<<<<<<<<<<<
@@ -9696,7 +10486,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_15KnotSearchState_7upsilon___g
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->upsilon); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 64; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->upsilon); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -9734,7 +10524,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_7upsilon_2__set__(
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 64; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->upsilon = __pyx_t_1;
 
   /* function exit code */
@@ -9748,7 +10538,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_7upsilon_2__set__(
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":65
+/* "pyearth/_knot_search.pxd":68
  *     cdef public FLOAT_t mu
  *     cdef public FLOAT_t upsilon
  *     cdef public FLOAT_t phi             # <<<<<<<<<<<<<<
@@ -9778,7 +10568,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_15KnotSearchState_3phi___get__
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->phi); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 65; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->phi); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -9816,7 +10606,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_3phi_2__set__(stru
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 65; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->phi = __pyx_t_1;
 
   /* function exit code */
@@ -9830,7 +10620,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_3phi_2__set__(stru
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":66
+/* "pyearth/_knot_search.pxd":69
  *     cdef public FLOAT_t upsilon
  *     cdef public FLOAT_t phi
  *     cdef public FLOAT_t phi_next             # <<<<<<<<<<<<<<
@@ -9860,7 +10650,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_15KnotSearchState_8phi_next___
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->phi_next); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 66; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->phi_next); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -9898,7 +10688,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_8phi_next_2__set__
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 66; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->phi_next = __pyx_t_1;
 
   /* function exit code */
@@ -9912,7 +10702,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_8phi_next_2__set__
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":67
+/* "pyearth/_knot_search.pxd":70
  *     cdef public FLOAT_t phi
  *     cdef public FLOAT_t phi_next
  *     cdef public INDEX_t ord_idx             # <<<<<<<<<<<<<<
@@ -9942,7 +10732,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_15KnotSearchState_7ord_idx___g
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->ord_idx); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->ord_idx); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 70; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -9980,7 +10770,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_7ord_idx_2__set__(
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 70; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->ord_idx = __pyx_t_1;
 
   /* function exit code */
@@ -9994,7 +10784,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_7ord_idx_2__set__(
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":68
+/* "pyearth/_knot_search.pxd":71
  *     cdef public FLOAT_t phi_next
  *     cdef public INDEX_t ord_idx
  *     cdef public INDEX_t idx             # <<<<<<<<<<<<<<
@@ -10024,7 +10814,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_15KnotSearchState_3idx___get__
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->idx); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->idx); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 71; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -10062,7 +10852,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_3idx_2__set__(stru
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 71; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->idx = __pyx_t_1;
 
   /* function exit code */
@@ -10076,7 +10866,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_3idx_2__set__(stru
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":69
+/* "pyearth/_knot_search.pxd":72
  *     cdef public INDEX_t ord_idx
  *     cdef public INDEX_t idx
  *     cdef public FLOAT_t zeta_squared             # <<<<<<<<<<<<<<
@@ -10106,7 +10896,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_15KnotSearchState_12zeta_squar
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->zeta_squared); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->zeta_squared); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 72; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -10144,7 +10934,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_12zeta_squared_2__
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 72; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->zeta_squared = __pyx_t_1;
 
   /* function exit code */
@@ -10158,7 +10948,7 @@ static int __pyx_pf_7pyearth_12_knot_search_15KnotSearchState_12zeta_squared_2__
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":319
+/* "pyearth/_knot_search.pyx":334
  * @cython.final
  * cdef class KnotSearchWorkingData:
  *     def __init__(KnotSearchWorkingData self, FLOAT_t[:] gamma, FLOAT_t[:] kappa,             # <<<<<<<<<<<<<<
@@ -10205,31 +10995,31 @@ static int __pyx_pw_7pyearth_12_knot_search_21KnotSearchWorkingData_1__init__(Py
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_kappa)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 319; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_delta_kappa)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 319; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_chi)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 319; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_psi)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 4); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 319; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 4); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  5:
         if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_state)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 5); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 319; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 5); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 319; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 6) {
       goto __pyx_L5_argtuple_error;
@@ -10241,22 +11031,22 @@ static int __pyx_pw_7pyearth_12_knot_search_21KnotSearchWorkingData_1__init__(Py
       values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
       values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
     }
-    __pyx_v_gamma = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[0]); if (unlikely(!__pyx_v_gamma.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 319; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_kappa = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[1]); if (unlikely(!__pyx_v_kappa.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 319; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_delta_kappa = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[2]); if (unlikely(!__pyx_v_delta_kappa.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 320; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_chi = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[3]); if (unlikely(!__pyx_v_chi.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 320; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_psi = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[4]); if (unlikely(!__pyx_v_psi.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 320; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_gamma = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[0]); if (unlikely(!__pyx_v_gamma.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_kappa = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[1]); if (unlikely(!__pyx_v_kappa.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_delta_kappa = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[2]); if (unlikely(!__pyx_v_delta_kappa.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 335; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_chi = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[3]); if (unlikely(!__pyx_v_chi.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 335; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_psi = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[4]); if (unlikely(!__pyx_v_psi.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 335; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
     __pyx_v_state = ((struct __pyx_obj_7pyearth_12_knot_search_KnotSearchState *)values[5]);
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 319; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._knot_search.KnotSearchWorkingData.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_state), __pyx_ptype_7pyearth_12_knot_search_KnotSearchState, 1, "state", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 321; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_state), __pyx_ptype_7pyearth_12_knot_search_KnotSearchState, 1, "state", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 336; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_r = __pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData___init__(((struct __pyx_obj_7pyearth_12_knot_search_KnotSearchWorkingData *)__pyx_v_self), __pyx_v_gamma, __pyx_v_kappa, __pyx_v_delta_kappa, __pyx_v_chi, __pyx_v_psi, __pyx_v_state);
 
   /* function exit code */
@@ -10273,7 +11063,7 @@ static int __pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData___init__(str
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "pyearth/_knot_search.pyx":322
+  /* "pyearth/_knot_search.pyx":337
  *                  FLOAT_t[:] delta_kappa, FLOAT_t[:] chi, FLOAT_t[:] psi,
  *                  KnotSearchState state):
  *         self.gamma = gamma             # <<<<<<<<<<<<<<
@@ -10284,7 +11074,7 @@ static int __pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData___init__(str
   __PYX_INC_MEMVIEW(&__pyx_v_gamma, 0);
   __pyx_v_self->gamma = __pyx_v_gamma;
 
-  /* "pyearth/_knot_search.pyx":323
+  /* "pyearth/_knot_search.pyx":338
  *                  KnotSearchState state):
  *         self.gamma = gamma
  *         self.kappa = kappa             # <<<<<<<<<<<<<<
@@ -10295,7 +11085,7 @@ static int __pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData___init__(str
   __PYX_INC_MEMVIEW(&__pyx_v_kappa, 0);
   __pyx_v_self->kappa = __pyx_v_kappa;
 
-  /* "pyearth/_knot_search.pyx":324
+  /* "pyearth/_knot_search.pyx":339
  *         self.gamma = gamma
  *         self.kappa = kappa
  *         self.delta_kappa = delta_kappa             # <<<<<<<<<<<<<<
@@ -10306,7 +11096,7 @@ static int __pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData___init__(str
   __PYX_INC_MEMVIEW(&__pyx_v_delta_kappa, 0);
   __pyx_v_self->delta_kappa = __pyx_v_delta_kappa;
 
-  /* "pyearth/_knot_search.pyx":325
+  /* "pyearth/_knot_search.pyx":340
  *         self.kappa = kappa
  *         self.delta_kappa = delta_kappa
  *         self.chi = chi             # <<<<<<<<<<<<<<
@@ -10317,7 +11107,7 @@ static int __pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData___init__(str
   __PYX_INC_MEMVIEW(&__pyx_v_chi, 0);
   __pyx_v_self->chi = __pyx_v_chi;
 
-  /* "pyearth/_knot_search.pyx":326
+  /* "pyearth/_knot_search.pyx":341
  *         self.delta_kappa = delta_kappa
  *         self.chi = chi
  *         self.psi = psi             # <<<<<<<<<<<<<<
@@ -10328,7 +11118,7 @@ static int __pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData___init__(str
   __PYX_INC_MEMVIEW(&__pyx_v_psi, 0);
   __pyx_v_self->psi = __pyx_v_psi;
 
-  /* "pyearth/_knot_search.pyx":327
+  /* "pyearth/_knot_search.pyx":342
  *         self.chi = chi
  *         self.psi = psi
  *         self.state = state             # <<<<<<<<<<<<<<
@@ -10341,7 +11131,7 @@ static int __pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData___init__(str
   __Pyx_DECREF(((PyObject *)__pyx_v_self->state));
   __pyx_v_self->state = __pyx_v_state;
 
-  /* "pyearth/_knot_search.pyx":319
+  /* "pyearth/_knot_search.pyx":334
  * @cython.final
  * cdef class KnotSearchWorkingData:
  *     def __init__(KnotSearchWorkingData self, FLOAT_t[:] gamma, FLOAT_t[:] kappa,             # <<<<<<<<<<<<<<
@@ -10360,7 +11150,7 @@ static int __pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData___init__(str
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":330
+/* "pyearth/_knot_search.pyx":345
  * 
  *     @classmethod
  *     def alloc(cls, int max_terms):             # <<<<<<<<<<<<<<
@@ -10379,7 +11169,7 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_21KnotSearchWorkingData_3alloc
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("alloc (wrapper)", 0);
   assert(__pyx_arg_max_terms); {
-    __pyx_v_max_terms = __Pyx_PyInt_As_int(__pyx_arg_max_terms); if (unlikely((__pyx_v_max_terms == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 330; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_max_terms = __Pyx_PyInt_As_int(__pyx_arg_max_terms); if (unlikely((__pyx_v_max_terms == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 345; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -10416,187 +11206,187 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData_2alloc
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("alloc", 0);
 
-  /* "pyearth/_knot_search.pyx":331
+  /* "pyearth/_knot_search.pyx":346
  *     @classmethod
  *     def alloc(cls, int max_terms):
  *         cdef FLOAT_t[:] gamma = np.empty(shape=max_terms, dtype=np.float)             # <<<<<<<<<<<<<<
  *         cdef FLOAT_t[:] kappa = np.empty(shape=max_terms, dtype=np.float)
  *         cdef FLOAT_t[:] delta_kappa = np.empty(shape=max_terms, dtype=np.float)
  */
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 331; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 331; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 331; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_max_terms); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 331; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_max_terms); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_shape, __pyx_t_3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 331; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_shape, __pyx_t_3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 331; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_float); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 331; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_float); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_dtype, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 331; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_dtype, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 331; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(__pyx_t_4);
-  if (unlikely(!__pyx_t_5.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 331; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_t_5.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_v_gamma = __pyx_t_5;
   __pyx_t_5.memview = NULL;
   __pyx_t_5.data = NULL;
 
-  /* "pyearth/_knot_search.pyx":332
+  /* "pyearth/_knot_search.pyx":347
  *     def alloc(cls, int max_terms):
  *         cdef FLOAT_t[:] gamma = np.empty(shape=max_terms, dtype=np.float)
  *         cdef FLOAT_t[:] kappa = np.empty(shape=max_terms, dtype=np.float)             # <<<<<<<<<<<<<<
  *         cdef FLOAT_t[:] delta_kappa = np.empty(shape=max_terms, dtype=np.float)
  *         cdef FLOAT_t[:] chi = np.empty(shape=max_terms, dtype=np.float)
  */
-  __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 332; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 347; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_empty); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 332; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_empty); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 347; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = PyDict_New(); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 332; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = PyDict_New(); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 347; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_max_terms); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 332; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_max_terms); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 347; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_shape, __pyx_t_2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 332; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_shape, __pyx_t_2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 347; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 332; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 347; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_float); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 332; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_float); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 347; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_t_3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 332; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_t_3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 347; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_4); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 332; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_4); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 347; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(__pyx_t_3);
-  if (unlikely(!__pyx_t_5.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 332; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_t_5.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 347; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_kappa = __pyx_t_5;
   __pyx_t_5.memview = NULL;
   __pyx_t_5.data = NULL;
 
-  /* "pyearth/_knot_search.pyx":333
+  /* "pyearth/_knot_search.pyx":348
  *         cdef FLOAT_t[:] gamma = np.empty(shape=max_terms, dtype=np.float)
  *         cdef FLOAT_t[:] kappa = np.empty(shape=max_terms, dtype=np.float)
  *         cdef FLOAT_t[:] delta_kappa = np.empty(shape=max_terms, dtype=np.float)             # <<<<<<<<<<<<<<
  *         cdef FLOAT_t[:] chi = np.empty(shape=max_terms, dtype=np.float)
  *         cdef FLOAT_t[:] psi = np.empty(shape=max_terms, dtype=np.float)
  */
-  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 348; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_empty); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_empty); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 348; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = PyDict_New(); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = PyDict_New(); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 348; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_max_terms); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_max_terms); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 348; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_shape, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_shape, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 348; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 348; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_float); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_float); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 348; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 348; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_empty_tuple, __pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_empty_tuple, __pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 348; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(__pyx_t_2);
-  if (unlikely(!__pyx_t_5.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_t_5.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 348; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_delta_kappa = __pyx_t_5;
   __pyx_t_5.memview = NULL;
   __pyx_t_5.data = NULL;
 
-  /* "pyearth/_knot_search.pyx":334
+  /* "pyearth/_knot_search.pyx":349
  *         cdef FLOAT_t[:] kappa = np.empty(shape=max_terms, dtype=np.float)
  *         cdef FLOAT_t[:] delta_kappa = np.empty(shape=max_terms, dtype=np.float)
  *         cdef FLOAT_t[:] chi = np.empty(shape=max_terms, dtype=np.float)             # <<<<<<<<<<<<<<
  *         cdef FLOAT_t[:] psi = np.empty(shape=max_terms, dtype=np.float)
  *         cdef INDEX_t q = 0
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 349; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_empty); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_empty); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 349; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyDict_New(); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = PyDict_New(); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 349; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_max_terms); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_max_terms); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 349; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_shape, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_shape, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 349; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 349; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_float); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_float); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 349; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_dtype, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_dtype, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 349; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_empty_tuple, __pyx_t_2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_empty_tuple, __pyx_t_2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 349; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(__pyx_t_1);
-  if (unlikely(!__pyx_t_5.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_t_5.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 349; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_chi = __pyx_t_5;
   __pyx_t_5.memview = NULL;
   __pyx_t_5.data = NULL;
 
-  /* "pyearth/_knot_search.pyx":335
+  /* "pyearth/_knot_search.pyx":350
  *         cdef FLOAT_t[:] delta_kappa = np.empty(shape=max_terms, dtype=np.float)
  *         cdef FLOAT_t[:] chi = np.empty(shape=max_terms, dtype=np.float)
  *         cdef FLOAT_t[:] psi = np.empty(shape=max_terms, dtype=np.float)             # <<<<<<<<<<<<<<
  *         cdef INDEX_t q = 0
  *         cdef KnotSearchState state = KnotSearchState.alloc()
  */
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 335; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 350; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 335; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_empty); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 350; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 335; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 350; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_max_terms); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 335; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_max_terms); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 350; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_shape, __pyx_t_3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 335; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_shape, __pyx_t_3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 350; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 335; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 350; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_float); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 335; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_float); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 350; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_dtype, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 335; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_dtype, __pyx_t_4) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 350; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 335; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 350; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(__pyx_t_4);
-  if (unlikely(!__pyx_t_5.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 335; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_t_5.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 350; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_v_psi = __pyx_t_5;
   __pyx_t_5.memview = NULL;
   __pyx_t_5.data = NULL;
 
-  /* "pyearth/_knot_search.pyx":336
+  /* "pyearth/_knot_search.pyx":351
  *         cdef FLOAT_t[:] chi = np.empty(shape=max_terms, dtype=np.float)
  *         cdef FLOAT_t[:] psi = np.empty(shape=max_terms, dtype=np.float)
  *         cdef INDEX_t q = 0             # <<<<<<<<<<<<<<
@@ -10605,14 +11395,14 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData_2alloc
  */
   __pyx_v_q = 0;
 
-  /* "pyearth/_knot_search.pyx":337
+  /* "pyearth/_knot_search.pyx":352
  *         cdef FLOAT_t[:] psi = np.empty(shape=max_terms, dtype=np.float)
  *         cdef INDEX_t q = 0
  *         cdef KnotSearchState state = KnotSearchState.alloc()             # <<<<<<<<<<<<<<
  *         return cls(gamma, kappa, delta_kappa, chi, psi, state)
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchState), __pyx_n_s_alloc); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 337; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchState), __pyx_n_s_alloc); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 352; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_1))) {
@@ -10625,18 +11415,18 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData_2alloc
     }
   }
   if (__pyx_t_2) {
-    __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 337; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 352; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   } else {
-    __pyx_t_4 = __Pyx_PyObject_CallNoArg(__pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 337; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyObject_CallNoArg(__pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 352; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_7pyearth_12_knot_search_KnotSearchState))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 337; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_7pyearth_12_knot_search_KnotSearchState))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 352; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_state = ((struct __pyx_obj_7pyearth_12_knot_search_KnotSearchState *)__pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "pyearth/_knot_search.pyx":338
+  /* "pyearth/_knot_search.pyx":353
  *         cdef INDEX_t q = 0
  *         cdef KnotSearchState state = KnotSearchState.alloc()
  *         return cls(gamma, kappa, delta_kappa, chi, psi, state)             # <<<<<<<<<<<<<<
@@ -10644,17 +11434,17 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData_2alloc
  * @cython.final
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_4 = __pyx_memoryview_fromslice(__pyx_v_gamma, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 338; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __pyx_memoryview_fromslice(__pyx_v_gamma, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 353; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_kappa, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 338; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_kappa, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 353; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_delta_kappa, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 338; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_delta_kappa, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 353; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_chi, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 338; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_chi, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 353; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_6 = __pyx_memoryview_fromslice(__pyx_v_psi, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 338; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = __pyx_memoryview_fromslice(__pyx_v_psi, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 353; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_7 = PyTuple_New(6); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 338; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_7 = PyTuple_New(6); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 353; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_GIVEREF(__pyx_t_4);
   PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_4);
@@ -10674,14 +11464,14 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData_2alloc
   __pyx_t_2 = 0;
   __pyx_t_3 = 0;
   __pyx_t_6 = 0;
-  __pyx_t_6 = __Pyx_PyObject_Call(((PyObject *)__pyx_v_cls), __pyx_t_7, NULL); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 338; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = __Pyx_PyObject_Call(((PyObject *)__pyx_v_cls), __pyx_t_7, NULL); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 353; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __pyx_r = __pyx_t_6;
   __pyx_t_6 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_knot_search.pyx":330
+  /* "pyearth/_knot_search.pyx":345
  * 
  *     @classmethod
  *     def alloc(cls, int max_terms):             # <<<<<<<<<<<<<<
@@ -10712,7 +11502,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData_2alloc
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":73
+/* "pyearth/_knot_search.pxd":76
  * @cython.final
  * cdef class KnotSearchWorkingData:
  *     cdef readonly FLOAT_t[:] gamma             # <<<<<<<<<<<<<<
@@ -10742,8 +11532,8 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData_5gamma
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_self->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->gamma, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 76; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->gamma, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 76; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -10760,7 +11550,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData_5gamma
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":74
+/* "pyearth/_knot_search.pxd":77
  * cdef class KnotSearchWorkingData:
  *     cdef readonly FLOAT_t[:] gamma
  *     cdef readonly FLOAT_t[:] kappa             # <<<<<<<<<<<<<<
@@ -10790,8 +11580,8 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData_5kappa
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_self->kappa.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 74; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->kappa, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 74; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->kappa.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 77; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->kappa, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 77; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -10808,7 +11598,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData_5kappa
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":75
+/* "pyearth/_knot_search.pxd":78
  *     cdef readonly FLOAT_t[:] gamma
  *     cdef readonly FLOAT_t[:] kappa
  *     cdef readonly FLOAT_t[:] delta_kappa             # <<<<<<<<<<<<<<
@@ -10838,8 +11628,8 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData_11delt
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_self->delta_kappa.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 75; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->delta_kappa, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 75; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->delta_kappa.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 78; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->delta_kappa, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 78; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -10856,7 +11646,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData_11delt
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":76
+/* "pyearth/_knot_search.pxd":79
  *     cdef readonly FLOAT_t[:] kappa
  *     cdef readonly FLOAT_t[:] delta_kappa
  *     cdef readonly FLOAT_t[:] chi             # <<<<<<<<<<<<<<
@@ -10886,8 +11676,8 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData_3chi__
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_self->chi.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 76; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->chi, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 76; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->chi.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 79; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->chi, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 79; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -10904,7 +11694,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData_3chi__
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":77
+/* "pyearth/_knot_search.pxd":80
  *     cdef readonly FLOAT_t[:] delta_kappa
  *     cdef readonly FLOAT_t[:] chi
  *     cdef readonly FLOAT_t[:] psi             # <<<<<<<<<<<<<<
@@ -10934,8 +11724,8 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData_3psi__
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_self->psi.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 77; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->psi, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 77; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_self->psi.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[1]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_self->psi, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -10952,7 +11742,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_21KnotSearchWorkingData_3psi__
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":342
+/* "pyearth/_knot_search.pyx":357
  * @cython.final
  * cdef class KnotSearchData:
  *     def __init__(KnotSearchData self, KnotSearchReadOnlyData constant,             # <<<<<<<<<<<<<<
@@ -10993,16 +11783,16 @@ static int __pyx_pw_7pyearth_12_knot_search_14KnotSearchData_1__init__(PyObject 
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_workings)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 342; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 357; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_q)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 342; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 357; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 342; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 357; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -11013,18 +11803,18 @@ static int __pyx_pw_7pyearth_12_knot_search_14KnotSearchData_1__init__(PyObject 
     }
     __pyx_v_constant = ((struct __pyx_obj_7pyearth_12_knot_search_KnotSearchReadOnlyData *)values[0]);
     __pyx_v_workings = ((PyObject*)values[1]);
-    __pyx_v_q = __Pyx_PyInt_As_npy_ulonglong(values[2]); if (unlikely((__pyx_v_q == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 343; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_q = __Pyx_PyInt_As_npy_ulonglong(values[2]); if (unlikely((__pyx_v_q == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 358; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 342; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 357; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._knot_search.KnotSearchData.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_constant), __pyx_ptype_7pyearth_12_knot_search_KnotSearchReadOnlyData, 1, "constant", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 342; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_workings), (&PyList_Type), 1, "workings", 1))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 343; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_constant), __pyx_ptype_7pyearth_12_knot_search_KnotSearchReadOnlyData, 1, "constant", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 357; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_workings), (&PyList_Type), 1, "workings", 1))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 358; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_r = __pyx_pf_7pyearth_12_knot_search_14KnotSearchData___init__(((struct __pyx_obj_7pyearth_12_knot_search_KnotSearchData *)__pyx_v_self), __pyx_v_constant, __pyx_v_workings, __pyx_v_q);
 
   /* function exit code */
@@ -11041,7 +11831,7 @@ static int __pyx_pf_7pyearth_12_knot_search_14KnotSearchData___init__(struct __p
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "pyearth/_knot_search.pyx":344
+  /* "pyearth/_knot_search.pyx":359
  *     def __init__(KnotSearchData self, KnotSearchReadOnlyData constant,
  *                  list workings, INDEX_t q):
  *         self.constant = constant             # <<<<<<<<<<<<<<
@@ -11054,7 +11844,7 @@ static int __pyx_pf_7pyearth_12_knot_search_14KnotSearchData___init__(struct __p
   __Pyx_DECREF(((PyObject *)__pyx_v_self->constant));
   __pyx_v_self->constant = __pyx_v_constant;
 
-  /* "pyearth/_knot_search.pyx":345
+  /* "pyearth/_knot_search.pyx":360
  *                  list workings, INDEX_t q):
  *         self.constant = constant
  *         self.workings = workings             # <<<<<<<<<<<<<<
@@ -11067,7 +11857,7 @@ static int __pyx_pf_7pyearth_12_knot_search_14KnotSearchData___init__(struct __p
   __Pyx_DECREF(__pyx_v_self->workings);
   __pyx_v_self->workings = __pyx_v_workings;
 
-  /* "pyearth/_knot_search.pyx":346
+  /* "pyearth/_knot_search.pyx":361
  *         self.constant = constant
  *         self.workings = workings
  *         self.q = q             # <<<<<<<<<<<<<<
@@ -11076,7 +11866,7 @@ static int __pyx_pf_7pyearth_12_knot_search_14KnotSearchData___init__(struct __p
  */
   __pyx_v_self->q = __pyx_v_q;
 
-  /* "pyearth/_knot_search.pyx":342
+  /* "pyearth/_knot_search.pyx":357
  * @cython.final
  * cdef class KnotSearchData:
  *     def __init__(KnotSearchData self, KnotSearchReadOnlyData constant,             # <<<<<<<<<<<<<<
@@ -11090,7 +11880,7 @@ static int __pyx_pf_7pyearth_12_knot_search_14KnotSearchData___init__(struct __p
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":82
+/* "pyearth/_knot_search.pxd":85
  * @cython.final
  * cdef class KnotSearchData:
  *     cdef readonly KnotSearchReadOnlyData constant             # <<<<<<<<<<<<<<
@@ -11127,7 +11917,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_14KnotSearchData_8constant___g
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":83
+/* "pyearth/_knot_search.pxd":86
  * cdef class KnotSearchData:
  *     cdef readonly KnotSearchReadOnlyData constant
  *     cdef readonly list workings             # <<<<<<<<<<<<<<
@@ -11164,7 +11954,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_14KnotSearchData_8workings___g
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pxd":84
+/* "pyearth/_knot_search.pxd":87
  *     cdef readonly KnotSearchReadOnlyData constant
  *     cdef readonly list workings
  *     cdef public INDEX_t q             # <<<<<<<<<<<<<<
@@ -11194,7 +11984,7 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_14KnotSearchData_1q___get__(st
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->q); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->q); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -11232,7 +12022,7 @@ static int __pyx_pf_7pyearth_12_knot_search_14KnotSearchData_1q_2__set__(struct 
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_value); if (unlikely((__pyx_t_1 == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[1]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->q = __pyx_t_1;
 
   /* function exit code */
@@ -11246,7 +12036,7 @@ static int __pyx_pf_7pyearth_12_knot_search_14KnotSearchData_1q_2__set__(struct 
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":348
+/* "pyearth/_knot_search.pyx":363
  *         self.q = q
  * 
  * cdef dot(FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q):             # <<<<<<<<<<<<<<
@@ -11269,7 +12059,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_dot(__Pyx_memviewslice __pyx_v_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("dot", 0);
 
-  /* "pyearth/_knot_search.pyx":349
+  /* "pyearth/_knot_search.pyx":364
  * 
  * cdef dot(FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q):
  *     cdef FLOAT_t result = 0.             # <<<<<<<<<<<<<<
@@ -11278,7 +12068,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_dot(__Pyx_memviewslice __pyx_v_
  */
   __pyx_v_result = 0.;
 
-  /* "pyearth/_knot_search.pyx":351
+  /* "pyearth/_knot_search.pyx":366
  *     cdef FLOAT_t result = 0.
  *     cdef INDEX_t i
  *     for i in range(q):             # <<<<<<<<<<<<<<
@@ -11289,7 +12079,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_dot(__Pyx_memviewslice __pyx_v_
   for (__pyx_t_2 = 0; __pyx_t_2 < __pyx_t_1; __pyx_t_2+=1) {
     __pyx_v_i = __pyx_t_2;
 
-    /* "pyearth/_knot_search.pyx":352
+    /* "pyearth/_knot_search.pyx":367
  *     cdef INDEX_t i
  *     for i in range(q):
  *         result += x1[i] * x2[i]             # <<<<<<<<<<<<<<
@@ -11301,7 +12091,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_dot(__Pyx_memviewslice __pyx_v_
     __pyx_v_result = (__pyx_v_result + ((*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_x1.data + __pyx_t_3 * __pyx_v_x1.strides[0]) ))) * (*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_x2.data + __pyx_t_4 * __pyx_v_x2.strides[0]) )))));
   }
 
-  /* "pyearth/_knot_search.pyx":353
+  /* "pyearth/_knot_search.pyx":368
  *     for i in range(q):
  *         result += x1[i] * x2[i]
  *     return result             # <<<<<<<<<<<<<<
@@ -11309,13 +12099,13 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_dot(__Pyx_memviewslice __pyx_v_
  * cdef w2dot(FLOAT_t[:] w, FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_5 = PyFloat_FromDouble(__pyx_v_result); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 353; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = PyFloat_FromDouble(__pyx_v_result); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 368; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_r = __pyx_t_5;
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_knot_search.pyx":348
+  /* "pyearth/_knot_search.pyx":363
  *         self.q = q
  * 
  * cdef dot(FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q):             # <<<<<<<<<<<<<<
@@ -11334,7 +12124,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_dot(__Pyx_memviewslice __pyx_v_
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":355
+/* "pyearth/_knot_search.pyx":370
  *     return result
  * 
  * cdef w2dot(FLOAT_t[:] w, FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q):             # <<<<<<<<<<<<<<
@@ -11358,7 +12148,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_w2dot(__Pyx_memviewslice __pyx_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("w2dot", 0);
 
-  /* "pyearth/_knot_search.pyx":356
+  /* "pyearth/_knot_search.pyx":371
  * 
  * cdef w2dot(FLOAT_t[:] w, FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q):
  *     cdef FLOAT_t result = 0.             # <<<<<<<<<<<<<<
@@ -11367,7 +12157,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_w2dot(__Pyx_memviewslice __pyx_
  */
   __pyx_v_result = 0.;
 
-  /* "pyearth/_knot_search.pyx":358
+  /* "pyearth/_knot_search.pyx":373
  *     cdef FLOAT_t result = 0.
  *     cdef INDEX_t i
  *     for i in range(q):             # <<<<<<<<<<<<<<
@@ -11378,7 +12168,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_w2dot(__Pyx_memviewslice __pyx_
   for (__pyx_t_2 = 0; __pyx_t_2 < __pyx_t_1; __pyx_t_2+=1) {
     __pyx_v_i = __pyx_t_2;
 
-    /* "pyearth/_knot_search.pyx":359
+    /* "pyearth/_knot_search.pyx":374
  *     cdef INDEX_t i
  *     for i in range(q):
  *         result += (w[i] ** 2) * x1[i] * x2[i]             # <<<<<<<<<<<<<<
@@ -11391,7 +12181,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_w2dot(__Pyx_memviewslice __pyx_
     __pyx_v_result = (__pyx_v_result + ((pow((*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_w.data + __pyx_t_3 * __pyx_v_w.strides[0]) ))), 2.0) * (*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_x1.data + __pyx_t_4 * __pyx_v_x1.strides[0]) )))) * (*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_x2.data + __pyx_t_5 * __pyx_v_x2.strides[0]) )))));
   }
 
-  /* "pyearth/_knot_search.pyx":360
+  /* "pyearth/_knot_search.pyx":375
  *     for i in range(q):
  *         result += (w[i] ** 2) * x1[i] * x2[i]
  *     return result             # <<<<<<<<<<<<<<
@@ -11399,13 +12189,13 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_w2dot(__Pyx_memviewslice __pyx_
  * cdef wdot(FLOAT_t[:] w, FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_result); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 360; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_result); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 375; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_6);
   __pyx_r = __pyx_t_6;
   __pyx_t_6 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_knot_search.pyx":355
+  /* "pyearth/_knot_search.pyx":370
  *     return result
  * 
  * cdef w2dot(FLOAT_t[:] w, FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q):             # <<<<<<<<<<<<<<
@@ -11424,7 +12214,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_w2dot(__Pyx_memviewslice __pyx_
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":362
+/* "pyearth/_knot_search.pyx":377
  *     return result
  * 
  * cdef wdot(FLOAT_t[:] w, FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q):             # <<<<<<<<<<<<<<
@@ -11448,7 +12238,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_wdot(__Pyx_memviewslice __pyx_v
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("wdot", 0);
 
-  /* "pyearth/_knot_search.pyx":363
+  /* "pyearth/_knot_search.pyx":378
  * 
  * cdef wdot(FLOAT_t[:] w, FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q):
  *     cdef FLOAT_t result = 0.             # <<<<<<<<<<<<<<
@@ -11457,7 +12247,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_wdot(__Pyx_memviewslice __pyx_v
  */
   __pyx_v_result = 0.;
 
-  /* "pyearth/_knot_search.pyx":365
+  /* "pyearth/_knot_search.pyx":380
  *     cdef FLOAT_t result = 0.
  *     cdef INDEX_t i
  *     for i in range(q):             # <<<<<<<<<<<<<<
@@ -11468,7 +12258,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_wdot(__Pyx_memviewslice __pyx_v
   for (__pyx_t_2 = 0; __pyx_t_2 < __pyx_t_1; __pyx_t_2+=1) {
     __pyx_v_i = __pyx_t_2;
 
-    /* "pyearth/_knot_search.pyx":366
+    /* "pyearth/_knot_search.pyx":381
  *     cdef INDEX_t i
  *     for i in range(q):
  *         result += w[i] * x1[i] * x2[i]             # <<<<<<<<<<<<<<
@@ -11481,7 +12271,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_wdot(__Pyx_memviewslice __pyx_v
     __pyx_v_result = (__pyx_v_result + (((*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_w.data + __pyx_t_3 * __pyx_v_w.strides[0]) ))) * (*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_x1.data + __pyx_t_4 * __pyx_v_x1.strides[0]) )))) * (*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_x2.data + __pyx_t_5 * __pyx_v_x2.strides[0]) )))));
   }
 
-  /* "pyearth/_knot_search.pyx":367
+  /* "pyearth/_knot_search.pyx":382
  *     for i in range(q):
  *         result += w[i] * x1[i] * x2[i]
  *     return result             # <<<<<<<<<<<<<<
@@ -11489,13 +12279,13 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_wdot(__Pyx_memviewslice __pyx_v
  * @cython.profile(False)
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_result); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 367; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_result); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 382; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_6);
   __pyx_r = __pyx_t_6;
   __pyx_t_6 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_knot_search.pyx":362
+  /* "pyearth/_knot_search.pyx":377
  *     return result
  * 
  * cdef wdot(FLOAT_t[:] w, FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q):             # <<<<<<<<<<<<<<
@@ -11514,7 +12304,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_wdot(__Pyx_memviewslice __pyx_v
   return __pyx_r;
 }
 
-/* "pyearth/_knot_search.pyx":370
+/* "pyearth/_knot_search.pyx":385
  * 
  * @cython.profile(False)
  * cdef inline void fast_update(PredictorDependentData predictor, SingleOutcomeDependentData outcome,             # <<<<<<<<<<<<<<
@@ -11534,6 +12324,10 @@ static CYTHON_INLINE void __pyx_f_7pyearth_12_knot_search_fast_update(struct __p
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_delta_lambda;
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_delta_mu;
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_delta_upsilon;
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_gamma_squared;
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_theta_gamma;
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_zeta_epsilon;
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_tol;
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_pidx;
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_xidx;
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_widx;
@@ -11572,19 +12366,17 @@ static CYTHON_INLINE void __pyx_f_7pyearth_12_knot_search_fast_update(struct __p
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_23;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_24;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_25;
-  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_26;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_27;
-  PyObject *__pyx_t_28 = NULL;
-  PyObject *__pyx_t_29 = NULL;
-  PyObject *__pyx_t_30 = NULL;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_31;
-  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_32;
+  PyObject *__pyx_t_26 = NULL;
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_27;
+  int __pyx_t_28;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_29;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_30;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("fast_update", 0);
 
-  /* "pyearth/_knot_search.pyx":383
+  /* "pyearth/_knot_search.pyx":398
  *     cdef FLOAT_t epsilon_squared
  *     cdef INDEX_t idx, j
  *     cdef FLOAT_t nu = 0.             # <<<<<<<<<<<<<<
@@ -11593,7 +12385,7 @@ static CYTHON_INLINE void __pyx_f_7pyearth_12_knot_search_fast_update(struct __p
  */
   __pyx_v_nu = 0.;
 
-  /* "pyearth/_knot_search.pyx":384
+  /* "pyearth/_knot_search.pyx":399
  *     cdef INDEX_t idx, j
  *     cdef FLOAT_t nu = 0.
  *     cdef FLOAT_t xi = 0.             # <<<<<<<<<<<<<<
@@ -11602,7 +12394,7 @@ static CYTHON_INLINE void __pyx_f_7pyearth_12_knot_search_fast_update(struct __p
  */
   __pyx_v_xi = 0.;
 
-  /* "pyearth/_knot_search.pyx":385
+  /* "pyearth/_knot_search.pyx":400
  *     cdef FLOAT_t nu = 0.
  *     cdef FLOAT_t xi = 0.
  *     cdef FLOAT_t rho = 0.             # <<<<<<<<<<<<<<
@@ -11611,7 +12403,7 @@ static CYTHON_INLINE void __pyx_f_7pyearth_12_knot_search_fast_update(struct __p
  */
   __pyx_v_rho = 0.;
 
-  /* "pyearth/_knot_search.pyx":386
+  /* "pyearth/_knot_search.pyx":401
  *     cdef FLOAT_t xi = 0.
  *     cdef FLOAT_t rho = 0.
  *     cdef FLOAT_t sigma = 0.             # <<<<<<<<<<<<<<
@@ -11620,7 +12412,7 @@ static CYTHON_INLINE void __pyx_f_7pyearth_12_knot_search_fast_update(struct __p
  */
   __pyx_v_sigma = 0.;
 
-  /* "pyearth/_knot_search.pyx":387
+  /* "pyearth/_knot_search.pyx":402
  *     cdef FLOAT_t rho = 0.
  *     cdef FLOAT_t sigma = 0.
  *     cdef FLOAT_t tau = 0.             # <<<<<<<<<<<<<<
@@ -11629,14 +12421,14 @@ static CYTHON_INLINE void __pyx_f_7pyearth_12_knot_search_fast_update(struct __p
  */
   __pyx_v_tau = 0.;
 
-  /* "pyearth/_knot_search.pyx":388
+  /* "pyearth/_knot_search.pyx":403
  *     cdef FLOAT_t sigma = 0.
  *     cdef FLOAT_t tau = 0.
  *     working.chi[:q] = 0.             # <<<<<<<<<<<<<<
  *     working.psi[:q] = 0.
  *     working.delta_kappa[:q] = 0.
  */
-  if (unlikely(!__pyx_v_working->chi.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 388; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  if (unlikely(!__pyx_v_working->chi.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 403; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
   __pyx_t_1 = __pyx_v_working->chi;
   __PYX_INC_MEMVIEW(&__pyx_t_1, 1);
   __pyx_t_2.data = __pyx_t_1.data;
@@ -11657,7 +12449,7 @@ static CYTHON_INLINE void __pyx_f_7pyearth_12_knot_search_fast_update(struct __p
     0,
     1) < 0))
 {
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 388; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 403; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 }
 
 __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
@@ -11677,14 +12469,14 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
   }
   __PYX_XDEC_MEMVIEW(&__pyx_t_2, 1);
 
-  /* "pyearth/_knot_search.pyx":389
+  /* "pyearth/_knot_search.pyx":404
  *     cdef FLOAT_t tau = 0.
  *     working.chi[:q] = 0.
  *     working.psi[:q] = 0.             # <<<<<<<<<<<<<<
  *     working.delta_kappa[:q] = 0.
  *     cdef FLOAT_t delta_lambda = 0.
  */
-  if (unlikely(!__pyx_v_working->psi.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 389; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  if (unlikely(!__pyx_v_working->psi.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 404; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
   __pyx_t_1 = __pyx_v_working->psi;
   __PYX_INC_MEMVIEW(&__pyx_t_1, 1);
   __pyx_t_4.data = __pyx_t_1.data;
@@ -11705,7 +12497,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
     0,
     1) < 0))
 {
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 389; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 404; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 }
 
 __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
@@ -11725,14 +12517,14 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
   }
   __PYX_XDEC_MEMVIEW(&__pyx_t_4, 1);
 
-  /* "pyearth/_knot_search.pyx":390
+  /* "pyearth/_knot_search.pyx":405
  *     working.chi[:q] = 0.
  *     working.psi[:q] = 0.
  *     working.delta_kappa[:q] = 0.             # <<<<<<<<<<<<<<
  *     cdef FLOAT_t delta_lambda = 0.
  *     cdef FLOAT_t delta_mu = 0.
  */
-  if (unlikely(!__pyx_v_working->delta_kappa.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 390; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+  if (unlikely(!__pyx_v_working->delta_kappa.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 405; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
   __pyx_t_1 = __pyx_v_working->delta_kappa;
   __PYX_INC_MEMVIEW(&__pyx_t_1, 1);
   __pyx_t_5.data = __pyx_t_1.data;
@@ -11753,7 +12545,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
     0,
     1) < 0))
 {
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 390; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 405; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 }
 
 __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
@@ -11773,7 +12565,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
   }
   __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
 
-  /* "pyearth/_knot_search.pyx":391
+  /* "pyearth/_knot_search.pyx":406
  *     working.psi[:q] = 0.
  *     working.delta_kappa[:q] = 0.
  *     cdef FLOAT_t delta_lambda = 0.             # <<<<<<<<<<<<<<
@@ -11782,25 +12574,34 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
   __pyx_v_delta_lambda = 0.;
 
-  /* "pyearth/_knot_search.pyx":392
+  /* "pyearth/_knot_search.pyx":407
  *     working.delta_kappa[:q] = 0.
  *     cdef FLOAT_t delta_lambda = 0.
  *     cdef FLOAT_t delta_mu = 0.             # <<<<<<<<<<<<<<
  *     cdef FLOAT_t delta_upsilon = 0.
- *     cdef FLOAT_t pidx, xidx, widx, yidx, qidx, delta_nu, \
+ *     cdef FLOAT_t gamma_squared
  */
   __pyx_v_delta_mu = 0.;
 
-  /* "pyearth/_knot_search.pyx":393
+  /* "pyearth/_knot_search.pyx":408
  *     cdef FLOAT_t delta_lambda = 0.
  *     cdef FLOAT_t delta_mu = 0.
  *     cdef FLOAT_t delta_upsilon = 0.             # <<<<<<<<<<<<<<
- *     cdef FLOAT_t pidx, xidx, widx, yidx, qidx, delta_nu, \
- *         delta_xi, delta_rho, delta_sigma, delta_tau, delta_psi, delta_chi
+ *     cdef FLOAT_t gamma_squared
+ *     cdef FLOAT_t theta_gamma
  */
   __pyx_v_delta_upsilon = 0.;
 
-  /* "pyearth/_knot_search.pyx":397
+  /* "pyearth/_knot_search.pyx":412
+ *     cdef FLOAT_t theta_gamma
+ *     cdef FLOAT_t zeta_epsilon
+ *     cdef FLOAT_t tol = 1e-5             # <<<<<<<<<<<<<<
+ *     cdef FLOAT_t pidx, xidx, widx, yidx, qidx, delta_nu, \
+ *         delta_xi, delta_rho, delta_sigma, delta_tau, delta_psi, delta_chi
+ */
+  __pyx_v_tol = 1e-5;
+
+  /* "pyearth/_knot_search.pyx":416
  *         delta_xi, delta_rho, delta_sigma, delta_tau, delta_psi, delta_chi
  * 
  *     while predictor.x[working.state.idx] > working.state.phi_next:             # <<<<<<<<<<<<<<
@@ -11808,12 +12609,12 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  *         pidx = p[idx]
  */
   while (1) {
-    if (unlikely(!__pyx_v_predictor->x.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 397; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_predictor->x.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 416; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_6 = __pyx_v_working->state->idx;
     __pyx_t_7 = (((*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_predictor->x.data + __pyx_t_6 * __pyx_v_predictor->x.strides[0]) ))) > __pyx_v_working->state->phi_next) != 0);
     if (!__pyx_t_7) break;
 
-    /* "pyearth/_knot_search.pyx":398
+    /* "pyearth/_knot_search.pyx":417
  * 
  *     while predictor.x[working.state.idx] > working.state.phi_next:
  *         idx = working.state.idx             # <<<<<<<<<<<<<<
@@ -11823,7 +12624,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
     __pyx_t_8 = __pyx_v_working->state->idx;
     __pyx_v_idx = __pyx_t_8;
 
-    /* "pyearth/_knot_search.pyx":399
+    /* "pyearth/_knot_search.pyx":418
  *     while predictor.x[working.state.idx] > working.state.phi_next:
  *         idx = working.state.idx
  *         pidx = p[idx]             # <<<<<<<<<<<<<<
@@ -11833,40 +12634,40 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
     __pyx_t_8 = __pyx_v_idx;
     __pyx_v_pidx = (*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_p.data + __pyx_t_8 * __pyx_v_p.strides[0]) )));
 
-    /* "pyearth/_knot_search.pyx":400
+    /* "pyearth/_knot_search.pyx":419
  *         idx = working.state.idx
  *         pidx = p[idx]
  *         xidx = predictor.x[idx]             # <<<<<<<<<<<<<<
  *         widx = outcome.weight.w[idx]
  *         yidx = outcome.y[idx]
  */
-    if (unlikely(!__pyx_v_predictor->x.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 400; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_predictor->x.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 419; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_9 = __pyx_v_idx;
     __pyx_v_xidx = (*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_predictor->x.data + __pyx_t_9 * __pyx_v_predictor->x.strides[0]) )));
 
-    /* "pyearth/_knot_search.pyx":401
+    /* "pyearth/_knot_search.pyx":420
  *         pidx = p[idx]
  *         xidx = predictor.x[idx]
  *         widx = outcome.weight.w[idx]             # <<<<<<<<<<<<<<
  *         yidx = outcome.y[idx]
  * 
  */
-    if (unlikely(!__pyx_v_outcome->weight->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 401; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_outcome->weight->w.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 420; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_10 = __pyx_v_idx;
     __pyx_v_widx = (*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_outcome->weight->w.data + __pyx_t_10 * __pyx_v_outcome->weight->w.strides[0]) )));
 
-    /* "pyearth/_knot_search.pyx":402
+    /* "pyearth/_knot_search.pyx":421
  *         xidx = predictor.x[idx]
  *         widx = outcome.weight.w[idx]
  *         yidx = outcome.y[idx]             # <<<<<<<<<<<<<<
  * 
  *         # In predictor.x[idx] is missing, p[idx] will be zeroed out for protection
  */
-    if (unlikely(!__pyx_v_outcome->y.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 402; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_outcome->y.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 421; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_11 = __pyx_v_idx;
     __pyx_v_yidx = (*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_outcome->y.data + __pyx_t_11 * __pyx_v_outcome->y.strides[0]) )));
 
-    /* "pyearth/_knot_search.pyx":407
+    /* "pyearth/_knot_search.pyx":426
  *         # (because there will be a present(x[idx]) factor in it)..
  *         # Skipping such indices prevents problems if x[idx] is a nan of some kind.
  *         if p[idx] != 0.:             # <<<<<<<<<<<<<<
@@ -11877,7 +12678,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
     __pyx_t_7 = (((*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_p.data + __pyx_t_12 * __pyx_v_p.strides[0]) ))) != 0.) != 0);
     if (__pyx_t_7) {
 
-      /* "pyearth/_knot_search.pyx":408
+      /* "pyearth/_knot_search.pyx":427
  *         # Skipping such indices prevents problems if x[idx] is a nan of some kind.
  *         if p[idx] != 0.:
  *             delta_nu = (widx ** 2) * (pidx ** 2)             # <<<<<<<<<<<<<<
@@ -11886,7 +12687,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
       __pyx_v_delta_nu = (pow(__pyx_v_widx, 2.0) * pow(__pyx_v_pidx, 2.0));
 
-      /* "pyearth/_knot_search.pyx":409
+      /* "pyearth/_knot_search.pyx":428
  *         if p[idx] != 0.:
  *             delta_nu = (widx ** 2) * (pidx ** 2)
  *             nu += delta_nu             # <<<<<<<<<<<<<<
@@ -11895,7 +12696,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
       __pyx_v_nu = (__pyx_v_nu + __pyx_v_delta_nu);
 
-      /* "pyearth/_knot_search.pyx":410
+      /* "pyearth/_knot_search.pyx":429
  *             delta_nu = (widx ** 2) * (pidx ** 2)
  *             nu += delta_nu
  *             delta_xi = delta_nu * xidx             # <<<<<<<<<<<<<<
@@ -11904,7 +12705,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
       __pyx_v_delta_xi = (__pyx_v_delta_nu * __pyx_v_xidx);
 
-      /* "pyearth/_knot_search.pyx":411
+      /* "pyearth/_knot_search.pyx":430
  *             nu += delta_nu
  *             delta_xi = delta_nu * xidx
  *             xi += delta_xi # (outcome.weight.w[idx] ** 2) * (p[idx] ** 2) * predictor.x[idx]             # <<<<<<<<<<<<<<
@@ -11913,7 +12714,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
       __pyx_v_xi = (__pyx_v_xi + __pyx_v_delta_xi);
 
-      /* "pyearth/_knot_search.pyx":412
+      /* "pyearth/_knot_search.pyx":431
  *             delta_xi = delta_nu * xidx
  *             xi += delta_xi # (outcome.weight.w[idx] ** 2) * (p[idx] ** 2) * predictor.x[idx]
  *             delta_rho = delta_xi * xidx             # <<<<<<<<<<<<<<
@@ -11922,7 +12723,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
       __pyx_v_delta_rho = (__pyx_v_delta_xi * __pyx_v_xidx);
 
-      /* "pyearth/_knot_search.pyx":413
+      /* "pyearth/_knot_search.pyx":432
  *             xi += delta_xi # (outcome.weight.w[idx] ** 2) * (p[idx] ** 2) * predictor.x[idx]
  *             delta_rho = delta_xi * xidx
  *             rho += delta_rho # (outcome.weight.w[idx] ** 2) * (p[idx] ** 2) * (predictor.x[idx] ** 2)             # <<<<<<<<<<<<<<
@@ -11931,7 +12732,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
       __pyx_v_rho = (__pyx_v_rho + __pyx_v_delta_rho);
 
-      /* "pyearth/_knot_search.pyx":414
+      /* "pyearth/_knot_search.pyx":433
  *             delta_rho = delta_xi * xidx
  *             rho += delta_rho # (outcome.weight.w[idx] ** 2) * (p[idx] ** 2) * (predictor.x[idx] ** 2)
  *             delta_tau = (widx ** 2) * yidx * pidx             # <<<<<<<<<<<<<<
@@ -11940,7 +12741,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
       __pyx_v_delta_tau = ((pow(__pyx_v_widx, 2.0) * __pyx_v_yidx) * __pyx_v_pidx);
 
-      /* "pyearth/_knot_search.pyx":415
+      /* "pyearth/_knot_search.pyx":434
  *             rho += delta_rho # (outcome.weight.w[idx] ** 2) * (p[idx] ** 2) * (predictor.x[idx] ** 2)
  *             delta_tau = (widx ** 2) * yidx * pidx
  *             tau += delta_tau             # <<<<<<<<<<<<<<
@@ -11949,7 +12750,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
       __pyx_v_tau = (__pyx_v_tau + __pyx_v_delta_tau);
 
-      /* "pyearth/_knot_search.pyx":416
+      /* "pyearth/_knot_search.pyx":435
  *             delta_tau = (widx ** 2) * yidx * pidx
  *             tau += delta_tau
  *             delta_sigma = delta_tau * xidx             # <<<<<<<<<<<<<<
@@ -11958,7 +12759,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
       __pyx_v_delta_sigma = (__pyx_v_delta_tau * __pyx_v_xidx);
 
-      /* "pyearth/_knot_search.pyx":417
+      /* "pyearth/_knot_search.pyx":436
  *             tau += delta_tau
  *             delta_sigma = delta_tau * xidx
  *             sigma += delta_sigma # (outcome.weight.w[idx] ** 2) * outcome.y[idx] * p[idx] * predictor.x[idx]             # <<<<<<<<<<<<<<
@@ -11967,7 +12768,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
       __pyx_v_sigma = (__pyx_v_sigma + __pyx_v_delta_sigma);
 
-      /* "pyearth/_knot_search.pyx":418
+      /* "pyearth/_knot_search.pyx":437
  *             delta_sigma = delta_tau * xidx
  *             sigma += delta_sigma # (outcome.weight.w[idx] ** 2) * outcome.y[idx] * p[idx] * predictor.x[idx]
  *             delta_lambda += delta_xi # (outcome.weight.w[idx] ** 2) * (p[idx] ** 2) * predictor.x[idx]             # <<<<<<<<<<<<<<
@@ -11976,7 +12777,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
       __pyx_v_delta_lambda = (__pyx_v_delta_lambda + __pyx_v_delta_xi);
 
-      /* "pyearth/_knot_search.pyx":419
+      /* "pyearth/_knot_search.pyx":438
  *             sigma += delta_sigma # (outcome.weight.w[idx] ** 2) * outcome.y[idx] * p[idx] * predictor.x[idx]
  *             delta_lambda += delta_xi # (outcome.weight.w[idx] ** 2) * (p[idx] ** 2) * predictor.x[idx]
  *             delta_mu += delta_nu #(outcome.weight.w[idx] ** 2) * (p[idx] ** 2)             # <<<<<<<<<<<<<<
@@ -11985,7 +12786,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
       __pyx_v_delta_mu = (__pyx_v_delta_mu + __pyx_v_delta_nu);
 
-      /* "pyearth/_knot_search.pyx":420
+      /* "pyearth/_knot_search.pyx":439
  *             delta_lambda += delta_xi # (outcome.weight.w[idx] ** 2) * (p[idx] ** 2) * predictor.x[idx]
  *             delta_mu += delta_nu #(outcome.weight.w[idx] ** 2) * (p[idx] ** 2)
  *             delta_upsilon += delta_tau # (outcome.weight.w[idx] ** 2) * outcome.y[idx] * p[idx]             # <<<<<<<<<<<<<<
@@ -11994,7 +12795,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
       __pyx_v_delta_upsilon = (__pyx_v_delta_upsilon + __pyx_v_delta_tau);
 
-      /* "pyearth/_knot_search.pyx":421
+      /* "pyearth/_knot_search.pyx":440
  *             delta_mu += delta_nu #(outcome.weight.w[idx] ** 2) * (p[idx] ** 2)
  *             delta_upsilon += delta_tau # (outcome.weight.w[idx] ** 2) * outcome.y[idx] * p[idx]
  *             for j in range(q):             # <<<<<<<<<<<<<<
@@ -12005,19 +12806,19 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
       for (__pyx_t_14 = 0; __pyx_t_14 < __pyx_t_13; __pyx_t_14+=1) {
         __pyx_v_j = __pyx_t_14;
 
-        /* "pyearth/_knot_search.pyx":422
+        /* "pyearth/_knot_search.pyx":441
  *             delta_upsilon += delta_tau # (outcome.weight.w[idx] ** 2) * outcome.y[idx] * p[idx]
  *             for j in range(q):
  *                 qidx = outcome.weight.Q_t[j,idx]             # <<<<<<<<<<<<<<
  *                 delta_psi = qidx * widx * pidx
  *                 delta_chi = delta_psi * xidx
  */
-        if (unlikely(!__pyx_v_outcome->weight->Q_t.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 422; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+        if (unlikely(!__pyx_v_outcome->weight->Q_t.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 441; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
         __pyx_t_15 = __pyx_v_j;
         __pyx_t_16 = __pyx_v_idx;
         __pyx_v_qidx = (*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_outcome->weight->Q_t.data + __pyx_t_15 * __pyx_v_outcome->weight->Q_t.strides[0]) ) + __pyx_t_16 * __pyx_v_outcome->weight->Q_t.strides[1]) )));
 
-        /* "pyearth/_knot_search.pyx":423
+        /* "pyearth/_knot_search.pyx":442
  *             for j in range(q):
  *                 qidx = outcome.weight.Q_t[j,idx]
  *                 delta_psi = qidx * widx * pidx             # <<<<<<<<<<<<<<
@@ -12026,7 +12827,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
         __pyx_v_delta_psi = ((__pyx_v_qidx * __pyx_v_widx) * __pyx_v_pidx);
 
-        /* "pyearth/_knot_search.pyx":424
+        /* "pyearth/_knot_search.pyx":443
  *                 qidx = outcome.weight.Q_t[j,idx]
  *                 delta_psi = qidx * widx * pidx
  *                 delta_chi = delta_psi * xidx             # <<<<<<<<<<<<<<
@@ -12035,41 +12836,41 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
         __pyx_v_delta_chi = (__pyx_v_delta_psi * __pyx_v_xidx);
 
-        /* "pyearth/_knot_search.pyx":425
+        /* "pyearth/_knot_search.pyx":444
  *                 delta_psi = qidx * widx * pidx
  *                 delta_chi = delta_psi * xidx
  *                 working.chi[j] += delta_chi # outcome.weight.Q_t[j,idx] * widx * pidx * xidx             # <<<<<<<<<<<<<<
  *                 working.psi[j] += delta_psi # outcome.weight.Q_t[j,idx] * outcome.weight.w[idx] * p[idx]
  *                 working.delta_kappa[j] += delta_psi # outcome.weight.Q_t[j,idx] * outcome.weight.w[idx] * p[idx]
  */
-        if (unlikely(!__pyx_v_working->chi.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 425; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+        if (unlikely(!__pyx_v_working->chi.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 444; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
         __pyx_t_17 = __pyx_v_j;
         *((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_working->chi.data + __pyx_t_17 * __pyx_v_working->chi.strides[0]) )) += __pyx_v_delta_chi;
 
-        /* "pyearth/_knot_search.pyx":426
+        /* "pyearth/_knot_search.pyx":445
  *                 delta_chi = delta_psi * xidx
  *                 working.chi[j] += delta_chi # outcome.weight.Q_t[j,idx] * widx * pidx * xidx
  *                 working.psi[j] += delta_psi # outcome.weight.Q_t[j,idx] * outcome.weight.w[idx] * p[idx]             # <<<<<<<<<<<<<<
  *                 working.delta_kappa[j] += delta_psi # outcome.weight.Q_t[j,idx] * outcome.weight.w[idx] * p[idx]
  * 
  */
-        if (unlikely(!__pyx_v_working->psi.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 426; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+        if (unlikely(!__pyx_v_working->psi.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 445; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
         __pyx_t_18 = __pyx_v_j;
         *((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_working->psi.data + __pyx_t_18 * __pyx_v_working->psi.strides[0]) )) += __pyx_v_delta_psi;
 
-        /* "pyearth/_knot_search.pyx":427
+        /* "pyearth/_knot_search.pyx":446
  *                 working.chi[j] += delta_chi # outcome.weight.Q_t[j,idx] * widx * pidx * xidx
  *                 working.psi[j] += delta_psi # outcome.weight.Q_t[j,idx] * outcome.weight.w[idx] * p[idx]
  *                 working.delta_kappa[j] += delta_psi # outcome.weight.Q_t[j,idx] * outcome.weight.w[idx] * p[idx]             # <<<<<<<<<<<<<<
  * 
  *         # Update idx for next iteration
  */
-        if (unlikely(!__pyx_v_working->delta_kappa.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 427; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+        if (unlikely(!__pyx_v_working->delta_kappa.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 446; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
         __pyx_t_19 = __pyx_v_j;
         *((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_working->delta_kappa.data + __pyx_t_19 * __pyx_v_working->delta_kappa.strides[0]) )) += __pyx_v_delta_psi;
       }
 
-      /* "pyearth/_knot_search.pyx":407
+      /* "pyearth/_knot_search.pyx":426
  *         # (because there will be a present(x[idx]) factor in it)..
  *         # Skipping such indices prevents problems if x[idx] is a nan of some kind.
  *         if p[idx] != 0.:             # <<<<<<<<<<<<<<
@@ -12078,7 +12879,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
     }
 
-    /* "pyearth/_knot_search.pyx":430
+    /* "pyearth/_knot_search.pyx":449
  * 
  *         # Update idx for next iteration
  *         working.state.ord_idx += 1             # <<<<<<<<<<<<<<
@@ -12090,7 +12891,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
     __pyx_t_20->ord_idx = (__pyx_t_20->ord_idx + 1);
     __Pyx_DECREF(((PyObject *)__pyx_t_20)); __pyx_t_20 = 0;
 
-    /* "pyearth/_knot_search.pyx":431
+    /* "pyearth/_knot_search.pyx":450
  *         # Update idx for next iteration
  *         working.state.ord_idx += 1
  *         if working.state.ord_idx >= m:             # <<<<<<<<<<<<<<
@@ -12100,7 +12901,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
     __pyx_t_7 = ((__pyx_v_working->state->ord_idx >= __pyx_v_m) != 0);
     if (__pyx_t_7) {
 
-      /* "pyearth/_knot_search.pyx":432
+      /* "pyearth/_knot_search.pyx":451
  *         working.state.ord_idx += 1
  *         if working.state.ord_idx >= m:
  *             break             # <<<<<<<<<<<<<<
@@ -12109,7 +12910,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
       goto __pyx_L4_break;
 
-      /* "pyearth/_knot_search.pyx":431
+      /* "pyearth/_knot_search.pyx":450
  *         # Update idx for next iteration
  *         working.state.ord_idx += 1
  *         if working.state.ord_idx >= m:             # <<<<<<<<<<<<<<
@@ -12118,20 +12919,20 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
     }
 
-    /* "pyearth/_knot_search.pyx":433
+    /* "pyearth/_knot_search.pyx":452
  *         if working.state.ord_idx >= m:
  *             break
  *         working.state.idx = predictor.order[working.state.ord_idx]             # <<<<<<<<<<<<<<
  * 
  *     # Update alpha, beta, and gamma
  */
-    if (unlikely(!__pyx_v_predictor->order.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 433; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_predictor->order.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 452; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_13 = __pyx_v_working->state->ord_idx;
     __pyx_v_working->state->idx = (*((__pyx_t_7pyearth_6_types_INT_t *) ( /* dim=0 */ (__pyx_v_predictor->order.data + __pyx_t_13 * __pyx_v_predictor->order.strides[0]) )));
   }
   __pyx_L4_break:;
 
-  /* "pyearth/_knot_search.pyx":436
+  /* "pyearth/_knot_search.pyx":455
  * 
  *     # Update alpha, beta, and gamma
  *     working.state.alpha += sigma - working.state.phi_next * tau + \             # <<<<<<<<<<<<<<
@@ -12141,7 +12942,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
   __Pyx_INCREF(((PyObject *)__pyx_v_working->state));
   __pyx_t_20 = __pyx_v_working->state;
 
-  /* "pyearth/_knot_search.pyx":437
+  /* "pyearth/_knot_search.pyx":456
  *     # Update alpha, beta, and gamma
  *     working.state.alpha += sigma - working.state.phi_next * tau + \
  *         (working.state.phi - working.state.phi_next) * working.state.upsilon             # <<<<<<<<<<<<<<
@@ -12151,7 +12952,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
   __pyx_t_20->alpha = (__pyx_t_20->alpha + ((__pyx_v_sigma - (__pyx_v_working->state->phi_next * __pyx_v_tau)) + ((__pyx_v_working->state->phi - __pyx_v_working->state->phi_next) * __pyx_v_working->state->upsilon)));
   __Pyx_DECREF(((PyObject *)__pyx_t_20)); __pyx_t_20 = 0;
 
-  /* "pyearth/_knot_search.pyx":438
+  /* "pyearth/_knot_search.pyx":457
  *     working.state.alpha += sigma - working.state.phi_next * tau + \
  *         (working.state.phi - working.state.phi_next) * working.state.upsilon
  *     working.state.beta += rho + (working.state.phi_next ** 2) * nu - 2 * working.state.phi_next * xi + \             # <<<<<<<<<<<<<<
@@ -12161,7 +12962,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
   __Pyx_INCREF(((PyObject *)__pyx_v_working->state));
   __pyx_t_20 = __pyx_v_working->state;
 
-  /* "pyearth/_knot_search.pyx":439
+  /* "pyearth/_knot_search.pyx":458
  *         (working.state.phi - working.state.phi_next) * working.state.upsilon
  *     working.state.beta += rho + (working.state.phi_next ** 2) * nu - 2 * working.state.phi_next * xi + \
  *         2 * (working.state.phi - working.state.phi_next) * working.state.lambda_ + \             # <<<<<<<<<<<<<<
@@ -12171,7 +12972,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
   __pyx_t_20->beta = (__pyx_t_20->beta + ((((__pyx_v_rho + (pow(__pyx_v_working->state->phi_next, 2.0) * __pyx_v_nu)) - ((2.0 * __pyx_v_working->state->phi_next) * __pyx_v_xi)) + ((2.0 * (__pyx_v_working->state->phi - __pyx_v_working->state->phi_next)) * __pyx_v_working->state->lambda_)) + ((pow(__pyx_v_working->state->phi_next, 2.0) - pow(__pyx_v_working->state->phi, 2.0)) * __pyx_v_working->state->mu)));
   __Pyx_DECREF(((PyObject *)__pyx_t_20)); __pyx_t_20 = 0;
 
-  /* "pyearth/_knot_search.pyx":441
+  /* "pyearth/_knot_search.pyx":460
  *         2 * (working.state.phi - working.state.phi_next) * working.state.lambda_ + \
  *         (working.state.phi_next ** 2 - working.state.phi ** 2) * working.state.mu
  *     for j in range(q):             # <<<<<<<<<<<<<<
@@ -12182,36 +12983,36 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
   for (__pyx_t_21 = 0; __pyx_t_21 < __pyx_t_14; __pyx_t_21+=1) {
     __pyx_v_j = __pyx_t_21;
 
-    /* "pyearth/_knot_search.pyx":442
+    /* "pyearth/_knot_search.pyx":461
  *         (working.state.phi_next ** 2 - working.state.phi ** 2) * working.state.mu
  *     for j in range(q):
  *         working.gamma[j] += (working.state.phi - working.state.phi_next) * working.kappa[j] + \             # <<<<<<<<<<<<<<
  *                             working.chi[j] - working.state.phi_next * working.psi[j]
  * 
  */
-    if (unlikely(!__pyx_v_working->kappa.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 442; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_working->kappa.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 461; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_22 = __pyx_v_j;
 
-    /* "pyearth/_knot_search.pyx":443
+    /* "pyearth/_knot_search.pyx":462
  *     for j in range(q):
  *         working.gamma[j] += (working.state.phi - working.state.phi_next) * working.kappa[j] + \
  *                             working.chi[j] - working.state.phi_next * working.psi[j]             # <<<<<<<<<<<<<<
  * 
  * #     x_should_be = np.maximum(np.asarray(predictor.x) - working.state.phi_next, 0) * p
  */
-    if (unlikely(!__pyx_v_working->chi.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 443; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_working->chi.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 462; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_23 = __pyx_v_j;
 
-    /* "pyearth/_knot_search.pyx":442
+    /* "pyearth/_knot_search.pyx":461
  *         (working.state.phi_next ** 2 - working.state.phi ** 2) * working.state.mu
  *     for j in range(q):
  *         working.gamma[j] += (working.state.phi - working.state.phi_next) * working.kappa[j] + \             # <<<<<<<<<<<<<<
  *                             working.chi[j] - working.state.phi_next * working.psi[j]
  * 
  */
-    if (unlikely(!__pyx_v_working->psi.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 443; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_working->psi.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 462; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
 
-    /* "pyearth/_knot_search.pyx":443
+    /* "pyearth/_knot_search.pyx":462
  *     for j in range(q):
  *         working.gamma[j] += (working.state.phi - working.state.phi_next) * working.kappa[j] + \
  *                             working.chi[j] - working.state.phi_next * working.psi[j]             # <<<<<<<<<<<<<<
@@ -12220,152 +13021,222 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
  */
     __pyx_t_24 = __pyx_v_j;
 
-    /* "pyearth/_knot_search.pyx":442
+    /* "pyearth/_knot_search.pyx":461
  *         (working.state.phi_next ** 2 - working.state.phi ** 2) * working.state.mu
  *     for j in range(q):
  *         working.gamma[j] += (working.state.phi - working.state.phi_next) * working.kappa[j] + \             # <<<<<<<<<<<<<<
  *                             working.chi[j] - working.state.phi_next * working.psi[j]
  * 
  */
-    if (unlikely(!__pyx_v_working->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 442; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_working->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 461; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_25 = __pyx_v_j;
     *((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_working->gamma.data + __pyx_t_25 * __pyx_v_working->gamma.strides[0]) )) += ((((__pyx_v_working->state->phi - __pyx_v_working->state->phi_next) * (*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_working->kappa.data + __pyx_t_22 * __pyx_v_working->kappa.strides[0]) )))) + (*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_working->chi.data + __pyx_t_23 * __pyx_v_working->chi.strides[0]) )))) - (__pyx_v_working->state->phi_next * (*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_working->psi.data + __pyx_t_24 * __pyx_v_working->psi.strides[0]) )))));
   }
 
-  /* "pyearth/_knot_search.pyx":452
+  /* "pyearth/_knot_search.pyx":471
  * 
  *     # Compute epsilon_squared and zeta_squared
  *     if working.state.beta > 0:             # <<<<<<<<<<<<<<
- *         epsilon_squared = working.state.beta
- *         for j in range(q):
+ *         gamma_squared = dot(working.gamma, working.gamma, q)
+ *         epsilon_squared = working.state.beta - gamma_squared
  */
   __pyx_t_7 = ((__pyx_v_working->state->beta > 0.0) != 0);
   if (__pyx_t_7) {
 
-    /* "pyearth/_knot_search.pyx":453
+    /* "pyearth/_knot_search.pyx":472
  *     # Compute epsilon_squared and zeta_squared
  *     if working.state.beta > 0:
- *         epsilon_squared = working.state.beta             # <<<<<<<<<<<<<<
- *         for j in range(q):
- *             epsilon_squared -= working.gamma[j] ** 2
+ *         gamma_squared = dot(working.gamma, working.gamma, q)             # <<<<<<<<<<<<<<
+ *         epsilon_squared = working.state.beta - gamma_squared
+ *         if epsilon_squared > 0:
  */
-    __pyx_t_26 = __pyx_v_working->state->beta;
-    __pyx_v_epsilon_squared = __pyx_t_26;
+    if (unlikely(!__pyx_v_working->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_working->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    __pyx_t_26 = __pyx_f_7pyearth_12_knot_search_dot(__pyx_v_working->gamma, __pyx_v_working->gamma, __pyx_v_q); if (unlikely(!__pyx_t_26)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_26);
+    __pyx_t_27 = __pyx_PyFloat_AsDouble(__pyx_t_26); if (unlikely((__pyx_t_27 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_t_26); __pyx_t_26 = 0;
+    __pyx_v_gamma_squared = __pyx_t_27;
 
-    /* "pyearth/_knot_search.pyx":454
+    /* "pyearth/_knot_search.pyx":473
  *     if working.state.beta > 0:
- *         epsilon_squared = working.state.beta
- *         for j in range(q):             # <<<<<<<<<<<<<<
- *             epsilon_squared -= working.gamma[j] ** 2
+ *         gamma_squared = dot(working.gamma, working.gamma, q)
+ *         epsilon_squared = working.state.beta - gamma_squared             # <<<<<<<<<<<<<<
  *         if epsilon_squared > 0:
+ *             theta_gamma = dot(working.gamma, outcome.theta, q)
  */
-    __pyx_t_14 = __pyx_v_q;
-    for (__pyx_t_21 = 0; __pyx_t_21 < __pyx_t_14; __pyx_t_21+=1) {
-      __pyx_v_j = __pyx_t_21;
+    __pyx_v_epsilon_squared = (__pyx_v_working->state->beta - __pyx_v_gamma_squared);
 
-      /* "pyearth/_knot_search.pyx":455
- *         epsilon_squared = working.state.beta
- *         for j in range(q):
- *             epsilon_squared -= working.gamma[j] ** 2             # <<<<<<<<<<<<<<
- *         if epsilon_squared > 0:
- *             working.state.zeta_squared = (working.state.alpha - dot(working.gamma, outcome.theta, q)) ** 2
- */
-      if (unlikely(!__pyx_v_working->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 455; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-      __pyx_t_27 = __pyx_v_j;
-      __pyx_v_epsilon_squared = (__pyx_v_epsilon_squared - pow((*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_working->gamma.data + __pyx_t_27 * __pyx_v_working->gamma.strides[0]) ))), 2.0));
-    }
-
-    /* "pyearth/_knot_search.pyx":456
- *         for j in range(q):
- *             epsilon_squared -= working.gamma[j] ** 2
+    /* "pyearth/_knot_search.pyx":474
+ *         gamma_squared = dot(working.gamma, working.gamma, q)
+ *         epsilon_squared = working.state.beta - gamma_squared
  *         if epsilon_squared > 0:             # <<<<<<<<<<<<<<
- *             working.state.zeta_squared = (working.state.alpha - dot(working.gamma, outcome.theta, q)) ** 2
- *             working.state.zeta_squared /= epsilon_squared
+ *             theta_gamma = dot(working.gamma, outcome.theta, q)
+ *             zeta_epsilon = working.state.alpha - theta_gamma
  */
     __pyx_t_7 = ((__pyx_v_epsilon_squared > 0.0) != 0);
     if (__pyx_t_7) {
 
-      /* "pyearth/_knot_search.pyx":457
- *             epsilon_squared -= working.gamma[j] ** 2
+      /* "pyearth/_knot_search.pyx":475
+ *         epsilon_squared = working.state.beta - gamma_squared
  *         if epsilon_squared > 0:
- *             working.state.zeta_squared = (working.state.alpha - dot(working.gamma, outcome.theta, q)) ** 2             # <<<<<<<<<<<<<<
- *             working.state.zeta_squared /= epsilon_squared
+ *             theta_gamma = dot(working.gamma, outcome.theta, q)             # <<<<<<<<<<<<<<
+ *             zeta_epsilon = working.state.alpha - theta_gamma
+ *             if (abs(zeta_epsilon) / abs(working.state.alpha + theta_gamma) > tol) or (epsilon_squared / abs(working.state.beta + gamma_squared) > tol):
+ */
+      if (unlikely(!__pyx_v_working->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 475; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+      if (unlikely(!__pyx_v_outcome->theta.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 475; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+      __pyx_t_26 = __pyx_f_7pyearth_12_knot_search_dot(__pyx_v_working->gamma, __pyx_v_outcome->theta, __pyx_v_q); if (unlikely(!__pyx_t_26)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 475; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_26);
+      __pyx_t_27 = __pyx_PyFloat_AsDouble(__pyx_t_26); if (unlikely((__pyx_t_27 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 475; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_DECREF(__pyx_t_26); __pyx_t_26 = 0;
+      __pyx_v_theta_gamma = __pyx_t_27;
+
+      /* "pyearth/_knot_search.pyx":476
+ *         if epsilon_squared > 0:
+ *             theta_gamma = dot(working.gamma, outcome.theta, q)
+ *             zeta_epsilon = working.state.alpha - theta_gamma             # <<<<<<<<<<<<<<
+ *             if (abs(zeta_epsilon) / abs(working.state.alpha + theta_gamma) > tol) or (epsilon_squared / abs(working.state.beta + gamma_squared) > tol):
+ *                 working.state.zeta_squared = (zeta_epsilon ** 2) / epsilon_squared
+ */
+      __pyx_v_zeta_epsilon = (__pyx_v_working->state->alpha - __pyx_v_theta_gamma);
+
+      /* "pyearth/_knot_search.pyx":477
+ *             theta_gamma = dot(working.gamma, outcome.theta, q)
+ *             zeta_epsilon = working.state.alpha - theta_gamma
+ *             if (abs(zeta_epsilon) / abs(working.state.alpha + theta_gamma) > tol) or (epsilon_squared / abs(working.state.beta + gamma_squared) > tol):             # <<<<<<<<<<<<<<
+ *                 working.state.zeta_squared = (zeta_epsilon ** 2) / epsilon_squared
+ * #             working.state.zeta_squared /= epsilon_squared
+ */
+      __pyx_t_28 = (((fabs(__pyx_v_zeta_epsilon) / fabs((__pyx_v_working->state->alpha + __pyx_v_theta_gamma))) > __pyx_v_tol) != 0);
+      if (!__pyx_t_28) {
+      } else {
+        __pyx_t_7 = __pyx_t_28;
+        goto __pyx_L14_bool_binop_done;
+      }
+      __pyx_t_28 = (((__pyx_v_epsilon_squared / fabs((__pyx_v_working->state->beta + __pyx_v_gamma_squared))) > __pyx_v_tol) != 0);
+      __pyx_t_7 = __pyx_t_28;
+      __pyx_L14_bool_binop_done:;
+      if (__pyx_t_7) {
+
+        /* "pyearth/_knot_search.pyx":478
+ *             zeta_epsilon = working.state.alpha - theta_gamma
+ *             if (abs(zeta_epsilon) / abs(working.state.alpha + theta_gamma) > tol) or (epsilon_squared / abs(working.state.beta + gamma_squared) > tol):
+ *                 working.state.zeta_squared = (zeta_epsilon ** 2) / epsilon_squared             # <<<<<<<<<<<<<<
+ * #             working.state.zeta_squared /= epsilon_squared
+ * #             if epsilon_squared < 1e-6:
+ */
+        __pyx_v_working->state->zeta_squared = (pow(__pyx_v_zeta_epsilon, 2.0) / __pyx_v_epsilon_squared);
+
+        /* "pyearth/_knot_search.pyx":477
+ *             theta_gamma = dot(working.gamma, outcome.theta, q)
+ *             zeta_epsilon = working.state.alpha - theta_gamma
+ *             if (abs(zeta_epsilon) / abs(working.state.alpha + theta_gamma) > tol) or (epsilon_squared / abs(working.state.beta + gamma_squared) > tol):             # <<<<<<<<<<<<<<
+ *                 working.state.zeta_squared = (zeta_epsilon ** 2) / epsilon_squared
+ * #             working.state.zeta_squared /= epsilon_squared
+ */
+        goto __pyx_L13;
+      }
+
+      /* "pyearth/_knot_search.pyx":489
+ *                 # dependence (which is what causes the instability) and
+ *                 # set zeta_squared, alpha, and beta accordingly
+ *                 print 'ELSE!!!!!!!!!'             # <<<<<<<<<<<<<<
+ *                 working.state.zeta_squared = 0.
+ *                 working.state.beta = gamma_squared
+ */
+      /*else*/ {
+        if (__Pyx_PrintOne(0, __pyx_kp_s_ELSE) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 489; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+
+        /* "pyearth/_knot_search.pyx":490
+ *                 # set zeta_squared, alpha, and beta accordingly
+ *                 print 'ELSE!!!!!!!!!'
+ *                 working.state.zeta_squared = 0.             # <<<<<<<<<<<<<<
+ *                 working.state.beta = gamma_squared
+ *                 theta_gamma = dot(working.gamma, outcome.theta, q)
+ */
+        __pyx_v_working->state->zeta_squared = 0.;
+
+        /* "pyearth/_knot_search.pyx":491
+ *                 print 'ELSE!!!!!!!!!'
+ *                 working.state.zeta_squared = 0.
+ *                 working.state.beta = gamma_squared             # <<<<<<<<<<<<<<
+ *                 theta_gamma = dot(working.gamma, outcome.theta, q)
+ *                 working.state.alpha = theta_gamma
+ */
+        __pyx_v_working->state->beta = __pyx_v_gamma_squared;
+
+        /* "pyearth/_knot_search.pyx":492
+ *                 working.state.zeta_squared = 0.
+ *                 working.state.beta = gamma_squared
+ *                 theta_gamma = dot(working.gamma, outcome.theta, q)             # <<<<<<<<<<<<<<
+ *                 working.state.alpha = theta_gamma
  *         else:
  */
-      __pyx_t_28 = PyFloat_FromDouble(__pyx_v_working->state->alpha); if (unlikely(!__pyx_t_28)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 457; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_28);
-      if (unlikely(!__pyx_v_working->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 457; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-      if (unlikely(!__pyx_v_outcome->theta.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 457; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-      __pyx_t_29 = __pyx_f_7pyearth_12_knot_search_dot(__pyx_v_working->gamma, __pyx_v_outcome->theta, __pyx_v_q); if (unlikely(!__pyx_t_29)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 457; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_29);
-      __pyx_t_30 = PyNumber_Subtract(__pyx_t_28, __pyx_t_29); if (unlikely(!__pyx_t_30)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 457; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_30);
-      __Pyx_DECREF(__pyx_t_28); __pyx_t_28 = 0;
-      __Pyx_DECREF(__pyx_t_29); __pyx_t_29 = 0;
-      __pyx_t_29 = PyNumber_Power(__pyx_t_30, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_29)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 457; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_29);
-      __Pyx_DECREF(__pyx_t_30); __pyx_t_30 = 0;
-      __pyx_t_26 = __pyx_PyFloat_AsDouble(__pyx_t_29); if (unlikely((__pyx_t_26 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 457; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_DECREF(__pyx_t_29); __pyx_t_29 = 0;
-      __pyx_v_working->state->zeta_squared = __pyx_t_26;
+        if (unlikely(!__pyx_v_working->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 492; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+        if (unlikely(!__pyx_v_outcome->theta.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 492; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+        __pyx_t_26 = __pyx_f_7pyearth_12_knot_search_dot(__pyx_v_working->gamma, __pyx_v_outcome->theta, __pyx_v_q); if (unlikely(!__pyx_t_26)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 492; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_26);
+        __pyx_t_27 = __pyx_PyFloat_AsDouble(__pyx_t_26); if (unlikely((__pyx_t_27 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 492; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_26); __pyx_t_26 = 0;
+        __pyx_v_theta_gamma = __pyx_t_27;
 
-      /* "pyearth/_knot_search.pyx":458
- *         if epsilon_squared > 0:
- *             working.state.zeta_squared = (working.state.alpha - dot(working.gamma, outcome.theta, q)) ** 2
- *             working.state.zeta_squared /= epsilon_squared             # <<<<<<<<<<<<<<
+        /* "pyearth/_knot_search.pyx":493
+ *                 working.state.beta = gamma_squared
+ *                 theta_gamma = dot(working.gamma, outcome.theta, q)
+ *                 working.state.alpha = theta_gamma             # <<<<<<<<<<<<<<
  *         else:
  *             working.state.zeta_squared = 0.
  */
-      __Pyx_INCREF(((PyObject *)__pyx_v_working->state));
-      __pyx_t_20 = __pyx_v_working->state;
-      __pyx_t_20->zeta_squared = (__pyx_t_20->zeta_squared / __pyx_v_epsilon_squared);
-      __Pyx_DECREF(((PyObject *)__pyx_t_20)); __pyx_t_20 = 0;
+        __pyx_v_working->state->alpha = __pyx_v_theta_gamma;
+      }
+      __pyx_L13:;
 
-      /* "pyearth/_knot_search.pyx":456
- *         for j in range(q):
- *             epsilon_squared -= working.gamma[j] ** 2
+      /* "pyearth/_knot_search.pyx":474
+ *         gamma_squared = dot(working.gamma, working.gamma, q)
+ *         epsilon_squared = working.state.beta - gamma_squared
  *         if epsilon_squared > 0:             # <<<<<<<<<<<<<<
- *             working.state.zeta_squared = (working.state.alpha - dot(working.gamma, outcome.theta, q)) ** 2
- *             working.state.zeta_squared /= epsilon_squared
+ *             theta_gamma = dot(working.gamma, outcome.theta, q)
+ *             zeta_epsilon = working.state.alpha - theta_gamma
  */
-      goto __pyx_L14;
+      goto __pyx_L12;
     }
 
-    /* "pyearth/_knot_search.pyx":460
- *             working.state.zeta_squared /= epsilon_squared
+    /* "pyearth/_knot_search.pyx":495
+ *                 working.state.alpha = theta_gamma
  *         else:
  *             working.state.zeta_squared = 0.             # <<<<<<<<<<<<<<
  *     else:
- *         working.state.zeta_squared = 0.
+ *         # This happens when there are no nonzero values in the
  */
     /*else*/ {
       __pyx_v_working->state->zeta_squared = 0.;
     }
-    __pyx_L14:;
+    __pyx_L12:;
 
-    /* "pyearth/_knot_search.pyx":452
+    /* "pyearth/_knot_search.pyx":471
  * 
  *     # Compute epsilon_squared and zeta_squared
  *     if working.state.beta > 0:             # <<<<<<<<<<<<<<
- *         epsilon_squared = working.state.beta
- *         for j in range(q):
+ *         gamma_squared = dot(working.gamma, working.gamma, q)
+ *         epsilon_squared = working.state.beta - gamma_squared
  */
     goto __pyx_L11;
   }
 
-  /* "pyearth/_knot_search.pyx":462
- *             working.state.zeta_squared = 0.
- *     else:
+  /* "pyearth/_knot_search.pyx":500
+ *         # new predictor yet.  It just means we need to wait for
+ *         # lower knot values.
  *         working.state.zeta_squared = 0.             # <<<<<<<<<<<<<<
- *     # Now zeta_squared is correct for phi_next.
- * 
+ * #         gamma_squared = dot(working.gamma, working.gamma, q)
+ * #         working.state.beta = gamma_squared
  */
   /*else*/ {
     __pyx_v_working->state->zeta_squared = 0.;
   }
   __pyx_L11:;
 
-  /* "pyearth/_knot_search.pyx":466
+  /* "pyearth/_knot_search.pyx":508
  * 
  *     # Update kappa, lambda, mu, and upsilon
  *     for j in range(q):             # <<<<<<<<<<<<<<
@@ -12376,21 +13247,21 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
   for (__pyx_t_21 = 0; __pyx_t_21 < __pyx_t_14; __pyx_t_21+=1) {
     __pyx_v_j = __pyx_t_21;
 
-    /* "pyearth/_knot_search.pyx":467
+    /* "pyearth/_knot_search.pyx":509
  *     # Update kappa, lambda, mu, and upsilon
  *     for j in range(q):
  *         working.kappa[j] += working.delta_kappa[j]             # <<<<<<<<<<<<<<
  *     working.state.lambda_ += delta_lambda
  *     working.state.mu += delta_mu
  */
-    if (unlikely(!__pyx_v_working->delta_kappa.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 467; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-    __pyx_t_31 = __pyx_v_j;
-    if (unlikely(!__pyx_v_working->kappa.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 467; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-    __pyx_t_32 = __pyx_v_j;
-    *((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_working->kappa.data + __pyx_t_32 * __pyx_v_working->kappa.strides[0]) )) += (*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_working->delta_kappa.data + __pyx_t_31 * __pyx_v_working->delta_kappa.strides[0]) )));
+    if (unlikely(!__pyx_v_working->delta_kappa.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 509; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    __pyx_t_29 = __pyx_v_j;
+    if (unlikely(!__pyx_v_working->kappa.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 509; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    __pyx_t_30 = __pyx_v_j;
+    *((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_working->kappa.data + __pyx_t_30 * __pyx_v_working->kappa.strides[0]) )) += (*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_working->delta_kappa.data + __pyx_t_29 * __pyx_v_working->delta_kappa.strides[0]) )));
   }
 
-  /* "pyearth/_knot_search.pyx":468
+  /* "pyearth/_knot_search.pyx":510
  *     for j in range(q):
  *         working.kappa[j] += working.delta_kappa[j]
  *     working.state.lambda_ += delta_lambda             # <<<<<<<<<<<<<<
@@ -12402,7 +13273,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
   __pyx_t_20->lambda_ = (__pyx_t_20->lambda_ + __pyx_v_delta_lambda);
   __Pyx_DECREF(((PyObject *)__pyx_t_20)); __pyx_t_20 = 0;
 
-  /* "pyearth/_knot_search.pyx":469
+  /* "pyearth/_knot_search.pyx":511
  *         working.kappa[j] += working.delta_kappa[j]
  *     working.state.lambda_ += delta_lambda
  *     working.state.mu += delta_mu             # <<<<<<<<<<<<<<
@@ -12414,7 +13285,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
   __pyx_t_20->mu = (__pyx_t_20->mu + __pyx_v_delta_mu);
   __Pyx_DECREF(((PyObject *)__pyx_t_20)); __pyx_t_20 = 0;
 
-  /* "pyearth/_knot_search.pyx":470
+  /* "pyearth/_knot_search.pyx":512
  *     working.state.lambda_ += delta_lambda
  *     working.state.mu += delta_mu
  *     working.state.upsilon += delta_upsilon             # <<<<<<<<<<<<<<
@@ -12426,7 +13297,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
   __pyx_t_20->upsilon = (__pyx_t_20->upsilon + __pyx_v_delta_upsilon);
   __Pyx_DECREF(((PyObject *)__pyx_t_20)); __pyx_t_20 = 0;
 
-  /* "pyearth/_knot_search.pyx":370
+  /* "pyearth/_knot_search.pyx":385
  * 
  * @cython.profile(False)
  * cdef inline void fast_update(PredictorDependentData predictor, SingleOutcomeDependentData outcome,             # <<<<<<<<<<<<<<
@@ -12442,15 +13313,13 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_t_4, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
   __Pyx_XDECREF(((PyObject *)__pyx_t_20));
-  __Pyx_XDECREF(__pyx_t_28);
-  __Pyx_XDECREF(__pyx_t_29);
-  __Pyx_XDECREF(__pyx_t_30);
+  __Pyx_XDECREF(__pyx_t_26);
   __Pyx_AddTraceback("pyearth._knot_search.fast_update", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
 }
 
-/* "pyearth/_knot_search.pyx":472
+/* "pyearth/_knot_search.pyx":514
  *     working.state.upsilon += delta_upsilon
  * 
  * cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p, INDEX_t q, INDEX_t m,             # <<<<<<<<<<<<<<
@@ -12493,21 +13362,20 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_13;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_14;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_15;
-  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_16;
-  PyObject *__pyx_t_17 = NULL;
-  PyObject *__pyx_t_18 = NULL;
-  __Pyx_memviewslice __pyx_t_19 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_t_20 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  int __pyx_t_21;
+  PyObject *__pyx_t_16 = NULL;
+  __Pyx_memviewslice __pyx_t_17 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_18 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  int __pyx_t_19;
+  PyObject *__pyx_t_20 = NULL;
+  PyObject *__pyx_t_21 = NULL;
   PyObject *__pyx_t_22 = NULL;
-  PyObject *__pyx_t_23 = NULL;
-  PyObject *__pyx_t_24 = NULL;
+  __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_23;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("knot_search", 0);
 
-  /* "pyearth/_knot_search.pyx":474
+  /* "pyearth/_knot_search.pyx":516
  * cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p, INDEX_t q, INDEX_t m,
  *                  INDEX_t r, INDEX_t n_outcomes):
  *     cdef KnotSearchReadOnlyData constant = data.constant             # <<<<<<<<<<<<<<
@@ -12519,7 +13387,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
   __pyx_v_constant = ((struct __pyx_obj_7pyearth_12_knot_search_KnotSearchReadOnlyData *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_knot_search.pyx":475
+  /* "pyearth/_knot_search.pyx":517
  *                  INDEX_t r, INDEX_t n_outcomes):
  *     cdef KnotSearchReadOnlyData constant = data.constant
  *     cdef PredictorDependentData predictor = constant.predictor             # <<<<<<<<<<<<<<
@@ -12531,7 +13399,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
   __pyx_v_predictor = ((struct __pyx_obj_7pyearth_12_knot_search_PredictorDependentData *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_knot_search.pyx":476
+  /* "pyearth/_knot_search.pyx":518
  *     cdef KnotSearchReadOnlyData constant = data.constant
  *     cdef PredictorDependentData predictor = constant.predictor
  *     cdef list outcomes = constant.outcome.outcomes             # <<<<<<<<<<<<<<
@@ -12543,7 +13411,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
   __pyx_v_outcomes = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_knot_search.pyx":477
+  /* "pyearth/_knot_search.pyx":519
  *     cdef PredictorDependentData predictor = constant.predictor
  *     cdef list outcomes = constant.outcome.outcomes
  *     cdef list workings = data.workings             # <<<<<<<<<<<<<<
@@ -12555,7 +13423,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
   __pyx_v_workings = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_knot_search.pyx":480
+  /* "pyearth/_knot_search.pyx":522
  * 
  *     # TODO: Remove these assertions
  *     assert len(outcomes) == n_outcomes             # <<<<<<<<<<<<<<
@@ -12566,17 +13434,17 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(__pyx_v_outcomes == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 480; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 522; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
-    __pyx_t_2 = PyList_GET_SIZE(__pyx_v_outcomes); if (unlikely(__pyx_t_2 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 480; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyList_GET_SIZE(__pyx_v_outcomes); if (unlikely(__pyx_t_2 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 522; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     if (unlikely(!((__pyx_t_2 == __pyx_v_n_outcomes) != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 480; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 522; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
   }
   #endif
 
-  /* "pyearth/_knot_search.pyx":481
+  /* "pyearth/_knot_search.pyx":523
  *     # TODO: Remove these assertions
  *     assert len(outcomes) == n_outcomes
  *     assert len(workings) == len(outcomes)             # <<<<<<<<<<<<<<
@@ -12587,22 +13455,22 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(__pyx_v_workings == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 481; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 523; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
-    __pyx_t_2 = PyList_GET_SIZE(__pyx_v_workings); if (unlikely(__pyx_t_2 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 481; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyList_GET_SIZE(__pyx_v_workings); if (unlikely(__pyx_t_2 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 523; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     if (unlikely(__pyx_v_outcomes == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 481; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 523; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
-    __pyx_t_3 = PyList_GET_SIZE(__pyx_v_outcomes); if (unlikely(__pyx_t_3 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 481; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyList_GET_SIZE(__pyx_v_outcomes); if (unlikely(__pyx_t_3 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 523; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     if (unlikely(!((__pyx_t_2 == __pyx_t_3) != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 481; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 523; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
   }
   #endif
 
-  /* "pyearth/_knot_search.pyx":482
+  /* "pyearth/_knot_search.pyx":524
  *     assert len(outcomes) == n_outcomes
  *     assert len(workings) == len(outcomes)
  *     assert len(candidates) == r             # <<<<<<<<<<<<<<
@@ -12611,18 +13479,18 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
  */
   #ifndef CYTHON_WITHOUT_ASSERTIONS
   if (unlikely(!Py_OptimizeFlag)) {
-    __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_candidates, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 482; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_candidates, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_3 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 482; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_3 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     if (unlikely(!((__pyx_t_3 == __pyx_v_r) != 0))) {
       PyErr_SetNone(PyExc_AssertionError);
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 482; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 524; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
   }
   #endif
 
-  /* "pyearth/_knot_search.pyx":483
+  /* "pyearth/_knot_search.pyx":525
  *     assert len(workings) == len(outcomes)
  *     assert len(candidates) == r
  *     assert outcomes[0].k == q             # <<<<<<<<<<<<<<
@@ -12633,25 +13501,25 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(__pyx_v_outcomes == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 483; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 525; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(PyList_GET_ITEM(__pyx_v_outcomes, 0), __pyx_n_s_k); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 483; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(PyList_GET_ITEM(__pyx_v_outcomes, 0), __pyx_n_s_k); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 525; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_q); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 483; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_q); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 525; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = PyObject_RichCompare(__pyx_t_1, __pyx_t_4, Py_EQ); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 483; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_5 = PyObject_RichCompare(__pyx_t_1, __pyx_t_4, Py_EQ); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 525; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely(__pyx_t_6 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 483; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely(__pyx_t_6 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 525; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     if (unlikely(!__pyx_t_6)) {
       PyErr_SetNone(PyExc_AssertionError);
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 483; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 525; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
   }
   #endif
 
-  /* "pyearth/_knot_search.pyx":490
+  /* "pyearth/_knot_search.pyx":532
  *     # updated across iterations.  Values that are calculated from scratch at
  *     # each iteration are not initialized.
  *     cdef FLOAT_t best_knot = 0.             # <<<<<<<<<<<<<<
@@ -12660,7 +13528,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
  */
   __pyx_v_best_knot = 0.;
 
-  /* "pyearth/_knot_search.pyx":491
+  /* "pyearth/_knot_search.pyx":533
  *     # each iteration are not initialized.
  *     cdef FLOAT_t best_knot = 0.
  *     cdef INDEX_t best_knot_index = 0             # <<<<<<<<<<<<<<
@@ -12669,7 +13537,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
  */
   __pyx_v_best_knot_index = 0;
 
-  /* "pyearth/_knot_search.pyx":492
+  /* "pyearth/_knot_search.pyx":534
  *     cdef FLOAT_t best_knot = 0.
  *     cdef INDEX_t best_knot_index = 0
  *     cdef FLOAT_t phi_next = candidates[0]             # <<<<<<<<<<<<<<
@@ -12679,7 +13547,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
   __pyx_t_7 = 0;
   __pyx_v_phi_next = (*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_candidates.data + __pyx_t_7 * __pyx_v_candidates.strides[0]) )));
 
-  /* "pyearth/_knot_search.pyx":497
+  /* "pyearth/_knot_search.pyx":539
  *     cdef INDEX_t j, i
  * #     print 'begin knot search!'
  *     for j in range(n_outcomes):             # <<<<<<<<<<<<<<
@@ -12690,7 +13558,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
   for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
     __pyx_v_j = __pyx_t_9;
 
-    /* "pyearth/_knot_search.pyx":498
+    /* "pyearth/_knot_search.pyx":540
  * #     print 'begin knot search!'
  *     for j in range(n_outcomes):
  *         working = workings[j]             # <<<<<<<<<<<<<<
@@ -12699,15 +13567,15 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
  */
     if (unlikely(__pyx_v_workings == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 498; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 540; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
-    if (!(likely(((PyList_GET_ITEM(__pyx_v_workings, __pyx_v_j)) == Py_None) || likely(__Pyx_TypeTest(PyList_GET_ITEM(__pyx_v_workings, __pyx_v_j), __pyx_ptype_7pyearth_12_knot_search_KnotSearchWorkingData))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 498; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (!(likely(((PyList_GET_ITEM(__pyx_v_workings, __pyx_v_j)) == Py_None) || likely(__Pyx_TypeTest(PyList_GET_ITEM(__pyx_v_workings, __pyx_v_j), __pyx_ptype_7pyearth_12_knot_search_KnotSearchWorkingData))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 540; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __pyx_t_5 = PyList_GET_ITEM(__pyx_v_workings, __pyx_v_j);
     __Pyx_INCREF(__pyx_t_5);
     __Pyx_XDECREF_SET(__pyx_v_working, ((struct __pyx_obj_7pyearth_12_knot_search_KnotSearchWorkingData *)__pyx_t_5));
     __pyx_t_5 = 0;
 
-    /* "pyearth/_knot_search.pyx":499
+    /* "pyearth/_knot_search.pyx":541
  *     for j in range(n_outcomes):
  *         working = workings[j]
  *         working.state.phi_next = phi_next             # <<<<<<<<<<<<<<
@@ -12716,7 +13584,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
  */
     __pyx_v_working->state->phi_next = __pyx_v_phi_next;
 
-    /* "pyearth/_knot_search.pyx":500
+    /* "pyearth/_knot_search.pyx":542
  *         working = workings[j]
  *         working.state.phi_next = phi_next
  *         working.state.alpha = 0.             # <<<<<<<<<<<<<<
@@ -12725,7 +13593,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
  */
     __pyx_v_working->state->alpha = 0.;
 
-    /* "pyearth/_knot_search.pyx":501
+    /* "pyearth/_knot_search.pyx":543
  *         working.state.phi_next = phi_next
  *         working.state.alpha = 0.
  *         working.state.beta = 0.             # <<<<<<<<<<<<<<
@@ -12734,7 +13602,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
  */
     __pyx_v_working->state->beta = 0.;
 
-    /* "pyearth/_knot_search.pyx":502
+    /* "pyearth/_knot_search.pyx":544
  *         working.state.alpha = 0.
  *         working.state.beta = 0.
  *         for i in range(q):             # <<<<<<<<<<<<<<
@@ -12745,19 +13613,19 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
     for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_10; __pyx_t_11+=1) {
       __pyx_v_i = __pyx_t_11;
 
-      /* "pyearth/_knot_search.pyx":503
+      /* "pyearth/_knot_search.pyx":545
  *         working.state.beta = 0.
  *         for i in range(q):
  *             working.gamma[i] = 0.             # <<<<<<<<<<<<<<
  *         for i in range(q):
  *             working.kappa[i] = 0.
  */
-      if (unlikely(!__pyx_v_working->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 503; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+      if (unlikely(!__pyx_v_working->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 545; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
       __pyx_t_12 = __pyx_v_i;
       *((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_working->gamma.data + __pyx_t_12 * __pyx_v_working->gamma.strides[0]) )) = 0.;
     }
 
-    /* "pyearth/_knot_search.pyx":504
+    /* "pyearth/_knot_search.pyx":546
  *         for i in range(q):
  *             working.gamma[i] = 0.
  *         for i in range(q):             # <<<<<<<<<<<<<<
@@ -12768,19 +13636,19 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
     for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_10; __pyx_t_11+=1) {
       __pyx_v_i = __pyx_t_11;
 
-      /* "pyearth/_knot_search.pyx":505
+      /* "pyearth/_knot_search.pyx":547
  *             working.gamma[i] = 0.
  *         for i in range(q):
  *             working.kappa[i] = 0.             # <<<<<<<<<<<<<<
  *         working.state.lambda_ = 0.
  *         working.state.mu = 0.
  */
-      if (unlikely(!__pyx_v_working->kappa.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 505; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+      if (unlikely(!__pyx_v_working->kappa.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 547; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
       __pyx_t_13 = __pyx_v_i;
       *((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_working->kappa.data + __pyx_t_13 * __pyx_v_working->kappa.strides[0]) )) = 0.;
     }
 
-    /* "pyearth/_knot_search.pyx":506
+    /* "pyearth/_knot_search.pyx":548
  *         for i in range(q):
  *             working.kappa[i] = 0.
  *         working.state.lambda_ = 0.             # <<<<<<<<<<<<<<
@@ -12789,7 +13657,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
  */
     __pyx_v_working->state->lambda_ = 0.;
 
-    /* "pyearth/_knot_search.pyx":507
+    /* "pyearth/_knot_search.pyx":549
  *             working.kappa[i] = 0.
  *         working.state.lambda_ = 0.
  *         working.state.mu = 0.             # <<<<<<<<<<<<<<
@@ -12798,7 +13666,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
  */
     __pyx_v_working->state->mu = 0.;
 
-    /* "pyearth/_knot_search.pyx":508
+    /* "pyearth/_knot_search.pyx":550
  *         working.state.lambda_ = 0.
  *         working.state.mu = 0.
  *         working.state.upsilon = 0.             # <<<<<<<<<<<<<<
@@ -12807,7 +13675,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
  */
     __pyx_v_working->state->upsilon = 0.;
 
-    /* "pyearth/_knot_search.pyx":509
+    /* "pyearth/_knot_search.pyx":551
  *         working.state.mu = 0.
  *         working.state.upsilon = 0.
  *         working.state.ord_idx = 0             # <<<<<<<<<<<<<<
@@ -12816,19 +13684,19 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
  */
     __pyx_v_working->state->ord_idx = 0;
 
-    /* "pyearth/_knot_search.pyx":510
+    /* "pyearth/_knot_search.pyx":552
  *         working.state.upsilon = 0.
  *         working.state.ord_idx = 0
  *         working.state.idx = predictor.order[working.state.ord_idx]             # <<<<<<<<<<<<<<
  * 
  *     # A lower bound for zeta_squared is 0 (it is the square of a real number),
  */
-    if (unlikely(!__pyx_v_predictor->order.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 510; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+    if (unlikely(!__pyx_v_predictor->order.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 552; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
     __pyx_t_10 = __pyx_v_working->state->ord_idx;
     __pyx_v_working->state->idx = (*((__pyx_t_7pyearth_6_types_INT_t *) ( /* dim=0 */ (__pyx_v_predictor->order.data + __pyx_t_10 * __pyx_v_predictor->order.strides[0]) )));
   }
 
-  /* "pyearth/_knot_search.pyx":514
+  /* "pyearth/_knot_search.pyx":556
  *     # A lower bound for zeta_squared is 0 (it is the square of a real number),
  *     # so initialize best_zeta_squared to 0.
  *     best_zeta_squared = 0.             # <<<<<<<<<<<<<<
@@ -12838,7 +13706,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
   __Pyx_INCREF(__pyx_float_0_);
   __pyx_v_best_zeta_squared = __pyx_float_0_;
 
-  /* "pyearth/_knot_search.pyx":526
+  /* "pyearth/_knot_search.pyx":568
  *     cdef INDEX_t k
  *     cdef FLOAT_t loss
  *     for k in range(r):             # <<<<<<<<<<<<<<
@@ -12849,7 +13717,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
   for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
     __pyx_v_k = __pyx_t_9;
 
-    /* "pyearth/_knot_search.pyx":527
+    /* "pyearth/_knot_search.pyx":569
  *     cdef FLOAT_t loss
  *     for k in range(r):
  *         phi = phi_next             # <<<<<<<<<<<<<<
@@ -12858,7 +13726,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
  */
     __pyx_v_phi = __pyx_v_phi_next;
 
-    /* "pyearth/_knot_search.pyx":528
+    /* "pyearth/_knot_search.pyx":570
  *     for k in range(r):
  *         phi = phi_next
  *         phi_next = candidates[k]             # <<<<<<<<<<<<<<
@@ -12868,7 +13736,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
     __pyx_t_11 = __pyx_v_k;
     __pyx_v_phi_next = (*((__pyx_t_7pyearth_6_types_FLOAT_t *) ( /* dim=0 */ (__pyx_v_candidates.data + __pyx_t_11 * __pyx_v_candidates.strides[0]) )));
 
-    /* "pyearth/_knot_search.pyx":529
+    /* "pyearth/_knot_search.pyx":571
  *         phi = phi_next
  *         phi_next = candidates[k]
  *         zeta_squared = 0.             # <<<<<<<<<<<<<<
@@ -12877,7 +13745,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
  */
     __pyx_v_zeta_squared = 0.;
 
-    /* "pyearth/_knot_search.pyx":530
+    /* "pyearth/_knot_search.pyx":572
  *         phi_next = candidates[k]
  *         zeta_squared = 0.
  *         for i in range(n_outcomes):             # <<<<<<<<<<<<<<
@@ -12888,41 +13756,41 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
     for (__pyx_t_15 = 0; __pyx_t_15 < __pyx_t_14; __pyx_t_15+=1) {
       __pyx_v_i = __pyx_t_15;
 
-      /* "pyearth/_knot_search.pyx":531
+      /* "pyearth/_knot_search.pyx":573
  *         zeta_squared = 0.
  *         for i in range(n_outcomes):
  *             working = workings[i]             # <<<<<<<<<<<<<<
  *             outcome = outcomes[i]
- * 
+ * #             omega_minus_theta_squared = outcome.omega - np.dot(outcome.theta[:q], outcome.theta[:q])
  */
       if (unlikely(__pyx_v_workings == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 531; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 573; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       }
-      if (!(likely(((PyList_GET_ITEM(__pyx_v_workings, __pyx_v_i)) == Py_None) || likely(__Pyx_TypeTest(PyList_GET_ITEM(__pyx_v_workings, __pyx_v_i), __pyx_ptype_7pyearth_12_knot_search_KnotSearchWorkingData))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 531; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      if (!(likely(((PyList_GET_ITEM(__pyx_v_workings, __pyx_v_i)) == Py_None) || likely(__Pyx_TypeTest(PyList_GET_ITEM(__pyx_v_workings, __pyx_v_i), __pyx_ptype_7pyearth_12_knot_search_KnotSearchWorkingData))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 573; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __pyx_t_5 = PyList_GET_ITEM(__pyx_v_workings, __pyx_v_i);
       __Pyx_INCREF(__pyx_t_5);
       __Pyx_XDECREF_SET(__pyx_v_working, ((struct __pyx_obj_7pyearth_12_knot_search_KnotSearchWorkingData *)__pyx_t_5));
       __pyx_t_5 = 0;
 
-      /* "pyearth/_knot_search.pyx":532
+      /* "pyearth/_knot_search.pyx":574
  *         for i in range(n_outcomes):
  *             working = workings[i]
  *             outcome = outcomes[i]             # <<<<<<<<<<<<<<
+ * #             omega_minus_theta_squared = outcome.omega - np.dot(outcome.theta[:q], outcome.theta[:q])
  * 
- *             # Get the next candidate knot
  */
       if (unlikely(__pyx_v_outcomes == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 532; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 574; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       }
-      if (!(likely(((PyList_GET_ITEM(__pyx_v_outcomes, __pyx_v_i)) == Py_None) || likely(__Pyx_TypeTest(PyList_GET_ITEM(__pyx_v_outcomes, __pyx_v_i), __pyx_ptype_7pyearth_12_knot_search_SingleOutcomeDependentData))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 532; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      if (!(likely(((PyList_GET_ITEM(__pyx_v_outcomes, __pyx_v_i)) == Py_None) || likely(__Pyx_TypeTest(PyList_GET_ITEM(__pyx_v_outcomes, __pyx_v_i), __pyx_ptype_7pyearth_12_knot_search_SingleOutcomeDependentData))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 574; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __pyx_t_5 = PyList_GET_ITEM(__pyx_v_outcomes, __pyx_v_i);
       __Pyx_INCREF(__pyx_t_5);
       __Pyx_XDECREF_SET(__pyx_v_outcome, ((struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *)__pyx_t_5));
       __pyx_t_5 = 0;
 
-      /* "pyearth/_knot_search.pyx":535
+      /* "pyearth/_knot_search.pyx":578
  * 
  *             # Get the next candidate knot
  *             working.state.phi = phi             # <<<<<<<<<<<<<<
@@ -12931,7 +13799,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
  */
       __pyx_v_working->state->phi = __pyx_v_phi;
 
-      /* "pyearth/_knot_search.pyx":536
+      /* "pyearth/_knot_search.pyx":579
  *             # Get the next candidate knot
  *             working.state.phi = phi
  *             working.state.phi_next = phi_next             # <<<<<<<<<<<<<<
@@ -12940,41 +13808,356 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
  */
       __pyx_v_working->state->phi_next = __pyx_v_phi_next;
 
-      /* "pyearth/_knot_search.pyx":539
+      /* "pyearth/_knot_search.pyx":582
  * 
  *             # Update workingdata for the new candidate knot
  *             fast_update(predictor, outcome, working, p, q, m, r)             # <<<<<<<<<<<<<<
  * 
- *             # Add up objectives
+ *             if working.state.zeta_squared >= outcome.sse_:
  */
-      __pyx_f_7pyearth_12_knot_search_fast_update(__pyx_v_predictor, __pyx_v_outcome, __pyx_v_working, __pyx_v_p, __pyx_v_q, __pyx_v_m, __pyx_v_r); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 539; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_f_7pyearth_12_knot_search_fast_update(__pyx_v_predictor, __pyx_v_outcome, __pyx_v_working, __pyx_v_p, __pyx_v_q, __pyx_v_m, __pyx_v_r); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 582; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-      /* "pyearth/_knot_search.pyx":542
+      /* "pyearth/_knot_search.pyx":584
+ *             fast_update(predictor, outcome, working, p, q, m, r)
+ * 
+ *             if working.state.zeta_squared >= outcome.sse_:             # <<<<<<<<<<<<<<
+ *                 # Sometimes this can happen because of numerical issues in
+ *                 # the fast update process.  These occur when the new potential
+ */
+      __pyx_t_6 = ((__pyx_v_working->state->zeta_squared >= __pyx_v_outcome->sse_) != 0);
+      if (__pyx_t_6) {
+
+        /* "pyearth/_knot_search.pyx":590
+ *                 # columns.  In that case, correct everything so that we can move
+ *                 # on.
+ *                 print 'this is a problem!'             # <<<<<<<<<<<<<<
+ *                 print 'zeta_squared =', working.state.zeta_squared
+ *                 print 'omega_minus_theta_squared =', outcome.sse_
+ */
+        if (__Pyx_PrintOne(0, __pyx_kp_s_this_is_a_problem) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 590; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+
+        /* "pyearth/_knot_search.pyx":591
+ *                 # on.
+ *                 print 'this is a problem!'
+ *                 print 'zeta_squared =', working.state.zeta_squared             # <<<<<<<<<<<<<<
+ *                 print 'omega_minus_theta_squared =', outcome.sse_
+ *                 print i
+ */
+        __pyx_t_5 = PyFloat_FromDouble(__pyx_v_working->state->zeta_squared); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 591; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_5);
+        __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 591; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_4);
+        __Pyx_INCREF(__pyx_kp_s_zeta_squared_2);
+        __Pyx_GIVEREF(__pyx_kp_s_zeta_squared_2);
+        PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_kp_s_zeta_squared_2);
+        __Pyx_GIVEREF(__pyx_t_5);
+        PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_5);
+        __pyx_t_5 = 0;
+        if (__Pyx_Print(0, __pyx_t_4, 1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 591; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+
+        /* "pyearth/_knot_search.pyx":592
+ *                 print 'this is a problem!'
+ *                 print 'zeta_squared =', working.state.zeta_squared
+ *                 print 'omega_minus_theta_squared =', outcome.sse_             # <<<<<<<<<<<<<<
+ *                 print i
+ *                 print 'epsilon_squared =',  working.state.beta - np.dot(working.gamma[:q], working.gamma[:q])
+ */
+        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_outcome->sse_); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 592; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_4);
+        __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 592; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_5);
+        __Pyx_INCREF(__pyx_kp_s_omega_minus_theta_squared);
+        __Pyx_GIVEREF(__pyx_kp_s_omega_minus_theta_squared);
+        PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_kp_s_omega_minus_theta_squared);
+        __Pyx_GIVEREF(__pyx_t_4);
+        PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_4);
+        __pyx_t_4 = 0;
+        if (__Pyx_Print(0, __pyx_t_5, 1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 592; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+
+        /* "pyearth/_knot_search.pyx":593
+ *                 print 'zeta_squared =', working.state.zeta_squared
+ *                 print 'omega_minus_theta_squared =', outcome.sse_
+ *                 print i             # <<<<<<<<<<<<<<
+ *                 print 'epsilon_squared =',  working.state.beta - np.dot(working.gamma[:q], working.gamma[:q])
+ *                 print 'alpha =', working.state.alpha
+ */
+        __pyx_t_5 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_i); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 593; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_5);
+        if (__Pyx_PrintOne(0, __pyx_t_5) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 593; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+
+        /* "pyearth/_knot_search.pyx":594
+ *                 print 'omega_minus_theta_squared =', outcome.sse_
+ *                 print i
+ *                 print 'epsilon_squared =',  working.state.beta - np.dot(working.gamma[:q], working.gamma[:q])             # <<<<<<<<<<<<<<
+ *                 print 'alpha =', working.state.alpha
+ *                 print 'gamma * theta =', dot(working.gamma, outcome.theta, q)
+ */
+        __pyx_t_5 = PyFloat_FromDouble(__pyx_v_working->state->beta); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 594; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_5);
+        __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 594; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_1);
+        __pyx_t_16 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_dot); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 594; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_16);
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        if (unlikely(!__pyx_v_working->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 594; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+        __pyx_t_17 = __pyx_v_working->gamma;
+        __PYX_INC_MEMVIEW(&__pyx_t_17, 1);
+        __pyx_t_18.data = __pyx_t_17.data;
+        __pyx_t_18.memview = __pyx_t_17.memview;
+        __PYX_INC_MEMVIEW(&__pyx_t_18, 0);
+        __pyx_t_19 = -1;
+        if (unlikely(__pyx_memoryview_slice_memviewslice(
+    &__pyx_t_18,
+    __pyx_t_17.shape[0], __pyx_t_17.strides[0], __pyx_t_17.suboffsets[0],
+    0,
+    0,
+    &__pyx_t_19,
+    0,
+    __pyx_v_q,
+    0,
+    0,
+    1,
+    0,
+    1) < 0))
+{
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 594; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+}
+
+__PYX_XDEC_MEMVIEW(&__pyx_t_17, 1);
+        __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_t_18, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 594; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_1);
+        __PYX_XDEC_MEMVIEW(&__pyx_t_18, 1);
+        if (unlikely(!__pyx_v_working->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 594; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+        __pyx_t_18 = __pyx_v_working->gamma;
+        __PYX_INC_MEMVIEW(&__pyx_t_18, 1);
+        __pyx_t_17.data = __pyx_t_18.data;
+        __pyx_t_17.memview = __pyx_t_18.memview;
+        __PYX_INC_MEMVIEW(&__pyx_t_17, 0);
+        __pyx_t_19 = -1;
+        if (unlikely(__pyx_memoryview_slice_memviewslice(
+    &__pyx_t_17,
+    __pyx_t_18.shape[0], __pyx_t_18.strides[0], __pyx_t_18.suboffsets[0],
+    0,
+    0,
+    &__pyx_t_19,
+    0,
+    __pyx_v_q,
+    0,
+    0,
+    1,
+    0,
+    1) < 0))
+{
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 594; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+}
+
+__PYX_XDEC_MEMVIEW(&__pyx_t_18, 1);
+        __pyx_t_20 = __pyx_memoryview_fromslice(__pyx_t_17, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_20)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 594; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_20);
+        __PYX_XDEC_MEMVIEW(&__pyx_t_17, 1);
+        __pyx_t_21 = NULL;
+        __pyx_t_3 = 0;
+        if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_16))) {
+          __pyx_t_21 = PyMethod_GET_SELF(__pyx_t_16);
+          if (likely(__pyx_t_21)) {
+            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_16);
+            __Pyx_INCREF(__pyx_t_21);
+            __Pyx_INCREF(function);
+            __Pyx_DECREF_SET(__pyx_t_16, function);
+            __pyx_t_3 = 1;
+          }
+        }
+        __pyx_t_22 = PyTuple_New(2+__pyx_t_3); if (unlikely(!__pyx_t_22)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 594; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_22);
+        if (__pyx_t_21) {
+          __Pyx_GIVEREF(__pyx_t_21); PyTuple_SET_ITEM(__pyx_t_22, 0, __pyx_t_21); __pyx_t_21 = NULL;
+        }
+        __Pyx_GIVEREF(__pyx_t_1);
+        PyTuple_SET_ITEM(__pyx_t_22, 0+__pyx_t_3, __pyx_t_1);
+        __Pyx_GIVEREF(__pyx_t_20);
+        PyTuple_SET_ITEM(__pyx_t_22, 1+__pyx_t_3, __pyx_t_20);
+        __pyx_t_1 = 0;
+        __pyx_t_20 = 0;
+        __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_16, __pyx_t_22, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 594; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_4);
+        __Pyx_DECREF(__pyx_t_22); __pyx_t_22 = 0;
+        __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+        __pyx_t_16 = PyNumber_Subtract(__pyx_t_5, __pyx_t_4); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 594; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_16);
+        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 594; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_4);
+        __Pyx_INCREF(__pyx_kp_s_epsilon_squared);
+        __Pyx_GIVEREF(__pyx_kp_s_epsilon_squared);
+        PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_kp_s_epsilon_squared);
+        __Pyx_GIVEREF(__pyx_t_16);
+        PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_16);
+        __pyx_t_16 = 0;
+        if (__Pyx_Print(0, __pyx_t_4, 1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 594; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+
+        /* "pyearth/_knot_search.pyx":595
+ *                 print i
+ *                 print 'epsilon_squared =',  working.state.beta - np.dot(working.gamma[:q], working.gamma[:q])
+ *                 print 'alpha =', working.state.alpha             # <<<<<<<<<<<<<<
+ *                 print 'gamma * theta =', dot(working.gamma, outcome.theta, q)
+ *                 print 'beta =', working.state.beta
+ */
+        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_working->state->alpha); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 595; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_4);
+        __pyx_t_16 = PyTuple_New(2); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 595; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_16);
+        __Pyx_INCREF(__pyx_kp_s_alpha_2);
+        __Pyx_GIVEREF(__pyx_kp_s_alpha_2);
+        PyTuple_SET_ITEM(__pyx_t_16, 0, __pyx_kp_s_alpha_2);
+        __Pyx_GIVEREF(__pyx_t_4);
+        PyTuple_SET_ITEM(__pyx_t_16, 1, __pyx_t_4);
+        __pyx_t_4 = 0;
+        if (__Pyx_Print(0, __pyx_t_16, 1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 595; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+
+        /* "pyearth/_knot_search.pyx":596
+ *                 print 'epsilon_squared =',  working.state.beta - np.dot(working.gamma[:q], working.gamma[:q])
+ *                 print 'alpha =', working.state.alpha
+ *                 print 'gamma * theta =', dot(working.gamma, outcome.theta, q)             # <<<<<<<<<<<<<<
+ *                 print 'beta =', working.state.beta
+ *                 print 'gamma^2 = ', dot(working.gamma, working.gamma, q)
+ */
+        if (unlikely(!__pyx_v_working->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 596; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+        if (unlikely(!__pyx_v_outcome->theta.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 596; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+        __pyx_t_16 = __pyx_f_7pyearth_12_knot_search_dot(__pyx_v_working->gamma, __pyx_v_outcome->theta, __pyx_v_q); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 596; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_16);
+        __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 596; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_4);
+        __Pyx_INCREF(__pyx_kp_s_gamma_theta);
+        __Pyx_GIVEREF(__pyx_kp_s_gamma_theta);
+        PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_kp_s_gamma_theta);
+        __Pyx_GIVEREF(__pyx_t_16);
+        PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_16);
+        __pyx_t_16 = 0;
+        if (__Pyx_Print(0, __pyx_t_4, 1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 596; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+
+        /* "pyearth/_knot_search.pyx":597
+ *                 print 'alpha =', working.state.alpha
+ *                 print 'gamma * theta =', dot(working.gamma, outcome.theta, q)
+ *                 print 'beta =', working.state.beta             # <<<<<<<<<<<<<<
+ *                 print 'gamma^2 = ', dot(working.gamma, working.gamma, q)
+ *                 working.state.zeta_squared = 0.
+ */
+        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_working->state->beta); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 597; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_4);
+        __pyx_t_16 = PyTuple_New(2); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 597; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_16);
+        __Pyx_INCREF(__pyx_kp_s_beta_2);
+        __Pyx_GIVEREF(__pyx_kp_s_beta_2);
+        PyTuple_SET_ITEM(__pyx_t_16, 0, __pyx_kp_s_beta_2);
+        __Pyx_GIVEREF(__pyx_t_4);
+        PyTuple_SET_ITEM(__pyx_t_16, 1, __pyx_t_4);
+        __pyx_t_4 = 0;
+        if (__Pyx_Print(0, __pyx_t_16, 1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 597; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+
+        /* "pyearth/_knot_search.pyx":598
+ *                 print 'gamma * theta =', dot(working.gamma, outcome.theta, q)
+ *                 print 'beta =', working.state.beta
+ *                 print 'gamma^2 = ', dot(working.gamma, working.gamma, q)             # <<<<<<<<<<<<<<
+ *                 working.state.zeta_squared = 0.
+ *                 working.state.alpha = dot(working.gamma, outcome.theta, q)
+ */
+        if (unlikely(!__pyx_v_working->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 598; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+        if (unlikely(!__pyx_v_working->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 598; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+        __pyx_t_16 = __pyx_f_7pyearth_12_knot_search_dot(__pyx_v_working->gamma, __pyx_v_working->gamma, __pyx_v_q); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 598; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_16);
+        __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 598; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_4);
+        __Pyx_INCREF(__pyx_kp_s_gamma_2);
+        __Pyx_GIVEREF(__pyx_kp_s_gamma_2);
+        PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_kp_s_gamma_2);
+        __Pyx_GIVEREF(__pyx_t_16);
+        PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_16);
+        __pyx_t_16 = 0;
+        if (__Pyx_Print(0, __pyx_t_4, 1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 598; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+
+        /* "pyearth/_knot_search.pyx":599
+ *                 print 'beta =', working.state.beta
+ *                 print 'gamma^2 = ', dot(working.gamma, working.gamma, q)
+ *                 working.state.zeta_squared = 0.             # <<<<<<<<<<<<<<
+ *                 working.state.alpha = dot(working.gamma, outcome.theta, q)
+ *                 working.state.beta = dot(working.gamma, working.gamma, q)
+ */
+        __pyx_v_working->state->zeta_squared = 0.;
+
+        /* "pyearth/_knot_search.pyx":600
+ *                 print 'gamma^2 = ', dot(working.gamma, working.gamma, q)
+ *                 working.state.zeta_squared = 0.
+ *                 working.state.alpha = dot(working.gamma, outcome.theta, q)             # <<<<<<<<<<<<<<
+ *                 working.state.beta = dot(working.gamma, working.gamma, q)
+ * 
+ */
+        if (unlikely(!__pyx_v_working->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 600; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+        if (unlikely(!__pyx_v_outcome->theta.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 600; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+        __pyx_t_4 = __pyx_f_7pyearth_12_knot_search_dot(__pyx_v_working->gamma, __pyx_v_outcome->theta, __pyx_v_q); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 600; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_4);
+        __pyx_t_23 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_23 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 600; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __pyx_v_working->state->alpha = __pyx_t_23;
+
+        /* "pyearth/_knot_search.pyx":601
+ *                 working.state.zeta_squared = 0.
+ *                 working.state.alpha = dot(working.gamma, outcome.theta, q)
+ *                 working.state.beta = dot(working.gamma, working.gamma, q)             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+        if (unlikely(!__pyx_v_working->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 601; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+        if (unlikely(!__pyx_v_working->gamma.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 601; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
+        __pyx_t_4 = __pyx_f_7pyearth_12_knot_search_dot(__pyx_v_working->gamma, __pyx_v_working->gamma, __pyx_v_q); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 601; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_4);
+        __pyx_t_23 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_23 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 601; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __pyx_v_working->state->beta = __pyx_t_23;
+
+        /* "pyearth/_knot_search.pyx":584
+ *             fast_update(predictor, outcome, working, p, q, m, r)
+ * 
+ *             if working.state.zeta_squared >= outcome.sse_:             # <<<<<<<<<<<<<<
+ *                 # Sometimes this can happen because of numerical issues in
+ *                 # the fast update process.  These occur when the new potential
+ */
+      }
+
+      /* "pyearth/_knot_search.pyx":605
  * 
  *             # Add up objectives
  *             zeta_squared += working.state.zeta_squared             # <<<<<<<<<<<<<<
- * 
  *         # Compare against best result so far
+ *         if zeta_squared > best_zeta_squared:
  */
       __pyx_v_zeta_squared = (__pyx_v_zeta_squared + __pyx_v_working->state->zeta_squared);
     }
 
-    /* "pyearth/_knot_search.pyx":545
- * 
+    /* "pyearth/_knot_search.pyx":607
+ *             zeta_squared += working.state.zeta_squared
  *         # Compare against best result so far
  *         if zeta_squared > best_zeta_squared:             # <<<<<<<<<<<<<<
  *             best_knot_index = k
  *             best_knot = phi_next
  */
-    __pyx_t_5 = PyFloat_FromDouble(__pyx_v_zeta_squared); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 545; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_4 = PyObject_RichCompare(__pyx_t_5, __pyx_v_best_zeta_squared, Py_GT); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 545; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_6 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 545; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = PyFloat_FromDouble(__pyx_v_zeta_squared); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 607; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_16 = PyObject_RichCompare(__pyx_t_4, __pyx_v_best_zeta_squared, Py_GT); __Pyx_XGOTREF(__pyx_t_16); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 607; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_16); if (unlikely(__pyx_t_6 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 607; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
     if (__pyx_t_6) {
 
-      /* "pyearth/_knot_search.pyx":546
+      /* "pyearth/_knot_search.pyx":608
  *         # Compare against best result so far
  *         if zeta_squared > best_zeta_squared:
  *             best_knot_index = k             # <<<<<<<<<<<<<<
@@ -12983,7 +14166,7 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
  */
       __pyx_v_best_knot_index = __pyx_v_k;
 
-      /* "pyearth/_knot_search.pyx":547
+      /* "pyearth/_knot_search.pyx":609
  *         if zeta_squared > best_zeta_squared:
  *             best_knot_index = k
  *             best_knot = phi_next             # <<<<<<<<<<<<<<
@@ -12992,20 +14175,20 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
  */
       __pyx_v_best_knot = __pyx_v_phi_next;
 
-      /* "pyearth/_knot_search.pyx":548
+      /* "pyearth/_knot_search.pyx":610
  *             best_knot_index = k
  *             best_knot = phi_next
  *             best_zeta_squared = zeta_squared             # <<<<<<<<<<<<<<
  * 
  *         # DEBUG
  */
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_zeta_squared); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 548; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_DECREF_SET(__pyx_v_best_zeta_squared, __pyx_t_4);
-      __pyx_t_4 = 0;
+      __pyx_t_16 = PyFloat_FromDouble(__pyx_v_zeta_squared); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 610; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_16);
+      __Pyx_DECREF_SET(__pyx_v_best_zeta_squared, __pyx_t_16);
+      __pyx_t_16 = 0;
 
-      /* "pyearth/_knot_search.pyx":545
- * 
+      /* "pyearth/_knot_search.pyx":607
+ *             zeta_squared += working.state.zeta_squared
  *         # Compare against best result so far
  *         if zeta_squared > best_zeta_squared:             # <<<<<<<<<<<<<<
  *             best_knot_index = k
@@ -13014,160 +14197,58 @@ static PyObject *__pyx_f_7pyearth_12_knot_search_knot_search(struct __pyx_obj_7p
     }
   }
 
-  /* "pyearth/_knot_search.pyx":572
+  /* "pyearth/_knot_search.pyx":634
  *     # Calculate value of overall objective function
  *     # (this is the sqrt of the sum of squared residuals)
  *     loss = -best_zeta_squared             # <<<<<<<<<<<<<<
  *     for i in range(n_outcomes):
  *         outcome = outcomes[i]
  */
-  __pyx_t_4 = PyNumber_Negative(__pyx_v_best_zeta_squared); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 572; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_16 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_16 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 572; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_v_loss = __pyx_t_16;
+  __pyx_t_16 = PyNumber_Negative(__pyx_v_best_zeta_squared); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 634; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_16);
+  __pyx_t_23 = __pyx_PyFloat_AsDouble(__pyx_t_16); if (unlikely((__pyx_t_23 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 634; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+  __pyx_v_loss = __pyx_t_23;
 
-  /* "pyearth/_knot_search.pyx":573
+  /* "pyearth/_knot_search.pyx":635
  *     # (this is the sqrt of the sum of squared residuals)
  *     loss = -best_zeta_squared
  *     for i in range(n_outcomes):             # <<<<<<<<<<<<<<
  *         outcome = outcomes[i]
- *         loss += outcome.omega - np.dot(outcome.theta[:q], outcome.theta[:q])
+ *         loss += outcome.sse_
  */
   __pyx_t_8 = __pyx_v_n_outcomes;
   for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
     __pyx_v_i = __pyx_t_9;
 
-    /* "pyearth/_knot_search.pyx":574
+    /* "pyearth/_knot_search.pyx":636
  *     loss = -best_zeta_squared
  *     for i in range(n_outcomes):
  *         outcome = outcomes[i]             # <<<<<<<<<<<<<<
- *         loss += outcome.omega - np.dot(outcome.theta[:q], outcome.theta[:q])
+ *         loss += outcome.sse_
  * #     if loss < 0:
  */
     if (unlikely(__pyx_v_outcomes == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 574; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 636; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
-    if (!(likely(((PyList_GET_ITEM(__pyx_v_outcomes, __pyx_v_i)) == Py_None) || likely(__Pyx_TypeTest(PyList_GET_ITEM(__pyx_v_outcomes, __pyx_v_i), __pyx_ptype_7pyearth_12_knot_search_SingleOutcomeDependentData))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 574; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __pyx_t_4 = PyList_GET_ITEM(__pyx_v_outcomes, __pyx_v_i);
-    __Pyx_INCREF(__pyx_t_4);
-    __Pyx_XDECREF_SET(__pyx_v_outcome, ((struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *)__pyx_t_4));
-    __pyx_t_4 = 0;
+    if (!(likely(((PyList_GET_ITEM(__pyx_v_outcomes, __pyx_v_i)) == Py_None) || likely(__Pyx_TypeTest(PyList_GET_ITEM(__pyx_v_outcomes, __pyx_v_i), __pyx_ptype_7pyearth_12_knot_search_SingleOutcomeDependentData))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 636; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_16 = PyList_GET_ITEM(__pyx_v_outcomes, __pyx_v_i);
+    __Pyx_INCREF(__pyx_t_16);
+    __Pyx_XDECREF_SET(__pyx_v_outcome, ((struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *)__pyx_t_16));
+    __pyx_t_16 = 0;
 
-    /* "pyearth/_knot_search.pyx":575
+    /* "pyearth/_knot_search.pyx":637
  *     for i in range(n_outcomes):
  *         outcome = outcomes[i]
- *         loss += outcome.omega - np.dot(outcome.theta[:q], outcome.theta[:q])             # <<<<<<<<<<<<<<
+ *         loss += outcome.sse_             # <<<<<<<<<<<<<<
  * #     if loss < 0:
  * #         print 'negative loss!'
  */
-    __pyx_t_4 = PyFloat_FromDouble(__pyx_v_loss); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 575; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = PyFloat_FromDouble(__pyx_v_outcome->omega); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 575; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_17 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_17)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 575; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_17);
-    __pyx_t_18 = __Pyx_PyObject_GetAttrStr(__pyx_t_17, __pyx_n_s_dot); if (unlikely(!__pyx_t_18)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 575; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_18);
-    __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
-    if (unlikely(!__pyx_v_outcome->theta.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 575; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-    __pyx_t_19 = __pyx_v_outcome->theta;
-    __PYX_INC_MEMVIEW(&__pyx_t_19, 1);
-    __pyx_t_20.data = __pyx_t_19.data;
-    __pyx_t_20.memview = __pyx_t_19.memview;
-    __PYX_INC_MEMVIEW(&__pyx_t_20, 0);
-    __pyx_t_21 = -1;
-    if (unlikely(__pyx_memoryview_slice_memviewslice(
-    &__pyx_t_20,
-    __pyx_t_19.shape[0], __pyx_t_19.strides[0], __pyx_t_19.suboffsets[0],
-    0,
-    0,
-    &__pyx_t_21,
-    0,
-    __pyx_v_q,
-    0,
-    0,
-    1,
-    0,
-    1) < 0))
-{
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 575; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-}
-
-__PYX_XDEC_MEMVIEW(&__pyx_t_19, 1);
-    __pyx_t_17 = __pyx_memoryview_fromslice(__pyx_t_20, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_17)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 575; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_17);
-    __PYX_XDEC_MEMVIEW(&__pyx_t_20, 1);
-    if (unlikely(!__pyx_v_outcome->theta.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");{__pyx_filename = __pyx_f[0]; __pyx_lineno = 575; __pyx_clineno = __LINE__; goto __pyx_L1_error;}}
-    __pyx_t_20 = __pyx_v_outcome->theta;
-    __PYX_INC_MEMVIEW(&__pyx_t_20, 1);
-    __pyx_t_19.data = __pyx_t_20.data;
-    __pyx_t_19.memview = __pyx_t_20.memview;
-    __PYX_INC_MEMVIEW(&__pyx_t_19, 0);
-    __pyx_t_21 = -1;
-    if (unlikely(__pyx_memoryview_slice_memviewslice(
-    &__pyx_t_19,
-    __pyx_t_20.shape[0], __pyx_t_20.strides[0], __pyx_t_20.suboffsets[0],
-    0,
-    0,
-    &__pyx_t_21,
-    0,
-    __pyx_v_q,
-    0,
-    0,
-    1,
-    0,
-    1) < 0))
-{
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 575; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-}
-
-__PYX_XDEC_MEMVIEW(&__pyx_t_20, 1);
-    __pyx_t_22 = __pyx_memoryview_fromslice(__pyx_t_19, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_22)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 575; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_22);
-    __PYX_XDEC_MEMVIEW(&__pyx_t_19, 1);
-    __pyx_t_23 = NULL;
-    __pyx_t_3 = 0;
-    if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_18))) {
-      __pyx_t_23 = PyMethod_GET_SELF(__pyx_t_18);
-      if (likely(__pyx_t_23)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_18);
-        __Pyx_INCREF(__pyx_t_23);
-        __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_18, function);
-        __pyx_t_3 = 1;
-      }
-    }
-    __pyx_t_24 = PyTuple_New(2+__pyx_t_3); if (unlikely(!__pyx_t_24)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 575; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_24);
-    if (__pyx_t_23) {
-      __Pyx_GIVEREF(__pyx_t_23); PyTuple_SET_ITEM(__pyx_t_24, 0, __pyx_t_23); __pyx_t_23 = NULL;
-    }
-    __Pyx_GIVEREF(__pyx_t_17);
-    PyTuple_SET_ITEM(__pyx_t_24, 0+__pyx_t_3, __pyx_t_17);
-    __Pyx_GIVEREF(__pyx_t_22);
-    PyTuple_SET_ITEM(__pyx_t_24, 1+__pyx_t_3, __pyx_t_22);
-    __pyx_t_17 = 0;
-    __pyx_t_22 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_18, __pyx_t_24, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 575; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_24); __pyx_t_24 = 0;
-    __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-    __pyx_t_18 = PyNumber_Subtract(__pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_18)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 575; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_18);
-    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyNumber_InPlaceAdd(__pyx_t_4, __pyx_t_18); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 575; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-    __pyx_t_16 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_16 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 575; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_v_loss = __pyx_t_16;
+    __pyx_v_loss = (__pyx_v_loss + __pyx_v_outcome->sse_);
   }
 
-  /* "pyearth/_knot_search.pyx":593
+  /* "pyearth/_knot_search.pyx":655
  * 
  *     # Return
  *     return best_knot, best_knot_index, loss             # <<<<<<<<<<<<<<
@@ -13175,28 +14256,28 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_20, 1);
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_best_knot); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 593; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_18 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_best_knot_index); if (unlikely(!__pyx_t_18)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 593; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_18);
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_loss); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 593; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_16 = PyFloat_FromDouble(__pyx_v_best_knot); if (unlikely(!__pyx_t_16)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 655; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_16);
+  __pyx_t_4 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_best_knot_index); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 655; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 593; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = PyFloat_FromDouble(__pyx_v_loss); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 655; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_5);
-  __Pyx_GIVEREF(__pyx_t_1);
-  PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_1);
-  __Pyx_GIVEREF(__pyx_t_18);
-  PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_18);
+  __pyx_t_22 = PyTuple_New(3); if (unlikely(!__pyx_t_22)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 655; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_22);
+  __Pyx_GIVEREF(__pyx_t_16);
+  PyTuple_SET_ITEM(__pyx_t_22, 0, __pyx_t_16);
   __Pyx_GIVEREF(__pyx_t_4);
-  PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_4);
-  __pyx_t_1 = 0;
-  __pyx_t_18 = 0;
+  PyTuple_SET_ITEM(__pyx_t_22, 1, __pyx_t_4);
+  __Pyx_GIVEREF(__pyx_t_5);
+  PyTuple_SET_ITEM(__pyx_t_22, 2, __pyx_t_5);
+  __pyx_t_16 = 0;
   __pyx_t_4 = 0;
-  __pyx_r = ((PyObject*)__pyx_t_5);
   __pyx_t_5 = 0;
+  __pyx_r = ((PyObject*)__pyx_t_22);
+  __pyx_t_22 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_knot_search.pyx":472
+  /* "pyearth/_knot_search.pyx":514
  *     working.state.upsilon += delta_upsilon
  * 
  * cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p, INDEX_t q, INDEX_t m,             # <<<<<<<<<<<<<<
@@ -13209,13 +14290,12 @@ __PYX_XDEC_MEMVIEW(&__pyx_t_20, 1);
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_XDECREF(__pyx_t_17);
-  __Pyx_XDECREF(__pyx_t_18);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_19, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_20, 1);
+  __Pyx_XDECREF(__pyx_t_16);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_17, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_18, 1);
+  __Pyx_XDECREF(__pyx_t_20);
+  __Pyx_XDECREF(__pyx_t_21);
   __Pyx_XDECREF(__pyx_t_22);
-  __Pyx_XDECREF(__pyx_t_23);
-  __Pyx_XDECREF(__pyx_t_24);
   __Pyx_AddTraceback("pyearth._knot_search.knot_search", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
@@ -13272,36 +14352,36 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_1knot_search(PyObject *__pyx_s
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_candidates)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("knot_search", 1, 7, 7, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("knot_search", 1, 7, 7, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 514; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_p)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("knot_search", 1, 7, 7, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("knot_search", 1, 7, 7, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 514; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_q)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("knot_search", 1, 7, 7, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("knot_search", 1, 7, 7, 3); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 514; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_m)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("knot_search", 1, 7, 7, 4); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("knot_search", 1, 7, 7, 4); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 514; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  5:
         if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_r)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("knot_search", 1, 7, 7, 5); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("knot_search", 1, 7, 7, 5); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 514; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  6:
         if (likely((values[6] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_n_outcomes)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("knot_search", 1, 7, 7, 6); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("knot_search", 1, 7, 7, 6); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 514; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "knot_search") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "knot_search") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 514; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 7) {
       goto __pyx_L5_argtuple_error;
@@ -13315,22 +14395,22 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_1knot_search(PyObject *__pyx_s
       values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
     }
     __pyx_v_data = ((struct __pyx_obj_7pyearth_12_knot_search_KnotSearchData *)values[0]);
-    __pyx_v_candidates = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[1]); if (unlikely(!__pyx_v_candidates.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_p = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[2]); if (unlikely(!__pyx_v_p.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_q = __Pyx_PyInt_As_npy_ulonglong(values[3]); if (unlikely((__pyx_v_q == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_m = __Pyx_PyInt_As_npy_ulonglong(values[4]); if (unlikely((__pyx_v_m == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_r = __Pyx_PyInt_As_npy_ulonglong(values[5]); if (unlikely((__pyx_v_r == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 473; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_n_outcomes = __Pyx_PyInt_As_npy_ulonglong(values[6]); if (unlikely((__pyx_v_n_outcomes == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 473; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_candidates = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[1]); if (unlikely(!__pyx_v_candidates.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 514; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_p = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[2]); if (unlikely(!__pyx_v_p.memview)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 514; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_q = __Pyx_PyInt_As_npy_ulonglong(values[3]); if (unlikely((__pyx_v_q == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 514; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_m = __Pyx_PyInt_As_npy_ulonglong(values[4]); if (unlikely((__pyx_v_m == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 514; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_r = __Pyx_PyInt_As_npy_ulonglong(values[5]); if (unlikely((__pyx_v_r == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 515; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_n_outcomes = __Pyx_PyInt_As_npy_ulonglong(values[6]); if (unlikely((__pyx_v_n_outcomes == (npy_ulonglong)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 515; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("knot_search", 1, 7, 7, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("knot_search", 1, 7, 7, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 514; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._knot_search.knot_search", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_data), __pyx_ptype_7pyearth_12_knot_search_KnotSearchData, 1, "data", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_data), __pyx_ptype_7pyearth_12_knot_search_KnotSearchData, 1, "data", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 514; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_r = __pyx_pf_7pyearth_12_knot_search_knot_search(__pyx_self, __pyx_v_data, __pyx_v_candidates, __pyx_v_p, __pyx_v_q, __pyx_v_m, __pyx_v_r, __pyx_v_n_outcomes);
 
   /* function exit code */
@@ -13351,9 +14431,9 @@ static PyObject *__pyx_pf_7pyearth_12_knot_search_knot_search(CYTHON_UNUSED PyOb
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("knot_search", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_candidates.memview)) { __Pyx_RaiseUnboundLocalError("candidates"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-  if (unlikely(!__pyx_v_p.memview)) { __Pyx_RaiseUnboundLocalError("p"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
-  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_knot_search(__pyx_v_data, __pyx_v_candidates, __pyx_v_p, __pyx_v_q, __pyx_v_m, __pyx_v_r, __pyx_v_n_outcomes, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 472; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__pyx_v_candidates.memview)) { __Pyx_RaiseUnboundLocalError("candidates"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 514; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+  if (unlikely(!__pyx_v_p.memview)) { __Pyx_RaiseUnboundLocalError("p"); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 514; __pyx_clineno = __LINE__; goto __pyx_L1_error;} }
+  __pyx_t_1 = __pyx_f_7pyearth_12_knot_search_knot_search(__pyx_v_data, __pyx_v_candidates, __pyx_v_p, __pyx_v_q, __pyx_v_m, __pyx_v_r, __pyx_v_n_outcomes, 0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 514; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -27103,6 +28183,10 @@ static PyObject *__pyx_getprop_7pyearth_12_knot_search_25SingleWeightDependentDa
   return __pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_3Q_t_1__get__(o);
 }
 
+static PyObject *__pyx_getprop_7pyearth_12_knot_search_25SingleWeightDependentData_total_weight(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_12total_weight_1__get__(o);
+}
+
 static PyMethodDef __pyx_methods_7pyearth_12_knot_search_SingleWeightDependentData[] = {
   {"alloc", (PyCFunction)__pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_3alloc, METH_VARARGS|METH_KEYWORDS, 0},
   {"update_from_basis_function", (PyCFunction)__pyx_pw_7pyearth_12_knot_search_25SingleWeightDependentData_5update_from_basis_function, METH_VARARGS|METH_KEYWORDS, 0},
@@ -27119,6 +28203,7 @@ static struct PyGetSetDef __pyx_getsets_7pyearth_12_knot_search_SingleWeightDepe
   {(char *)"k", __pyx_getprop_7pyearth_12_knot_search_25SingleWeightDependentData_k, 0, 0, 0},
   {(char *)"max_terms", __pyx_getprop_7pyearth_12_knot_search_25SingleWeightDependentData_max_terms, 0, 0, 0},
   {(char *)"Q_t", __pyx_getprop_7pyearth_12_knot_search_25SingleWeightDependentData_Q_t, 0, 0, 0},
+  {(char *)"total_weight", __pyx_getprop_7pyearth_12_knot_search_25SingleWeightDependentData_total_weight, 0, 0, 0},
   {0, 0, 0, 0, 0}
 };
 
@@ -27230,6 +28315,7 @@ static PyMethodDef __pyx_methods_7pyearth_12_knot_search_MultipleOutcomeDependen
   {"update_from_array", (PyCFunction)__pyx_pw_7pyearth_12_knot_search_28MultipleOutcomeDependentData_5update_from_array, METH_VARARGS|METH_KEYWORDS, 0},
   {"downdate", (PyCFunction)__pyx_pw_7pyearth_12_knot_search_28MultipleOutcomeDependentData_7downdate, METH_NOARGS, 0},
   {"sse", (PyCFunction)__pyx_pw_7pyearth_12_knot_search_28MultipleOutcomeDependentData_9sse, METH_NOARGS, 0},
+  {"mse", (PyCFunction)__pyx_pw_7pyearth_12_knot_search_28MultipleOutcomeDependentData_11mse, METH_NOARGS, 0},
   {0, 0, 0, 0}
 };
 
@@ -27368,6 +28454,20 @@ static int __pyx_setprop_7pyearth_12_knot_search_26SingleOutcomeDependentData_om
   }
 }
 
+static PyObject *__pyx_getprop_7pyearth_12_knot_search_26SingleOutcomeDependentData_sse_(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_7pyearth_12_knot_search_26SingleOutcomeDependentData_4sse__1__get__(o);
+}
+
+static int __pyx_setprop_7pyearth_12_knot_search_26SingleOutcomeDependentData_sse_(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_7pyearth_12_knot_search_26SingleOutcomeDependentData_4sse__3__set__(o, v);
+  }
+  else {
+    PyErr_SetString(PyExc_NotImplementedError, "__del__");
+    return -1;
+  }
+}
+
 static PyObject *__pyx_getprop_7pyearth_12_knot_search_26SingleOutcomeDependentData_m(PyObject *o, CYTHON_UNUSED void *x) {
   return __pyx_pw_7pyearth_12_knot_search_26SingleOutcomeDependentData_1m_1__get__(o);
 }
@@ -27437,6 +28537,7 @@ static struct PyGetSetDef __pyx_getsets_7pyearth_12_knot_search_SingleOutcomeDep
   {(char *)"weight", __pyx_getprop_7pyearth_12_knot_search_26SingleOutcomeDependentData_weight, 0, 0, 0},
   {(char *)"theta", __pyx_getprop_7pyearth_12_knot_search_26SingleOutcomeDependentData_theta, 0, 0, 0},
   {(char *)"omega", __pyx_getprop_7pyearth_12_knot_search_26SingleOutcomeDependentData_omega, __pyx_setprop_7pyearth_12_knot_search_26SingleOutcomeDependentData_omega, 0, 0},
+  {(char *)"sse_", __pyx_getprop_7pyearth_12_knot_search_26SingleOutcomeDependentData_sse_, __pyx_setprop_7pyearth_12_knot_search_26SingleOutcomeDependentData_sse_, 0, 0},
   {(char *)"m", __pyx_getprop_7pyearth_12_knot_search_26SingleOutcomeDependentData_m, __pyx_setprop_7pyearth_12_knot_search_26SingleOutcomeDependentData_m, 0, 0},
   {(char *)"k", __pyx_getprop_7pyearth_12_knot_search_26SingleOutcomeDependentData_k, __pyx_setprop_7pyearth_12_knot_search_26SingleOutcomeDependentData_k, 0, 0},
   {(char *)"max_terms", __pyx_getprop_7pyearth_12_knot_search_26SingleOutcomeDependentData_max_terms, __pyx_setprop_7pyearth_12_knot_search_26SingleOutcomeDependentData_max_terms, 0, 0},
@@ -28928,6 +30029,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_Buffer_view_does_not_expose_stri, __pyx_k_Buffer_view_does_not_expose_stri, sizeof(__pyx_k_Buffer_view_does_not_expose_stri), 0, 0, 1, 0},
   {&__pyx_kp_s_Can_only_create_a_buffer_that_is, __pyx_k_Can_only_create_a_buffer_that_is, sizeof(__pyx_k_Can_only_create_a_buffer_that_is), 0, 0, 1, 0},
   {&__pyx_kp_s_Cannot_index_with_type_s, __pyx_k_Cannot_index_with_type_s, sizeof(__pyx_k_Cannot_index_with_type_s), 0, 0, 1, 0},
+  {&__pyx_kp_s_ELSE, __pyx_k_ELSE, sizeof(__pyx_k_ELSE), 0, 0, 1, 0},
   {&__pyx_n_s_Ellipsis, __pyx_k_Ellipsis, sizeof(__pyx_k_Ellipsis), 0, 0, 1, 1},
   {&__pyx_kp_s_Empty_shape_tuple_for_cython_arr, __pyx_k_Empty_shape_tuple_for_cython_arr, sizeof(__pyx_k_Empty_shape_tuple_for_cython_arr), 0, 0, 1, 0},
   {&__pyx_n_s_FLOAT, __pyx_k_FLOAT, sizeof(__pyx_k_FLOAT), 0, 0, 1, 1},
@@ -28953,12 +30055,14 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_alloc, __pyx_k_alloc, sizeof(__pyx_k_alloc), 0, 0, 1, 1},
   {&__pyx_n_s_allocate_buffer, __pyx_k_allocate_buffer, sizeof(__pyx_k_allocate_buffer), 0, 0, 1, 1},
   {&__pyx_n_s_alpha, __pyx_k_alpha, sizeof(__pyx_k_alpha), 0, 0, 1, 1},
+  {&__pyx_kp_s_alpha_2, __pyx_k_alpha_2, sizeof(__pyx_k_alpha_2), 0, 0, 1, 0},
   {&__pyx_n_s_argsort, __pyx_k_argsort, sizeof(__pyx_k_argsort), 0, 0, 1, 1},
   {&__pyx_n_s_array, __pyx_k_array, sizeof(__pyx_k_array), 0, 0, 1, 1},
   {&__pyx_n_s_asarray, __pyx_k_asarray, sizeof(__pyx_k_asarray), 0, 0, 1, 1},
   {&__pyx_n_s_b, __pyx_k_b, sizeof(__pyx_k_b), 0, 0, 1, 1},
   {&__pyx_n_s_base, __pyx_k_base, sizeof(__pyx_k_base), 0, 0, 1, 1},
   {&__pyx_n_s_beta, __pyx_k_beta, sizeof(__pyx_k_beta), 0, 0, 1, 1},
+  {&__pyx_kp_s_beta_2, __pyx_k_beta_2, sizeof(__pyx_k_beta_2), 0, 0, 1, 0},
   {&__pyx_n_s_bf, __pyx_k_bf, sizeof(__pyx_k_bf), 0, 0, 1, 1},
   {&__pyx_n_s_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 0, 1, 1},
   {&__pyx_n_u_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 1, 0, 1},
@@ -28975,15 +30079,20 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_dtype_is_object, __pyx_k_dtype_is_object, sizeof(__pyx_k_dtype_is_object), 0, 0, 1, 1},
   {&__pyx_n_s_empty, __pyx_k_empty, sizeof(__pyx_k_empty), 0, 0, 1, 1},
   {&__pyx_n_s_encode, __pyx_k_encode, sizeof(__pyx_k_encode), 0, 0, 1, 1},
+  {&__pyx_n_s_end, __pyx_k_end, sizeof(__pyx_k_end), 0, 0, 1, 1},
   {&__pyx_n_s_endspan, __pyx_k_endspan, sizeof(__pyx_k_endspan), 0, 0, 1, 1},
   {&__pyx_n_s_enumerate, __pyx_k_enumerate, sizeof(__pyx_k_enumerate), 0, 0, 1, 1},
+  {&__pyx_kp_s_epsilon_squared, __pyx_k_epsilon_squared, sizeof(__pyx_k_epsilon_squared), 0, 0, 1, 0},
   {&__pyx_n_s_error, __pyx_k_error, sizeof(__pyx_k_error), 0, 0, 1, 1},
+  {&__pyx_n_s_file, __pyx_k_file, sizeof(__pyx_k_file), 0, 0, 1, 1},
   {&__pyx_n_s_flags, __pyx_k_flags, sizeof(__pyx_k_flags), 0, 0, 1, 1},
   {&__pyx_n_s_float, __pyx_k_float, sizeof(__pyx_k_float), 0, 0, 1, 1},
   {&__pyx_n_s_format, __pyx_k_format, sizeof(__pyx_k_format), 0, 0, 1, 1},
   {&__pyx_n_s_fortran, __pyx_k_fortran, sizeof(__pyx_k_fortran), 0, 0, 1, 1},
   {&__pyx_n_u_fortran, __pyx_k_fortran, sizeof(__pyx_k_fortran), 0, 1, 0, 1},
   {&__pyx_n_s_gamma, __pyx_k_gamma, sizeof(__pyx_k_gamma), 0, 0, 1, 1},
+  {&__pyx_kp_s_gamma_2, __pyx_k_gamma_2, sizeof(__pyx_k_gamma_2), 0, 0, 1, 0},
+  {&__pyx_kp_s_gamma_theta, __pyx_k_gamma_theta, sizeof(__pyx_k_gamma_theta), 0, 0, 1, 0},
   {&__pyx_kp_s_got_differing_extents_in_dimensi, __pyx_k_got_differing_extents_in_dimensi, sizeof(__pyx_k_got_differing_extents_in_dimensi), 0, 0, 1, 0},
   {&__pyx_n_s_id, __pyx_k_id, sizeof(__pyx_k_id), 0, 0, 1, 1},
   {&__pyx_n_s_idx, __pyx_k_idx, sizeof(__pyx_k_idx), 0, 0, 1, 1},
@@ -29014,6 +30123,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_numpy, __pyx_k_numpy, sizeof(__pyx_k_numpy), 0, 0, 1, 1},
   {&__pyx_n_s_obj, __pyx_k_obj, sizeof(__pyx_k_obj), 0, 0, 1, 1},
   {&__pyx_n_s_omega, __pyx_k_omega, sizeof(__pyx_k_omega), 0, 0, 1, 1},
+  {&__pyx_kp_s_omega_minus_theta_squared, __pyx_k_omega_minus_theta_squared, sizeof(__pyx_k_omega_minus_theta_squared), 0, 0, 1, 0},
   {&__pyx_n_s_ord_idx, __pyx_k_ord_idx, sizeof(__pyx_k_ord_idx), 0, 0, 1, 1},
   {&__pyx_n_s_order, __pyx_k_order, sizeof(__pyx_k_order), 0, 0, 1, 1},
   {&__pyx_n_s_outcome, __pyx_k_outcome, sizeof(__pyx_k_outcome), 0, 0, 1, 1},
@@ -29023,6 +30133,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_phi, __pyx_k_phi, sizeof(__pyx_k_phi), 0, 0, 1, 1},
   {&__pyx_n_s_phi_next, __pyx_k_phi_next, sizeof(__pyx_k_phi_next), 0, 0, 1, 1},
   {&__pyx_n_s_predictor, __pyx_k_predictor, sizeof(__pyx_k_predictor), 0, 0, 1, 1},
+  {&__pyx_n_s_print, __pyx_k_print, sizeof(__pyx_k_print), 0, 0, 1, 1},
   {&__pyx_n_s_psi, __pyx_k_psi, sizeof(__pyx_k_psi), 0, 0, 1, 1},
   {&__pyx_n_s_pyx_getbuffer, __pyx_k_pyx_getbuffer, sizeof(__pyx_k_pyx_getbuffer), 0, 0, 1, 1},
   {&__pyx_n_s_pyx_vtable, __pyx_k_pyx_vtable, sizeof(__pyx_k_pyx_vtable), 0, 0, 1, 1},
@@ -29034,6 +30145,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_size, __pyx_k_size, sizeof(__pyx_k_size), 0, 0, 1, 1},
   {&__pyx_n_s_sp, __pyx_k_sp, sizeof(__pyx_k_sp), 0, 0, 1, 1},
   {&__pyx_n_s_sse, __pyx_k_sse, sizeof(__pyx_k_sse), 0, 0, 1, 1},
+  {&__pyx_n_s_sse_2, __pyx_k_sse_2, sizeof(__pyx_k_sse_2), 0, 0, 1, 1},
   {&__pyx_n_s_start, __pyx_k_start, sizeof(__pyx_k_start), 0, 0, 1, 1},
   {&__pyx_n_s_state, __pyx_k_state, sizeof(__pyx_k_state), 0, 0, 1, 1},
   {&__pyx_n_s_step, __pyx_k_step, sizeof(__pyx_k_step), 0, 0, 1, 1},
@@ -29042,8 +30154,11 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_strided_and_direct_or_indirect, __pyx_k_strided_and_direct_or_indirect, sizeof(__pyx_k_strided_and_direct_or_indirect), 0, 0, 1, 0},
   {&__pyx_kp_s_strided_and_indirect, __pyx_k_strided_and_indirect, sizeof(__pyx_k_strided_and_indirect), 0, 0, 1, 0},
   {&__pyx_n_s_struct, __pyx_k_struct, sizeof(__pyx_k_struct), 0, 0, 1, 1},
+  {&__pyx_n_s_sum, __pyx_k_sum, sizeof(__pyx_k_sum), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_n_s_theta, __pyx_k_theta, sizeof(__pyx_k_theta), 0, 0, 1, 1},
+  {&__pyx_kp_s_this_is_a_problem, __pyx_k_this_is_a_problem, sizeof(__pyx_k_this_is_a_problem), 0, 0, 1, 0},
+  {&__pyx_n_s_total_weight, __pyx_k_total_weight, sizeof(__pyx_k_total_weight), 0, 0, 1, 1},
   {&__pyx_n_s_types, __pyx_k_types, sizeof(__pyx_k_types), 0, 0, 1, 1},
   {&__pyx_kp_s_unable_to_allocate_array_data, __pyx_k_unable_to_allocate_array_data, sizeof(__pyx_k_unable_to_allocate_array_data), 0, 0, 1, 0},
   {&__pyx_kp_s_unable_to_allocate_shape_and_str, __pyx_k_unable_to_allocate_shape_and_str, sizeof(__pyx_k_unable_to_allocate_shape_and_str), 0, 0, 1, 0},
@@ -29060,11 +30175,12 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_y, __pyx_k_y, sizeof(__pyx_k_y), 0, 0, 1, 1},
   {&__pyx_n_s_zero_tol, __pyx_k_zero_tol, sizeof(__pyx_k_zero_tol), 0, 0, 1, 1},
   {&__pyx_n_s_zeta_squared, __pyx_k_zeta_squared, sizeof(__pyx_k_zeta_squared), 0, 0, 1, 1},
+  {&__pyx_kp_s_zeta_squared_2, __pyx_k_zeta_squared_2, sizeof(__pyx_k_zeta_squared_2), 0, 0, 1, 0},
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 100; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 76; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 103; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) {__pyx_filename = __pyx_f[2]; __pyx_lineno = 799; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 147; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -29081,61 +30197,61 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "pyearth/_knot_search.pyx":92
+  /* "pyearth/_knot_search.pyx":95
  *             weights = []
  *             for i in range(w.shape[1]):
  *                 weights.append(SingleWeightDependentData.alloc(w[:, i], m, max_terms))             # <<<<<<<<<<<<<<
  *         elif len(w.shape) == 1 or w.shape[1] == 1:
  *             n_weights = 1
  */
-  __pyx_slice_ = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice_)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice_ = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice_)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice_);
   __Pyx_GIVEREF(__pyx_slice_);
 
-  /* "pyearth/_knot_search.pyx":98
+  /* "pyearth/_knot_search.pyx":101
  *                 weights = [SingleWeightDependentData.alloc(w, m, max_terms)]
  *             else:
  *                 weights = [SingleWeightDependentData.alloc(w[:, 0], m, max_terms)]             # <<<<<<<<<<<<<<
  *         else:
  *             raise ValueError('Shape of weights does not match shape of outcomes.')
  */
-  __pyx_slice__2 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__2 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__2);
   __Pyx_GIVEREF(__pyx_slice__2);
-  __pyx_tuple__3 = PyTuple_Pack(2, __pyx_slice__2, __pyx_int_0); if (unlikely(!__pyx_tuple__3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__3 = PyTuple_Pack(2, __pyx_slice__2, __pyx_int_0); if (unlikely(!__pyx_tuple__3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__3);
   __Pyx_GIVEREF(__pyx_tuple__3);
 
-  /* "pyearth/_knot_search.pyx":100
+  /* "pyearth/_knot_search.pyx":103
  *                 weights = [SingleWeightDependentData.alloc(w[:, 0], m, max_terms)]
  *         else:
  *             raise ValueError('Shape of weights does not match shape of outcomes.')             # <<<<<<<<<<<<<<
  * 
  *         outcomes = []
  */
-  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_s_Shape_of_weights_does_not_match); if (unlikely(!__pyx_tuple__4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 100; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_s_Shape_of_weights_does_not_match); if (unlikely(!__pyx_tuple__4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 103; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__4);
   __Pyx_GIVEREF(__pyx_tuple__4);
 
-  /* "pyearth/_knot_search.pyx":263
+  /* "pyearth/_knot_search.pyx":278
  *     def alloc(cls, FLOAT_t[:] x):
  *         cdef INT_t[:] order
  *         order = np.argsort(x)[::-1]             # <<<<<<<<<<<<<<
  *         return cls(x, order)
  * 
  */
-  __pyx_slice__5 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 263; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_slice__5 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 278; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_slice__5);
   __Pyx_GIVEREF(__pyx_slice__5);
 
-  /* "pyearth/_knot_search.pyx":315
+  /* "pyearth/_knot_search.pyx":330
  *     @classmethod
  *     def alloc(cls):
  *         return cls(0., 0., 0., 0., 0., 0., 0., 0, 0, 0.)             # <<<<<<<<<<<<<<
  * 
  * @cython.final
  */
-  __pyx_tuple__6 = PyTuple_Pack(10, __pyx_float_0_, __pyx_float_0_, __pyx_float_0_, __pyx_float_0_, __pyx_float_0_, __pyx_float_0_, __pyx_float_0_, __pyx_int_0, __pyx_int_0, __pyx_float_0_); if (unlikely(!__pyx_tuple__6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 315; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__6 = PyTuple_Pack(10, __pyx_float_0_, __pyx_float_0_, __pyx_float_0_, __pyx_float_0_, __pyx_float_0_, __pyx_float_0_, __pyx_float_0_, __pyx_int_0, __pyx_int_0, __pyx_float_0_); if (unlikely(!__pyx_tuple__6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 330; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__6);
   __Pyx_GIVEREF(__pyx_tuple__6);
 
@@ -29536,40 +30652,41 @@ PyMODINIT_FUNC PyInit__knot_search(void)
   __pyx_vtable_7pyearth_12_knot_search_MultipleOutcomeDependentData.update_from_array = (PyObject *(*)(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *, __Pyx_memviewslice, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch))__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_update_from_array;
   __pyx_vtable_7pyearth_12_knot_search_MultipleOutcomeDependentData.downdate = (PyObject *(*)(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *, int __pyx_skip_dispatch))__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_downdate;
   __pyx_vtable_7pyearth_12_knot_search_MultipleOutcomeDependentData.sse = (PyObject *(*)(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *, int __pyx_skip_dispatch))__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_sse;
-  if (PyType_Ready(&__pyx_type_7pyearth_12_knot_search_MultipleOutcomeDependentData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 77; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_vtable_7pyearth_12_knot_search_MultipleOutcomeDependentData.mse = (__pyx_t_7pyearth_6_types_FLOAT_t (*)(struct __pyx_obj_7pyearth_12_knot_search_MultipleOutcomeDependentData *, int __pyx_skip_dispatch))__pyx_f_7pyearth_12_knot_search_28MultipleOutcomeDependentData_mse;
+  if (PyType_Ready(&__pyx_type_7pyearth_12_knot_search_MultipleOutcomeDependentData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type_7pyearth_12_knot_search_MultipleOutcomeDependentData.tp_print = 0;
-  if (__Pyx_SetVtable(__pyx_type_7pyearth_12_knot_search_MultipleOutcomeDependentData.tp_dict, __pyx_vtabptr_7pyearth_12_knot_search_MultipleOutcomeDependentData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 77; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  if (PyObject_SetAttrString(__pyx_m, "MultipleOutcomeDependentData", (PyObject *)&__pyx_type_7pyearth_12_knot_search_MultipleOutcomeDependentData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 77; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (__Pyx_SetVtable(__pyx_type_7pyearth_12_knot_search_MultipleOutcomeDependentData.tp_dict, __pyx_vtabptr_7pyearth_12_knot_search_MultipleOutcomeDependentData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyObject_SetAttrString(__pyx_m, "MultipleOutcomeDependentData", (PyObject *)&__pyx_type_7pyearth_12_knot_search_MultipleOutcomeDependentData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_7pyearth_12_knot_search_MultipleOutcomeDependentData = &__pyx_type_7pyearth_12_knot_search_MultipleOutcomeDependentData;
   __pyx_vtabptr_7pyearth_12_knot_search_SingleOutcomeDependentData = &__pyx_vtable_7pyearth_12_knot_search_SingleOutcomeDependentData;
   __pyx_vtable_7pyearth_12_knot_search_SingleOutcomeDependentData.sse = (__pyx_t_7pyearth_6_types_FLOAT_t (*)(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *, int __pyx_skip_dispatch))__pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_sse;
   __pyx_vtable_7pyearth_12_knot_search_SingleOutcomeDependentData.synchronize = (int (*)(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch))__pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_synchronize;
   __pyx_vtable_7pyearth_12_knot_search_SingleOutcomeDependentData.update = (int (*)(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *, __pyx_t_7pyearth_6_types_FLOAT_t, int __pyx_skip_dispatch))__pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_update;
   __pyx_vtable_7pyearth_12_knot_search_SingleOutcomeDependentData.downdate = (PyObject *(*)(struct __pyx_obj_7pyearth_12_knot_search_SingleOutcomeDependentData *, int __pyx_skip_dispatch))__pyx_f_7pyearth_12_knot_search_26SingleOutcomeDependentData_downdate;
-  if (PyType_Ready(&__pyx_type_7pyearth_12_knot_search_SingleOutcomeDependentData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 128; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyType_Ready(&__pyx_type_7pyearth_12_knot_search_SingleOutcomeDependentData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type_7pyearth_12_knot_search_SingleOutcomeDependentData.tp_print = 0;
-  if (__Pyx_SetVtable(__pyx_type_7pyearth_12_knot_search_SingleOutcomeDependentData.tp_dict, __pyx_vtabptr_7pyearth_12_knot_search_SingleOutcomeDependentData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 128; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  if (PyObject_SetAttrString(__pyx_m, "SingleOutcomeDependentData", (PyObject *)&__pyx_type_7pyearth_12_knot_search_SingleOutcomeDependentData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 128; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (__Pyx_SetVtable(__pyx_type_7pyearth_12_knot_search_SingleOutcomeDependentData.tp_dict, __pyx_vtabptr_7pyearth_12_knot_search_SingleOutcomeDependentData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyObject_SetAttrString(__pyx_m, "SingleOutcomeDependentData", (PyObject *)&__pyx_type_7pyearth_12_knot_search_SingleOutcomeDependentData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_7pyearth_12_knot_search_SingleOutcomeDependentData = &__pyx_type_7pyearth_12_knot_search_SingleOutcomeDependentData;
-  if (PyType_Ready(&__pyx_type_7pyearth_12_knot_search_PredictorDependentData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 202; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyType_Ready(&__pyx_type_7pyearth_12_knot_search_PredictorDependentData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 217; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type_7pyearth_12_knot_search_PredictorDependentData.tp_print = 0;
-  if (PyObject_SetAttrString(__pyx_m, "PredictorDependentData", (PyObject *)&__pyx_type_7pyearth_12_knot_search_PredictorDependentData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 202; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyObject_SetAttrString(__pyx_m, "PredictorDependentData", (PyObject *)&__pyx_type_7pyearth_12_knot_search_PredictorDependentData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 217; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_7pyearth_12_knot_search_PredictorDependentData = &__pyx_type_7pyearth_12_knot_search_PredictorDependentData;
-  if (PyType_Ready(&__pyx_type_7pyearth_12_knot_search_KnotSearchReadOnlyData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 267; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyType_Ready(&__pyx_type_7pyearth_12_knot_search_KnotSearchReadOnlyData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 282; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type_7pyearth_12_knot_search_KnotSearchReadOnlyData.tp_print = 0;
-  if (PyObject_SetAttrString(__pyx_m, "KnotSearchReadOnlyData", (PyObject *)&__pyx_type_7pyearth_12_knot_search_KnotSearchReadOnlyData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 267; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyObject_SetAttrString(__pyx_m, "KnotSearchReadOnlyData", (PyObject *)&__pyx_type_7pyearth_12_knot_search_KnotSearchReadOnlyData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 282; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_7pyearth_12_knot_search_KnotSearchReadOnlyData = &__pyx_type_7pyearth_12_knot_search_KnotSearchReadOnlyData;
-  if (PyType_Ready(&__pyx_type_7pyearth_12_knot_search_KnotSearchState) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 288; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyType_Ready(&__pyx_type_7pyearth_12_knot_search_KnotSearchState) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 303; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type_7pyearth_12_knot_search_KnotSearchState.tp_print = 0;
-  if (PyObject_SetAttrString(__pyx_m, "KnotSearchState", (PyObject *)&__pyx_type_7pyearth_12_knot_search_KnotSearchState) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 288; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyObject_SetAttrString(__pyx_m, "KnotSearchState", (PyObject *)&__pyx_type_7pyearth_12_knot_search_KnotSearchState) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 303; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_7pyearth_12_knot_search_KnotSearchState = &__pyx_type_7pyearth_12_knot_search_KnotSearchState;
-  if (PyType_Ready(&__pyx_type_7pyearth_12_knot_search_KnotSearchWorkingData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyType_Ready(&__pyx_type_7pyearth_12_knot_search_KnotSearchWorkingData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type_7pyearth_12_knot_search_KnotSearchWorkingData.tp_print = 0;
-  if (PyObject_SetAttrString(__pyx_m, "KnotSearchWorkingData", (PyObject *)&__pyx_type_7pyearth_12_knot_search_KnotSearchWorkingData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyObject_SetAttrString(__pyx_m, "KnotSearchWorkingData", (PyObject *)&__pyx_type_7pyearth_12_knot_search_KnotSearchWorkingData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_7pyearth_12_knot_search_KnotSearchWorkingData = &__pyx_type_7pyearth_12_knot_search_KnotSearchWorkingData;
-  if (PyType_Ready(&__pyx_type_7pyearth_12_knot_search_KnotSearchData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 341; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyType_Ready(&__pyx_type_7pyearth_12_knot_search_KnotSearchData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 356; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type_7pyearth_12_knot_search_KnotSearchData.tp_print = 0;
-  if (PyObject_SetAttrString(__pyx_m, "KnotSearchData", (PyObject *)&__pyx_type_7pyearth_12_knot_search_KnotSearchData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 341; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyObject_SetAttrString(__pyx_m, "KnotSearchData", (PyObject *)&__pyx_type_7pyearth_12_knot_search_KnotSearchData) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 356; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_7pyearth_12_knot_search_KnotSearchData = &__pyx_type_7pyearth_12_knot_search_KnotSearchData;
   if (PyType_Ready(&__pyx_type___pyx_array) < 0) {__pyx_filename = __pyx_f[3]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type___pyx_array.tp_print = 0;
@@ -29701,147 +30818,147 @@ PyMODINIT_FUNC PyInit__knot_search(void)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "pyearth/_knot_search.pyx":28
+  /* "pyearth/_knot_search.pyx":29
  * 
  *     @classmethod
  *     def alloc(cls, FLOAT_t[:] w, INDEX_t m, INDEX_t max_terms):             # <<<<<<<<<<<<<<
  *         cdef UpdatingQT updating_qt = UpdatingQT.alloc(m, max_terms)
- *         return cls(updating_qt, w, m, 0, max_terms)
+ *         cdef FLOAT_t total_weight = np.sum(w[:m])
  */
-  __pyx_t_3 = __Pyx_GetNameInClass((PyObject *)__pyx_ptype_7pyearth_12_knot_search_SingleWeightDependentData, __pyx_n_s_alloc); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_GetNameInClass((PyObject *)__pyx_ptype_7pyearth_12_knot_search_SingleWeightDependentData, __pyx_n_s_alloc); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
 
-  /* "pyearth/_knot_search.pyx":27
- *         self.Q_t = self.updating_qt.Q_t
+  /* "pyearth/_knot_search.pyx":28
+ *         self.total_weight = total_weight
  * 
  *     @classmethod             # <<<<<<<<<<<<<<
  *     def alloc(cls, FLOAT_t[:] w, INDEX_t m, INDEX_t max_terms):
  *         cdef UpdatingQT updating_qt = UpdatingQT.alloc(m, max_terms)
  */
-  __pyx_t_2 = __Pyx_Method_ClassMethod(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 27; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_Method_ClassMethod(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_7pyearth_12_knot_search_SingleWeightDependentData->tp_dict, __pyx_n_s_alloc, __pyx_t_2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 28; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_7pyearth_12_knot_search_SingleWeightDependentData->tp_dict, __pyx_n_s_alloc, __pyx_t_2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 29; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_7pyearth_12_knot_search_SingleWeightDependentData);
 
-  /* "pyearth/_knot_search.pyx":83
+  /* "pyearth/_knot_search.pyx":86
  * 
  *     @classmethod
  *     def alloc(cls, FLOAT_t[:,:] y, w, INDEX_t m, INDEX_t n_outcomes, INDEX_t max_terms):             # <<<<<<<<<<<<<<
  *         cdef list weights
  *         cdef list outcomes
  */
-  __pyx_t_2 = __Pyx_GetNameInClass((PyObject *)__pyx_ptype_7pyearth_12_knot_search_MultipleOutcomeDependentData, __pyx_n_s_alloc); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_GetNameInClass((PyObject *)__pyx_ptype_7pyearth_12_knot_search_MultipleOutcomeDependentData, __pyx_n_s_alloc); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 86; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
 
-  /* "pyearth/_knot_search.pyx":82
+  /* "pyearth/_knot_search.pyx":85
  *         self.weights = weights
  * 
  *     @classmethod             # <<<<<<<<<<<<<<
  *     def alloc(cls, FLOAT_t[:,:] y, w, INDEX_t m, INDEX_t n_outcomes, INDEX_t max_terms):
  *         cdef list weights
  */
-  __pyx_t_3 = __Pyx_Method_ClassMethod(__pyx_t_2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_Method_ClassMethod(__pyx_t_2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 85; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_7pyearth_12_knot_search_MultipleOutcomeDependentData->tp_dict, __pyx_n_s_alloc, __pyx_t_3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_7pyearth_12_knot_search_MultipleOutcomeDependentData->tp_dict, __pyx_n_s_alloc, __pyx_t_3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 86; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   PyType_Modified(__pyx_ptype_7pyearth_12_knot_search_MultipleOutcomeDependentData);
 
-  /* "pyearth/_knot_search.pyx":140
+  /* "pyearth/_knot_search.pyx":151
  * 
  *     @classmethod
  *     def alloc(cls, FLOAT_t[:] y, SingleWeightDependentData weight, INDEX_t m, INDEX_t max_terms):             # <<<<<<<<<<<<<<
  *         cdef FLOAT_t[:] theta
  *         cdef FLOAT_t[:] wy = np.empty(shape=m, dtype=np.float)
  */
-  __pyx_t_3 = __Pyx_GetNameInClass((PyObject *)__pyx_ptype_7pyearth_12_knot_search_SingleOutcomeDependentData, __pyx_n_s_alloc); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_GetNameInClass((PyObject *)__pyx_ptype_7pyearth_12_knot_search_SingleOutcomeDependentData, __pyx_n_s_alloc); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 151; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
 
-  /* "pyearth/_knot_search.pyx":139
- *         self.max_terms = max_terms
+  /* "pyearth/_knot_search.pyx":150
+ *         self.sse_ = sse_
  * 
  *     @classmethod             # <<<<<<<<<<<<<<
  *     def alloc(cls, FLOAT_t[:] y, SingleWeightDependentData weight, INDEX_t m, INDEX_t max_terms):
  *         cdef FLOAT_t[:] theta
  */
-  __pyx_t_2 = __Pyx_Method_ClassMethod(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_Method_ClassMethod(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_7pyearth_12_knot_search_SingleOutcomeDependentData->tp_dict, __pyx_n_s_alloc, __pyx_t_2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_7pyearth_12_knot_search_SingleOutcomeDependentData->tp_dict, __pyx_n_s_alloc, __pyx_t_2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 151; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_7pyearth_12_knot_search_SingleOutcomeDependentData);
 
-  /* "pyearth/_knot_search.pyx":261
+  /* "pyearth/_knot_search.pyx":276
  * 
  *     @classmethod
  *     def alloc(cls, FLOAT_t[:] x):             # <<<<<<<<<<<<<<
  *         cdef INT_t[:] order
  *         order = np.argsort(x)[::-1]
  */
-  __pyx_t_2 = __Pyx_GetNameInClass((PyObject *)__pyx_ptype_7pyearth_12_knot_search_PredictorDependentData, __pyx_n_s_alloc); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 261; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_GetNameInClass((PyObject *)__pyx_ptype_7pyearth_12_knot_search_PredictorDependentData, __pyx_n_s_alloc); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 276; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
 
-  /* "pyearth/_knot_search.pyx":260
+  /* "pyearth/_knot_search.pyx":275
  *         return np.array(self.x)[self.order]
  * 
  *     @classmethod             # <<<<<<<<<<<<<<
  *     def alloc(cls, FLOAT_t[:] x):
  *         cdef INT_t[:] order
  */
-  __pyx_t_3 = __Pyx_Method_ClassMethod(__pyx_t_2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 260; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_Method_ClassMethod(__pyx_t_2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 275; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_7pyearth_12_knot_search_PredictorDependentData->tp_dict, __pyx_n_s_alloc, __pyx_t_3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 261; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_7pyearth_12_knot_search_PredictorDependentData->tp_dict, __pyx_n_s_alloc, __pyx_t_3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 276; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   PyType_Modified(__pyx_ptype_7pyearth_12_knot_search_PredictorDependentData);
 
-  /* "pyearth/_knot_search.pyx":314
+  /* "pyearth/_knot_search.pyx":329
  * 
  *     @classmethod
  *     def alloc(cls):             # <<<<<<<<<<<<<<
  *         return cls(0., 0., 0., 0., 0., 0., 0., 0, 0, 0.)
  * 
  */
-  __pyx_t_3 = __Pyx_GetNameInClass((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchState, __pyx_n_s_alloc); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 314; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_GetNameInClass((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchState, __pyx_n_s_alloc); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 329; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
 
-  /* "pyearth/_knot_search.pyx":313
+  /* "pyearth/_knot_search.pyx":328
  *         self.zeta_squared = zeta_squared
  * 
  *     @classmethod             # <<<<<<<<<<<<<<
  *     def alloc(cls):
  *         return cls(0., 0., 0., 0., 0., 0., 0., 0, 0, 0.)
  */
-  __pyx_t_2 = __Pyx_Method_ClassMethod(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 313; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_Method_ClassMethod(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 328; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchState->tp_dict, __pyx_n_s_alloc, __pyx_t_2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 314; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchState->tp_dict, __pyx_n_s_alloc, __pyx_t_2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 329; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_7pyearth_12_knot_search_KnotSearchState);
 
-  /* "pyearth/_knot_search.pyx":330
+  /* "pyearth/_knot_search.pyx":345
  * 
  *     @classmethod
  *     def alloc(cls, int max_terms):             # <<<<<<<<<<<<<<
  *         cdef FLOAT_t[:] gamma = np.empty(shape=max_terms, dtype=np.float)
  *         cdef FLOAT_t[:] kappa = np.empty(shape=max_terms, dtype=np.float)
  */
-  __pyx_t_2 = __Pyx_GetNameInClass((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchWorkingData, __pyx_n_s_alloc); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 330; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_GetNameInClass((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchWorkingData, __pyx_n_s_alloc); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 345; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
 
-  /* "pyearth/_knot_search.pyx":329
+  /* "pyearth/_knot_search.pyx":344
  *         self.state = state
  * 
  *     @classmethod             # <<<<<<<<<<<<<<
  *     def alloc(cls, int max_terms):
  *         cdef FLOAT_t[:] gamma = np.empty(shape=max_terms, dtype=np.float)
  */
-  __pyx_t_3 = __Pyx_Method_ClassMethod(__pyx_t_2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 329; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_Method_ClassMethod(__pyx_t_2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 344; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchWorkingData->tp_dict, __pyx_n_s_alloc, __pyx_t_3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 330; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchWorkingData->tp_dict, __pyx_n_s_alloc, __pyx_t_3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 345; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   PyType_Modified(__pyx_ptype_7pyearth_12_knot_search_KnotSearchWorkingData);
 
@@ -30905,6 +32022,23 @@ static CYTHON_INLINE int __Pyx_TypeTest(PyObject *obj, PyTypeObject *type) {
     return 0;
 }
 
+static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name) {
+    PyObject *result;
+#if CYTHON_COMPILING_IN_CPYTHON
+    result = PyDict_GetItem(__pyx_d, name);
+    if (likely(result)) {
+        Py_INCREF(result);
+    } else {
+#else
+    result = PyObject_GetItem(__pyx_d, name);
+    if (!result) {
+        PyErr_Clear();
+#endif
+        result = __Pyx_GetBuiltinName(name);
+    }
+    return result;
+}
+
 #if CYTHON_COMPILING_IN_CPYTHON
 static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg) {
     PyObject *self, *result;
@@ -31332,23 +32466,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func) {
     return __Pyx_PyObject_Call(func, __pyx_empty_tuple, NULL);
 }
 #endif
-
-static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name) {
-    PyObject *result;
-#if CYTHON_COMPILING_IN_CPYTHON
-    result = PyDict_GetItem(__pyx_d, name);
-    if (likely(result)) {
-        Py_INCREF(result);
-    } else {
-#else
-    result = PyObject_GetItem(__pyx_d, name);
-    if (!result) {
-        PyErr_Clear();
-#endif
-        result = __Pyx_GetBuiltinName(name);
-    }
-    return result;
-}
 
 static void __Pyx_WriteUnraisable(const char *name, CYTHON_UNUSED int clineno,
                                   CYTHON_UNUSED int lineno, CYTHON_UNUSED const char *filename,
@@ -33309,6 +34426,147 @@ static int __pyx_memview_set_nn___pyx_t_7pyearth_6_types_INT_t(const char *itemp
     *(__pyx_t_7pyearth_6_types_INT_t *) itemp = value;
     return 1;
 }
+
+#if !CYTHON_COMPILING_IN_PYPY && PY_MAJOR_VERSION < 3
+static PyObject *__Pyx_GetStdout(void) {
+    PyObject *f = PySys_GetObject((char *)"stdout");
+    if (!f) {
+        PyErr_SetString(PyExc_RuntimeError, "lost sys.stdout");
+    }
+    return f;
+}
+static int __Pyx_Print(PyObject* f, PyObject *arg_tuple, int newline) {
+    int i;
+    if (!f) {
+        if (!(f = __Pyx_GetStdout()))
+            return -1;
+    }
+    Py_INCREF(f);
+    for (i=0; i < PyTuple_GET_SIZE(arg_tuple); i++) {
+        PyObject* v;
+        if (PyFile_SoftSpace(f, 1)) {
+            if (PyFile_WriteString(" ", f) < 0)
+                goto error;
+        }
+        v = PyTuple_GET_ITEM(arg_tuple, i);
+        if (PyFile_WriteObject(v, f, Py_PRINT_RAW) < 0)
+            goto error;
+        if (PyString_Check(v)) {
+            char *s = PyString_AsString(v);
+            Py_ssize_t len = PyString_Size(v);
+            if (len > 0) {
+                switch (s[len-1]) {
+                    case ' ': break;
+                    case '\f': case '\r': case '\n': case '\t': case '\v':
+                        PyFile_SoftSpace(f, 0);
+                        break;
+                    default:  break;
+                }
+            }
+        }
+    }
+    if (newline) {
+        if (PyFile_WriteString("\n", f) < 0)
+            goto error;
+        PyFile_SoftSpace(f, 0);
+    }
+    Py_DECREF(f);
+    return 0;
+error:
+    Py_DECREF(f);
+    return -1;
+}
+#else
+static int __Pyx_Print(PyObject* stream, PyObject *arg_tuple, int newline) {
+    PyObject* kwargs = 0;
+    PyObject* result = 0;
+    PyObject* end_string;
+    if (unlikely(!__pyx_print)) {
+        __pyx_print = PyObject_GetAttr(__pyx_b, __pyx_n_s_print);
+        if (!__pyx_print)
+            return -1;
+    }
+    if (stream) {
+        kwargs = PyDict_New();
+        if (unlikely(!kwargs))
+            return -1;
+        if (unlikely(PyDict_SetItem(kwargs, __pyx_n_s_file, stream) < 0))
+            goto bad;
+        if (!newline) {
+            end_string = PyUnicode_FromStringAndSize(" ", 1);
+            if (unlikely(!end_string))
+                goto bad;
+            if (PyDict_SetItem(kwargs, __pyx_n_s_end, end_string) < 0) {
+                Py_DECREF(end_string);
+                goto bad;
+            }
+            Py_DECREF(end_string);
+        }
+    } else if (!newline) {
+        if (unlikely(!__pyx_print_kwargs)) {
+            __pyx_print_kwargs = PyDict_New();
+            if (unlikely(!__pyx_print_kwargs))
+                return -1;
+            end_string = PyUnicode_FromStringAndSize(" ", 1);
+            if (unlikely(!end_string))
+                return -1;
+            if (PyDict_SetItem(__pyx_print_kwargs, __pyx_n_s_end, end_string) < 0) {
+                Py_DECREF(end_string);
+                return -1;
+            }
+            Py_DECREF(end_string);
+        }
+        kwargs = __pyx_print_kwargs;
+    }
+    result = PyObject_Call(__pyx_print, arg_tuple, kwargs);
+    if (unlikely(kwargs) && (kwargs != __pyx_print_kwargs))
+        Py_DECREF(kwargs);
+    if (!result)
+        return -1;
+    Py_DECREF(result);
+    return 0;
+bad:
+    if (kwargs != __pyx_print_kwargs)
+        Py_XDECREF(kwargs);
+    return -1;
+}
+#endif
+
+#if !CYTHON_COMPILING_IN_PYPY && PY_MAJOR_VERSION < 3
+static int __Pyx_PrintOne(PyObject* f, PyObject *o) {
+    if (!f) {
+        if (!(f = __Pyx_GetStdout()))
+            return -1;
+    }
+    Py_INCREF(f);
+    if (PyFile_SoftSpace(f, 0)) {
+        if (PyFile_WriteString(" ", f) < 0)
+            goto error;
+    }
+    if (PyFile_WriteObject(o, f, Py_PRINT_RAW) < 0)
+        goto error;
+    if (PyFile_WriteString("\n", f) < 0)
+        goto error;
+    Py_DECREF(f);
+    return 0;
+error:
+    Py_DECREF(f);
+    return -1;
+    /* the line below is just to avoid C compiler
+     * warnings about unused functions */
+    return __Pyx_Print(f, NULL, 0);
+}
+#else
+static int __Pyx_PrintOne(PyObject* stream, PyObject *o) {
+    int res;
+    PyObject* arg_tuple = PyTuple_Pack(1, o);
+    if (unlikely(!arg_tuple))
+        return -1;
+    res = __Pyx_Print(stream, arg_tuple, 1);
+    Py_DECREF(arg_tuple);
+    return res;
+}
+#endif
 
 static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *x) {
     const long neg_one = (long) -1, const_zero = (long) 0;

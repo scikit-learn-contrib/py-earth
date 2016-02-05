@@ -30,7 +30,7 @@ cdef class PruningPasser:
             y_avg = np.average(self.y, weights=sample_weight[:,0], axis=0)
         else:
             y_avg = np.average(self.y, weights=sample_weight, axis=0)
-        self.sst = np.sum(sample_weight[:, np.newaxis] * (self.y - y_avg[np.newaxis, :]) ** 2) / np.sum(self.sample_weight)
+        self.sst = np.sum(sample_weight[:, np.newaxis] * (self.y - y_avg[np.newaxis, :]) ** 2)# / np.sum(self.sample_weight)
 
     cpdef run(PruningPasser self):
         # This is a totally naive implementation and could potentially be made
@@ -110,12 +110,13 @@ cdef class PruningPasser:
                     beta, mse_ = np.linalg.lstsq(
                         B[:, 0:pruned_basis_size], weighted_y)[0:2]
                     if mse_:
-                        mse_ /= np.sum(self.sample_weight)
+                        pass
+#                         mse_ /= np.sum(self.sample_weight)
                     else:
                         mse_ = np.sum((np.dot(B[:, 0:pruned_basis_size], beta) -
-                                    weighted_y) ** 2) / np.sum(sample_weight)
+                                    weighted_y) ** 2)# / np.sum(sample_weight)
                     mse += mse_# * output_weight[p]
-                gcv_ = gcv(mse, pruned_basis_size, self.m, self.penalty)
+                gcv_ = gcv(mse / np.sum(sample_weight), pruned_basis_size, self.m, self.penalty)
 
                 if gcv_ <= best_iteration_gcv or first:
                     best_iteration_gcv = gcv_

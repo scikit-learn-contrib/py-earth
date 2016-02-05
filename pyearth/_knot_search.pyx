@@ -16,18 +16,20 @@ from _util cimport log2
 @cython.final
 cdef class SingleWeightDependentData:
     def __init__(SingleWeightDependentData self, UpdatingQT updating_qt, FLOAT_t[:] w, INDEX_t m, 
-                 INDEX_t k, INDEX_t max_terms):
+                 INDEX_t k, INDEX_t max_terms, FLOAT_t total_weight):
         self.updating_qt = updating_qt
         self.w = w
         self.m = m
         self.k = k
         self.max_terms = max_terms
         self.Q_t = self.updating_qt.Q_t
+        self.total_weight = total_weight
     
     @classmethod
     def alloc(cls, FLOAT_t[:] w, INDEX_t m, INDEX_t max_terms):
         cdef UpdatingQT updating_qt = UpdatingQT.alloc(m, max_terms)
-        return cls(updating_qt, w, m, 0, max_terms)
+        cdef FLOAT_t total_weight = np.dot(w[:m], w[:m])
+        return cls(updating_qt, w, m, 0, max_terms, total_weight)
     
     cpdef int update_from_basis_function(SingleWeightDependentData self, BasisFunction bf, FLOAT_t[:,:] X, 
                                          BOOL_t[:,:] missing, FLOAT_t zero_tol) except *:
@@ -68,6 +70,7 @@ cdef class SingleWeightDependentData:
                    FLOAT_t zero_tol):
         cdef INDEX_t i
         self.w = w
+        self.total_weight = np.dot(self.w[:self.m], self.w[:self.m])
         self.k = 0
         self.updating_qt.reset()
         for i in range(k):
@@ -123,11 +126,18 @@ cdef class MultipleOutcomeDependentData:
             
     cpdef list sse(MultipleOutcomeDependentData self):
         return [outcome.sse() for outcome in self.outcomes]
+    
+    cpdef FLOAT_t mse(MultipleOutcomeDependentData self):
+        cdef FLOAT_t result
+        for outcome in self.outcomes:
+            result += outcome.sse_ / outcome.weight.total_weight
+        return result
+#         return [outcome.sse_ / outcome.weight.total_weight for outcome in self.outcomes]
         
 @cython.final
 cdef class SingleOutcomeDependentData:
     def __init__(SingleOutcomeDependentData self, FLOAT_t[:] y, SingleWeightDependentData weight,
-                 FLOAT_t[:] theta, FLOAT_t omega, INDEX_t m, INDEX_t k, INDEX_t max_terms):
+                 FLOAT_t[:] theta, FLOAT_t omega, INDEX_t m, INDEX_t k, INDEX_t max_terms, FLOAT_t sse_):
         self.y = y
         self.weight = weight
         self.theta = theta
@@ -135,23 +145,26 @@ cdef class SingleOutcomeDependentData:
         self.m = m
         self.k = k
         self.max_terms = max_terms
+        self.sse_ = sse_
     
     @classmethod
     def alloc(cls, FLOAT_t[:] y, SingleWeightDependentData weight, INDEX_t m, INDEX_t max_terms):
         cdef FLOAT_t[:] theta
         cdef FLOAT_t[:] wy = np.empty(shape=m, dtype=np.float)
+        cdef FLOAT_t sse_ = 0.
         cdef int i
         for i in range(m):
             wy[i] = weight.w[i] * y[i]
         cdef FLOAT_t omega = np.dot(wy, wy)
         theta = np.dot(weight.Q_t, wy)
-        return cls(y, weight, theta, omega, m, 0, max_terms)
+        return cls(y, weight, theta, omega, m, 0, max_terms, sse_)
     
     cpdef FLOAT_t sse(SingleOutcomeDependentData self):
         '''
         Return the weighted mean squared error for the linear least squares problem
         represented by Q_t, y, and w.
         '''
+        # TODO: Why is this squared?
         return ((self.omega - np.dot(self.theta, self.theta)) ** 2)# / np.sum(self.w)
     
 #     cpdef int update_from_basis_function(OutcomeDependentData self, BasisFunction bf, FLOAT_t[:,:] X, 
@@ -181,11 +194,13 @@ cdef class SingleOutcomeDependentData:
             return -1
         self.k += 1
         self.theta = np.dot(self.weight.Q_t[:self.k, :], np.asarray(self.y) * self.weight.w)
+        self.sse_ = self.omega - np.dot(self.theta[:self.k], self.theta[:self.k])
         
         return 0
         
     cpdef downdate(SingleOutcomeDependentData self):
         self.k -= 1
+        self.sse_ = self.omega - np.dot(self.theta[:self.k], self.theta[:self.k])
     
 #     cpdef reweight(OutcomeDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k, FLOAT_t zero_tol):
 #         cdef INDEX_t i
@@ -391,6 +406,10 @@ cdef inline void fast_update(PredictorDependentData predictor, SingleOutcomeDepe
     cdef FLOAT_t delta_lambda = 0.
     cdef FLOAT_t delta_mu = 0.
     cdef FLOAT_t delta_upsilon = 0.
+    cdef FLOAT_t gamma_squared
+    cdef FLOAT_t theta_gamma
+    cdef FLOAT_t zeta_epsilon
+    cdef FLOAT_t tol = 1e-5
     cdef FLOAT_t pidx, xidx, widx, yidx, qidx, delta_nu, \
         delta_xi, delta_rho, delta_sigma, delta_tau, delta_psi, delta_chi
     
@@ -450,16 +469,39 @@ cdef inline void fast_update(PredictorDependentData predictor, SingleOutcomeDepe
     
     # Compute epsilon_squared and zeta_squared
     if working.state.beta > 0:
-        epsilon_squared = working.state.beta 
-        for j in range(q):
-            epsilon_squared -= working.gamma[j] ** 2
+        gamma_squared = dot(working.gamma, working.gamma, q)
+        epsilon_squared = working.state.beta - gamma_squared
         if epsilon_squared > 0:
-            working.state.zeta_squared = (working.state.alpha - dot(working.gamma, outcome.theta, q)) ** 2
-            working.state.zeta_squared /= epsilon_squared
+            theta_gamma = dot(working.gamma, outcome.theta, q)
+            zeta_epsilon = working.state.alpha - theta_gamma
+            if (abs(zeta_epsilon) / abs(working.state.alpha + theta_gamma) > tol) or (epsilon_squared / abs(working.state.beta + gamma_squared) > tol):
+                working.state.zeta_squared = (zeta_epsilon ** 2) / epsilon_squared
+#             working.state.zeta_squared /= epsilon_squared
+#             if epsilon_squared < 1e-6:
+#                 print 'epsilon_squared =', epsilon_squared
+#                 print 'alpha =', working.state.alpha
+#                 print 'gamma * theta =', dot(working.gamma, outcome.theta, q)
+#                 print 'beta =', working.state.beta
+            else:
+                # Numerical instability got us here.  Assume linear
+                # dependence (which is what causes the instability) and 
+                # set zeta_squared, alpha, and beta accordingly
+                print 'ELSE!!!!!!!!!'
+                working.state.zeta_squared = 0.
+                working.state.beta = gamma_squared
+                theta_gamma = dot(working.gamma, outcome.theta, q)
+                working.state.alpha = theta_gamma
         else:
             working.state.zeta_squared = 0.
     else:
+        # This happens when there are no nonzero values in the 
+        # new predictor yet.  It just means we need to wait for 
+        # lower knot values.
         working.state.zeta_squared = 0.
+#         gamma_squared = dot(working.gamma, working.gamma, q)
+#         working.state.beta = gamma_squared
+#         theta_gamma = dot(working.gamma, outcome.theta, q)
+#         working.state.alpha = theta_gamma
     # Now zeta_squared is correct for phi_next.
     
     # Update kappa, lambda, mu, and upsilon
@@ -530,6 +572,7 @@ cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p
         for i in range(n_outcomes):
             working = workings[i]
             outcome = outcomes[i]
+#             omega_minus_theta_squared = outcome.omega - np.dot(outcome.theta[:q], outcome.theta[:q])
             
             # Get the next candidate knot
             working.state.phi = phi
@@ -538,9 +581,28 @@ cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p
             # Update workingdata for the new candidate knot
             fast_update(predictor, outcome, working, p, q, m, r)
             
+            if working.state.zeta_squared >= outcome.sse_:
+                # Sometimes this can happen because of numerical issues in 
+                # the fast update process.  These occur when the new potential
+                # predictor column is close to linear dependence on previous 
+                # columns.  In that case, correct everything so that we can move
+                # on.
+                print 'this is a problem!'
+                print 'zeta_squared =', working.state.zeta_squared
+                print 'omega_minus_theta_squared =', outcome.sse_
+                print i
+                print 'epsilon_squared =',  working.state.beta - np.dot(working.gamma[:q], working.gamma[:q])
+                print 'alpha =', working.state.alpha
+                print 'gamma * theta =', dot(working.gamma, outcome.theta, q)
+                print 'beta =', working.state.beta
+                print 'gamma^2 = ', dot(working.gamma, working.gamma, q)
+                working.state.zeta_squared = 0.
+                working.state.alpha = dot(working.gamma, outcome.theta, q)
+                working.state.beta = dot(working.gamma, working.gamma, q)
+
+
             # Add up objectives
             zeta_squared += working.state.zeta_squared
-
         # Compare against best result so far
         if zeta_squared > best_zeta_squared:
             best_knot_index = k
@@ -572,7 +634,7 @@ cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p
     loss = -best_zeta_squared
     for i in range(n_outcomes):
         outcome = outcomes[i]
-        loss += outcome.omega - np.dot(outcome.theta[:q], outcome.theta[:q])
+        loss += outcome.sse_
 #     if loss < 0:
 #         print 'negative loss!'
 #         print 'best_zeta_squared =', best_zeta_squared

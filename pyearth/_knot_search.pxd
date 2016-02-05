@@ -11,6 +11,7 @@ cdef class SingleWeightDependentData:
     cdef readonly INDEX_t k
     cdef readonly INDEX_t max_terms
     cdef readonly FLOAT_t[:, :] Q_t
+    cdef readonly FLOAT_t total_weight
     cpdef int update_from_basis_function(SingleWeightDependentData self, BasisFunction bf, FLOAT_t[:,:] X, 
                                          BOOL_t[:,:] missing, FLOAT_t zero_tol) except *
     cpdef int update_from_array(SingleWeightDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *
@@ -26,6 +27,7 @@ cdef class MultipleOutcomeDependentData:
     cpdef update_from_array(MultipleOutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol)
     cpdef downdate(MultipleOutcomeDependentData self)
     cpdef list sse(MultipleOutcomeDependentData self)
+    cpdef FLOAT_t mse(MultipleOutcomeDependentData self)
     
 @cython.final
 cdef class SingleOutcomeDependentData:
@@ -33,6 +35,7 @@ cdef class SingleOutcomeDependentData:
     cdef readonly SingleWeightDependentData weight
     cdef readonly FLOAT_t[:] theta
     cdef public FLOAT_t omega
+    cdef public FLOAT_t sse_
     cdef public INDEX_t m
     cdef public INDEX_t k
     cdef public INDEX_t max_terms

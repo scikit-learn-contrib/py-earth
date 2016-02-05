@@ -300,6 +300,9 @@ cdef class ForwardPasser:
         cdef cnp.ndarray[FLOAT_t, ndim = 1] b
         cdef cnp.ndarray[FLOAT_t, ndim = 1] p
         
+        if self.outcome.weights[0].k > 0:
+            print np.dot(self.outcome.weights[0].Q_t[:self.outcome.weights[0].k,:], np.asarray(self.outcome.weights[0].Q_t[:self.outcome.weights[0].k,:]).T)
+        
         if self.use_fast and not (self.last_fast_empty or self.last_fast_low_improvement):
             # choose only among the top "fast_K" basis functions
             # as parents
@@ -393,13 +396,14 @@ cdef class ForwardPasser:
                 # term in order to compare later.  Note that the mse with
                 # another term never increases, but the gcv may because it
                 # penalizes additional terms.
-                mse_ = sum(self.outcome.sse()) / np.sum(self.sample_weight ** 2)
+                mse_ = self.outcome.mse()
                 if missing_flag and not covered:
                     gcv_ = gcv_factor_k_plus_3 * mse_
                 else:
                     gcv_ = gcv_factor_k_plus_1 * mse_
 
                 if linear_variables[variable]:
+                    print 'variable %s is linear' % self.xlabels[variable]
                     mse = mse_
                     knot_idx = -1
                 else:
@@ -459,7 +463,8 @@ cdef class ForwardPasser:
                 self.orthonormal_downdate()
                 
                 # Update the choices
-#                 print parent, variable, mse, mse_choice, knot_idx, knot_idx_choice
+                print parent, variable, self.xlabels[variable], mse, mse_choice, knot
+                
                 if mse < mse_choice or first:
 #                     print 'choose'
                     if first:
@@ -663,9 +668,13 @@ cdef class ForwardPasser:
             self.record[len(self.record) - 1].set_no_candidates(True)
             return
         
-
+        # Compute the new mse, which is the result of the very stable
+        # orthonormal updates and not the mse that comes directly from 
+        # the knot search
+        cdef FLOAT_t final_mse = self.outcome.mse()
+        
         # Update the build record
         self.record.append(ForwardPassIteration(parent_idx_choice,
                                                 variable_choice,
-                                                knot_idx_choice, mse_choice,
+                                                knot_idx_choice, final_mse,
                                                 len(self.basis)))
