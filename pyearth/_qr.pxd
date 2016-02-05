@@ -7,7 +7,8 @@ cdef class UpdatingQT:
     cdef readonly Householder householder
     cdef readonly int k
     cdef readonly FLOAT_t[::1, :] Q_t
-    cpdef void update_qt(UpdatingQT self)
+    cdef readonly FLOAT_t zero_tol
+    cpdef void update_qt(UpdatingQT self, bint dependent)
     cpdef void update(UpdatingQT self, FLOAT_t[:] x)
     cpdef void downdate(UpdatingQT self)
     cpdef void reset(UpdatingQT self)
@@ -19,11 +20,13 @@ cdef class Householder:
     cdef readonly FLOAT_t[::1, :] V
     cdef readonly FLOAT_t[::1, :] T
     cdef readonly FLOAT_t[::1] tau
+    cdef readonly FLOAT_t[::1] beta
     cdef readonly FLOAT_t[::1, :] work
+    cdef readonly FLOAT_t zero_tol
     cpdef void downdate(Householder self)
     cpdef void reset(Householder self)
-    cpdef void update_from_column(Householder self, FLOAT_t[:] c)
-    cpdef void update_v_t(Householder self)
+    cpdef bint update_from_column(Householder self, FLOAT_t[:] c)
+    cpdef bint update_v_t(Householder self)
     cpdef void left_apply(Householder self, FLOAT_t[::1, :] C)
     cpdef void left_apply_transpose(Householder self, FLOAT_t[::1, :] C)
     cpdef void right_apply(Householder self, FLOAT_t[::1, :] C)
