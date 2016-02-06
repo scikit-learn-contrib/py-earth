@@ -518,20 +518,20 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             X, y, sample_weight, output_weight, missing)
 
         # Do the actual work
-        self.__forward_pass(X, y, 
+        self.forward_pass(X, y, 
                             sample_weight, output_weight, missing,
                             self.xlabels_, linvars, skip_scrub=True)
         if self.enable_pruning is True:
-            self.__pruning_pass(X, y,
+            self.pruning_pass(X, y,
                             sample_weight, output_weight, missing, 
                             skip_scrub=True)
         if hasattr(self, 'smooth') and self.smooth:
             self.basis_ = self.basis_.smooth(X)
-        self.__linear_fit(X, y, sample_weight, output_weight, missing, 
+        self.linear_fit(X, y, sample_weight, output_weight, missing, 
                           skip_scrub=True)
         return self
     
-#     def __forward_pass2(self, X, y=None,
+#     def forward_pass2(self, X, y=None,
 #                        sample_weight=None, output_weight=None,
 #                        missing=None,
 #                        xlabels=None, linvars=[]):
@@ -554,7 +554,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 #             sample_weight, output_weight, xlabels=self.xlabels_, linvars=linvars)
 # #         self.basis_ = forward_passer.get_basis()
 #     
-    def __forward_pass(self, X, y=None,
+    def forward_pass(self, X, y=None,
                        sample_weight=None, output_weight=None,
                        missing=None,
                        xlabels=None, linvars=[], skip_scrub=False):
@@ -639,7 +639,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         self.forward_pass_record_ = forward_passer.trace()
         self.basis_ = forward_passer.get_basis()
 
-    def __pruning_pass(self, X, y=None, sample_weight=None, output_weight=None, 
+    def pruning_pass(self, X, y=None, sample_weight=None, output_weight=None, 
                        missing=None, skip_scrub=False):
         '''
         Perform the pruning pass of the multivariate adaptive regression
@@ -697,8 +697,10 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             
         if sample_weight.shape[1]:
             sample_weight = np.repeat(sample_weight,y.shape[1],axis=1)
+        
         # Pull arguments from self
         args = self._pull_pruning_args(**self.__dict__)
+        
         # Do the actual work
         pruning_passer = PruningPasser(
             self.basis_, X, missing, y, sample_weight,
@@ -710,10 +712,15 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 #         # Format data
 #         X, y, sample_weight, output_weight, missing = self._scrub(
 #             X, y, sample_weight, output_weight, missing)
-#         
+#          
 #         # Dimensions
-#         m = X.shape[0]
+#         m, n = X.shape
 #         basis_size = len(self.basis_)
+#         pruned_basis_size = self.basis_.plen()
+#          
+#         self.pruning_pass_record_ = PruningPassRecord(m, n, args['penalty'], sst, pruned_basis_size)
+#         
+#         
 #         
 #         # Pull arguments from self
 #         args = self._pull_pruning_args(**self.__dict__)
@@ -739,7 +746,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 #             print 2
 #             sys.stdout.flush()
 #             # Score this prune set
-#             self.__linear_fit(X, y, sample_weight, output_weight, missing, skip_scrub=True)
+#             self.linear_fit(X, y, sample_weight, output_weight, missing, skip_scrub=True)
 #             y_pred = self.predict(X, missing, skip_scrub=True)
 #             score = gcv(np.mean(((y - y_pred) * np.sqrt(sample_weight)) ** 2),
 #                         basis_size - len(prune_set), m, penalty)
@@ -825,7 +832,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             self.mse_, self.gcv_, self.rsq_, self.grsq_)
         return result
 
-    def __linear_fit(self, X, y=None, sample_weight=None, output_weight=None,
+    def linear_fit(self, X, y=None, sample_weight=None, output_weight=None,
                      missing=None, skip_scrub=False):
         '''
         Solve the linear least squares problem to determine the coefficients
@@ -879,15 +886,17 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             X, y, sample_weight, output_weight, missing = self._scrub(
                 X, y, sample_weight, output_weight, missing)
         
-        if sample_weight.shape[1]:
-            sample_weight = np.repeat(sample_weight,y.shape[1],axis=1)
+#         if sample_weight.shape[1]:
+#             sample_weight = np.repeat(sample_weight,y.shape[1],axis=1)
         
         # Solve the linear least squares problem
         self.coef_ = []
         resid_ = []
+        total_weight = 0.
+        mse0 = 0.
         for i in range(y.shape[1]):
             
-            # Apply weights to B
+            # Figure out the weight column
             if sample_weight.shape[1] == 1:
                 w = sample_weight[:, i]
             else:
@@ -896,10 +905,16 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             # Transform into basis space
             B = self.transform(X, missing) * w[:, None]
             apply_weights_2d(B, w)
+            
+            # Compute total weight
+            total_weight += np.sum(w)
     
             # Apply weights to y
             weighted_y = y.copy()
             weighted_y *= np.sqrt(w[:, np.newaxis])
+            
+            # Compute the mse0
+            mse0 += np.sum((weighted_y - np.average(weighted_y)) ** 2)
             
             coef, resid = np.linalg.lstsq(B, weighted_y[:, i])[0:2]
             self.coef_.append(coef)
@@ -910,8 +925,8 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         self.coef_ = np.array(self.coef_)
         # Compute the final mse, gcv, rsq, and grsq (may be different from the
         # pruning scores if the model has been smoothed)
-        self.mse_ = np.sum(resid_) / np.sum(sample_weight)
-        mse0 = np.sum(((y - np.average(y, weights=sample_weight, axis=0))**2) * sample_weight )/ np.sum(sample_weight)
+        self.mse_ = np.sum(resid_) / total_weight
+        mse0 = mse0 / total_weight
         self.gcv_ = gcv(self.mse_,
                         coef.shape[0], X.shape[0],
                         self.get_penalty())

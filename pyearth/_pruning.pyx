@@ -70,16 +70,18 @@ cdef class PruningPasser:
             self.basis.weighted_transform(X, missing, B, sample_weight[:, p])
             beta, mse_ = np.linalg.lstsq(B[:, 0:(basis_size)], weighted_y)[0:2]
             if mse_:
-                mse_ /= np.sum(sample_weight)
+                pass
+#                 mse_ /= np.sum(sample_weight)
             else:
                 mse_ = np.sum(
-                    (np.dot(B[:, 0:basis_size], beta) - weighted_y) ** 2) / \
-                    np.sum(sample_weight)
+                    (np.dot(B[:, 0:basis_size], beta) - weighted_y) ** 2)# / \
+#                     np.sum(sample_weight)
             mse += mse_# * output_weight[p]
-            
+        
+        print 'sst, mse = ', self.sst, mse
         # Create the record object
         self.record = PruningPassRecord(
-            self.m, self.n, self.penalty, self.sst, pruned_basis_size, mse)
+            self.m, self.n, self.penalty, self.sst / np.sum(self.sample_weight), pruned_basis_size, mse)
         gcv_ = self.record.gcv(0)
         best_gcv = gcv_
         best_iteration = 0
@@ -114,7 +116,7 @@ cdef class PruningPasser:
 #                         mse_ /= np.sum(self.sample_weight)
                     else:
                         mse_ = np.sum((np.dot(B[:, 0:pruned_basis_size], beta) -
-                                    weighted_y) ** 2)# / np.sum(sample_weight)
+                                    weighted_y) ** 2) #/ np.sum(sample_weight)
                     mse += mse_# * output_weight[p]
                 gcv_ = gcv(mse / np.sum(sample_weight), pruned_basis_size, self.m, self.penalty)
 
@@ -127,12 +129,13 @@ cdef class PruningPasser:
 
             # The inner loop found the best basis function to remove for this
             # iteration. Now check whether this iteration is better than all
-            #the previous ones.
+            # the previous ones.
             if best_iteration_gcv <= best_gcv:
                 best_gcv = best_iteration_gcv
                 best_iteration = i
 
             # Update the record and prune the selected basis function
+            print 'best_iteration_mse =', best_iteration_mse
             self.record.append(PruningPassIteration(
                 best_bf_to_prune, pruned_basis_size, best_iteration_mse))
             self.basis[best_bf_to_prune].prune()
