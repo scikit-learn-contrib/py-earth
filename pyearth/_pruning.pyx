@@ -30,7 +30,7 @@ cdef class PruningPasser:
             y_avg = np.average(self.y, weights=sample_weight[:,0], axis=0)
         else:
             y_avg = np.average(self.y, weights=sample_weight, axis=0)
-        self.sst = np.sum(sample_weight[:, np.newaxis] * (self.y - y_avg[np.newaxis, :]) ** 2)# / np.sum(self.sample_weight)
+#         self.sst = np.sum(sample_weight[:, np.newaxis] * (self.y - y_avg[np.newaxis, :]) ** 2)# / np.sum(self.sample_weight)
 
     cpdef run(PruningPasser self):
         # This is a totally naive implementation and could potentially be made
@@ -65,8 +65,18 @@ cdef class PruningPasser:
         # Initial solution
         
         mse = 0.
+        mse0 = 0.
+#         total_weight = 0.
         for p in range(y.shape[1]):
-            weighted_y = y[:,p] * np.sqrt(sample_weight[:,p])
+            if sample_weight.shape[1] == 1:
+                weighted_y = y[:,p] * np.sqrt(sample_weight[:,0])
+                self.basis.weighted_transform(X, missing, B, sample_weight[:, 0])
+#                 total_weight += np.sum(sample_weight[:,0])
+            else:
+                weighted_y = y[:,p] * np.sqrt(sample_weight[:,p])
+                self.basis.weighted_transform(X, missing, B, sample_weight[:, p])
+#                 total_weight += np.sum(sample_weight[:,p])
+            mse0 += np.sum((weighted_y - np.average(weighted_y)) ** 2)
             self.basis.weighted_transform(X, missing, B, sample_weight[:, p])
             beta, mse_ = np.linalg.lstsq(B[:, 0:(basis_size)], weighted_y)[0:2]
             if mse_:
@@ -78,10 +88,10 @@ cdef class PruningPasser:
 #                     np.sum(sample_weight)
             mse += mse_# * output_weight[p]
         
-        print 'sst, mse = ', self.sst, mse
+#         print 'sst, mse = ', self.sst, mse0, mse
         # Create the record object
         self.record = PruningPassRecord(
-            self.m, self.n, self.penalty, self.sst / np.sum(self.sample_weight), pruned_basis_size, mse)
+            self.m, self.n, self.penalty, mse0, pruned_basis_size, mse)
         gcv_ = self.record.gcv(0)
         best_gcv = gcv_
         best_iteration = 0
