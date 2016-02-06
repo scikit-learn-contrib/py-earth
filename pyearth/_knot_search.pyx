@@ -26,19 +26,19 @@ cdef class SingleWeightDependentData:
         self.total_weight = total_weight
     
     @classmethod
-    def alloc(cls, FLOAT_t[:] w, INDEX_t m, INDEX_t max_terms):
-        cdef UpdatingQT updating_qt = UpdatingQT.alloc(m, max_terms)
+    def alloc(cls, FLOAT_t[:] w, INDEX_t m, INDEX_t max_terms, FLOAT_t zero_tol):
+        cdef UpdatingQT updating_qt = UpdatingQT.alloc(m, max_terms, zero_tol)
         cdef FLOAT_t total_weight = np.dot(w[:m], w[:m])
         return cls(updating_qt, w, m, 0, max_terms, total_weight)
     
-    cpdef int update_from_basis_function(SingleWeightDependentData self, BasisFunction bf, FLOAT_t[:,:] X, 
-                                         BOOL_t[:,:] missing, FLOAT_t zero_tol) except *:
-        if self.k >= self.max_terms:
-            return -1
-        bf.apply(X, missing, self.Q_t[self.k, :])
-        return self._update(zero_tol)
+#     cpdef int update_from_basis_function(SingleWeightDependentData self, BasisFunction bf, FLOAT_t[:,:] X, 
+#                                          BOOL_t[:,:] missing) except *:
+#         if self.k >= self.max_terms:
+#             return -1
+#         bf.apply(X, missing, self.Q_t[self.k, :])
+#         return self._update()
                             
-    cpdef int update_from_array(SingleWeightDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *:
+    cpdef int update_from_array(SingleWeightDependentData self, FLOAT_t[:] b) except *:
         if self.k >= self.max_terms:
             return -1
         
@@ -66,15 +66,14 @@ cdef class SingleWeightDependentData:
         self.updating_qt.downdate()
         self.k -= 1
     
-    cpdef reweight(SingleWeightDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k, 
-                   FLOAT_t zero_tol):
+    cpdef reweight(SingleWeightDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k):
         cdef INDEX_t i
         self.w = w
         self.total_weight = np.dot(self.w[:self.m], self.w[:self.m])
         self.k = 0
         self.updating_qt.reset()
         for i in range(k):
-            self.update_from_array(B[:, i], zero_tol)
+            self.update_from_array(B[:, i])
         
 @cython.final
 cdef class MultipleOutcomeDependentData:
@@ -83,7 +82,7 @@ cdef class MultipleOutcomeDependentData:
         self.weights = weights
         
     @classmethod
-    def alloc(cls, FLOAT_t[:,:] y, w, INDEX_t m, INDEX_t n_outcomes, INDEX_t max_terms):
+    def alloc(cls, FLOAT_t[:,:] y, w, INDEX_t m, INDEX_t n_outcomes, INDEX_t max_terms, FLOAT_t zero_tol):
         cdef list weights
         cdef list outcomes
         cdef int i, n_weights
@@ -92,7 +91,7 @@ cdef class MultipleOutcomeDependentData:
             n_weights = w.shape[1]
             weights = []
             for i in range(w.shape[1]):
-                weights.append(SingleWeightDependentData.alloc(w[:, i], m, max_terms))
+                weights.append(SingleWeightDependentData.alloc(w[:, i], m, max_terms, zero_tol))
         elif len(w.shape) == 1 or w.shape[1] == 1:
             n_weights = 1
             if len(w.shape) == 1:
@@ -108,13 +107,13 @@ cdef class MultipleOutcomeDependentData:
         
         return cls(outcomes, weights)
     
-    cpdef update_from_array(MultipleOutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol):
+    cpdef update_from_array(MultipleOutcomeDependentData self, FLOAT_t[:] b):
         cdef SingleWeightDependentData weight
         cdef SingleOutcomeDependentData outcome
         for weight in self.weights:
-            weight.update_from_array(b, zero_tol)
+            weight.update_from_array(b)
         for outcome in self.outcomes:
-            outcome.update(zero_tol)
+            outcome.update()
     
     cpdef downdate(MultipleOutcomeDependentData self):
         cdef SingleWeightDependentData weight
@@ -128,10 +127,12 @@ cdef class MultipleOutcomeDependentData:
         return [outcome.sse() for outcome in self.outcomes]
     
     cpdef FLOAT_t mse(MultipleOutcomeDependentData self):
-        cdef FLOAT_t result
+        cdef FLOAT_t numerator = 0.
+        cdef FLOAT_t denominator = 0.
         for outcome in self.outcomes:
-            result += outcome.sse_ / outcome.weight.total_weight
-        return result
+            numerator += outcome.sse_ 
+            denominator += outcome.weight.total_weight
+        return numerator / denominator
 #         return [outcome.sse_ / outcome.weight.total_weight for outcome in self.outcomes]
         
 @cython.final
@@ -151,11 +152,11 @@ cdef class SingleOutcomeDependentData:
     def alloc(cls, FLOAT_t[:] y, SingleWeightDependentData weight, INDEX_t m, INDEX_t max_terms):
         cdef FLOAT_t[:] theta
         cdef FLOAT_t[:] wy = np.empty(shape=m, dtype=np.float)
-        cdef FLOAT_t sse_ = 0.
         cdef int i
         for i in range(m):
             wy[i] = weight.w[i] * y[i]
         cdef FLOAT_t omega = np.dot(wy, wy)
+        cdef FLOAT_t sse_ = omega
         theta = np.dot(weight.Q_t, wy)
         return cls(y, weight, theta, omega, m, 0, max_terms, sse_)
     
@@ -183,12 +184,12 @@ cdef class SingleOutcomeDependentData:
 #         for j in range(self.m):
 #             self.Q_t[self.k,j] = self.w[j] * b[j]
 #         return self._update(zero_tol)
-    cpdef int synchronize(SingleOutcomeDependentData self, FLOAT_t zero_tol) except *:
+    cpdef int synchronize(SingleOutcomeDependentData self) except *:
         self.k = self.weight.k
         self.theta = np.dot(self.weight.Q_t[:self.k, :], np.asarray(self.y) * self.weight.w)
         return 0
     
-    cpdef int update(SingleOutcomeDependentData self, FLOAT_t zero_tol) except *:
+    cpdef int update(SingleOutcomeDependentData self) except *:
         # Assume weight has already been updated.
         if self.k >= self.max_terms:
             return -1

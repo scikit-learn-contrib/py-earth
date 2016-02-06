@@ -8,6 +8,7 @@ cdef class UpdatingQT:
     cdef readonly int k
     cdef readonly FLOAT_t[::1, :] Q_t
     cdef readonly FLOAT_t zero_tol
+    cdef readonly BOOL_t[::1] dependent_cols
     cpdef void update_qt(UpdatingQT self, bint dependent)
     cpdef void update(UpdatingQT self, FLOAT_t[:] x)
     cpdef void downdate(UpdatingQT self)

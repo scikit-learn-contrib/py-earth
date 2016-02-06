@@ -10,24 +10,29 @@ def test_updating_qt():
     np.random.seed(0)
     m = 10
     n = 3
+
     X = np.random.normal(size=(n,m)).T
     u = UpdatingQT.alloc(m, n, 1e-14)
+
 #     u2 = UpdatingQT(m, n)
     Q = np.linalg.qr(X, mode='reduced')[0]
     u.update(X[:,0])
+
 #     u2.update(X[:,0])
     u.update(X[:,1])
 #     u2.update(X[:,1])
     u.update(X[:,2])
 #     u2.update(X[:,2])
-    
+
 #     assert np.max(np.abs(np.abs(u2.Q_t) - np.abs(Q.T))) < .0000000000001
     assert np.max(np.abs(np.abs(u.Q_t) - np.abs(Q.T))) < .0000000000001
     
     X2 = X.copy()
     X2[:,2] = np.random.normal(size=m)
+
     u.downdate()
     u.update(X2[:,2])
+
     Q2 = np.linalg.qr(X2, mode='reduced')[0]
     assert np.max(np.abs(np.abs(u.Q_t) - np.abs(Q2.T))) < .0000000000001
     
@@ -38,11 +43,11 @@ def test_updating_qr_with_linear_dependence():
     assert n >= 3
     X = np.random.normal(size=(n,m)).T
     X[:,2] = X[:,0] + 3 * X[:,1]
-    
+
     Q = np.linalg.qr(X, mode='reduced')[0]
     u = UpdatingQT.alloc(m, n, 1e-14)
     u2 = UpdatingQT.alloc(m, n, 1e-14)
-    
+
     u.update(X[:,0])
     u2.update(X[:,0])
 #     u2.update(X[:,0])
@@ -51,6 +56,12 @@ def test_updating_qr_with_linear_dependence():
 #     u2.update(X[:,1])
     u.update(X[:,2])
     
+    assert np.max(np.abs(np.abs(u.Q_t[:2,:]) - np.abs(Q[:,:2].T))) < .0000000000001
+    assert np.max(np.abs(u.Q_t[2,:])) == 0.
+    
+    # Make sure you can downdate a dependent column safely
+    u.downdate()
+    u.update(X[:,2])
     assert np.max(np.abs(np.abs(u.Q_t[:2,:]) - np.abs(Q[:,:2].T))) < .0000000000001
     assert np.max(np.abs(u.Q_t[2,:])) == 0.
     

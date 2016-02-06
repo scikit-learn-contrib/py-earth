@@ -12,19 +12,18 @@ cdef class SingleWeightDependentData:
     cdef readonly INDEX_t max_terms
     cdef readonly FLOAT_t[:, :] Q_t
     cdef readonly FLOAT_t total_weight
-    cpdef int update_from_basis_function(SingleWeightDependentData self, BasisFunction bf, FLOAT_t[:,:] X, 
-                                         BOOL_t[:,:] missing, FLOAT_t zero_tol) except *
-    cpdef int update_from_array(SingleWeightDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol) except *
+#     cpdef int update_from_basis_function(SingleWeightDependentData self, BasisFunction bf, FLOAT_t[:,:] X, 
+#                                          BOOL_t[:,:] missing) except *
+    cpdef int update_from_array(SingleWeightDependentData self, FLOAT_t[:] b) except *
 #     cpdef int _update(SingleWeightDependentData self, FLOAT_t zero_tol)
     cpdef downdate(SingleWeightDependentData self)
-    cpdef reweight(SingleWeightDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k, 
-                   FLOAT_t zero_tol)
+    cpdef reweight(SingleWeightDependentData self, FLOAT_t[:] w, FLOAT_t[:,:] B, INDEX_t k)
     
 @cython.final
 cdef class MultipleOutcomeDependentData:
     cdef list outcomes
     cdef list weights
-    cpdef update_from_array(MultipleOutcomeDependentData self, FLOAT_t[:] b, FLOAT_t zero_tol)
+    cpdef update_from_array(MultipleOutcomeDependentData self, FLOAT_t[:] b)
     cpdef downdate(MultipleOutcomeDependentData self)
     cpdef list sse(MultipleOutcomeDependentData self)
     cpdef FLOAT_t mse(MultipleOutcomeDependentData self)
@@ -41,8 +40,8 @@ cdef class SingleOutcomeDependentData:
     cdef public INDEX_t max_terms
     cdef public object householder
     cpdef FLOAT_t sse(SingleOutcomeDependentData self)
-    cpdef int synchronize(SingleOutcomeDependentData self, FLOAT_t zero_tol) except *
-    cpdef int update(SingleOutcomeDependentData self, FLOAT_t zero_tol) except *
+    cpdef int synchronize(SingleOutcomeDependentData self) except *
+    cpdef int update(SingleOutcomeDependentData self) except *
     cpdef downdate(SingleOutcomeDependentData self)
 
 

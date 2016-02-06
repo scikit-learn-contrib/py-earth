@@ -98,9 +98,6 @@ cdef class ForwardPasser:
         
         weighted_mean = np.mean((self.sample_weight ** 2) * self.y)
         self.sst = np.sum((self.sample_weight * (self.y - weighted_mean)) ** 2)
-
-        self.record = ForwardPassRecord(
-            self.m, self.n, self.penalty, self.sst / np.sum(self.sample_weight ** 2), self.xlabels)
         self.basis = Basis(self.n)
         self.basis.append(ConstantBasisFunction())
         if self.use_fast is True:
@@ -141,8 +138,9 @@ cdef class ForwardPasser:
         n_weights = self.sample_weight.shape[1]
         self.workings = []
         self.outcome = MultipleOutcomeDependentData.alloc(self.y, self.sample_weight, self.m, 
-                                                          self.n_outcomes, self.max_terms + 4)
-        self.outcome.update_from_array(self.B[:,0], self.zero_tol)
+                                                          self.n_outcomes, self.max_terms + 4, 
+                                                          self.zero_tol)
+        self.outcome.update_from_array(self.B[:,0])
         for i in range(self.n_outcomes):
             working = KnotSearchWorkingData.alloc(self.max_terms + 4)
             self.workings.append(working)
@@ -152,7 +150,11 @@ cdef class ForwardPasser:
             x[missing[:,i]==1] = 0.
             predictor = PredictorDependentData.alloc(x)
             self.predictors.append(predictor)
-
+        
+        # Initialize the forward pass record
+        self.record = ForwardPassRecord(
+            self.m, self.n, self.penalty, self.outcome.mse(), self.xlabels)
+        
     cpdef Basis get_basis(ForwardPasser self):
         return self.basis
 
@@ -215,7 +217,7 @@ cdef class ForwardPasser:
         # Update the outcome data
         linear_dependence = False
         return_codes = []
-        return_code = self.outcome.update_from_array(b, self.zero_tol)
+        return_code = self.outcome.update_from_array(b)
         if return_code == -1:
             raise ValueError('This should not have happened.')
         if return_code == 1:
@@ -307,8 +309,10 @@ cdef class ForwardPasser:
             # choose only among the top "fast_K" basis functions
             # as parents
             nb_basis = min(self.fast_K, k, len(self.fast_heap))
-        else:
+        elif self.use_fast:
             nb_basis = min(k, len(self.fast_heap))
+        else:
+            nb_basis = k
 
         content_to_be_repushed = []
         for idx in range(nb_basis):
@@ -672,6 +676,7 @@ cdef class ForwardPasser:
         # orthonormal updates and not the mse that comes directly from 
         # the knot search
         cdef FLOAT_t final_mse = self.outcome.mse()
+        print 'final_mse =', final_mse
         
         # Update the build record
         self.record.append(ForwardPassIteration(parent_idx_choice,

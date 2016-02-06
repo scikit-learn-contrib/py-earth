@@ -7,22 +7,25 @@ import numpy as np
 from scipy.linalg.cython_lapack cimport dlarfg, dlarft, dlarfb
 from scipy.linalg.cython_blas cimport dcopy
 from libc.math cimport abs
+from _types import BOOL, FLOAT
 
 cdef class UpdatingQT:
     def __init__(UpdatingQT self, int m, int max_n, Householder householder, 
-                 int k, FLOAT_t[::1, :] Q_t, FLOAT_t zero_tol):
+                 int k, FLOAT_t[::1, :] Q_t, FLOAT_t zero_tol, BOOL_t[::1] dependent_cols):
         self.m = m
         self.max_n = max_n
         self.householder = householder
         self.k = k
         self.Q_t = Q_t
         self.zero_tol = zero_tol
+        self.dependent_cols = dependent_cols
     
     @classmethod
     def alloc(cls, int m, int max_n, FLOAT_t zero_tol):
         cdef Householder householder = Householder.alloc(m, max_n, zero_tol)
-        cdef FLOAT_t[::1, :] Q_t = np.empty(shape=(max_n, m), dtype=float, order='F')
-        return cls(m, max_n, householder, 0, Q_t, zero_tol)
+        cdef FLOAT_t[::1, :] Q_t = np.empty(shape=(max_n, m), dtype=FLOAT, order='F')
+        cdef BOOL_t[::1] dependent_cols = np.empty(shape=max_n, dtype=BOOL, order='F')
+        return cls(m, max_n, householder, 0, Q_t, zero_tol, dependent_cols)
     
     cpdef void update_qt(UpdatingQT self, bint dependent):
         # Assume that householder has already been updated and now Q_t needs to be updated 
@@ -39,7 +42,7 @@ cdef class UpdatingQT:
         if not dependent:
             
             # Place a one in the right place
-            # In general self.householder.k <= self.k.  
+            # In general self.householder.k <= self.k + 1.  
             # They are not necessarily equal.
             self.Q_t[self.k, self.householder.k - 1] = 1.
         
@@ -52,9 +55,15 @@ cdef class UpdatingQT:
     cpdef void update(UpdatingQT self, FLOAT_t[:] x):
         # Updates householder, then calls 
         # update_qt
-#         cdef FLOAT_t beta
+        
+        # The Householder will detect if the new vector is linearly dependent on the previous
+        # ones (within numerical precision specified by zero_tol).
         cdef bint dependent
         dependent = self.householder.update_from_column(x)
+        
+        # Mark the column as independent or dependent.  This information will be needed if the 
+        # column is ever downdated, since we then need to not downdate householder
+        self.dependent_cols[self.k] = dependent
         
         # If linear dependence was detected, the householder will have failed to update
         # (as it should).  In that case, we want a row of zeros in our Q_t matrix because 
@@ -63,10 +72,13 @@ cdef class UpdatingQT:
         # of Q_t.  The update_qt method takes care of adding the zeros if dependent. Note this means 
         # that in general self.householder.k <= self.k.  They are not necessarily equal.
         self.update_qt(dependent)
-            
+        
+        
+        
     cpdef void downdate(UpdatingQT self):
-        self.householder.downdate()
         self.k -= 1
+        if not self.dependent_cols[self.k]:
+            self.householder.downdate()
         
     cpdef void reset(UpdatingQT self):
         self.householder.reset()
@@ -90,11 +102,11 @@ cdef class Householder:
     @classmethod
     def alloc(cls, int m, int max_n, FLOAT_t zero_tol):
         cdef int k = 0
-        cdef FLOAT_t[::1, :] V = np.empty(shape=(m, max_n), dtype=float, order='F')
-        cdef FLOAT_t[::1, :] T = np.empty(shape=(max_n, max_n), dtype=float, order='F')
-        cdef FLOAT_t[::1] tau = np.empty(shape=max_n, dtype=float, order='F')
-        cdef FLOAT_t[::1] beta = np.empty(shape=max_n, dtype=float, order='F')
-        cdef FLOAT_t[::1, :] work = np.empty(shape=(m, max_n), dtype=float, order='F')
+        cdef FLOAT_t[::1, :] V = np.empty(shape=(m, max_n), dtype=FLOAT, order='F')
+        cdef FLOAT_t[::1, :] T = np.empty(shape=(max_n, max_n), dtype=FLOAT, order='F')
+        cdef FLOAT_t[::1] tau = np.empty(shape=max_n, dtype=FLOAT, order='F')
+        cdef FLOAT_t[::1] beta = np.empty(shape=max_n, dtype=FLOAT, order='F')
+        cdef FLOAT_t[::1, :] work = np.empty(shape=(m, max_n), dtype=FLOAT, order='F')
         return cls(k, m, max_n, V, T, tau, beta, work, zero_tol)
     
     cpdef void downdate(Householder self):
