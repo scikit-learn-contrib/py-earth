@@ -95,9 +95,9 @@ cdef class MultipleOutcomeDependentData:
         elif len(w.shape) == 1 or w.shape[1] == 1:
             n_weights = 1
             if len(w.shape) == 1:
-                weights = [SingleWeightDependentData.alloc(w, m, max_terms)]
+                weights = [SingleWeightDependentData.alloc(w, m, max_terms, zero_tol)]
             else:
-                weights = [SingleWeightDependentData.alloc(w[:, 0], m, max_terms)]
+                weights = [SingleWeightDependentData.alloc(w[:, 0], m, max_terms, zero_tol)]
         else:
             raise ValueError('Shape of weights does not match shape of outcomes.')
         
