@@ -897,7 +897,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         for i in range(y.shape[1]):
             
             # Figure out the weight column
-            if sample_weight.shape[1] == 1:
+            if sample_weight.shape[1] > 1:
                 w = sample_weight[:, i]
             else:
                 w = sample_weight[:, 0]
