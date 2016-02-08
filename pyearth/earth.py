@@ -903,7 +903,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                 w = sample_weight[:, 0]
             
             # Transform into basis space
-            B = self.transform(X, missing) * w[:, None]
+            B = self.transform(X, missing) #* w[:, None]
             apply_weights_2d(B, w)
             
             # Compute total weight
@@ -914,7 +914,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             weighted_y *= np.sqrt(w[:, np.newaxis])
             
             # Compute the mse0
-            mse0 += np.sum((weighted_y - np.average(weighted_y)) ** 2)
+            mse0 += np.sum((weighted_y[:,i] - np.average(weighted_y[:,i])) ** 2)
             
             coef, resid = np.linalg.lstsq(B, weighted_y[:, i])[0:2]
             self.coef_.append(coef)
