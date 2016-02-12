@@ -1096,7 +1096,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         if not skip_scrub:
             X, y, sample_weight, output_weight, missing = self._scrub(
                 X, y, sample_weight, output_weight, missing)
-        if sample_weight.shape[1]:
+        if sample_weight.shape[1] == 1 and y.shape[1] > 1:
             sample_weight = np.repeat(sample_weight,y.shape[1],axis=1)
         y_hat = self.predict(X)
 #         m, _ = X.shape
