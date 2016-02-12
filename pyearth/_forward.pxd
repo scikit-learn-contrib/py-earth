@@ -50,6 +50,7 @@ cdef class ForwardPasser:
     cdef INDEX_t n
     cdef FLOAT_t sst
     cdef FLOAT_t y_squared
+    cdef FLOAT_t total_weight
     
     # Knot search data
     cdef MultipleOutcomeDependentData outcome

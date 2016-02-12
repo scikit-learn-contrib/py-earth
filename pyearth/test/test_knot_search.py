@@ -12,7 +12,7 @@ def test_outcome_dependent_data():
     max_terms = 100
     y = np.random.normal(size=m)
     w = np.random.normal(size=m) ** 2
-    weight = SingleWeightDependentData.alloc(w, m, max_terms)
+    weight = SingleWeightDependentData.alloc(w, m, max_terms, 1e-16)
     data = SingleOutcomeDependentData.alloc(y, weight, m, max_terms)
     
     # Test updating
@@ -20,14 +20,14 @@ def test_outcome_dependent_data():
     for k in range(max_terms):
         b = np.random.normal(size=m)
         B[:,k] = b
-        code = weight.update_from_array(b, 1e-16)
+        code = weight.update_from_array(b)
         if k >= 99:
             1+1
-        data.update(1e-16)
+        data.update()
         assert_equal(code, 0)
         assert_almost_equal(np.dot(weight.Q_t[:k+1,:], np.transpose(weight.Q_t[:k+1,:])),
                             np.eye(k+1))
-    assert_equal(weight.update_from_array(b, 1e-16), -1)
+    assert_equal(weight.update_from_array(b), -1)
 #     data.update(1e-16)
     
     # Test downdating
@@ -35,8 +35,8 @@ def test_outcome_dependent_data():
     theta = np.array(data.theta[:max_terms]).copy()
     weight.downdate()
     data.downdate()
-    weight.update_from_array(b, 1e-16)
-    data.update(1e-16)
+    weight.update_from_array(b)
+    data.update()
     assert_almost_equal(q, np.array(weight.Q_t))
     assert_almost_equal(theta, np.array(data.theta[:max_terms]))
     assert_almost_equal(np.array(data.theta[:max_terms]), np.dot(weight.Q_t, w * y))
@@ -47,8 +47,8 @@ def test_outcome_dependent_data():
     # Test that reweighting works
     assert_equal(data.k, max_terms)
     w2 = np.random.normal(size=m) ** 2
-    weight.reweight(w2, B, max_terms, 1e-16)
-    data.synchronize(1e-16)
+    weight.reweight(w2, B, max_terms)
+    data.synchronize()
     assert_equal(data.k, max_terms)
     w2B = B * w2[:,None]
     Q2, _ = qr(w2B, pivoting=False, mode='economic')
@@ -136,9 +136,9 @@ def form_inputs(x, B, p, knot, candidates, y, w):
     for _ in range(n_outcomes):
         working = KnotSearchWorkingData.alloc(max_terms)
         workings.append(working)
-    outcome = MultipleOutcomeDependentData.alloc(y, w, m, n_outcomes, max_terms)
+    outcome = MultipleOutcomeDependentData.alloc(y, w, m, n_outcomes, max_terms, 1e-16)
     for j in range(B.shape[1]):
-        outcome.update_from_array(B[:, j], 1e-16)
+        outcome.update_from_array(B[:, j])
     predictor = PredictorDependentData.alloc(x)
     constant = KnotSearchReadOnlyData(predictor, outcome)
     return KnotSearchData(constant, workings, q)
@@ -183,3 +183,4 @@ if __name__ == '__main__':
     test_outcome_dependent_data()
     test_knot_candidates()
     test_knot_search()
+    print 'Success!'

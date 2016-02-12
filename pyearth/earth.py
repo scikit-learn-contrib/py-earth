@@ -695,8 +695,8 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             X, y, sample_weight, output_weight, missing = self._scrub(
                 X, y, sample_weight, output_weight, missing)
             
-        if sample_weight.shape[1]:
-            sample_weight = np.repeat(sample_weight,y.shape[1],axis=1)
+#         if sample_weight.shape[1] == 1 and y.shape[1] != 1:
+#             sample_weight = np.repeat(sample_weight,y.shape[1],axis=1)
         
         # Pull arguments from self
         args = self._pull_pruning_args(**self.__dict__)
