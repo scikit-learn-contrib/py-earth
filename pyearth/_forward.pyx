@@ -141,9 +141,11 @@ cdef class ForwardPasser:
                                                           self.n_outcomes, self.max_terms + 4, 
                                                           self.zero_tol)
         self.outcome.update_from_array(self.B[:,0])
+        self.total_weight = 0.
         for i in range(self.n_outcomes):
             working = KnotSearchWorkingData.alloc(self.max_terms + 4)
             self.workings.append(working)
+            self.total_weight += self.outcome.outcomes[i].weight.total_weight
         self.predictors = []
         for i in range(n_predictors):
             x = self.X[:, i]
@@ -347,6 +349,7 @@ cdef class ForwardPasser:
             parent_degree = parent.effective_degree()
             
             for variable in variables:
+                print parent, variable
                 # Determine whether missingness needs to be accounted for.
                 if self.allow_missing and has_missing[variable]:
                     missing_flag = True
@@ -359,6 +362,7 @@ cdef class ForwardPasser:
                 # covering missingness basis function if required)
                 if self.max_degree >= 0:
                     if parent_degree >= self.max_degree:
+                        print 'degree too high', parent, variable
                         continue
                 
                 # If there is missing data and this parent is not 
@@ -366,6 +370,7 @@ cdef class ForwardPasser:
                 # (because it includes a non-missing factor for the variable)
                 # then skip this variable.
                 if missing_flag and not eligible:
+                    print 'ineligible', parent, variable
                     continue
 
                 # Add the linear term to B
@@ -432,7 +437,7 @@ cdef class ForwardPasser:
 #                         print len(candidates_idx)
                         knot, knot_idx, mse = knot_search(search_data, candidates, p, q, 
                                                           self.m, len(candidates), self.n_outcomes)
-                        mse /= np.sum(self.sample_weight ** 2)
+                        mse /= self.total_weight
 #                         print knot_idx
                         knot_idx = candidates_idx[knot_idx]
 #                         print parent, variable, mse
@@ -451,14 +456,17 @@ cdef class ForwardPasser:
                                     mse = mse_
                                     knot_idx = -1
                     else:
-                        # Do an orthonormal downdate and skip to the next
-                        # iteration
-                        if missing_flag and not covered:
+                        if self.allow_linear:
+                            mse = mse_
+                            knot_idx = -1
+                        else:
+                            # Do an orthonormal downdate and skip to the next
+                            # iteration
+                            if missing_flag and not covered:
+                                self.orthonormal_downdate()
+                                self.orthonormal_downdate()
                             self.orthonormal_downdate()
-                            self.orthonormal_downdate()
-                        self.orthonormal_downdate()
-                        continue
-                        # TODO: Should that continue be there?
+                            continue
                         
                 # Do an orthonormal downdate
                 if missing_flag and not covered:
@@ -629,7 +637,7 @@ cdef class ForwardPasser:
 #                 else:
 #                     already_covered = False
 #                 parent_choice = bf2
-            new_basis_function = LinearBasisFunction(parent_choice, variable_choice, label)
+            new_basis_function = LinearBasisFunction(new_parent, variable_choice, label)
             new_basis_function.apply(X, missing, B[:, len(self.basis)])
             self.orthonormal_update(B[:, len(self.basis)])
             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:

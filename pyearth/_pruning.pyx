@@ -77,7 +77,10 @@ cdef class PruningPasser:
                 self.basis.weighted_transform(X, missing, B, sample_weight[:, p])
 #                 total_weight += np.sum(sample_weight[:,p])
             mse0 += np.sum((weighted_y - np.average(weighted_y)) ** 2)
-            self.basis.weighted_transform(X, missing, B, sample_weight[:, p])
+            if sample_weight.shape[1] == 1:
+                self.basis.weighted_transform(X, missing, B, sample_weight[:, 0])
+            else:
+                self.basis.weighted_transform(X, missing, B, sample_weight[:, p])
             beta, mse_ = np.linalg.lstsq(B[:, 0:(basis_size)], weighted_y)[0:2]
             if mse_:
                 pass

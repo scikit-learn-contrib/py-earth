@@ -42,7 +42,7 @@ cdef class SingleWeightDependentData:
         if self.k >= self.max_terms:
             return -1
         
-        self.updating_qt.update(b)
+        self.updating_qt.update(np.asarray(self.w) * b)
         self.k += 1
 #         cdef INDEX_t j
 #         for j in range(self.m):
