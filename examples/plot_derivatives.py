@@ -22,7 +22,7 @@ y = 10*numpy.sin(X[:, 6]) + 0.25*numpy.random.normal(size=m)
 y_prime = 10*numpy.cos(X[:, 6])
 
 # Fit an Earth model
-model = Earth(max_degree=3, minspan_alpha=.5, smooth=True, zero_tol=1e-4)
+model = Earth(max_degree=2, minspan_alpha=.5, smooth=True)
 model.fit(X, y)
 
 # Print the model
