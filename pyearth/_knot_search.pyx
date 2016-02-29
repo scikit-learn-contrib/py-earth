@@ -487,7 +487,6 @@ cdef inline void fast_update(PredictorDependentData predictor, SingleOutcomeDepe
                 # Numerical instability got us here.  Assume linear
                 # dependence (which is what causes the instability) and 
                 # set zeta_squared, alpha, and beta accordingly
-                print 'ELSE!!!!!!!!!'
                 working.state.zeta_squared = 0.
                 working.state.beta = gamma_squared
                 theta_gamma = dot(working.gamma, outcome.theta, q)
@@ -536,7 +535,6 @@ cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p
     cdef FLOAT_t phi
     cdef KnotSearchWorkingData working
     cdef INDEX_t j, i
-#     print 'begin knot search!'
     for j in range(n_outcomes):
         working = workings[j]
         working.state.phi_next = phi_next

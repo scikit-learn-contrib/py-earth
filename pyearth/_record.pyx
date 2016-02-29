@@ -5,7 +5,6 @@
 # cython: profile = False
 
 from ._util cimport gcv, ascii_table
-from ._forward cimport stopping_conditions
 
 cdef class Record:
 
@@ -29,7 +28,6 @@ cdef class Record:
 
     cpdef append(Record self, Iteration iteration):
         self.iterations.append(iteration)
-        self.report_append()
 
     cpdef FLOAT_t mse(Record self, INDEX_t iteration):
         return self.iterations[iteration].get_mse()
@@ -61,9 +59,6 @@ cdef class PruningPassRecord(Record):
         self.penalty = penalty
         self.sst = sst
         self.iterations = [FirstPruningPassIteration(size, mse)]
-    
-    def report_append(self):
-        pass
     
     def __reduce__(PruningPassRecord self):
         return (PruningPassRecord, (1, 1, 1.0, 1.0, 1, 1.0), self._getstate())
@@ -98,16 +93,19 @@ cdef class PruningPassRecord(Record):
             basis[self.iterations[n - i - 1].get_pruned()].unprune()
 
     def __str__(PruningPassRecord self):
+        return self.partial_str(slice(None))
+    
+    def partial_str(PruningPassRecord self, rows, print_header=True, print_footer=True):
         result = ''
-        result += 'Pruning Pass\n'
+#         result += 'Pruning Pass\n'
         header = 'iter\tbf\tterms\tmse\tgcv\trsq\tgrsq'.split('\t')
         data = []
-        for i, iteration in enumerate(self.iterations):
+        for i, iteration in enumerate(self.iterations[rows]):
             row = str(i) + '\t' + str(iteration) + '\t%.3f\t%.3f\t%.3f' % (
                 self.gcv(i), self.rsq(i), self.grsq(i))
             data.append(row.split('\t'))
-        result += ascii_table(header, data)
-        result += '\nSelected iteration: ' + str(self.selected) + '\n'
+        result += ascii_table(header, data, print_header, print_footer)
+#         result += '\nSelected iteration: ' + str(self.selected) + '\n'
         return result
 
 cdef class ForwardPassRecord(Record):
@@ -121,9 +119,6 @@ cdef class ForwardPassRecord(Record):
         self.sst = sst
         self.iterations = [FirstForwardPassIteration(self.sst)]
         self.xlabels = xlabels
-    
-    def report_append(self):
-        print 'Current R^2 = %f' % self.rsq(len(self) - 1)
     
     def __reduce__(ForwardPassRecord self):
         return (ForwardPassRecord, (self.num_samples, self.num_variables,
@@ -151,19 +146,36 @@ cdef class ForwardPassRecord(Record):
         self.stopping_condition = stopping_condition
 
     def __str__(ForwardPassRecord self):
+        return self.partial_str(slice(None))
+#         header = ['iter', 'parent', 'var', 'knot',
+#                   'mse', 'terms', 'gcv', 'rsq', 'grsq']
+#         data = []
+#         for i, iteration in enumerate(self.iterations):
+#             data.append([str(i)] + str(iteration).split('\t') +
+#                         ('%.3f\t%.3f\t%.3f' % (self.gcv(i), self.rsq(i),
+#                                                self.grsq(i))).split('\t'))
+#         result = ''
+#         result += 'Forward Pass\n'
+#         result += ascii_table(header, data)
+#         result += '\nStopping Condition %d: %s\n' % (
+#             self.stopping_condition,
+#             stopping_conditions[self.stopping_condition])
+#         return result
+    
+    def partial_str(ForwardPassRecord self, rows, print_header=True, print_footer=True):
         header = ['iter', 'parent', 'var', 'knot',
                   'mse', 'terms', 'gcv', 'rsq', 'grsq']
         data = []
-        for i, iteration in enumerate(self.iterations):
+        for i, iteration in enumerate(self.iterations[rows]):
             data.append([str(i)] + str(iteration).split('\t') +
                         ('%.3f\t%.3f\t%.3f' % (self.gcv(i), self.rsq(i),
                                                self.grsq(i))).split('\t'))
         result = ''
-        result += 'Forward Pass\n'
-        result += ascii_table(header, data)
-        result += '\nStopping Condition %d: %s\n' % (
-            self.stopping_condition,
-            stopping_conditions[self.stopping_condition])
+#         result += 'Forward Pass\n'
+        result += ascii_table(header, data, print_header, print_footer)
+#         result += '\nStopping Condition %d: %s\n' % (
+#             self.stopping_condition,
+#             stopping_conditions[self.stopping_condition])
         return result
 
 cdef class Iteration:

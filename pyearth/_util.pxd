@@ -20,4 +20,4 @@ cpdef FLOAT_t gcv_adjust(FLOAT_t basis_size, FLOAT_t data_size, FLOAT_t penalty)
 
 cpdef str_pad(string, length)
 
-cpdef ascii_table(header, data)
+cpdef ascii_table(header, data, print_header=?, print_footer=?)

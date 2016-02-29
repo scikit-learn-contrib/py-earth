@@ -53,7 +53,7 @@ cpdef str_pad(string, length):
     pad = length - len(string)
     return string + ' ' * pad
 
-cpdef ascii_table(header, data):
+cpdef ascii_table(header, data, print_header=True, print_footer=True):
     '''
     header - list of strings representing the header row
     data - list of lists of strings representing data rows
@@ -70,19 +70,25 @@ cpdef ascii_table(header, data):
         column_widths[j] += 1
 
     result = ''
-    for j, col_width in enumerate(column_widths):
-        result += '-' * col_width + '-'
-    result += '\n'
-    for j, head in enumerate(header):
-        result += str_pad(head, column_widths[j]) + ' '
-    result += '\n'
-    for j, col_width in enumerate(column_widths):
-        result += '-' * col_width + '-'
-    for i, row in enumerate(data):
+    if print_header:
+        for j, col_width in enumerate(column_widths):
+            result += '-' * col_width + '-'
         result += '\n'
+        for j, head in enumerate(header):
+            result += str_pad(head, column_widths[j]) + ' '
+        result += '\n'
+        for j, col_width in enumerate(column_widths):
+            result += '-' * col_width + '-'
+#         result += '\n'
+        result += '\n'
+    for i, row in enumerate(data):
+        if i > 0:
+            result += '\n'
         for j, item in enumerate(row):
             result += str_pad(item, column_widths[j]) + ' '
-    result += '\n'
-    for j, col_width in enumerate(column_widths):
-        result += '-' * col_width + '-'
+        
+    if print_footer:
+        result += '\n'
+        for j, col_width in enumerate(column_widths):
+            result += '-' * col_width + '-'
     return result
