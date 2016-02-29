@@ -186,8 +186,8 @@ cdef class ForwardPasser:
                 
     cpdef run(ForwardPasser self):
         if self.verbose:
-            print 'Beginning forward pass'
-            print self.record.partial_str(slice(-1, None, None), print_footer=False)
+            print('Beginning forward pass')
+            print(self.record.partial_str(slice(-1, None, None), print_footer=False))
         if self.max_terms > 1:
             while True:
                 self.next_pair()
@@ -197,7 +197,7 @@ cdef class ForwardPasser:
 
     cdef stop_check(ForwardPasser self):
         if self.verbose:
-            print self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False)
+            print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
         last = self.record.__len__() - 1
         if self.record.iterations[last].get_size() > self.max_terms:
             self.record.stopping_condition = MAXTERMS

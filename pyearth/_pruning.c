@@ -2938,7 +2938,7 @@ static PyObject *__pyx_f_7pyearth_8_pruning_13PruningPasser_run(struct __pyx_obj
  *         cdef cnp.ndarray[FLOAT_t, ndim = 1] weighted_y
  * 
  *         if self.verbose:             # <<<<<<<<<<<<<<
- *             print 'Beginning pruning pass'
+ *             print('Beginning pruning pass')
  * 
  */
   __pyx_t_6 = (__pyx_v_self->verbose != 0);
@@ -2947,7 +2947,7 @@ static PyObject *__pyx_f_7pyearth_8_pruning_13PruningPasser_run(struct __pyx_obj
     /* "pyearth/_pruning.pyx":64
  * 
  *         if self.verbose:
- *             print 'Beginning pruning pass'             # <<<<<<<<<<<<<<
+ *             print('Beginning pruning pass')             # <<<<<<<<<<<<<<
  * 
  *         # Initial solution
  */
@@ -3962,7 +3962,7 @@ static PyObject *__pyx_f_7pyearth_8_pruning_13PruningPasser_run(struct __pyx_obj
  *         best_iteration = 0
  * 
  *         if self.verbose:             # <<<<<<<<<<<<<<
- *             print self.record.partial_str(slice(-1, None, None), print_footer=False)
+ *             print(self.record.partial_str(slice(-1, None, None), print_footer=False))
  * 
  */
   __pyx_t_6 = (__pyx_v_self->verbose != 0);
@@ -3971,7 +3971,7 @@ static PyObject *__pyx_f_7pyearth_8_pruning_13PruningPasser_run(struct __pyx_obj
     /* "pyearth/_pruning.pyx":101
  * 
  *         if self.verbose:
- *             print self.record.partial_str(slice(-1, None, None), print_footer=False)             # <<<<<<<<<<<<<<
+ *             print(self.record.partial_str(slice(-1, None, None), print_footer=False))             # <<<<<<<<<<<<<<
  * 
  *         # Prune basis functions sequentially
  */
@@ -4908,7 +4908,7 @@ static PyObject *__pyx_f_7pyearth_8_pruning_13PruningPasser_run(struct __pyx_obj
  *             self.basis[best_bf_to_prune].prune()
  * 
  *             if self.verbose:             # <<<<<<<<<<<<<<
- *                 print self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False)
+ *                 print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
  * 
  */
     __pyx_t_26 = (__pyx_v_self->verbose != 0);
@@ -4917,7 +4917,7 @@ static PyObject *__pyx_f_7pyearth_8_pruning_13PruningPasser_run(struct __pyx_obj
       /* "pyearth/_pruning.pyx":157
  * 
  *             if self.verbose:
- *                 print self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False)             # <<<<<<<<<<<<<<
+ *                 print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))             # <<<<<<<<<<<<<<
  * 
  *         # Unprune the basis functions pruned after the best iteration
  */
@@ -7631,7 +7631,7 @@ static int __Pyx_InitCachedConstants(void) {
   /* "pyearth/_pruning.pyx":101
  * 
  *         if self.verbose:
- *             print self.record.partial_str(slice(-1, None, None), print_footer=False)             # <<<<<<<<<<<<<<
+ *             print(self.record.partial_str(slice(-1, None, None), print_footer=False))             # <<<<<<<<<<<<<<
  * 
  *         # Prune basis functions sequentially
  */
@@ -7726,7 +7726,7 @@ static int __Pyx_InitCachedConstants(void) {
   /* "pyearth/_pruning.pyx":157
  * 
  *             if self.verbose:
- *                 print self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False)             # <<<<<<<<<<<<<<
+ *                 print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))             # <<<<<<<<<<<<<<
  * 
  *         # Unprune the basis functions pruned after the best iteration
  */

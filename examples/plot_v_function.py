@@ -8,7 +8,6 @@ A simple example plotting a fit of the absolute value function.
 
 import numpy
 import matplotlib.pyplot as plt
-
 from pyearth import Earth
 
 # Create some fake data
@@ -25,7 +24,6 @@ model.fit(X, y)
 # Print the model
 print(model.trace())
 print(model.summary())
-print model.score(X, y)
 
 # Plot the model
 y_hat = model.predict(X)

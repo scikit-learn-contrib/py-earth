@@ -61,7 +61,7 @@ cdef class PruningPasser:
         cdef cnp.ndarray[FLOAT_t, ndim = 1] weighted_y
 
         if self.verbose:
-            print 'Beginning pruning pass'
+            print('Beginning pruning pass')
 
         # Initial solution
         mse = 0.
@@ -98,7 +98,7 @@ cdef class PruningPasser:
         best_iteration = 0
         
         if self.verbose:
-            print self.record.partial_str(slice(-1, None, None), print_footer=False)
+            print(self.record.partial_str(slice(-1, None, None), print_footer=False))
 
         # Prune basis functions sequentially
         for i in range(1, pruned_basis_size):
@@ -154,7 +154,7 @@ cdef class PruningPasser:
             self.basis[best_bf_to_prune].prune()
             
             if self.verbose:
-                print self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False)
+                print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
 
         # Unprune the basis functions pruned after the best iteration
         self.record.set_selected(best_iteration)

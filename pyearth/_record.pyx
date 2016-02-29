@@ -100,9 +100,10 @@ cdef class PruningPassRecord(Record):
 #         result += 'Pruning Pass\n'
         header = 'iter\tbf\tterms\tmse\tgcv\trsq\tgrsq'.split('\t')
         data = []
+        map_back = list(range(*rows.indices(len(self.iterations))))
         for i, iteration in enumerate(self.iterations[rows]):
-            row = str(i) + '\t' + str(iteration) + '\t%.3f\t%.3f\t%.3f' % (
-                self.gcv(i), self.rsq(i), self.grsq(i))
+            row = str(map_back[i]) + '\t' + str(iteration) + '\t%.3f\t%.3f\t%.3f' % (
+                self.gcv(map_back[i]), self.rsq(map_back[i]), self.grsq(map_back[i]))
             data.append(row.split('\t'))
         result += ascii_table(header, data, print_header, print_footer)
 #         result += '\nSelected iteration: ' + str(self.selected) + '\n'
@@ -166,10 +167,11 @@ cdef class ForwardPassRecord(Record):
         header = ['iter', 'parent', 'var', 'knot',
                   'mse', 'terms', 'gcv', 'rsq', 'grsq']
         data = []
+        map_back = list(range(*rows.indices(len(self.iterations))))
         for i, iteration in enumerate(self.iterations[rows]):
             data.append([str(i)] + str(iteration).split('\t') +
-                        ('%.3f\t%.3f\t%.3f' % (self.gcv(i), self.rsq(i),
-                                               self.grsq(i))).split('\t'))
+                        ('%.3f\t%.3f\t%.3f' % (self.gcv(map_back[i]), self.rsq(map_back[i]),
+                                               self.grsq(map_back[i]))).split('\t'))
         result = ''
 #         result += 'Forward Pass\n'
         result += ascii_table(header, data, print_header, print_footer)

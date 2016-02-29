@@ -475,7 +475,8 @@ cdef inline void fast_update(PredictorDependentData predictor, SingleOutcomeDepe
         if epsilon_squared > 0:
             theta_gamma = dot(working.gamma, outcome.theta, q)
             zeta_epsilon = working.state.alpha - theta_gamma
-            if (abs(zeta_epsilon) / abs(working.state.alpha + theta_gamma) > tol) or (epsilon_squared / abs(working.state.beta + gamma_squared) > tol):
+            if (abs(zeta_epsilon) / abs(working.state.alpha + theta_gamma) > tol) \
+                or (epsilon_squared / abs(working.state.beta + gamma_squared) > tol):
                 working.state.zeta_squared = (zeta_epsilon ** 2) / epsilon_squared
 #             working.state.zeta_squared /= epsilon_squared
 #             if epsilon_squared < 1e-6:

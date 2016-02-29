@@ -6053,7 +6053,7 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_4init_linear_variab
  * 
  *     cpdef run(ForwardPasser self):             # <<<<<<<<<<<<<<
  *         if self.verbose:
- *             print 'Beginning forward pass'
+ *             print('Beginning forward pass')
  */
 
 static PyObject *__pyx_pw_7pyearth_8_forward_13ForwardPasser_7run(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
@@ -6108,8 +6108,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
  * 
  *     cpdef run(ForwardPasser self):
  *         if self.verbose:             # <<<<<<<<<<<<<<
- *             print 'Beginning forward pass'
- *             print self.record.partial_str(slice(-1, None, None), print_footer=False)
+ *             print('Beginning forward pass')
+ *             print(self.record.partial_str(slice(-1, None, None), print_footer=False))
  */
   __pyx_t_5 = (__pyx_v_self->verbose != 0);
   if (__pyx_t_5) {
@@ -6117,16 +6117,16 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
     /* "pyearth/_forward.pyx":189
  *     cpdef run(ForwardPasser self):
  *         if self.verbose:
- *             print 'Beginning forward pass'             # <<<<<<<<<<<<<<
- *             print self.record.partial_str(slice(-1, None, None), print_footer=False)
+ *             print('Beginning forward pass')             # <<<<<<<<<<<<<<
+ *             print(self.record.partial_str(slice(-1, None, None), print_footer=False))
  *         if self.max_terms > 1:
  */
     if (__Pyx_PrintOne(0, __pyx_kp_s_Beginning_forward_pass) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 189; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
     /* "pyearth/_forward.pyx":190
  *         if self.verbose:
- *             print 'Beginning forward pass'
- *             print self.record.partial_str(slice(-1, None, None), print_footer=False)             # <<<<<<<<<<<<<<
+ *             print('Beginning forward pass')
+ *             print(self.record.partial_str(slice(-1, None, None), print_footer=False))             # <<<<<<<<<<<<<<
  *         if self.max_terms > 1:
  *             while True:
  */
@@ -6146,8 +6146,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
   __pyx_L3:;
 
   /* "pyearth/_forward.pyx":191
- *             print 'Beginning forward pass'
- *             print self.record.partial_str(slice(-1, None, None), print_footer=False)
+ *             print('Beginning forward pass')
+ *             print(self.record.partial_str(slice(-1, None, None), print_footer=False))
  *         if self.max_terms > 1:             # <<<<<<<<<<<<<<
  *             while True:
  *                 self.next_pair()
@@ -6156,7 +6156,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
   if (__pyx_t_5) {
 
     /* "pyearth/_forward.pyx":192
- *             print self.record.partial_str(slice(-1, None, None), print_footer=False)
+ *             print(self.record.partial_str(slice(-1, None, None), print_footer=False))
  *         if self.max_terms > 1:
  *             while True:             # <<<<<<<<<<<<<<
  *                 self.next_pair()
@@ -6217,7 +6217,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
  * 
  *     cpdef run(ForwardPasser self):             # <<<<<<<<<<<<<<
  *         if self.verbose:
- *             print 'Beginning forward pass'
+ *             print('Beginning forward pass')
  */
 
   /* function exit code */
@@ -6280,7 +6280,7 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_6run(struct __pyx_o
  * 
  *     cdef stop_check(ForwardPasser self):             # <<<<<<<<<<<<<<
  *         if self.verbose:
- *             print self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False)
+ *             print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
  */
 
 static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __pyx_obj_7pyearth_8_forward_ForwardPasser *__pyx_v_self) {
@@ -6304,7 +6304,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  * 
  *     cdef stop_check(ForwardPasser self):
  *         if self.verbose:             # <<<<<<<<<<<<<<
- *             print self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False)
+ *             print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
  *         last = self.record.__len__() - 1
  */
   __pyx_t_1 = (__pyx_v_self->verbose != 0);
@@ -6313,7 +6313,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
     /* "pyearth/_forward.pyx":200
  *     cdef stop_check(ForwardPasser self):
  *         if self.verbose:
- *             print self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False)             # <<<<<<<<<<<<<<
+ *             print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))             # <<<<<<<<<<<<<<
  *         last = self.record.__len__() - 1
  *         if self.record.iterations[last].get_size() > self.max_terms:
  */
@@ -6335,7 +6335,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
 
   /* "pyearth/_forward.pyx":201
  *         if self.verbose:
- *             print self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False)
+ *             print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
  *         last = self.record.__len__() - 1             # <<<<<<<<<<<<<<
  *         if self.record.iterations[last].get_size() > self.max_terms:
  *             self.record.stopping_condition = MAXTERMS
@@ -6367,7 +6367,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
   __pyx_t_3 = 0;
 
   /* "pyearth/_forward.pyx":202
- *             print self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False)
+ *             print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
  *         last = self.record.__len__() - 1
  *         if self.record.iterations[last].get_size() > self.max_terms:             # <<<<<<<<<<<<<<
  *             self.record.stopping_condition = MAXTERMS
@@ -6702,7 +6702,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  * 
  *     cdef stop_check(ForwardPasser self):             # <<<<<<<<<<<<<<
  *         if self.verbose:
- *             print self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False)
+ *             print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
  */
 
   /* function exit code */
@@ -24917,8 +24917,8 @@ static int __Pyx_InitCachedConstants(void) {
 
   /* "pyearth/_forward.pyx":190
  *         if self.verbose:
- *             print 'Beginning forward pass'
- *             print self.record.partial_str(slice(-1, None, None), print_footer=False)             # <<<<<<<<<<<<<<
+ *             print('Beginning forward pass')
+ *             print(self.record.partial_str(slice(-1, None, None), print_footer=False))             # <<<<<<<<<<<<<<
  *         if self.max_terms > 1:
  *             while True:
  */
@@ -24932,7 +24932,7 @@ static int __Pyx_InitCachedConstants(void) {
   /* "pyearth/_forward.pyx":200
  *     cdef stop_check(ForwardPasser self):
  *         if self.verbose:
- *             print self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False)             # <<<<<<<<<<<<<<
+ *             print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))             # <<<<<<<<<<<<<<
  *         last = self.record.__len__() - 1
  *         if self.record.iterations[last].get_size() > self.max_terms:
  */
