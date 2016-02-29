@@ -1115,12 +1115,15 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         if sample_weight.shape[1]:
             sample_weight = np.repeat(sample_weight,y.shape[1],axis=1)
         y_hat = self.predict(X)
-#         m, _ = X.shape
+        if len(y_hat.shape) == 1:
+            y_hat = y_hat[:, None]
+
         residual = y - y_hat
-        mse = np.sum(sample_weight * (residual ** 2)) / np.sum(sample_weight)
+#         total_weight = np.sum(sample_weight)
+        mse = np.sum(sample_weight * (residual ** 2))
         y_avg = np.average(y, weights=sample_weight, axis=0)
         
-        mse0 = np.sum(sample_weight * ((y - y_avg) ** 2)) / np.sum(sample_weight)
+        mse0 = np.sum(sample_weight * ((y - y_avg) ** 2))
 #         mse0 = np.sum(y_sqr * output_weight) / m
         return 1 - (mse / mse0)
 # 

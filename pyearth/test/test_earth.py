@@ -51,7 +51,7 @@ def test_get_params():
                                'use_fast': None, 'fast_K': None, 
                                'fast_h': None, 'smooth': None,
                                'enable_pruning': True,
-                               'allow_missing': False})
+                               'allow_missing': False, 'verbose': False})
     assert_equal(
         Earth(
             max_degree=3).get_params(), {'penalty': None,
@@ -66,7 +66,7 @@ def test_get_params():
                                          'allow_linear': None, 'use_fast': None,
                                          'fast_K': None, 'fast_h': None,
                                          'smooth': None, 'enable_pruning': True,
-                                         'allow_missing': False})
+                                         'allow_missing': False, 'verbose': False})
 
 
 @if_statsmodels
@@ -75,13 +75,13 @@ def test_linear_fit():
 
     earth = Earth(**default_params)
     earth.fit(X, y)
-    earth._Earth__linear_fit(X, y)
+    earth.linear_fit(X, y)
     soln = OLS(y, earth.transform(X)).fit().params
     assert_almost_equal(numpy.mean((earth.coef_ - soln) ** 2), 0.0)
 
     sample_weight = 1.0 / (numpy.random.normal(size=y.shape) ** 2)
     earth.fit(X, y)
-    earth._Earth__linear_fit(X, y, sample_weight)
+    earth.linear_fit(X, y, sample_weight)
     soln = GLS(y, earth.transform(
         X), 1.0 / sample_weight).fit().params
     assert_almost_equal(numpy.mean((earth.coef_ - soln) ** 2), 0.0)
@@ -107,13 +107,13 @@ def test_sample_weight():
                         rsq_trace)
     
     # Uncomment below to see what this test situation looks like
-    #        from matplotlib import pyplot
-    #        print model.summary()
-    #        print model.score(x,y,sample_weight = sample_weight)
-    #        pyplot.figure()
-    #        pyplot.plot(x,y,'b.')
-    #        pyplot.plot(x,model.predict(x),'r.')
-    #        pyplot.show()
+#     from matplotlib import pyplot
+#     print model.summary()
+#     print model.score(x,y,sample_weight = sample_weight)
+#     pyplot.figure()
+#     pyplot.plot(x,y,'b.')
+#     pyplot.plot(x,model.predict(x),'r.')
+#     pyplot.show()
 
 
 def test_output_weight():
@@ -153,6 +153,8 @@ def test_fit():
     res = str(earth.trace()) + '\n' + earth.summary()
     filename = os.path.join(os.path.dirname(__file__),
                             'earth_regress.txt')
+#     with open(filename, 'w') as fl:
+#         fl.write(res)
     with open(filename, 'r') as fl:
         prev = fl.read()
     assert_equal(res, prev)
@@ -164,6 +166,8 @@ def test_smooth():
         res = str(model.trace()) + '\n' + model.summary()
         filename = os.path.join(os.path.dirname(__file__),
                                 'earth_regress_smooth.txt')
+#         with open(filename, 'w') as fl:
+#             fl.write(res)
         with open(filename, 'r') as fl:
             prev = fl.read()
         assert_equal(res, prev)
@@ -175,6 +179,8 @@ def test_linvars():
     res = str(earth.trace()) + '\n' + earth.summary()
     filename = os.path.join(os.path.dirname(__file__),
                             'earth_linvars_regress.txt')
+#     with open(filename, 'w') as fl:
+#         fl.write(res)
     with open(filename, 'r') as fl:
         prev = fl.read()
 
@@ -311,7 +317,7 @@ def test_nb_terms():
     for max_terms in (1, 3, 12, 13):
         model = Earth(max_terms=max_terms)
         model.fit(X, y)
-        assert_true(len(model.basis_) <= max_terms)
+        assert_true(len(model.basis_) <= max_terms + 2)
         assert_true(len(model.coef_) <= len(model.basis_))
         assert_true(len(model.coef_) >= 1)
         if max_terms == 1:

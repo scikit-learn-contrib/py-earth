@@ -46,6 +46,7 @@ cdef class PruningPasser:
         cdef FLOAT_t best_gcv
         cdef FLOAT_t best_iteration_gcv
         cdef FLOAT_t best_iteration_mse
+        cdef FLOAT_t mse, mse0, total_weight
 
         cdef cnp.ndarray[FLOAT_t, ndim = 2] B = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)
@@ -65,15 +66,18 @@ cdef class PruningPasser:
         # Initial solution
         mse = 0.
         mse0 = 0.
+        total_weight = 0.
         for p in range(y.shape[1]):
             if sample_weight.shape[1] == 1:
                 weighted_y = y[:,p] * np.sqrt(sample_weight[:,0])
                 self.basis.weighted_transform(X, missing, B, sample_weight[:, 0])
+                total_weight += np.sum(sample_weight[:,0])
+                mse0 += np.sum(sample_weight[:,0] * (y[:,p] - np.average(y[:,p], weights=sample_weight[:,0])) ** 2)
             else:
                 weighted_y = y[:,p] * np.sqrt(sample_weight[:,p])
                 self.basis.weighted_transform(X, missing, B, sample_weight[:, p])
-#                 total_weight += np.sum(sample_weight[:,p])
-            mse0 += np.sum((weighted_y - np.average(weighted_y)) ** 2)
+                total_weight += np.sum(sample_weight[:,p])
+                mse0 += np.sum(sample_weight[:,p] * (y[:,p] - np.average(y[:,p], weights=sample_weight[:,p])) ** 2)
             if sample_weight.shape[1] == 1:
                 self.basis.weighted_transform(X, missing, B, sample_weight[:, 0])
             else:
@@ -88,7 +92,7 @@ cdef class PruningPasser:
         
         # Create the record object
         self.record = PruningPassRecord(
-            self.m, self.n, self.penalty, mse0, pruned_basis_size, mse)
+            self.m, self.n, self.penalty, mse0 / total_weight, pruned_basis_size, mse / total_weight)
         gcv_ = self.record.gcv(0)
         best_gcv = gcv_
         best_iteration = 0
@@ -146,7 +150,7 @@ cdef class PruningPasser:
 
             # Update the record and prune the selected basis function
             self.record.append(PruningPassIteration(
-                best_bf_to_prune, pruned_basis_size, best_iteration_mse))
+                best_bf_to_prune, pruned_basis_size, best_iteration_mse / total_weight))
             self.basis[best_bf_to_prune].prune()
             
             if self.verbose:

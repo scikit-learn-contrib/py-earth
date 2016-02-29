@@ -25,6 +25,7 @@ model.fit(X, y)
 # Print the model
 print(model.trace())
 print(model.summary())
+print model.score(X, y)
 
 # Plot the model
 y_hat = model.predict(X)
