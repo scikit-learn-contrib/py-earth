@@ -14,7 +14,7 @@ cdef class PruningPasser:
                  cnp.ndarray[FLOAT_t, ndim=2] X, 
                  cnp.ndarray[BOOL_t, ndim=2] missing, 
                  cnp.ndarray[FLOAT_t, ndim=2] y,
-                 cnp.ndarray[FLOAT_t, ndim=2] sample_weight,
+                 cnp.ndarray[FLOAT_t, ndim=2] sample_weight, bint verbose,
                  **kwargs):
         self.X = X
         self.missing = missing
@@ -22,7 +22,7 @@ cdef class PruningPasser:
         self.n = self.X.shape[1]
         self.y = y
         self.sample_weight = sample_weight
-#         self.output_weight = output_weight
+        self.verbose = verbose
         self.basis = basis
         self.B = np.empty(shape=(self.m, len(self.basis) + 1), dtype=np.float)
         self.penalty = kwargs.get('penalty', 3.0)
@@ -30,7 +30,6 @@ cdef class PruningPasser:
             y_avg = np.average(self.y, weights=sample_weight[:,0], axis=0)
         else:
             y_avg = np.average(self.y, weights=sample_weight, axis=0)
-#         self.sst = np.sum(sample_weight[:, np.newaxis] * (self.y - y_avg[np.newaxis, :]) ** 2)# / np.sum(self.sample_weight)
 
     cpdef run(PruningPasser self):
         # This is a totally naive implementation and could potentially be made
@@ -47,6 +46,7 @@ cdef class PruningPasser:
         cdef FLOAT_t best_gcv
         cdef FLOAT_t best_iteration_gcv
         cdef FLOAT_t best_iteration_mse
+        cdef FLOAT_t mse, mse0, total_weight
 
         cdef cnp.ndarray[FLOAT_t, ndim = 2] B = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)
@@ -58,25 +58,26 @@ cdef class PruningPasser:
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.y)
         cdef cnp.ndarray[FLOAT_t, ndim = 2] sample_weight = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.sample_weight)
-#         cdef cnp.ndarray[FLOAT_t, ndim = 1] output_weight = (
-#             <cnp.ndarray[FLOAT_t, ndim = 1] > self.output_weight)
         cdef cnp.ndarray[FLOAT_t, ndim = 1] weighted_y
 
+        if self.verbose:
+            print('Beginning pruning pass')
+
         # Initial solution
-        
         mse = 0.
         mse0 = 0.
-#         total_weight = 0.
+        total_weight = 0.
         for p in range(y.shape[1]):
             if sample_weight.shape[1] == 1:
                 weighted_y = y[:,p] * np.sqrt(sample_weight[:,0])
                 self.basis.weighted_transform(X, missing, B, sample_weight[:, 0])
-#                 total_weight += np.sum(sample_weight[:,0])
+                total_weight += np.sum(sample_weight[:,0])
+                mse0 += np.sum(sample_weight[:,0] * (y[:,p] - np.average(y[:,p], weights=sample_weight[:,0])) ** 2)
             else:
                 weighted_y = y[:,p] * np.sqrt(sample_weight[:,p])
                 self.basis.weighted_transform(X, missing, B, sample_weight[:, p])
-#                 total_weight += np.sum(sample_weight[:,p])
-            mse0 += np.sum((weighted_y - np.average(weighted_y)) ** 2)
+                total_weight += np.sum(sample_weight[:,p])
+                mse0 += np.sum(sample_weight[:,p] * (y[:,p] - np.average(y[:,p], weights=sample_weight[:,p])) ** 2)
             if sample_weight.shape[1] == 1:
                 self.basis.weighted_transform(X, missing, B, sample_weight[:, 0])
             else:
@@ -84,20 +85,20 @@ cdef class PruningPasser:
             beta, mse_ = np.linalg.lstsq(B[:, 0:(basis_size)], weighted_y)[0:2]
             if mse_:
                 pass
-#                 mse_ /= np.sum(sample_weight)
             else:
                 mse_ = np.sum(
-                    (np.dot(B[:, 0:basis_size], beta) - weighted_y) ** 2)# / \
-#                     np.sum(sample_weight)
-            mse += mse_# * output_weight[p]
+                    (np.dot(B[:, 0:basis_size], beta) - weighted_y) ** 2)
+            mse += mse_
         
-#         print 'sst, mse = ', self.sst, mse0, mse
         # Create the record object
         self.record = PruningPassRecord(
-            self.m, self.n, self.penalty, mse0, pruned_basis_size, mse)
+            self.m, self.n, self.penalty, mse0 / total_weight, pruned_basis_size, mse / total_weight)
         gcv_ = self.record.gcv(0)
         best_gcv = gcv_
         best_iteration = 0
+        
+        if self.verbose:
+            print(self.record.partial_str(slice(-1, None, None), print_footer=False))
 
         # Prune basis functions sequentially
         for i in range(1, pruned_basis_size):
@@ -148,10 +149,12 @@ cdef class PruningPasser:
                 best_iteration = i
 
             # Update the record and prune the selected basis function
-            print 'best_iteration_mse =', best_iteration_mse
             self.record.append(PruningPassIteration(
-                best_bf_to_prune, pruned_basis_size, best_iteration_mse))
+                best_bf_to_prune, pruned_basis_size, best_iteration_mse / total_weight))
             self.basis[best_bf_to_prune].prune()
+            
+            if self.verbose:
+                print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
 
         # Unprune the basis functions pruned after the best iteration
         self.record.set_selected(best_iteration)

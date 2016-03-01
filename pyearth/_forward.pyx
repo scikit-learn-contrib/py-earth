@@ -40,6 +40,11 @@ class FastHeapContent:
     def __lt__(self, other):
         return self.mse < other.mse
 
+cdef int MAXTERMS = 0
+cdef int MAXRSQ = 1
+cdef int NOIMPRV = 2
+cdef int LOWGRSQ = 3
+cdef int NOCAND = 4
 stopping_conditions = {
     MAXTERMS: "Reached maximum number of terms",
     MAXRSQ: "Achieved RSQ value within threshold of 1",
@@ -82,6 +87,7 @@ cdef class ForwardPasser:
         self.fast_h = kwargs.get("fast_h", 1)
         self.zero_tol = kwargs.get('zero_tol', 1e-12)
         self.allow_missing = kwargs.get("allow_missing", False)
+        self.verbose = kwargs.get("verbose", False)
         if self.allow_missing:
             self.has_missing = np.any(self.missing, axis=0).astype(BOOL)
             
@@ -103,7 +109,6 @@ cdef class ForwardPasser:
         if self.use_fast is True:
             content = FastHeapContent(idx=0)
             heappush(self.fast_heap, content)
-            print 'push', content
             
         self.mwork = np.empty(shape=self.m, dtype=np.int)
         
@@ -116,8 +121,6 @@ cdef class ForwardPasser:
         
         self.linear_variables = np.zeros(shape=self.n, dtype=np.int)
         self.init_linear_variables()
-        
-        
         
         # Removed in favor of new knot search code
         self.iteration_number = 0
@@ -182,6 +185,9 @@ cdef class ForwardPasser:
                 linear_variables[variable] = 0
                 
     cpdef run(ForwardPasser self):
+        if self.verbose:
+            print('Beginning forward pass')
+            print(self.record.partial_str(slice(-1, None, None), print_footer=False))
         if self.max_terms > 1:
             while True:
                 self.next_pair()
@@ -190,6 +196,8 @@ cdef class ForwardPasser:
                 self.iteration_number += 1
 
     cdef stop_check(ForwardPasser self):
+        if self.verbose:
+            print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
         last = self.record.__len__() - 1
         if self.record.iterations[last].get_size() > self.max_terms:
             self.record.stopping_condition = MAXTERMS
@@ -225,15 +233,6 @@ cdef class ForwardPasser:
         if return_code == 1:
             linear_dependence = True
         return linear_dependence
-#         for outcome in self.outcomes:
-#             return_code = outcome.update_from_array(b, self.zero_tol)
-#             if return_code == -1:
-#                 raise ValueError('This should not have happened.')
-#             return_codes.append(return_code != 0)
-#         # TODO: Change to any?
-#         if all(return_codes):
-#             linear_dependence = True
-#         return linear_dependence
     
     cpdef orthonormal_downdate(ForwardPasser self):
         self.outcome.downdate()
@@ -264,10 +263,6 @@ cdef class ForwardPasser:
         parent_basis_content = None
         cdef INDEX_t variable_choice
         cdef bint first = True
-#         cdef BasisFunction bf1
-#         cdef BasisFunction bf2
-#         cdef BasisFunction bf3
-#         cdef BasisFunction bf4
         cdef bint already_covered
         cdef INDEX_t k = len(self.basis)
         cdef INDEX_t endspan
@@ -289,7 +284,6 @@ cdef class ForwardPasser:
         cdef bint covered
         cdef bint missing_flag
         cdef bint choice_needs_coverage
-#         cdef int max_variable_degree
         
         cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
@@ -303,9 +297,6 @@ cdef class ForwardPasser:
             <cnp.ndarray[BOOL_t, ndim = 1] > self.has_missing)
         cdef cnp.ndarray[FLOAT_t, ndim = 1] b
         cdef cnp.ndarray[FLOAT_t, ndim = 1] p
-        
-        if self.outcome.weights[0].k > 0:
-            print np.dot(self.outcome.weights[0].Q_t[:self.outcome.weights[0].k,:], np.asarray(self.outcome.weights[0].Q_t[:self.outcome.weights[0].k,:]).T)
         
         if self.use_fast and not (self.last_fast_empty or self.last_fast_low_improvement):
             # choose only among the top "fast_K" basis functions
@@ -322,7 +313,6 @@ cdef class ForwardPasser:
             if self.use_fast:
                 # retrieve the next basis function to try as parent
                 parent_basis_content = heappop(self.fast_heap)
-                print 'pop', parent_basis_content
                 content_to_be_repushed.append(parent_basis_content)
                 parent_idx = parent_basis_content.idx
                 mse_choice_cur_parent = -1
@@ -349,7 +339,6 @@ cdef class ForwardPasser:
             parent_degree = parent.effective_degree()
             
             for variable in variables:
-                print parent, variable
                 # Determine whether missingness needs to be accounted for.
                 if self.allow_missing and has_missing[variable]:
                     missing_flag = True
@@ -362,7 +351,6 @@ cdef class ForwardPasser:
                 # covering missingness basis function if required)
                 if self.max_degree >= 0:
                     if parent_degree >= self.max_degree:
-                        print 'degree too high', parent, variable
                         continue
                 
                 # If there is missing data and this parent is not 
@@ -370,7 +358,6 @@ cdef class ForwardPasser:
                 # (because it includes a non-missing factor for the variable)
                 # then skip this variable.
                 if missing_flag and not eligible:
-                    print 'ineligible', parent, variable
                     continue
 
                 # Add the linear term to B
@@ -412,7 +399,6 @@ cdef class ForwardPasser:
                     gcv_ = gcv_factor_k_plus_1 * mse_
 
                 if linear_variables[variable]:
-                    print 'variable %s is linear' % self.xlabels[variable]
                     mse = mse_
                     knot_idx = -1
                 else:
@@ -434,15 +420,10 @@ cdef class ForwardPasser:
                         search_data = KnotSearchData(constant, self.workings, q)
 
                         # Run knot search
-#                         print len(candidates_idx)
                         knot, knot_idx, mse = knot_search(search_data, candidates, p, q, 
                                                           self.m, len(candidates), self.n_outcomes)
                         mse /= self.total_weight
-#                         print knot_idx
                         knot_idx = candidates_idx[knot_idx]
-#                         print parent, variable, mse
-#                         print knot_idx
-#                         mse = mse ** 2
                         
                         # If the hinge function does not decrease the gcv then
                         # just keep the linear term (if allow_linear is True)
@@ -475,17 +456,13 @@ cdef class ForwardPasser:
                 self.orthonormal_downdate()
                 
                 # Update the choices
-                print parent, variable, self.xlabels[variable], mse, mse_choice, knot
-                
                 if mse < mse_choice or first:
-#                     print 'choose'
                     if first:
                         first = False
                         self.last_fast_empty = False
                     knot_choice = knot
                     mse_choice = mse
                     knot_idx_choice = knot_idx
-#                     print 'knot_idx_choice', knot_idx_choice
                     parent_idx_choice = parent_idx
                     parent_choice = parent
                     if self.use_fast is True:
@@ -509,7 +486,6 @@ cdef class ForwardPasser:
         
         if self.use_fast is True:
             for content in content_to_be_repushed:
-                print 'push', content
                 heappush(self.fast_heap, content)
 
         # Make sure at least one candidate was checked
@@ -523,7 +499,6 @@ cdef class ForwardPasser:
         
         # Add the new basis functions
         label = self.xlabels[variable_choice]
-        print 'Chose variable %s and parent %s' % (label, parent_choice)
         if self.use_fast is True: 
             parent_basis_content_choice.m = -np.inf
         if choice_needs_coverage:
@@ -536,7 +511,6 @@ cdef class ForwardPasser:
                 if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
                     content = FastHeapContent(idx=len(self.basis))
                     heappush(self.fast_heap, content)
-                    print 'push', content
                 self.basis.append(new_basis_function)
                 new_parent = new_basis_function
                 
@@ -547,14 +521,7 @@ cdef class ForwardPasser:
                 if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
                     content = FastHeapContent(idx=len(self.basis))
                     heappush(self.fast_heap, content)
-                    print 'push', content
                 self.basis.append(new_basis_function)
-#             if self.basis.has_coverage(variable_choice):
-#                 bf3, bf4 = self.basis.get_coverage(variable_choice)
-#                 already_covered = True
-#             else:
-#                 already_covered = False
-#             parent_choice = bf3
         else:
             new_parent = parent_choice
         if knot_idx_choice != -1:
@@ -568,7 +535,6 @@ cdef class ForwardPasser:
             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
                 content = FastHeapContent(idx=len(self.basis))
                 heappush(self.fast_heap, FastHeapContent(idx=len(self.basis)))
-                print 'push', content
             self.basis.append(new_basis_function)
             
             new_basis_function = HingeBasisFunction(new_parent,
@@ -580,100 +546,18 @@ cdef class ForwardPasser:
             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
                 content = FastHeapContent(idx=len(self.basis))
                 heappush(self.fast_heap, content)
-                print 'push', content
             self.basis.append(new_basis_function)
             
-#             bf1.apply(X, missing, B[:, k])
-#             bf2.apply(X, missing, B[:, k + 1])
-# 
-#             self.basis.append(bf1)
-#             print 'append %s' % str(bf1)
-#             self.basis.append(bf2)
-#             print 'append %s' % str(bf2)
-#             
-#             if choice_needs_coverage:
-#                 print 'choice needs coverage'
-#                 if not already_covered:
-#                     bf3.apply(X, missing, B[:, k + 2])
-#                     bf4.apply(X, missing, B[:, k + 3])
-#                     self.basis.add_coverage(variable_choice, bf3, bf4)
-#                     print 'append %s' % str(bf3)
-#                     print 'append %s' % str(bf4)
-
-#             if self.use_fast is True:
-#                 bf1_content = FastHeapContent(idx=k)
-#                 heappush(self.fast_heap, bf1_content)
-#                 bf2_content = FastHeapContent(idx=k + 1)
-#                 heappush(self.fast_heap, bf2_content)
-#                 if choice_needs_coverage:
-#                     if not already_covered:
-#                         bf3_content = FastHeapContent(idx=k + 2)
-#                         heappush(self.fast_heap, FastHeapContent(idx=k + 2))
-#                         bf4_content = FastHeapContent(idx=k + 3)
-#                         heappush(self.fast_heap, FastHeapContent(idx=k + 3))
-                    
-#             # Orthogonalize the new basis
-#             if self.orthonormal_update(B[:, k]) == 1:
-#                 bf1.make_unsplittable()
-#             if self.orthonormal_update(B[:, k + 1]) == 1:
-#                 bf2.make_unsplittable()
-#             if choice_needs_coverage:
-#                 if not already_covered:
-#                     if self.orthonormal_update(B[:, k + 2]) == 1:
-#                         pass
-#                     if self.orthonormal_update(B[:, k + 3]) == 1:
-#                         pass
         elif not dependent and knot_idx_choice == -1:
             # In this case, only add the linear basis function (in addition to 
             # covering missingness basis functions if needed)
-#             if choice_needs_coverage:
-#                 bf2 = MissingnessBasisFunction(parent_choice, variable_choice,
-#                                                True, label)
-#                 bf3 = MissingnessBasisFunction(parent_choice, variable_choice,
-#                                                False, label)
-#                 if self.basis.has_coverage(variable_choice):
-#                     bf2, bf3 = self.basis.get_coverage(variable_choice)
-#                     already_covered = True
-#                 else:
-#                     already_covered = False
-#                 parent_choice = bf2
             new_basis_function = LinearBasisFunction(new_parent, variable_choice, label)
             new_basis_function.apply(X, missing, B[:, len(self.basis)])
             self.orthonormal_update(B[:, len(self.basis)])
             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
                 content = FastHeapContent(idx=len(self.basis))
                 heappush(self.fast_heap, content)
-                print 'push', content
             self.basis.append(new_basis_function)
-            
-#             bf1.apply(X, missing, B[:, k])
-#             self.basis.append(bf1)
-#             print 'append %s' % str(bf1)
-#             if choice_needs_coverage:
-#                 if not already_covered:
-#                     bf2.apply(X, missing, B[:, k + 1])
-#                     bf3.apply(X, missing, B[:, k + 2])
-#                     self.basis.add_coverage(variable_choice, bf2, bf3)
-#                     print 'append %s' % str(bf2)
-#                     print 'append %s' % str(bf3)
-#             if self.use_fast is True:
-#                 bf1_content = FastHeapContent(idx=k)
-#                 heappush(self.fast_heap, bf1_content)
-#                 if choice_needs_coverage:
-#                     if not already_covered:
-#                         bf2_content = FastHeapContent(idx=k + 1)
-#                         heappush(self.fast_heap, bf2_content)
-#                         bf3_content = FastHeapContent(idx=k + 2)
-#                         heappush(self.fast_heap, bf3_content)
-#             # Orthogonalize the new basis
-#             if self.orthonormal_update(B[:, k]) == 1:
-#                 bf1.make_unsplittable()
-#             if choice_needs_coverage:
-#                 if not already_covered:
-#                     if self.orthonormal_update(B[:, k + 1]) == 1:
-#                         pass
-#                     if self.orthonormal_update(B[:, k + 2]) == 1:
-#                         pass
         else:  # dependent and knot_idx_choice == -1
             # In this case there were no acceptable choices remaining, so end
             # the forward pass
@@ -684,7 +568,6 @@ cdef class ForwardPasser:
         # orthonormal updates and not the mse that comes directly from 
         # the knot search
         cdef FLOAT_t final_mse = self.outcome.mse()
-        print 'final_mse =', final_mse
         
         # Update the build record
         self.record.append(ForwardPassIteration(parent_idx_choice,

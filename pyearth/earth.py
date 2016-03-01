@@ -9,6 +9,19 @@ import numpy as np
 from scipy import sparse
 
 
+MAXTERMS = 0
+MAXRSQ = 1
+NOIMPRV = 2
+LOWGRSQ = 3
+NOCAND = 4
+stopping_conditions = {
+    MAXTERMS: "Reached maximum number of terms",
+    MAXRSQ: "Achieved RSQ value within threshold of 1",
+    NOIMPRV: "Improvement below threshold",
+    LOWGRSQ: "GRSQ too low",
+    NOCAND: "No remaining candidate knot locations"
+}
+
 class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
     """
@@ -171,6 +184,9 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
     enable_pruning : bool, optional(default=True)
         If False, the pruning pass will be skipped.
+        
+    verbose : bool, optional(default=False)
+        Print out progress information during fitting.
 
     Attributes
     ----------
@@ -248,10 +264,10 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         'minspan_alpha', 'minspan',
         'thresh', 'zero_tol', 'min_search_points', 
         'check_every', 'allow_linear',
-        'use_fast', 'fast_K', 'fast_h'
+        'use_fast', 'fast_K', 'fast_h', 'verbose'
     ])
     pruning_pass_arg_names = set([
-        'penalty'
+        'penalty', 'verbose'
     ])
 
     def __init__(self, max_terms=None, max_degree=None, allow_missing=False, 
@@ -260,7 +276,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                  thresh=None, zero_tol=None, min_search_points=None, 
                  check_every=None,
                  allow_linear=None, use_fast=None, fast_K=None,
-                 fast_h=None, smooth=None, enable_pruning=True):
+                 fast_h=None, smooth=None, enable_pruning=True, verbose=False):
         kwargs = {}
         call = locals()
         for name in self._get_param_names():
@@ -1099,12 +1115,15 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         if sample_weight.shape[1] == 1 and y.shape[1] > 1:
             sample_weight = np.repeat(sample_weight,y.shape[1],axis=1)
         y_hat = self.predict(X)
-#         m, _ = X.shape
+        if len(y_hat.shape) == 1:
+            y_hat = y_hat[:, None]
+
         residual = y - y_hat
-        mse = np.sum(sample_weight * (residual ** 2)) / np.sum(sample_weight)
+#         total_weight = np.sum(sample_weight)
+        mse = np.sum(sample_weight * (residual ** 2))
         y_avg = np.average(y, weights=sample_weight, axis=0)
         
-        mse0 = np.sum(sample_weight * ((y - y_avg) ** 2)) / np.sum(sample_weight)
+        mse0 = np.sum(sample_weight * ((y - y_avg) ** 2))
 #         mse0 = np.sum(y_sqr * output_weight) / m
         return 1 - (mse / mse0)
 # 
@@ -1169,4 +1188,14 @@ class EarthTrace(object):
                 self.pruning_trace == other.pruning_trace)
 
     def __str__(self):
-        return str(self.forward_trace) + '\n' + str(self.pruning_trace)
+        result = ''
+        result += 'Forward Pass\n'
+        result += str(self.forward_trace)
+        result += '\nStopping Condition %d: %s\n' % (
+            self.forward_trace.stopping_condition,
+            stopping_conditions[self.forward_trace.stopping_condition])
+        result += '\n'
+        result += 'Pruning Pass\n'
+        result += str(self.pruning_trace)
+        result += '\nSelected iteration: ' + str(self.pruning_trace.selected) + '\n'
+        return result

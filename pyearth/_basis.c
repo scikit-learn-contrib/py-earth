@@ -821,6 +821,18 @@ typedef npy_clongdouble __pyx_t_5numpy_clongdouble_t;
  * cdef inline object PyArray_MultiIterNew1(a):
  */
 typedef npy_cdouble __pyx_t_5numpy_complex_t;
+struct __pyx_opt_args_7pyearth_5_util_ascii_table;
+
+/* "_util.pxd":23
+ * cpdef str_pad(string, length)
+ * 
+ * cpdef ascii_table(header, data, print_header=?, print_footer=?)             # <<<<<<<<<<<<<<
+ */
+struct __pyx_opt_args_7pyearth_5_util_ascii_table {
+  int __pyx_n;
+  PyObject *print_header;
+  PyObject *print_footer;
+};
 struct __pyx_opt_args_7pyearth_6_basis_13BasisFunction_apply;
 struct __pyx_opt_args_7pyearth_6_basis_17RootBasisFunction_apply;
 struct __pyx_opt_args_7pyearth_6_basis_25DataVariableBasisFunction_apply;

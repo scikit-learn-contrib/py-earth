@@ -8,7 +8,6 @@ A simple example plotting a fit of the absolute value function.
 
 import numpy
 import matplotlib.pyplot as plt
-
 from pyearth import Earth
 
 # Create some fake data
@@ -19,7 +18,7 @@ X = 80 * numpy.random.uniform(size=(m, n)) - 40
 y = numpy.abs(X[:, 6] - 4.0) + 1 * numpy.random.normal(size=m)
 
 # Fit an Earth model
-model = Earth(max_degree=1)
+model = Earth(max_degree=1, verbose=True)
 model.fit(X, y)
 
 # Print the model

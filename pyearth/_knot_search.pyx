@@ -410,7 +410,7 @@ cdef inline void fast_update(PredictorDependentData predictor, SingleOutcomeDepe
     cdef FLOAT_t gamma_squared
     cdef FLOAT_t theta_gamma
     cdef FLOAT_t zeta_epsilon
-    cdef FLOAT_t tol = 1e-5
+    cdef FLOAT_t tol = .9
     cdef FLOAT_t pidx, xidx, widx, yidx, qidx, delta_nu, \
         delta_xi, delta_rho, delta_sigma, delta_tau, delta_psi, delta_chi
     
@@ -475,23 +475,24 @@ cdef inline void fast_update(PredictorDependentData predictor, SingleOutcomeDepe
         if epsilon_squared > 0:
             theta_gamma = dot(working.gamma, outcome.theta, q)
             zeta_epsilon = working.state.alpha - theta_gamma
-            if (abs(zeta_epsilon) / abs(working.state.alpha + theta_gamma) > tol) or (epsilon_squared / abs(working.state.beta + gamma_squared) > tol):
-                working.state.zeta_squared = (zeta_epsilon ** 2) / epsilon_squared
+#             if (abs(zeta_epsilon) / abs(working.state.alpha - theta_gamma) > tol) \
+#                 or (epsilon_squared / abs(working.state.beta + gamma_squared) > tol):
+            working.state.zeta_squared = (zeta_epsilon ** 2) / epsilon_squared
 #             working.state.zeta_squared /= epsilon_squared
 #             if epsilon_squared < 1e-6:
 #                 print 'epsilon_squared =', epsilon_squared
 #                 print 'alpha =', working.state.alpha
 #                 print 'gamma * theta =', dot(working.gamma, outcome.theta, q)
 #                 print 'beta =', working.state.beta
-            else:
-                # Numerical instability got us here.  Assume linear
-                # dependence (which is what causes the instability) and 
-                # set zeta_squared, alpha, and beta accordingly
-                print 'ELSE!!!!!!!!!'
-                working.state.zeta_squared = 0.
-                working.state.beta = gamma_squared
-                theta_gamma = dot(working.gamma, outcome.theta, q)
-                working.state.alpha = theta_gamma
+#             else:
+#                 # Numerical instability got us here.  Assume linear
+#                 # dependence (which is what causes the instability) and 
+#                 # set zeta_squared, alpha, and beta accordingly
+#                 print 'else'
+#                 working.state.zeta_squared = 0.
+#                 working.state.beta = gamma_squared
+#                 theta_gamma = dot(working.gamma, outcome.theta, q)
+#                 working.state.alpha = theta_gamma
         else:
             working.state.zeta_squared = 0.
     else:
@@ -536,7 +537,6 @@ cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p
     cdef FLOAT_t phi
     cdef KnotSearchWorkingData working
     cdef INDEX_t j, i
-#     print 'begin knot search!'
     for j in range(n_outcomes):
         working = workings[j]
         working.state.phi_next = phi_next

@@ -5,14 +5,7 @@ from _basis cimport Basis
 from _record cimport ForwardPassRecord
 from _knot_search cimport MultipleOutcomeDependentData
 
-ctypedef enum StoppingCondition:
-    MAXTERMS = 0,
-    MAXRSQ = 1,
-    NOIMPRV = 2,
-    LOWGRSQ = 3,
-    NOCAND = 4
-
-cdef dict stopping_conditions
+# cdef dict stopping_conditions
 
 cdef class ForwardPasser:
 
@@ -37,6 +30,7 @@ cdef class ForwardPasser:
     cdef long fast_K
     cdef long fast_h
     cdef bint allow_missing
+    cdef bint verbose
 
     # Input data
     cdef cnp.ndarray X

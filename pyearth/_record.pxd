@@ -20,7 +20,7 @@ cdef class Record:
     cpdef FLOAT_t grsq(Record self, INDEX_t iteration)
 
 cdef class PruningPassRecord(Record):
-    cdef INDEX_t selected
+    cdef readonly INDEX_t selected
 
     cpdef set_selected(PruningPassRecord self, INDEX_t selected)
 
@@ -29,7 +29,7 @@ cdef class PruningPassRecord(Record):
     cpdef roll_back(PruningPassRecord self, Basis basis)
 
 cdef class ForwardPassRecord(Record):
-    cdef int stopping_condition
+    cdef readonly int stopping_condition
 
     cdef list xlabels
 
