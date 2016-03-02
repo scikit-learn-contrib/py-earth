@@ -169,7 +169,7 @@ cdef class ForwardPassRecord(Record):
         data = []
         map_back = list(range(*rows.indices(len(self.iterations))))
         for i, iteration in enumerate(self.iterations[rows]):
-            data.append([str(i)] + str(iteration).split('\t') +
+            data.append([str(map_back[i])] + str(iteration).split('\t') +
                         ('%.3f\t%.3f\t%.3f' % (self.gcv(map_back[i]), self.rsq(map_back[i]),
                                                self.grsq(map_back[i]))).split('\t'))
         result = ''
