@@ -2,6 +2,7 @@ from setuptools import setup, Extension
 import numpy
 import sys
 import os
+import codecs
 sys.path.insert(0, os.path.join('.', 'pyearth'))
 from _version import __version__
 
@@ -85,7 +86,7 @@ setup_args = {'name': 'py-earth',
               'license': 'LICENSE.txt',
               'description':
               'A Python implementation of Jerome Friedman\'s MARS algorithm.',
-              'long_description': open('README.md', 'r').read(),
+              'long_description': codecs.open('README.md', mode='r', encoding='utf-8').read(),
               'py_modules': ['pyearth.earth', 'pyearth._version'],
               'ext_modules': ext_modules,
               'classifiers': ['Development Status :: 3 - Alpha'],
