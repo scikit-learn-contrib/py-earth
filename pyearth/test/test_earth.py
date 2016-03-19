@@ -7,7 +7,8 @@ import pickle
 import copy
 import os
 from .testing_utils import if_statsmodels, if_pandas, if_patsy, if_environ_has, \
-    assert_list_almost_equal_value, assert_list_almost_equal
+    assert_list_almost_equal_value, assert_list_almost_equal, \
+    if_sklearn_version_greater_than_or_equal_to
 from nose.tools import assert_equal, assert_true, \
     assert_almost_equal, assert_list_equal, assert_raises, assert_not_equal
 import numpy
@@ -38,6 +39,11 @@ y = numpy.empty(shape=100, dtype=numpy.float64)
 y[:] = numpy.dot(B, beta) + numpy.random.normal(size=100)
 default_params = {"penalty": 1}
 
+@if_sklearn_version_greater_than_or_equal_to('0.17.2')
+def test_check_estimator():
+    import sklearn.utils.estimator_checks
+    sklearn.utils.estimator_checks.MULTI_OUTPUT.append('Earth')
+    sklearn.utils.estimator_checks.check_estimator(Earth)
 
 def test_get_params():
     assert_equal(
