@@ -156,27 +156,27 @@ def test_missing_data():
 def test_fit():
     earth = Earth(**default_params)
     earth.fit(X, y)
-    res = str(earth.trace()) + '\n' + earth.summary()
+    res = str(earth.rsq_)
     filename = os.path.join(os.path.dirname(__file__),
                             'earth_regress.txt')
 #     with open(filename, 'w') as fl:
 #         fl.write(res)
     with open(filename, 'r') as fl:
         prev = fl.read()
-    assert_equal(res, prev)
+    assert_true(abs(float(res) - float(prev)) < .01)
 
 
 def test_smooth():
-        model = Earth(penalty=1, smooth=True)
-        model.fit(X, y)
-        res = str(model.trace()) + '\n' + model.summary()
-        filename = os.path.join(os.path.dirname(__file__),
-                                'earth_regress_smooth.txt')
-#         with open(filename, 'w') as fl:
-#             fl.write(res)
-        with open(filename, 'r') as fl:
-            prev = fl.read()
-        assert_equal(res, prev)
+    model = Earth(penalty=1, smooth=True)
+    model.fit(X, y)
+    res = str(model.rsq_)
+    filename = os.path.join(os.path.dirname(__file__),
+                            'earth_regress_smooth.txt')
+#     with open(filename, 'w') as fl:
+#         fl.write(res)
+    with open(filename, 'r') as fl:
+        prev = fl.read()
+    assert_true(abs(float(res) - float(prev)) < .01)
 
 
 def test_linvars():
