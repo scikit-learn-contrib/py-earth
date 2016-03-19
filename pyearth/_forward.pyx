@@ -206,15 +206,16 @@ cdef class ForwardPasser:
         if rsq > 1 - self.thresh:
             self.record.stopping_condition = MAXRSQ
             return True
-        previous_rsq = self.record.rsq(last - 1)
-        if rsq - previous_rsq < self.thresh:
-            if self.use_fast and not self.last_fast_low_improvement:
-                self.last_fast_low_improvement = True
-            else:
-                self.record.stopping_condition = NOIMPRV
-                return True
-        elif self.use_fast:
-            self.last_fast_low_improvement = False
+        if last > 0:
+            previous_rsq = self.record.rsq(last - 1)
+            if rsq - previous_rsq < self.thresh:
+                if self.use_fast and not self.last_fast_low_improvement:
+                    self.last_fast_low_improvement = True
+                else:
+                    self.record.stopping_condition = NOIMPRV
+                    return True
+            elif self.use_fast:
+                self.last_fast_low_improvement = False
         if self.record.grsq(last) < -10:
             self.record.stopping_condition = LOWGRSQ
             return True

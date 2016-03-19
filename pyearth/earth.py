@@ -343,7 +343,9 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                         labels = ['x%d' % i for i in range(X.shape[1])]
                     except IndexError:
                         labels = ['x%d' % i for i in range(1)]
-
+                except AttributeError: # handle case where X is not np.array (e.g list)
+                    X = np.array(X)
+                    labels = ['x%d' % i for i in range(X.shape[1])]
         return labels
 
     def _scrub_x(self, X, missing, **kwargs):
@@ -354,7 +356,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         if sparse.issparse(X):
             raise TypeError('A sparse matrix was passed, but dense data '
                             'is required. Use X.toarray() to convert to dense.')
-        
+        X = np.asarray(X, dtype=np.float64, order='F')
         # Figure out missingness
         if missing is None:
             # Infer missingness
@@ -365,7 +367,6 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         assert_all_finite(missing)
         if missing.ndim == 1:
             missing = missing[:, np.newaxis]
-        X = np.asarray(X, dtype=np.float64, order='F')
         if not self.allow_missing:
             try:
                 assert_all_finite(X)
