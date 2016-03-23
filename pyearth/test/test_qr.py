@@ -90,8 +90,3 @@ def test_updating_qr_with_linear_dependence():
     # u should have one more column than u2
     assert u.k == u2.k + 1
     
-    
-if __name__ == '__main__':
-    test_updating_qt()
-    test_updating_qr_with_linear_dependence()
-    print 'Success!'

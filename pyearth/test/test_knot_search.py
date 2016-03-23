@@ -177,10 +177,3 @@ def test_knot_search():
     assert_equal(candidates[fast_best_k], candidates[best_k])
     assert_almost_equal(fast_best_e, best_e)
     
-    
-    
-if __name__ == '__main__':
-    test_outcome_dependent_data()
-    test_knot_candidates()
-    test_knot_search()
-    print 'Success!'
