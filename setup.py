@@ -96,7 +96,8 @@ def setup_package():
         'requires': ['numpy', 'scipy'],
         'install_requires': ['scikit-learn >= 0.16',
                            'sphinx_gallery'],
-        'setup_requires': ['numpy']
+        'setup_requires': ['numpy'],
+        'include_package_data': True
     }
 
     # Add the build_ext command only if cythonizing
