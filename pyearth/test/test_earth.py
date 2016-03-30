@@ -13,7 +13,6 @@ from nose.tools import assert_equal, assert_true, \
     assert_almost_equal, assert_list_equal, assert_raises, assert_not_equal
 import numpy
 from scipy.sparse import csr_matrix
-from sklearn.utils.validation import NotFittedError
 from pyearth._types import BOOL
 from pyearth._basis import (Basis, ConstantBasisFunction,
                             HingeBasisFunction, LinearBasisFunction)
@@ -431,7 +430,16 @@ def test_xlabels():
 
 
 def test_untrained():
-
+    # NotFittedError moved from utils.validation to exceptions
+    # some time after 0.17.1
+    try:
+        from sklearn.exceptions import NotFittedError
+    except ImportError:
+        from sklearn.utils.validation import NotFittedError
+    
+    # Make sure calling methods that require a fitted Earth object
+    # raises the appropriate exception when using a not yet fitted 
+    # Earth object
     model = Earth(**default_params)
     assert_raises(NotFittedError, model.predict, X)
     assert_raises(NotFittedError, model.transform, X)
