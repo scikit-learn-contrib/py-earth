@@ -1,0 +1,33 @@
+package:
+  name: pyearth
+  version: "0.1"
+
+source:
+  git_url: https://github.com/scikit-learn-contrib/py-earth.git
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - numpy
+    - scipy
+    - scikit-learn
+    - cython
+    - nose
+    - six  
+  run:
+    - python
+    - six  
+
+test:
+  requires:
+    - numpy
+    - scipy
+    - scikit-learn
+    - nose
+  imports:
+    - pyearth 
+
+about:
+  home: https://github.com/scikit-learn-contrib/py-earth
+  license: BSD

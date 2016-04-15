@@ -25,3 +25,6 @@ test-coverage: inplace
 
 verbose-test: inplace
 	$(NOSETESTS) -sv pyearth
+
+conda:
+	conda-build conda-recipe
