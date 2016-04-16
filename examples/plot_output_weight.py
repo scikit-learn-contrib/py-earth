@@ -1,8 +1,7 @@
 """
-==================================
-Demonstrating a use of weights in
-outputs with two sine functions
-==================================
+=================================================================
+Demonstrating a use of weights in outputs with two sine functions
+=================================================================
 
 Each row in the grid is a run of an earth model.
 Each column is an output.
@@ -29,7 +28,7 @@ y_mix = np.concatenate((y1[:, np.newaxis], y2[:, np.newaxis]), axis=1)
 alphas = [1., 0.8, 0.6, 0.4, 0.2, 0.]
 n_plots = len(alphas)
 k = 1
-fig = plt.figure()
+fig = plt.figure(figsize=(10, 15))
 for i, alpha in enumerate(alphas):
     # Fit an Earth model
     model = Earth(max_degree=5,

@@ -261,3 +261,9 @@ texinfo_documents = [
 
 # Create the .nojekyll file for github pages
 open(os.path.join('_build', 'html', '.nojekyll'), 'w').close()
+
+sphinx_gallery_conf = {
+    # path to your examples scripts
+    'examples_dirs' : '../examples',
+    # path where to save gallery generated examples
+    'gallery_dirs'  : 'auto_examples'}
