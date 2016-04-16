@@ -1,0 +1,360 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Plotting derivatives of simple sine function &mdash; py-earth 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="py-earth 0.1.0 documentation" href="../index.html"/>
+        <link rel="up" title="Gallery" href="index.html"/>
+        <link rel="next" title="Demonstrating a use of weights in outputs with two sine functions" href="plot_output_weight.html"/>
+        <link rel="prev" title="Plotting two simple sine functions" href="plot_sine_wave_2d.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> py-earth
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../content.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content.html#multivariate-adaptive-regression-splines">Multivariate Adaptive Regression Splines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content.html#a-simple-earth-example">A Simple Earth Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content.html#bibliography">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content.html#api">API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Gallery</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="plot_v_function.html">Plotting the absolute value function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_sine_wave.html">Plotting simple sine function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_sine_wave_2d.html">Plotting two simple sine functions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Plotting derivatives of simple sine function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_output_weight.html">Demonstrating a use of weights in outputs with two sine functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_missing_data_problem.html">Plotting sine function with redundant predictors an missing data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_classifier_comp.html">Plotting sckit-learn classifiers comparison with Earth</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">py-earth</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Gallery</a> &raquo;</li>
+      
+    <li>Plotting derivatives of simple sine function</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/auto_examples/plot_derivatives.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="plotting-derivatives-of-simple-sine-function">
+<span id="sphx-glr-auto-examples-plot-derivatives-py"></span><h1>Plotting derivatives of simple sine function<a class="headerlink" href="#plotting-derivatives-of-simple-sine-function" title="Permalink to this headline">¶</a></h1>
+<p>A simple example plotting a fit of the sine function and
+the derivatives computed by Earth.</p>
+<img alt="../_images/sphx_glr_plot_derivatives_001.png" class="align-center" src="../_images/sphx_glr_plot_derivatives_001.png" />
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-python"><div class="highlight"><pre><span></span>  Forward Pass
+-----------------------------------------------------------------
+iter  parent  var  knot  mse        terms  gcv     rsq    grsq
+-----------------------------------------------------------------
+0     -       -    -     47.918854  1      47.928  0.000  0.000
+1     0       6    7511  44.378017  3      44.458  0.074  0.072
+2     1       6    4611  35.601672  5      35.723  0.257  0.255
+3     2       6    7723  21.066447  7      21.172  0.560  0.558
+4     0       6    2911  11.242578  9      11.317  0.765  0.764
+5     7       6    1411  4.966547   11     5.008   0.896  0.896
+6     0       6    5618  1.414334   13     1.428   0.970  0.970
+7     0       6    4118  0.976659   15     0.988   0.980  0.979
+8     1       6    6218  0.747674   17     0.757   0.984  0.984
+9     2       6    8630  0.341531   19     0.347   0.993  0.993
+10    13      6    2511  0.243778   21     0.248   0.995  0.995
+11    11      6    1011  0.191405   23     0.195   0.996  0.996
+12    13      6    3318  0.171912   25     0.175   0.996  0.996
+-----------------------------------------------------------------
+Stopping Condition 2: Improvement below threshold
+
+Pruning Pass
+----------------------------------------------
+iter  bf  terms  mse    gcv     rsq    grsq
+----------------------------------------------
+0     -   25     0.17   0.175   0.996  0.996
+1     20  24     0.17   0.175   0.996  0.996
+2     12  23     0.17   0.175   0.996  0.996
+3     18  22     0.17   0.175   0.996  0.996
+4     14  21     0.17   0.175   0.996  0.996
+5     2   20     0.17   0.175   0.996  0.996
+6     16  19     0.17   0.174   0.996  0.996
+7     21  18     0.17   0.175   0.996  0.996
+8     5   17     0.17   0.175   0.996  0.996
+9     23  16     0.18   0.178   0.996  0.996
+10    10  15     0.20   0.201   0.996  0.996
+11    22  14     0.24   0.239   0.995  0.995
+12    24  13     0.28   0.282   0.994  0.994
+13    11  12     0.70   0.701   0.985  0.985
+14    17  11     1.13   1.137   0.976  0.976
+15    19  10     1.69   1.698   0.965  0.965
+16    4   9      2.21   2.221   0.954  0.954
+17    3   8      2.38   2.399   0.950  0.950
+18    6   7      14.40  14.469  0.700  0.698
+19    8   6      23.03  23.128  0.519  0.517
+20    1   5      27.73  27.823  0.421  0.419
+21    15  4      36.71  36.803  0.234  0.232
+22    9   3      42.46  42.538  0.114  0.112
+23    13  2      45.14  45.181  0.058  0.057
+24    7   1      47.92  47.928  0.000  0.000
+----------------------------------------------
+Selected iteration: 6
+
+Earth Model
+--------------------------------------------------------------------------------------------------
+Basis Function                                                               Pruned  Coefficient
+--------------------------------------------------------------------------------------------------
+(Intercept)                                                                  No      147.688
+C(x6|s=+1,-5.29049,-5.08316,-3.81365)                                        No      -31.3083
+C(x6|s=-1,-5.29049,-5.08316,-3.81365)                                        Yes     None
+C(x6|s=+1,-0.315974,0.653401,1.17646)*C(x6|s=+1,-5.29049,-5.08316,-3.81365)  No      -4.604
+C(x6|s=-1,-0.315974,0.653401,1.17646)*C(x6|s=+1,-5.29049,-5.08316,-3.81365)  No      3.02266
+C(x6|s=+1,-6.3914,-5.49781,-5.29049)*C(x6|s=-1,-5.29049,-5.08316,-3.81365)   No      -3.27762
+C(x6|s=-1,-6.3914,-5.49781,-5.29049)*C(x6|s=-1,-5.29049,-5.08316,-3.81365)   No      3.1787
+C(x6|s=+1,3.75798,4.21422,4.62577)                                           No      14.6399
+C(x6|s=-1,3.75798,4.21422,4.62577)                                           No      -14.834
+C(x6|s=+1,6.13852,7.23971,7.61111)*C(x6|s=+1,3.75798,4.21422,4.62577)        No      -5.60341
+C(x6|s=-1,6.13852,7.23971,7.61111)*C(x6|s=+1,3.75798,4.21422,4.62577)        No      3.56954
+C(x6|s=+1,-1.91474,-1.28535,-0.315974)                                       No      12.2845
+C(x6|s=-1,-1.91474,-1.28535,-0.315974)                                       Yes     None
+C(x6|s=+1,1.17646,1.69952,2.50062)                                           No      -11.5728
+C(x6|s=-1,1.17646,1.69952,2.50062)                                           Yes     None
+C(x6|s=+1,-3.81365,-2.54413,-1.91474)*C(x6|s=+1,-5.29049,-5.08316,-3.81365)  No      4.10527
+C(x6|s=-1,-3.81365,-2.54413,-1.91474)*C(x6|s=+1,-5.29049,-5.08316,-3.81365)  Yes     None
+C(x6|s=+1,-8.64229,-7.28499,-6.3914)*C(x6|s=-1,-5.29049,-5.08316,-3.81365)   No      4.14465
+C(x6|s=-1,-8.64229,-7.28499,-6.3914)*C(x6|s=-1,-5.29049,-5.08316,-3.81365)   Yes     None
+C(x6|s=+1,4.62577,5.03733,6.13852)*C(x6|s=+1,1.17646,1.69952,2.50062)        No      3.9774
+C(x6|s=-1,4.62577,5.03733,6.13852)*C(x6|s=+1,1.17646,1.69952,2.50062)        Yes     None
+C(x6|s=+1,7.61111,7.98251,8.99069)*C(x6|s=+1,-1.91474,-1.28535,-0.315974)    No      0.0397711
+C(x6|s=-1,7.61111,7.98251,8.99069)*C(x6|s=+1,-1.91474,-1.28535,-0.315974)    No      -0.483734
+C(x6|s=+1,2.50062,3.30173,3.75798)*C(x6|s=+1,1.17646,1.69952,2.50062)        No      -0.214956
+C(x6|s=-1,2.50062,3.30173,3.75798)*C(x6|s=+1,1.17646,1.69952,2.50062)        No      2.10639
+--------------------------------------------------------------------------------------------------
+MSE: 0.1242, GCV: 0.1261, RSQ: 0.9974, GRSQ: 0.9974
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="kn">from</span> <span class="nn">pyearth</span> <span class="kn">import</span> <span class="n">Earth</span>
+
+<span class="c1"># Create some fake data</span>
+<span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">m</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">X</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span> <span class="o">-</span> <span class="mi">10</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">10</span><span class="o">*</span><span class="n">numpy</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.25</span><span class="o">*</span><span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
+
+<span class="c1"># Compute the known true derivative with respect to the predictive variable</span>
+<span class="n">y_prime</span> <span class="o">=</span> <span class="mi">10</span><span class="o">*</span><span class="n">numpy</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">])</span>
+
+<span class="c1"># Fit an Earth model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Earth</span><span class="p">(</span><span class="n">max_degree</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">minspan_alpha</span><span class="o">=.</span><span class="mi">5</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Print the model</span>
+<span class="k">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">trace</span><span class="p">())</span>
+<span class="k">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+
+<span class="c1"># Get the predicted values and derivatives</span>
+<span class="n">y_hat</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">y_prime_hat</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_deriv</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s1">&#39;x6&#39;</span><span class="p">)</span>
+
+<span class="c1"># Plot true and predicted function values and derivatives</span>
+<span class="c1"># for the predictive variable</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">211</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;r.&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">y_hat</span><span class="p">,</span> <span class="s1">&#39;b.&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;function&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">212</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">y_prime</span><span class="p">,</span> <span class="s1">&#39;r.&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">y_prime_hat</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;b.&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;derivative&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>Total running time of the script:</strong>
+(0 minutes 5.237 seconds)</p>
+<div class="sphx-glr-download container">
+<strong>Download Python source code:</strong> <a class="reference download internal" href="../_downloads/plot_derivatives.py"><code class="xref download docutils literal"><span class="pre">plot_derivatives.py</span></code></a></div>
+<div class="sphx-glr-download container">
+<strong>Download IPython notebook:</strong> <a class="reference download internal" href="../_downloads/plot_derivatives.ipynb"><code class="xref download docutils literal"><span class="pre">plot_derivatives.ipynb</span></code></a></div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="plot_output_weight.html" class="btn btn-neutral float-right" title="Demonstrating a use of weights in outputs with two sine functions" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="plot_sine_wave_2d.html" class="btn btn-neutral" title="Plotting two simple sine functions" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2013, Jason Rudy.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

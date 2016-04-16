@@ -1,725 +1,219 @@
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Py-earth documentation &mdash; py-earth 0.1.0 documentation</title>
+  
 
+  
+  
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Welcome to py-earth’s documentation! &mdash; py-earth 0.1.0 documentation</title>
-    
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
-        VERSION:     '0.1.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="py-earth 0.1.0 documentation" href="#" /> 
-  </head>
-  <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li><a href="#">py-earth 0.1.0 documentation</a> &raquo;</li> 
-      </ul>
-    </div>  
+  
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body">
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="py-earth 0.1.0 documentation" href="#"/>
+        <link rel="next" title="Introduction" href="content.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> py-earth
+          
+
+          
+          </a>
+
+          
             
-  <div class="section" id="welcome-to-py-earth-s-documentation">
-<h1>Welcome to py-earth&#8217;s documentation!<a class="headerlink" href="#welcome-to-py-earth-s-documentation" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
-<p>The py-earth package is a Python implementation of Jerome Friedman&#8217;s Multivariate Adaptive
-Regression Splines algorithm, in the style of scikit-learn.  For more information about Multivariate
-Adaptive Regression Splines, see below.  Py-earth is written in Python and Cython.  It
-provides an interface that is compatible with scikit-learn&#8217;s Estimator, Predictor, Transformer, and Model
-interfaces.  Py-earth accommodates input in the form of numpy arrays, pandas DataFrames, patsy DesignMatrix
-objects, or most anything that can be converted into an arrray of floats.  Fitted models can be pickled for
-later use.</p>
-</div>
-<div class="section" id="multivariate-adaptive-regression-splines">
-<h2>Multivariate Adaptive Regression Splines<a class="headerlink" href="#multivariate-adaptive-regression-splines" title="Permalink to this headline">¶</a></h2>
-<p>Multivariate adaptive regression splines, implemented by the Earth class, is a flexible
-regression method that automatically searches for interactions and non-linear
-relationships.  Earth models can be thought of as linear models in a higher dimensional
-basis space.  Each term in an Earth model is a product of so called &#8220;hinge functions&#8221;.
-A hinge function is a function that&#8217;s equal to its argument where that argument is greater
-than zero and is zero everywhere else.</p>
-<div class="math">
-\[\begin{split}\text{h}\left(x-t\right)=\left[x-t\right]_{+}=\begin{cases}
-x-t, &amp; x&gt;t\\
-0, &amp; x\leq t
-\end{cases}\end{split}\]</div>
-<img alt="_images/hinge.png" src="_images/hinge.png" />
-<p>An Earth model is a linear combination of basis functions, each of which is a product of one
-or more of the following:</p>
-<blockquote>
-<div><ol class="arabic simple">
-<li>A constant</li>
-<li>Linear functions of input variables</li>
-<li>Hinge functions of input variables</li>
-</ol>
-</div></blockquote>
-<p>For example, a simple piecewise linear function in one variable can be expressed
-as a linear combination of two hinge functions and a constant (see below).  During fitting, the Earth class
-automatically determines which variables and basis functions to use.
-The algorithm has two stages.  First, the
-forward pass searches for terms that locally minimize squared error loss on the training set.  Next, a pruning pass selects a subset of those
-terms that produces a locally minimal generalized cross-validation (GCV) score.  The GCV
-score is not actually based on cross-validation, but rather is meant to approximate a true
-cross-validation score by penalizing model complexity.  The final result is a set of basis functions
-that is nonlinear in the original feature space, may include interactions, and is likely to
-generalize well.</p>
-<div class="math">
-\[y=1-2\text{h}\left(1-x\right)+\frac{1}{2}\text{h}\left(x-1\right)\]</div>
-<img alt="_images/piecewise_linear.png" src="_images/piecewise_linear.png" />
-</div>
-<div class="section" id="a-simple-earth-example">
-<h2>A Simple Earth Example<a class="headerlink" href="#a-simple-earth-example" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">from</span> <span class="nn">pyearth</span> <span class="kn">import</span> <span class="n">Earth</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span>
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
 
-<span class="c">#Create some fake data</span>
-<span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">m</span> <span class="o">=</span> <span class="mi">1000</span>
-<span class="n">n</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">X</span> <span class="o">=</span> <span class="mi">80</span><span class="o">*</span><span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">))</span> <span class="o">-</span> <span class="mi">40</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span><span class="mi">6</span><span class="p">]</span> <span class="o">-</span> <span class="mf">4.0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="o">*</span><span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
-
-<span class="c">#Fit an Earth model</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">Earth</span><span class="p">()</span>
-<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
-
-<span class="c">#Print the model</span>
-<span class="k">print</span> <span class="n">model</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span>
-<span class="k">print</span> <span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
-
-<span class="c">#Plot the model</span>
-<span class="n">y_hat</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-<span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span><span class="mi">6</span><span class="p">],</span><span class="n">y</span><span class="p">,</span><span class="s">&#39;r.&#39;</span><span class="p">)</span>
-<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span><span class="mi">6</span><span class="p">],</span><span class="n">y_hat</span><span class="p">,</span><span class="s">&#39;b.&#39;</span><span class="p">)</span>
-<span class="n">pyplot</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;x_6&#39;</span><span class="p">)</span>
-<span class="n">pyplot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&#39;y&#39;</span><span class="p">)</span>
-<span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Simple Earth Example&#39;</span><span class="p">)</span>
-<span class="n">pyplot</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-<img alt="_images/simple_earth_example.png" src="_images/simple_earth_example.png" />
-</div>
-<div class="section" id="bibliography">
-<h2>Bibliography<a class="headerlink" href="#bibliography" title="Permalink to this headline">¶</a></h2>
-<p id="bibtex-bibliography-index-0"><table class="docutils citation" frame="void" id="bjorck1996" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id8">[1]</a></td><td><span class="first last"><span><span><span><span><span>Ake</span><span> </span></span><span>Bjorck</span></span><span>.</span></span><span> </span><span><em><span>Numerical Methods for Least Squares Problems</span></em><span>.</span></span></span><span> </span><span><span><span>Society for Industrial and Applied Mathematics</span><span>, </span><span>Philadelphia</span></span><span>, </span><span>1996</span><span>.</span></span></span></td></tr>
-</tbody>
-</table>
-<table class="docutils citation" frame="void" id="friedman1993" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[2]</td><td><em>(<a class="fn-backref" href="#id4">1</a>, <a class="fn-backref" href="#id11">2</a>)</em> <span class="last"><span><span><span><span><span><span>Jerome</span><span>&nbsp;</span><span>H.</span></span><span> </span></span><span>Friedman</span></span><span>.</span></span><span> </span><span><span>Technical Report No. 110: Fast MARS.</span><span>.</span></span></span><span> </span><span><span><span>Technical Report</span><span>, </span><span>Stanford University Department of Statistics</span></span><span>, </span><span>1993</span><span>.</span></span></span></td></tr>
-</tbody>
-</table>
-<table class="docutils citation" frame="void" id="friedman1991" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[3]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id6">2</a>)</em> <span class="last"><span><span><span><span><span>JH</span><span>&nbsp;</span></span><span>Friedman</span></span><span>.</span></span><span> </span><span><span>Multivariate adaptive regression splines</span><span>.</span></span></span><span> </span><span><span><em><span>The annals of statistics</span></em><span>, </span><span><span><span>19</span><span><span>(</span><span>1</span><span>)</span></span><span>:</span></span><span>1–67</span></span></span><span>, </span><span>1991</span><span>.</span></span></span></td></tr>
-</tbody>
-</table>
-<table class="docutils citation" frame="void" id="friedman1991a" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[4]</td><td><em>(<a class="fn-backref" href="#id5">1</a>, <a class="fn-backref" href="#id12">2</a>)</em> <span class="last"><span><span><span><span><span>JH</span><span>&nbsp;</span></span><span>Friedman</span></span><span>.</span></span><span> </span><span><span>Technical Report No. 108: Estimating functions of mixed ordinal and categorical variables using adaptive splines</span><span>.</span></span></span><span> </span><span><span><span>Technical Report</span><span>, </span><span>Stanford University Department of Statistics</span></span><span>, </span><span>1991</span><span>.</span></span></span></td></tr>
-</tbody>
-</table>
-<table class="docutils citation" frame="void" id="golub1996" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id10">[5]</a></td><td><span class="first last"><span><span><span><span><span><span>Gene</span><span> </span></span><span>Golub</span></span><span> and </span><span><span><span>Charles</span><span> </span></span><span>Van Loan</span></span></span><span>.</span></span><span> </span><span><em><span>Matrix Computations</span></em><span>.</span></span></span><span> </span><span><span><span>Johns Hopkins University Press</span><span>, </span><span><span>3</span><span> </span><span>edition</span></span></span><span>, </span><span>1996</span><span>.</span></span></span></td></tr>
-</tbody>
-</table>
-<table class="docutils citation" frame="void" id="hastie2009" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[6]</a></td><td><span class="first last"><span><span><span><span><span><span><span>Trevor</span><span> </span></span><span>Hastie</span></span><span>, </span><span><span><span>Robert</span><span> </span></span><span>Tibshirani</span></span></span><span>, and </span><span><span><span>Jerome</span><span> </span></span><span>Friedman</span></span></span><span>.</span></span><span> </span><span><em><span>Elements of Statistical Learning: Data Mining, Inference, and Prediction</span></em><span>.</span></span></span><span> </span><span><span><span>Springer Science+Business Media</span><span>, </span><span>New York</span><span>, </span><span><span>2</span><span> </span><span>edition</span></span></span><span>, </span><span>2009</span><span>.</span></span></span></td></tr>
-</tbody>
-</table>
-<table class="docutils citation" frame="void" id="millborrow2012" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[7]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id7">2</a>)</em> <span class="last"><span><span><span><span><span>Stephen</span><span> </span></span><span>Millborrow</span></span><span>.</span></span><span> </span><span><span>earth: Multivariate Adaptive Regression Spline Models</span><span>.</span></span></span><span> </span><span><span>2012</span><span>.</span></span></span></td></tr>
-</tbody>
-</table>
-<table class="docutils citation" frame="void" id="stewart1998" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id9">[8]</a></td><td><span class="first last"><span><span><span><span><span><span>G.</span><span>&nbsp;</span><span>W.</span></span><span> </span></span><span>Stewart</span></span><span>.</span></span><span> </span><span><em><span>Matrix Algorithms Volume 1: Basic Decompositions</span></em><span>.</span></span></span><span> </span><span><span><span>Society for Industrial and Applied Mathematics</span><span>, </span><span>Philadelphia</span></span><span>, </span><span>1998</span><span>.</span></span></span></td></tr>
-</tbody>
-</table>
-</p>
-<p>References <a class="reference internal" href="#hastie2009">[6]</a>, <a class="reference internal" href="#millborrow2012">[7]</a>, <a class="reference internal" href="#friedman1991">[3]</a>, <a class="reference internal" href="#friedman1993">[2]</a>,
-and <a class="reference internal" href="#friedman1991a">[4]</a> contain discussions likely to be useful to users of py-earth.
-References <a class="reference internal" href="#friedman1991">[3]</a>, <a class="reference internal" href="#millborrow2012">[7]</a>, <a class="reference internal" href="#bjorck1996">[1]</a>, <a class="reference internal" href="#stewart1998">[8]</a>,
-<a class="reference internal" href="#golub1996">[5]</a>, <a class="reference internal" href="#friedman1993">[2]</a>, and <a class="reference internal" href="#friedman1991a">[4]</a> were useful during the
-implementation process.</p>
-</div>
-<div class="section" id="api">
-<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="pyearth.Earth">
-<em class="property">class </em><tt class="descclassname">pyearth.</tt><tt class="descname">Earth</tt><big>(</big><em>endspan=None</em>, <em>minspan=None</em>, <em>endspan_alpha=None</em>, <em>minspan_alpha=None</em>, <em>max_terms=None</em>, <em>max_degree=None</em>, <em>thresh=None</em>, <em>penalty=None</em>, <em>check_every=None</em>, <em>min_search_points=None</em>, <em>xlabels=None</em>, <em>linvars=None</em><big>)</big><a class="headerlink" href="#pyearth.Earth" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multivariate Adaptive Regression Splines</p>
-<p>A flexible regression method that automatically searches for interactions and non-linear 
-relationships.  Earth models can be thought of as linear models in a higher dimensional 
-basis space (specifically, a multivariate truncated power spline basis).  Each term in an 
-Earth model is a product of so called &#8220;hinge functions&#8221;.  A hinge function is a function 
-that&#8217;s equal to its argument where that argument is greater than zero and is zero everywhere 
-else.</p>
-<p>The multivariate adaptive regression splines algorithm has two stages.  First, the 
-forward pass searches for terms in the truncated power spline basis that locally minimize 
-the squared error loss of the training set.  Next, a pruning pass selects a subset of those 
-terms that produces a locally minimal generalized cross-validation (GCV) score.  The GCV 
-score is not actually based on cross-validation, but rather is meant to approximate a true
-cross-validation score by penalizing model complexity.  The final result is a set of terms
-that is nonlinear in the original feature space, may include interactions, and is likely to 
-generalize well.</p>
-<p>The Earth class supports dense input only.  Data structures from the pandas and patsy 
-modules are supported, but are copied into numpy arrays for computation.  No copy is 
-made if the inputs are numpy float64 arrays.  Earth objects can be serialized using the 
-pickle module and copied using the copy module.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>max_terms</strong> : int, optional (default=2*n + 10, where n is the number of features)</p>
-<blockquote>
-<div><p>The maximum number of terms generated by the forward pass.</p>
-</div></blockquote>
-<p><strong>max_degree</strong> : int, optional (default=1)</p>
-<blockquote>
-<div><p>The maximum degree of terms generated by the forward pass.</p>
-</div></blockquote>
-<p><strong>penalty</strong> : float, optional (default=3.0)</p>
-<blockquote>
-<div><p>A smoothing parameter used to calculate GCV and GRSQ.  Used during the pruning pass 
-and to determine whether to add a hinge or linear basis function during the forward
-pass.  See the d parameter in equation 32, Friedman, 1991.</p>
-</div></blockquote>
-<p><strong>endspan_alpha</strong> : float, optional, probability between 0 and 1 (default=0.05)</p>
-<blockquote>
-<div><p>A parameter controlling the calculation of the endspan parameter (below).  The 
-endspan parameter is calculated as round(3 - log2(endspan_alpha/n)), where n is the
-number of features.  The endspan_alpha parameter represents the probability of a run 
-of positive or negative error values on either end of the data vector of any feature
-in the data set.  See equation 45, Friedman, 1991.</p>
-</div></blockquote>
-<p><strong>endspan</strong> : int, optional (default=-1)</p>
-<blockquote>
-<div><p>The number of extreme data values of each feature not eligible as knot locations.  
-If endspan is set to -1 (default) then the endspan parameter is calculated based on
-endspan_alpah (above).  If endspan is set to a positive integer then endspan_alpha 
-is ignored.</p>
-</div></blockquote>
-<p><strong>minspan_alpha</strong> : float, optional, probability between 0 and 1 (default=0.05)</p>
-<blockquote>
-<div><p>A parameter controlling the calculation of the minspan parameter (below).  The 
-minspan parameter is calculated as</p>
-<blockquote>
-<div><p>(int) -log2(-(1.0/(n*count))*log(1.0-minspan_alpha)) / 2.5</p>
-</div></blockquote>
-<p>where n is the number of features and count is the number of points at which the
-parent term is non-zero.  The minspan_alpha parameter represents the probability of 
-a run of positive or negative error values between adjacent knots separated by 
-minspan intervening data points.  See equation 43, Friedman, 1991.</p>
-</div></blockquote>
-<p><strong>minspan</strong> : int, optional (default=-1)</p>
-<blockquote>
-<div><p>The minimal number of data points between knots.  If minspan is set to -1 (default) 
-then the minspan parameter is calculated based on minspan_alpha (above).  If minspan
-is set to a positive integer then minspan_alpha is ignored.</p>
-</div></blockquote>
-<p><strong>thresh</strong> : float, optional (defaul=0.001)</p>
-<blockquote>
-<div><p>Parameter used when evaluating stopping conditions for the forward pass.  If either
-RSQ &gt; 1 - thresh or if RSQ increases by less than thresh for a forward pass iteration
-then the forward pass is terminated.</p>
-</div></blockquote>
-<p><strong>min_searh_points</strong> : int, optional (default=100)</p>
-<blockquote>
-<div><p>Used to calculate check_every (below).  The minimum samples necessary for check_every 
-to be greater than 1.  The check_every parameter is calculated as</p>
-<blockquote>
-<div><p>(int) m / min_search_points</p>
-</div></blockquote>
-<p>if m &gt; min_search_points, where m is the number of samples in the training set.  If 
-m &lt;= min_search_points then check_every is set to 1.</p>
-</div></blockquote>
-<p><strong>check_every</strong> : int, optional (default=-1)</p>
-<blockquote>
-<div><p>If check_every &gt; 0, only one of every check_every sorted data points is considered as 
-a candidate knot.  If check_every is set to -1 then the check_every parameter is 
-calculated based on min_search_points (above).</p>
-</div></blockquote>
-<p><strong>linvars</strong> : iterable of strings or ints, optional (empty by default)</p>
-<blockquote>
-<div><p>Used to specify features that may only enter terms as linear basis functions (without 
-knots).  Can include both column numbers an column names (see xlabels, below).</p>
-</div></blockquote>
-<p><strong>xlabels</strong> : iterable of strings, optional (empty by default)</p>
-<blockquote class="last">
-<div><p>The xlabels argument can be used to assign names to data columns.  This argument is not
-generally needed, as names can be captured automatically from most standard data 
-structures.  If included, must have length n, where n is the number of features.  Note 
-that column order is used to compute term values and make predictions, not column names.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="42%" />
-<col width="16%" />
-<col width="41%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><cite>coef_</cite></td>
-<td>array, shape = [pruned basis length]</td>
-<td>The weights of the model terms that have not been pruned.</td>
-</tr>
-<tr class="row-even"><td><cite>basis_</cite></td>
-<td>_basis.Basis</td>
-<td>An object representing model terms.  Each term is a product of constant, linear, and hinge
-functions of the input features.</td>
-</tr>
-<tr class="row-odd"><td><cite>forward_pass_record_</cite></td>
-<td>_record.ForwardPassRecord</td>
-<td>An object containing information about the forward pass, such as training loss function
-values after each iteration and the final stopping condition.</td>
-</tr>
-<tr class="row-even"><td><cite>pruning_pass_record_</cite></td>
-<td>_record.PruningPassRecord</td>
-<td>An object containing information about the pruning pass, such as training loss function
-values after each iteration and the selected optimal iteration.</td>
-</tr>
-<tr class="row-odd"><td><strong>References:</strong></td>
-<td>&nbsp;</td>
-<td>&nbsp;</td>
-</tr>
-<tr class="row-even"><td>Friedman, Jerome. Multivariate Adaptive Regression Splines.  Annals of Statistics. Volume 19,</td>
-<td>&nbsp;</td>
-<td>Number 1 (1991), 1-67.</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="pyearth.Earth.fit">
-<tt class="descname">fit</tt><big>(</big><em>X</em>, <em>y=None</em>, <em>weights=None</em>, <em>xlabels=None</em>, <em>linvars=None</em><big>)</big><a class="headerlink" href="#pyearth.Earth.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit an Earth model to the input data X and y.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>X</strong> : array-like, shape = [m, n] where m is the number of samples and n is the number of features</p>
-<blockquote>
-<div><p>The training predictors.  The X parameter can be a numpy array, a pandas DataFrame, a patsy 
-DesignMatrix, or a tuple of patsy DesignMatrix objects as output by patsy.dmatrices.</p>
-</div></blockquote>
-<p><strong>y</strong> : array-like, optional (default=None), shape = [m] where m is the number of samples</p>
-<blockquote>
-<div><p>The training response.  The y parameter can be a numpy array, a pandas DataFrame with one 
-column, a Patsy DesignMatrix, or can be left as None (default) if X was the output of a 
-call to patsy.dmatrices (in which case, X contains the response).</p>
-</div></blockquote>
-<p><strong>weights</strong> : array-like, optional (default=None), shape = [m] where m is the number of samples</p>
-<blockquote>
-<div><p>Sample weights for training.  Weights must be greater than or equal to zero.  Rows with 
-greater weights contribute more strongly to the fitted model.  Rows with zero weight do
-not contribute at all.  Weights are useful when dealing with heteroscedasticity.  In such
-cases, the weight should be proportional to the inverse of the (known) variance.</p>
-</div></blockquote>
-<p><strong>xlabels</strong> : iterable of strings, optional (default=None)</p>
-<blockquote>
-<div><p>Convenient way to set the xlabels parameter while calling fit.  Ignored if None (default).  
-See the Earth class for an explanation of the xlabels parameter.</p>
-</div></blockquote>
-<p><strong>linvars</strong> : iterable of ints or strings or both, optional (default=None)</p>
-<blockquote class="last">
-<div><p>Convenient way to set the linvars parameter while calling fit.  Ignored if None (default).  
-See the Earth class for an explanation of the linvars parameter.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyearth.Earth.fit_transform">
-<tt class="descname">fit_transform</tt><big>(</big><em>X</em>, <em>y=None</em>, <em>**fit_params</em><big>)</big><a class="headerlink" href="#pyearth.Earth.fit_transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit to data, then transform it</p>
-<p>Fits transformer to X and y with optional parameters fit_params
-and returns a transformed version of X.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>X</strong> : numpy array of shape [n_samples, n_features]</p>
-<blockquote>
-<div><p>Training set.</p>
-</div></blockquote>
-<p><strong>y</strong> : numpy array of shape [n_samples]</p>
-<blockquote>
-<div><p>Target values.</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>X_new</strong> : numpy array of shape [n_samples, n_features_new]</p>
-<blockquote class="last">
-<div><p>Transformed array.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyearth.Earth.forward_pass">
-<tt class="descname">forward_pass</tt><big>(</big><em>X</em>, <em>y=None</em>, <em>weights=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyearth.Earth.forward_pass" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform the forward pass of the multivariate adaptive regression splines algorithm.  Users
-will normally want to call the fit method instead, which performs the forward pass, the pruning 
-pass, and a linear fit to determine the final model coefficients.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>X</strong> : array-like, shape = [m, n] where m is the number of samples and n is the number of features</p>
-<blockquote>
-<div><p>The training predictors.  The X parameter can be a numpy array, a pandas DataFrame, a patsy 
-DesignMatrix, or a tuple of patsy DesignMatrix objects as output by patsy.dmatrices.</p>
-</div></blockquote>
-<p><strong>y</strong> : array-like, optional (default=None), shape = [m] where m is the number of samples</p>
-<blockquote>
-<div><p>The training response.  The y parameter can be a numpy array, a pandas DataFrame with one 
-column, a Patsy DesignMatrix, or can be left as None (default) if X was the output of a 
-call to patsy.dmatrices (in which case, X contains the response).</p>
-</div></blockquote>
-<p><strong>weights</strong> : array-like, optional (default=None), shape = [m] where m is the number of samples</p>
-<blockquote>
-<div><p>Sample weights for training.  Weights must be greater than or equal to zero.  Rows with 
-greater weights contribute more strongly to the fitted model.  Rows with zero weight do
-not contribute at all.  Weights are useful when dealing with heteroscedasticity.  In such
-cases, the weight should be proportional to the inverse of the (known) variance.</p>
-</div></blockquote>
-<p><strong>xlabels</strong> : iterable of strings, optional (default=None)</p>
-<blockquote>
-<div><p>Convenient way to set the xlabels parameter while calling forward_pass.  Ignored if None 
-(default).  See the Earth class for an explanation of the xlabels parameter.</p>
-</div></blockquote>
-<p><strong>linvars</strong> : iterable of ints or strings or both, optional (default=None)</p>
-<blockquote class="last">
-<div><p>Convenient way to set the linvars parameter while calling forward_pass.  Ignored if None 
-(default).  See the Earth class for an explanation of the linvars parameter.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyearth.Earth.forward_trace">
-<tt class="descname">forward_trace</tt><big>(</big><big>)</big><a class="headerlink" href="#pyearth.Earth.forward_trace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return information about the forward pass.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyearth.Earth.get_params">
-<tt class="descname">get_params</tt><big>(</big><em>deep=True</em><big>)</big><a class="headerlink" href="#pyearth.Earth.get_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get parameters for the estimator</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>deep: boolean, optional</strong> :</p>
-<blockquote class="last">
-<div><p>If True, will return the parameters for this estimator and
-contained subobjects that are estimators.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyearth.Earth.get_penalty">
-<tt class="descname">get_penalty</tt><big>(</big><big>)</big><a class="headerlink" href="#pyearth.Earth.get_penalty" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the penalty parameter being used.  Default is 3.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyearth.Earth.linear_fit">
-<tt class="descname">linear_fit</tt><big>(</big><em>X</em>, <em>y=None</em>, <em>weights=None</em><big>)</big><a class="headerlink" href="#pyearth.Earth.linear_fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Solve the linear least squares problem to determine the coefficients of the unpruned basis functions.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>X</strong> : array-like, shape = [m, n] where m is the number of samples and n is the number of features</p>
-<blockquote>
-<div><p>The training predictors.  The X parameter can be a numpy array, a pandas DataFrame, a patsy 
-DesignMatrix, or a tuple of patsy DesignMatrix objects as output by patsy.dmatrices.</p>
-</div></blockquote>
-<p><strong>y</strong> : array-like, optional (default=None), shape = [m] where m is the number of samples</p>
-<blockquote>
-<div><p>The training response.  The y parameter can be a numpy array, a pandas DataFrame with one 
-column, a Patsy DesignMatrix, or can be left as None (default) if X was the output of a 
-call to patsy.dmatrices (in which case, X contains the response).</p>
-</div></blockquote>
-<p><strong>weights</strong> : array-like, optional (default=None), shape = [m] where m is the number of samples</p>
-<blockquote class="last">
-<div><p>Sample weights for training.  Weights must be greater than or equal to zero.  Rows with 
-greater weights contribute more strongly to the fitted model.  Rows with zero weight do
-not contribute at all.  Weights are useful when dealing with heteroscedasticity.  In such
-cases, the weight should be proportional to the inverse of the (known) variance.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyearth.Earth.predict">
-<tt class="descname">predict</tt><big>(</big><em>X</em><big>)</big><a class="headerlink" href="#pyearth.Earth.predict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Predict the response based on the input data X.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>X</strong> : array-like, shape = [m, n] where m is the number of samples and n is the number of features</p>
-<blockquote class="last">
-<div><p>The training predictors.  The X parameter can be a numpy array, a pandas DataFrame, or a 
-patsy DesignMatrix.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyearth.Earth.pruning_pass">
-<tt class="descname">pruning_pass</tt><big>(</big><em>X</em>, <em>y=None</em>, <em>weights=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#pyearth.Earth.pruning_pass" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform the pruning pass of the multivariate adaptive regression splines algorithm.  Users
-will normally want to call the fit method instead, which performs the forward pass, the pruning 
-pass, and a linear fit to determine the final model coefficients.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>X</strong> : array-like, shape = [m, n] where m is the number of samples and n is the number of features</p>
-<blockquote>
-<div><p>The training predictors.  The X parameter can be a numpy array, a pandas DataFrame, a patsy 
-DesignMatrix, or a tuple of patsy DesignMatrix objects as output by patsy.dmatrices.</p>
-</div></blockquote>
-<p><strong>y</strong> : array-like, optional (default=None), shape = [m] where m is the number of samples</p>
-<blockquote>
-<div><p>The training response.  The y parameter can be a numpy array, a pandas DataFrame with one 
-column, a Patsy DesignMatrix, or can be left as None (default) if X was the output of a 
-call to patsy.dmatrices (in which case, X contains the response).</p>
-</div></blockquote>
-<p><strong>weights</strong> : array-like, optional (default=None), shape = [m] where m is the number of samples</p>
-<blockquote class="last">
-<div><p>Sample weights for training.  Weights must be greater than or equal to zero.  Rows with 
-greater weights contribute more strongly to the fitted model.  Rows with zero weight do
-not contribute at all.  Weights are useful when dealing with heteroscedasticity.  In such
-cases, the weight should be proportional to the inverse of the (known) variance.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyearth.Earth.pruning_trace">
-<tt class="descname">pruning_trace</tt><big>(</big><big>)</big><a class="headerlink" href="#pyearth.Earth.pruning_trace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return information about the pruning pass.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyearth.Earth.score">
-<tt class="descname">score</tt><big>(</big><em>X</em>, <em>y=None</em>, <em>weights=None</em><big>)</big><a class="headerlink" href="#pyearth.Earth.score" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the generalized r^2 of the model on data X and y.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>X</strong> : array-like, shape = [m, n] where m is the number of samples and n is the number of features</p>
-<blockquote>
-<div><p>The training predictors.  The X parameter can be a numpy array, a pandas DataFrame, a patsy 
-DesignMatrix, or a tuple of patsy DesignMatrix objects as output by patsy.dmatrices.</p>
-</div></blockquote>
-<p><strong>y</strong> : array-like, optional (default=None), shape = [m] where m is the number of samples</p>
-<blockquote>
-<div><p>The training response.  The y parameter can be a numpy array, a pandas DataFrame with one 
-column, a Patsy DesignMatrix, or can be left as None (default) if X was the output of a 
-call to patsy.dmatrices (in which case, X contains the response).</p>
-</div></blockquote>
-<p><strong>weights</strong> : array-like, optional (default=None), shape = [m] where m is the number of samples</p>
-<blockquote class="last">
-<div><p>Sample weights for training.  Weights must be greater than or equal to zero.  Rows with 
-greater weights contribute more strongly to the fitted model.  Rows with zero weight do
-not contribute at all.  Weights are useful when dealing with heteroscedasticity.  In such
-cases, the weight should be proportional to the inverse of the (known) variance.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyearth.Earth.set_params">
-<tt class="descname">set_params</tt><big>(</big><em>**params</em><big>)</big><a class="headerlink" href="#pyearth.Earth.set_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the parameters of the estimator.</p>
-<p>The method works on simple estimators as well as on nested objects
-(such as pipelines). The former have parameters of the form
-<tt class="docutils literal"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></tt> so that it&#8217;s possible to update each
-component of a nested object.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns :</th><td class="field-body"><strong>self</strong> :</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyearth.Earth.summary">
-<tt class="descname">summary</tt><big>(</big><big>)</big><a class="headerlink" href="#pyearth.Earth.summary" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a string describing the model.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyearth.Earth.trace">
-<tt class="descname">trace</tt><big>(</big><big>)</big><a class="headerlink" href="#pyearth.Earth.trace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return information about the forward and pruning passes.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyearth.Earth.transform">
-<tt class="descname">transform</tt><big>(</big><em>X</em><big>)</big><a class="headerlink" href="#pyearth.Earth.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transform X into the basis space.  Normally, users will call the predict method instead, which
-both transforms into basis space calculates the weighted sum of basis terms to produce a 
-prediction of the response.  Users may wish to call transform directly in some cases.  For 
-example, users may wish to apply other statistical or machine learning algorithms, such as 
-generalized linear regression, in basis space.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>X</strong> : array-like, shape = [m, n] where m is the number of samples and n is the number of features</p>
-<blockquote class="last">
-<div><p>The training predictors.  The X parameter can be a numpy array, a pandas DataFrame, or a 
-patsy DesignMatrix.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyearth.Earth.unprune">
-<tt class="descname">unprune</tt><big>(</big><em>X</em>, <em>y=None</em><big>)</big><a class="headerlink" href="#pyearth.Earth.unprune" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unprune all pruned basis functions and fit coefficients to X and y using the unpruned basis.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
 </div>
 
+          
+        </div>
 
-          </div>
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="content.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="content.html#multivariate-adaptive-regression-splines">Multivariate Adaptive Regression Splines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="content.html#a-simple-earth-example">A Simple Earth Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="content.html#bibliography">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="content.html#api">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Gallery</a></li>
+</ul>
+
+            
+          
         </div>
       </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="#">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Welcome to py-earth&#8217;s documentation!</a><ul>
-<li><a class="reference internal" href="#introduction">Introduction</a></li>
-<li><a class="reference internal" href="#multivariate-adaptive-regression-splines">Multivariate Adaptive Regression Splines</a></li>
-<li><a class="reference internal" href="#a-simple-earth-example">A Simple Earth Example</a></li>
-<li><a class="reference internal" href="#bibliography">Bibliography</a></li>
-<li><a class="reference internal" href="#api">API</a></li>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="#">py-earth</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="#">Docs</a> &raquo;</li>
+      
+    <li>Py-earth documentation</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/index.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="py-earth-documentation">
+<h1>Py-earth documentation<a class="headerlink" href="#py-earth-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="content.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="content.html#multivariate-adaptive-regression-splines">Multivariate Adaptive Regression Splines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="content.html#a-simple-earth-example">A Simple Earth Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="content.html#bibliography">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="content.html#api">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Gallery</a><ul>
 </ul>
 </li>
 </ul>
-
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/index.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="content.html" class="btn btn-neutral float-right" title="Introduction" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2013, Jason Rudy.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li><a href="#">py-earth 0.1.0 documentation</a> &raquo;</li> 
-      </ul>
-    </div>
-    <div class="footer">
-        &copy; Copyright 2013, Jason Rudy.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
-    </div>
-  </body>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
 </html>

@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Plotting simple sine function &mdash; py-earth 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="py-earth 0.1.0 documentation" href="../index.html"/>
+        <link rel="up" title="Gallery" href="index.html"/>
+        <link rel="next" title="Plotting two simple sine functions" href="plot_sine_wave_2d.html"/>
+        <link rel="prev" title="Plotting the absolute value function" href="plot_v_function.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> py-earth
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../content.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content.html#multivariate-adaptive-regression-splines">Multivariate Adaptive Regression Splines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content.html#a-simple-earth-example">A Simple Earth Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content.html#bibliography">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content.html#api">API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Gallery</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="plot_v_function.html">Plotting the absolute value function</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Plotting simple sine function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_sine_wave_2d.html">Plotting two simple sine functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_derivatives.html">Plotting derivatives of simple sine function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_output_weight.html">Demonstrating a use of weights in outputs with two sine functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_missing_data_problem.html">Plotting sine function with redundant predictors an missing data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_classifier_comp.html">Plotting sckit-learn classifiers comparison with Earth</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">py-earth</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Gallery</a> &raquo;</li>
+      
+    <li>Plotting simple sine function</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/auto_examples/plot_sine_wave.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="plotting-simple-sine-function">
+<span id="sphx-glr-auto-examples-plot-sine-wave-py"></span><h1>Plotting simple sine function<a class="headerlink" href="#plotting-simple-sine-function" title="Permalink to this headline">¶</a></h1>
+<p>A simple example plotting a fit of the sine function.</p>
+<img alt="../_images/sphx_glr_plot_sine_wave_001.png" class="align-center" src="../_images/sphx_glr_plot_sine_wave_001.png" />
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-python"><div class="highlight"><pre><span></span>  Forward Pass
+---------------------------------------------------------------------
+iter  parent  var  knot  mse          terms  gcv       rsq    grsq
+---------------------------------------------------------------------
+0     -       -    -     4430.555176  1      4431.441  0.000  0.000
+1     0       6    8011  2964.059135  3      2969.402  0.331  0.330
+2     1       6    3811  158.822645   5      159.364   0.964  0.964
+3     0       6    6611  130.961663   7      131.619   0.970  0.970
+4     3       6    1111  109.598855   9      110.326   0.975  0.975
+5     5       6    4811  103.242721   11     104.095   0.977  0.977
+6     9       6    3811  101.482622   13     102.485   0.977  0.977
+---------------------------------------------------------------------
+Stopping Condition 2: Improvement below threshold
+
+Pruning Pass
+--------------------------------------------------
+iter  bf  terms  mse      gcv       rsq    grsq
+--------------------------------------------------
+0     -   13     101.48   102.485   0.977  0.977
+1     1   12     101.48   102.402   0.977  0.977
+2     12  11     101.93   102.772   0.977  0.977
+3     10  10     102.45   103.208   0.977  0.977
+4     3   9      103.71   104.394   0.977  0.976
+5     7   8      103.97   104.573   0.977  0.976
+6     11  7      106.98   107.516   0.976  0.976
+7     6   6      114.15   114.633   0.974  0.974
+8     8   5      141.05   141.529   0.968  0.968
+9     4   4      386.34   387.346   0.913  0.913
+10    2   3      1999.02  2002.627  0.549  0.548
+11    9   2      3765.62  3769.387  0.150  0.149
+12    5   1      4430.56  4431.441  0.000  0.000
+--------------------------------------------------
+Selected iteration: 1
+
+Earth Model
+---------------------------------------------------------------
+Basis Function                            Pruned  Coefficient
+---------------------------------------------------------------
+(Intercept)                               No      -390.273
+h(x6+24.5573)                             Yes     None
+h(-24.5573-x6)                            No      16.0595
+h(x6-9.30493)*h(x6+24.5573)               No      -2.10343
+h(9.30493-x6)*h(x6+24.5573)               No      -0.427249
+h(x6+13.4226)                             No      6.38372
+h(-13.4226-x6)                            No      -6.68751
+h(x6-31.139)*h(x6-9.30493)*h(x6+24.5573)  No      -0.0879511
+h(31.139-x6)*h(x6-9.30493)*h(x6+24.5573)  No      0.0899066
+h(x6-1.089)*h(x6+13.4226)                 No      -0.407022
+h(1.089-x6)*h(x6+13.4226)                 No      0.140094
+h(x6-9.30493)*h(x6-1.089)*h(x6+13.4226)   No      0.0960841
+h(9.30493-x6)*h(x6-1.089)*h(x6+13.4226)   No      0.0150274
+---------------------------------------------------------------
+MSE: 101.4826, GCV: 102.4022, RSQ: 0.9771, GRSQ: 0.9769
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="kn">from</span> <span class="nn">pyearth</span> <span class="kn">import</span> <span class="n">Earth</span>
+
+<span class="c1"># Create some fake data</span>
+<span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">m</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">X</span> <span class="o">=</span> <span class="mi">80</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span> <span class="o">-</span> <span class="mi">40</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> \
+    <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">])</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-</span> <span class="mf">4.0</span><span class="p">)</span> <span class="o">+</span> \
+    <span class="mi">10</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
+
+<span class="c1"># Fit an Earth model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Earth</span><span class="p">(</span><span class="n">max_degree</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">minspan_alpha</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Print the model</span>
+<span class="k">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">trace</span><span class="p">())</span>
+<span class="k">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+
+<span class="c1"># Plot the model</span>
+<span class="n">y_hat</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;r.&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">y_hat</span><span class="p">,</span> <span class="s1">&#39;b.&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>Total running time of the script:</strong>
+(0 minutes 1.258 seconds)</p>
+<div class="sphx-glr-download container">
+<strong>Download Python source code:</strong> <a class="reference download internal" href="../_downloads/plot_sine_wave.py"><code class="xref download docutils literal"><span class="pre">plot_sine_wave.py</span></code></a></div>
+<div class="sphx-glr-download container">
+<strong>Download IPython notebook:</strong> <a class="reference download internal" href="../_downloads/plot_sine_wave.ipynb"><code class="xref download docutils literal"><span class="pre">plot_sine_wave.ipynb</span></code></a></div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="plot_sine_wave_2d.html" class="btn btn-neutral float-right" title="Plotting two simple sine functions" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="plot_v_function.html" class="btn btn-neutral" title="Plotting the absolute value function" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2013, Jason Rudy.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

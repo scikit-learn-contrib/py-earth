@@ -1,0 +1,1228 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyearth.earth &mdash; py-earth 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="py-earth 0.1.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> py-earth
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../content.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content.html#multivariate-adaptive-regression-splines">Multivariate Adaptive Regression Splines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content.html#a-simple-earth-example">A Simple Earth Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content.html#bibliography">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content.html#api">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">Gallery</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">py-earth</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>pyearth.earth</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyearth.earth</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">._forward</span> <span class="kn">import</span> <span class="n">ForwardPasser</span>
+<span class="kn">from</span> <span class="nn">._pruning</span> <span class="kn">import</span> <span class="n">PruningPasser</span>
+<span class="kn">from</span> <span class="nn">._util</span> <span class="kn">import</span> <span class="n">ascii_table</span><span class="p">,</span> <span class="n">apply_weights_2d</span><span class="p">,</span> <span class="n">gcv</span>
+<span class="kn">from</span> <span class="nn">._types</span> <span class="kn">import</span> <span class="n">BOOL</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">RegressorMixin</span><span class="p">,</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
+<span class="kn">from</span> <span class="nn">sklearn.utils.validation</span> <span class="kn">import</span> <span class="p">(</span><span class="n">assert_all_finite</span><span class="p">,</span> <span class="n">check_is_fitted</span><span class="p">,</span>
+                                      <span class="n">check_X_y</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">sparse</span>
+
+
+<div class="viewcode-block" id="Earth"><a class="viewcode-back" href="../../content.html#pyearth.Earth">[docs]</a><span class="k">class</span> <span class="nc">Earth</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">RegressorMixin</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Multivariate Adaptive Regression Splines</span>
+
+<span class="sd">    A flexible regression method that automatically searches for interactions</span>
+<span class="sd">    and non-linear relationships.  Earth models can be thought of as</span>
+<span class="sd">    linear models in a higher dimensional basis space</span>
+<span class="sd">    (specifically, a multivariate truncated power spline basis).</span>
+<span class="sd">    Each term in an Earth model is a product of so called &quot;hinge functions&quot;.</span>
+<span class="sd">    A hinge function is a function that&#39;s equal to its argument where that</span>
+<span class="sd">    argument is greater than zero and is zero everywhere else.</span>
+
+<span class="sd">    The multivariate adaptive regression splines algorithm has two stages.</span>
+<span class="sd">    First, the forward pass searches for terms in the truncated power spline</span>
+<span class="sd">    basis that locally minimize the squared error loss of the training set.</span>
+<span class="sd">    Next, a pruning pass selects a subset of those terms that produces</span>
+<span class="sd">    a locally minimal generalized cross-validation (GCV) score.  The GCV score</span>
+<span class="sd">    is not actually based on cross-validation, but rather is meant to</span>
+<span class="sd">    approximate a true cross-validation score by penalizing model complexity.</span>
+<span class="sd">    The final result is a set of terms that is nonlinear in the original</span>
+<span class="sd">    feature space, may include interactions, and is likely to generalize well.</span>
+
+<span class="sd">    The Earth class supports dense input only.  Data structures from the</span>
+<span class="sd">    pandas and patsy modules are supported, but are copied into numpy arrays</span>
+<span class="sd">    for computation.  No copy is made if the inputs are numpy float64 arrays.</span>
+<span class="sd">    Earth objects can be serialized using the pickle module and copied</span>
+<span class="sd">    using the copy module.</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    max_terms : int, optional (default=2*n + 10, where n is the</span>
+<span class="sd">                               number of features)</span>
+<span class="sd">        The maximum number of terms generated by the forward pass.</span>
+
+
+<span class="sd">    max_degree : int, optional (default=1)</span>
+<span class="sd">        The maximum degree of terms generated by the forward pass.</span>
+
+<span class="sd">        </span>
+<span class="sd">    allow_missing : boolean, optional (default=False)</span>
+<span class="sd">        If True, use missing data method described in [3]. </span>
+<span class="sd">        Use missing argument to determine missingness or,if X is a pandas </span>
+<span class="sd">        DataFrame, infer missingness from X.</span>
+
+<span class="sd">    penalty : float, optional (default=3.0)</span>
+<span class="sd">        A smoothing parameter used to calculate GCV and GRSQ.</span>
+<span class="sd">        Used during the pruning pass and to determine whether to add a hinge</span>
+<span class="sd">        or linear basis function during the forward pass.</span>
+<span class="sd">        See the d parameter in equation 32, Friedman, 1991.</span>
+
+
+<span class="sd">    endspan_alpha : float, optional, probability between 0 and 1 (default=0.05)</span>
+<span class="sd">        A parameter controlling the calculation of the endspan</span>
+<span class="sd">        parameter (below).  The endspan parameter is calculated as</span>
+<span class="sd">        round(3 - log2(endspan_alpha/n)), where n is the number of features.</span>
+<span class="sd">        The endspan_alpha parameter represents the probability of a run of</span>
+<span class="sd">        positive or negative error values on either end of the data vector</span>
+<span class="sd">        of any feature in the data set.  See equation 45, Friedman, 1991.</span>
+
+
+<span class="sd">    endspan : int, optional (default=-1)</span>
+<span class="sd">        The number of extreme data values of each feature not eligible</span>
+<span class="sd">        as knot locations. If endspan is set to -1 (default) then the</span>
+<span class="sd">        endspan parameter is calculated based on endspan_alpah (above).</span>
+<span class="sd">        If endspan is set to a positive integer then endspan_alpha is ignored.</span>
+
+
+<span class="sd">    minspan_alpha : float, optional, probability between 0 and 1 (default=0.05)</span>
+<span class="sd">        A parameter controlling the calculation of the minspan</span>
+<span class="sd">        parameter (below).  The minspan parameter is calculated as</span>
+
+<span class="sd">            (int) -log2(-(1.0/(n*count))*log(1.0-minspan_alpha)) / 2.5</span>
+
+<span class="sd">        where n is the number of features and count is the number of points at</span>
+<span class="sd">        which the parent term is non-zero.  The minspan_alpha parameter</span>
+<span class="sd">        represents the probability of a run of positive or negative error values</span>
+<span class="sd">        between adjacent knots separated by minspan intervening data points.</span>
+<span class="sd">        See equation 43, Friedman, 1991.</span>
+
+
+<span class="sd">    minspan : int, optional (default=-1)</span>
+<span class="sd">        The minimal number of data points between knots.  If minspan is set</span>
+<span class="sd">        to -1 (default) then the minspan parameter is calculated based on</span>
+<span class="sd">        minspan_alpha (above).  If minspan is set to a positive integer then</span>
+<span class="sd">        minspan_alpha is ignored.</span>
+
+
+<span class="sd">    thresh : float, optional (default=0.001)</span>
+<span class="sd">        Parameter used when evaluating stopping conditions for the forward</span>
+<span class="sd">        pass. If either RSQ &gt; 1 - thresh or if RSQ increases by less than</span>
+<span class="sd">        thresh for a forward pass iteration then the forward pass is terminated.</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">    zero_tol : float, optional (default=1e-12)</span>
+<span class="sd">        Used when determining whether a floating point number is zero during the </span>
+<span class="sd">        forward pass.  This is important in determining linear dependence and in </span>
+<span class="sd">        the fast update procedure.  There should normally be no reason to change </span>
+<span class="sd">        zero_tol from its default.  However, if nans are showing up during the </span>
+<span class="sd">        forward pass or the forward pass seems to be terminating unexpectedly, </span>
+<span class="sd">        consider adjusting zero_tol.</span>
+
+<span class="sd">    min_search_points : int, optional (default=100)</span>
+<span class="sd">        Used to calculate check_every (below).  The minimum samples necessary</span>
+<span class="sd">        for check_every to be greater than 1.  The check_every parameter</span>
+<span class="sd">        is calculated as</span>
+
+<span class="sd">             (int) m / min_search_points</span>
+
+<span class="sd">        if m &gt; min_search_points, where m is the number of samples in the</span>
+<span class="sd">        training set.  If m &lt;= min_search_points then check_every is set to 1.</span>
+
+
+<span class="sd">    check_every : int, optional (default=-1)</span>
+<span class="sd">        If check_every &gt; 0, only one of every check_every sorted data points</span>
+<span class="sd">        is considered as a candidate knot.  If check_every is set to -1 then</span>
+<span class="sd">        the check_every parameter is calculated based on</span>
+<span class="sd">        min_search_points (above).</span>
+
+
+<span class="sd">    allow_linear : bool, optional (default=True)</span>
+<span class="sd">        If True, the forward pass will check the GCV of each new pair of terms</span>
+<span class="sd">        and, if it&#39;s not an improvement on a single term with no knot</span>
+<span class="sd">        (called a linear term, although it may actually be a product of a linear</span>
+<span class="sd">        term with some other parent term), then only that single, knotless term</span>
+<span class="sd">        will be used.  If False, that behavior is disabled and all terms</span>
+<span class="sd">        will have knots except those with variables specified by the linvars</span>
+<span class="sd">        argument (see the fit method).</span>
+
+<span class="sd">    use_fast : bool, optional (default=False)</span>
+<span class="sd">        if True, use the approximation procedure defined in [2] to speed up the</span>
+<span class="sd">        forward pass. The procedure uses two hyper-parameters : fast_K</span>
+<span class="sd">        and fast_h. Check below for more details.</span>
+
+<span class="sd">    fast_K : int, optional (default=5)</span>
+<span class="sd">        Only used if use_fast is True. As defined in [2], section 3.0, it</span>
+<span class="sd">        defines the maximum number of basis functions to look at when</span>
+<span class="sd">        we search for a parent, that is we look at only the fast_K top</span>
+<span class="sd">        terms ranked by the mean squared error of the model the last time</span>
+<span class="sd">        the term was chosen as a parent. The smaller fast_K is, the more</span>
+<span class="sd">        gains in speed we get but the more approximate is the result.</span>
+<span class="sd">        If fast_K is the maximum number of terms and fast_h is 1,</span>
+<span class="sd">        the behavior is the same as in the normal case</span>
+<span class="sd">        (when use_fast is False).</span>
+
+<span class="sd">    fast_h : int, optional (default=1)</span>
+<span class="sd">        Only used if use_fast is True. As defined in [2], section 4.0, it</span>
+<span class="sd">        determines the number of iterations before repassing through all</span>
+<span class="sd">        the variables when searching for the variable to use for a</span>
+<span class="sd">        given parent term. Before reaching fast_h number of iterations</span>
+<span class="sd">        only the last chosen variable for the parent term is used. The</span>
+<span class="sd">        bigger fast_h is, the more speed gains we get, but the result</span>
+<span class="sd">        is more approximate.</span>
+
+<span class="sd">    smooth : bool, optional (default=False)</span>
+<span class="sd">        If True, the model will be smoothed such that it has continuous first</span>
+<span class="sd">        derivatives.</span>
+<span class="sd">        For details, see section 3.7, Friedman, 1991.</span>
+
+<span class="sd">    enable_pruning : bool, optional(default=True)</span>
+<span class="sd">        If False, the pruning pass will be skipped.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    `coef_` : array, shape = [pruned basis length, number of outputs]</span>
+<span class="sd">        The weights of the model terms that have not been pruned.</span>
+
+
+<span class="sd">    `basis_` : _basis.Basis</span>
+<span class="sd">        An object representing model terms.  Each term is a product of</span>
+<span class="sd">        constant, linear, and hinge functions of the input features.</span>
+
+
+<span class="sd">    `mse_` : float</span>
+<span class="sd">        The mean squared error of the model after the final linear fit.</span>
+<span class="sd">        If sample_weight and/or output_weight are given, this score is</span>
+<span class="sd">        weighted appropriately.</span>
+
+
+<span class="sd">    `rsq_` : float</span>
+<span class="sd">        The generalized r^2 of the model after the final linear fit.</span>
+<span class="sd">        If sample_weight and/or output_weight are given, this score is</span>
+<span class="sd">        weighted appropriately.</span>
+
+<span class="sd">    `gcv_` : float</span>
+<span class="sd">        The generalized cross validation (GCV) score of the model after the</span>
+<span class="sd">        final linear fit. If sample_weight and/or output_weight are</span>
+<span class="sd">        given, this score is weighted appropriately.</span>
+
+<span class="sd">    `grsq_` : float</span>
+<span class="sd">        An r^2 like score based on the GCV. If sample_weight and/or</span>
+<span class="sd">        output_weight are given, this score is</span>
+<span class="sd">        weighted appropriately.</span>
+
+<span class="sd">    `forward_pass_record_` : _record.ForwardPassRecord</span>
+<span class="sd">        An object containing information about the forward pass, such as</span>
+<span class="sd">        training loss function values after each iteration and the final</span>
+<span class="sd">        stopping condition.</span>
+
+
+<span class="sd">    `pruning_pass_record_` : _record.PruningPassRecord</span>
+<span class="sd">        An object containing information about the pruning pass, such as</span>
+<span class="sd">        training loss function values after each iteration and the</span>
+<span class="sd">        selected optimal iteration.</span>
+
+
+<span class="sd">    `xlabels_` : list</span>
+<span class="sd">        List of column names for training predictors.</span>
+<span class="sd">        Defaults to [&#39;x0&#39;,&#39;x1&#39;,....] if column names are not provided.</span>
+<span class="sd">        </span>
+<span class="sd">    </span>
+<span class="sd">    `allow_missing_` : list</span>
+<span class="sd">        List of booleans indicating whether each variable is allowed to </span>
+<span class="sd">        be missing.  Set during training.  A variable may be missing </span>
+<span class="sd">        only if fitting included missing data for that variable.</span>
+
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    .. [1] Friedman, Jerome. Multivariate Adaptive Regression Splines.</span>
+<span class="sd">           Annals of Statistics. Volume 19, Number 1 (1991), 1-67.</span>
+
+<span class="sd">    .. [2] Fast MARS, Jerome H.Friedman, Technical Report No.110, May 1993.</span>
+<span class="sd">    </span>
+<span class="sd">    .. [3] Estimating Functions of Mixed Ordinal and Categorical Variables </span>
+<span class="sd">           Using Adaptive Splines, Jerome H.Friedman, Technical Report </span>
+<span class="sd">           No.108, June 1991.</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">forward_pass_arg_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span>
+        <span class="s1">&#39;max_terms&#39;</span><span class="p">,</span> <span class="s1">&#39;max_degree&#39;</span><span class="p">,</span> <span class="s1">&#39;allow_missing&#39;</span><span class="p">,</span> <span class="s1">&#39;penalty&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;endspan_alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;endspan&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;minspan_alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;minspan&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;thresh&#39;</span><span class="p">,</span> <span class="s1">&#39;zero_tol&#39;</span><span class="p">,</span> <span class="s1">&#39;min_search_points&#39;</span><span class="p">,</span> 
+        <span class="s1">&#39;check_every&#39;</span><span class="p">,</span> <span class="s1">&#39;allow_linear&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;use_fast&#39;</span><span class="p">,</span> <span class="s1">&#39;fast_K&#39;</span><span class="p">,</span> <span class="s1">&#39;fast_h&#39;</span>
+    <span class="p">])</span>
+    <span class="n">pruning_pass_arg_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span>
+        <span class="s1">&#39;penalty&#39;</span>
+    <span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_terms</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">max_degree</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">allow_missing</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> 
+                 <span class="n">penalty</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">endspan_alpha</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">endspan</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">minspan_alpha</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">minspan</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">thresh</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">zero_tol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">min_search_points</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
+                 <span class="n">check_every</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">allow_linear</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">use_fast</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fast_K</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">fast_h</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">enable_pruning</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">call</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_param_names</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">call</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">call</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">other</span><span class="o">.</span><span class="n">__class__</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">v_self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="n">v_other</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">False</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">v_self</span> <span class="o">!=</span> <span class="n">v_other</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">False</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>  <span class="c1"># Case of numpy arrays</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">v_self</span> <span class="o">!=</span> <span class="n">v_other</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_pull_forward_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Pull named arguments relevant to the forward pass.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_pass_arg_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_pull_pruning_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Pull named arguments relevant to the pruning pass.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pruning_pass_arg_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_scrape_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Try to get labels from input data (for example, if X is a</span>
+<span class="sd">        pandas DataFrame).  Return None if no labels can be extracted.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">design_info</span><span class="o">.</span><span class="n">column_names</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+                    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span> <span class="c1"># handle case where X is not np.array (e.g list)</span>
+                    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+                    <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+        <span class="k">return</span> <span class="n">labels</span>
+
+    <span class="k">def</span> <span class="nf">_scrub_x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Sanitize input predictors and extract column names if appropriate.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># Check for sparseness</span>
+        <span class="k">if</span> <span class="n">sparse</span><span class="o">.</span><span class="n">issparse</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;A sparse matrix was passed, but dense data &#39;</span>
+                            <span class="s1">&#39;is required. Use X.toarray() to convert to dense.&#39;</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span><span class="p">)</span>
+        <span class="c1"># Figure out missingness</span>
+        <span class="k">if</span> <span class="n">missing</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c1"># Infer missingness</span>
+            <span class="n">missing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+            
+        <span class="c1"># Convert to internally used data type</span>
+        <span class="n">missing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">missing</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">BOOL</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span><span class="p">)</span>
+        <span class="n">assert_all_finite</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">missing</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">missing</span> <span class="o">=</span> <span class="n">missing</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">allow_missing</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">assert_all_finite</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input contains NaN, infinity or a value that&#39;s too large.  Did you mean to set allow_missing=True?&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+
+        <span class="c1"># Ensure correct number of columns</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;basis_&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis_</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis_</span><span class="o">.</span><span class="n">num_variables</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Wrong number of columns in X&#39;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">missing</span>
+
+    <span class="k">def</span> <span class="nf">_scrub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Sanitize input data.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># Check for sparseness</span>
+        <span class="k">if</span> <span class="n">sparse</span><span class="o">.</span><span class="n">issparse</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;A sparse matrix was passed, but dense data &#39;</span>
+                            <span class="s1">&#39;is required. Use y.toarray() to convert to dense.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sparse</span><span class="o">.</span><span class="n">issparse</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;A sparse matrix was passed, but dense data &#39;</span>
+                            <span class="s1">&#39;is required. Use sample_weight.toarray()&#39;</span>
+                            <span class="s1">&#39;to convert to dense.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sparse</span><span class="o">.</span><span class="n">issparse</span><span class="p">(</span><span class="n">output_weight</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;A sparse matrix was passed, but dense data &#39;</span>
+                            <span class="s1">&#39;is required. Use output_weight.toarray()&#39;</span>
+                            <span class="s1">&#39;to convert to dense.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Check whether X is the output of patsy.dmatrices</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">y</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">X</span>
+
+        <span class="c1"># Handle X separately</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub_x</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Convert y to internally used data type</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">assert_all_finite</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+
+        <span class="c1"># Deal with sample_weight</span>
+        <span class="k">if</span> <span class="n">sample_weight</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">sample_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sample_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">)</span>
+            <span class="n">assert_all_finite</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">)</span>
+        <span class="c1"># Deal with output_weight</span>
+        <span class="k">if</span> <span class="n">output_weight</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">output_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">output_weight</span><span class="p">)</span>
+            <span class="n">assert_all_finite</span><span class="p">(</span><span class="n">output_weight</span><span class="p">)</span>
+
+        <span class="c1"># Make sure dimensions match</span>
+        <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;X and y do not have compatible dimensions.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">sample_weight</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;y and sample_weight do not have compatible dimensions.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">output_weight</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;y and output_weight do not have compatible dimensions.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Make sure everything is finite (except X, which is allowed to have</span>
+        <span class="c1"># missing values)</span>
+        <span class="n">assert_all_finite</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span>
+        <span class="n">assert_all_finite</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">assert_all_finite</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">)</span>
+        <span class="n">assert_all_finite</span><span class="p">(</span><span class="n">output_weight</span><span class="p">)</span>
+        
+        <span class="c1"># Make sure everything is consistent</span>
+        <span class="n">check_X_y</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">accept_sparse</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">multi_output</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                  <span class="n">force_all_finite</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span>
+
+<div class="viewcode-block" id="Earth.fit"><a class="viewcode-back" href="../../content.html#pyearth.Earth.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">sample_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">output_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">xlabels</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">linvars</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Fit an Earth model to the input data X and y.</span>
+
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like, shape = [m, n] where m is the number of samples</span>
+<span class="sd">            and n is the number of features The training predictors.</span>
+<span class="sd">            The X parameter can be a numpy array, a pandas DataFrame, a patsy</span>
+<span class="sd">            DesignMatrix, or a tuple of patsy DesignMatrix objects as</span>
+<span class="sd">            output by patsy.dmatrices.</span>
+
+
+<span class="sd">        y : array-like, optional (default=None), shape = [m, p] where m is the</span>
+<span class="sd">            number of samples The training response, p the number of outputs.</span>
+<span class="sd">            The y parameter can be a numpy array, a pandas DataFrame,</span>
+<span class="sd">            a Patsy DesignMatrix, or can be left as None (default) if X was</span>
+<span class="sd">            the output of a call to patsy.dmatrices (in which case, X contains</span>
+<span class="sd">            the response).</span>
+
+
+<span class="sd">        sample_weight : array-like, optional (default=None), shape = [m]</span>
+<span class="sd">             where m is the number of samples.</span>
+<span class="sd">             Sample weights for training.  Weights must be greater than or equal</span>
+<span class="sd">             to zero. Rows with zero weight do not contribute at all.</span>
+<span class="sd">             Weights are useful when dealing with heteroscedasticity.  In such</span>
+<span class="sd">             cases, the weight should be proportional to the inverse of the</span>
+<span class="sd">             (known) variance.</span>
+
+<span class="sd">        output_weight : array-like, optional (default=None), shape = [p]</span>
+<span class="sd">             where p is the number of outputs.</span>
+<span class="sd">             Output weights for training.  Weights must be greater than or equal</span>
+<span class="sd">             to zero. Output with zero weight do not contribute at all.</span>
+<span class="sd">             </span>
+<span class="sd">        missing : array-like, shape = [m, n] where m is the number of samples</span>
+<span class="sd">            and n is the number of features.</span>
+<span class="sd">            The missing parameter can be a numpy array, a pandas DataFrame, or a </span>
+<span class="sd">            patsy DesignMatrix.  All entries will be interpreted as boolean </span>
+<span class="sd">            values, with True indicating the corresponding entry in X should be</span>
+<span class="sd">            interpreted as missing.  If the missing argument not used but the X</span>
+<span class="sd">            argument is a pandas DataFrame, missing will be inferred from X if </span>
+<span class="sd">            allow_missing is True.</span>
+<span class="sd">            </span>
+<span class="sd">        linvars : iterable of strings or ints, optional (empty by default)</span>
+<span class="sd">            Used to specify features that may only enter terms as linear basis</span>
+<span class="sd">            functions (without knots).  Can include both column numbers and</span>
+<span class="sd">            column names (see xlabels, below).  If left empty, some variables</span>
+<span class="sd">            may still enter linearly during the forward pass if no knot would</span>
+<span class="sd">            provide a reduction in GCV compared to the linear function.</span>
+<span class="sd">            Note that this feature differs from the R package earth.</span>
+
+
+<span class="sd">        xlabels : iterable of strings, optional (empty by default)</span>
+<span class="sd">            The xlabels argument can be used to assign names to data columns.</span>
+<span class="sd">            This argument is not generally needed, as names can be captured</span>
+<span class="sd">            automatically from most standard data structures.</span>
+<span class="sd">            If included, must have length n, where n is the number of features.</span>
+<span class="sd">            Note that column order is used to compute term values and make</span>
+<span class="sd">            predictions, not column names.</span>
+
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># Format and label the data</span>
+        <span class="k">if</span> <span class="n">xlabels</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xlabels_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrape_labels</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xlabels</span><span class="p">)</span> <span class="o">!=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The length of xlabels is not the &#39;</span>
+                                 <span class="s1">&#39;same as the number of columns of X&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xlabels_</span> <span class="o">=</span> <span class="n">xlabels</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">linvars_</span> <span class="o">=</span> <span class="n">linvars</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+
+        <span class="c1"># Do the actual work</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__forward_pass</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> 
+                            <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">xlabels_</span><span class="p">,</span> <span class="n">linvars</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_pruning</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__pruning_pass</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+                            <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;smooth&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">smooth</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">basis_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis_</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__linear_fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    <span class="k">def</span> <span class="nf">__forward_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                       <span class="n">sample_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">output_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                       <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                       <span class="n">xlabels</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">linvars</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Perform the forward pass of the multivariate adaptive regression</span>
+<span class="sd">        splines algorithm.  Users will normally want to call the fit method</span>
+<span class="sd">        instead, which performs the forward pass, the pruning pass,</span>
+<span class="sd">        and a linear fit to determine the final model coefficients.</span>
+
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like, shape = [m, n] where m is the number of samples and n is</span>
+<span class="sd">            the number of features The training predictors.  The X parameter can</span>
+<span class="sd">            be a numpy array, a pandas DataFrame, a patsy DesignMatrix, or a</span>
+<span class="sd">            tuple of patsy DesignMatrix objects as output by patsy.dmatrices.</span>
+
+<span class="sd">        y : array-like, optional (default=None), shape = [m, p] where m is the</span>
+<span class="sd">            number of samples, p the number of outputs.</span>
+<span class="sd">            The y parameter can be a numpy array, a pandas DataFrame,</span>
+<span class="sd">            a Patsy DesignMatrix, or can be left as None (default) if X was</span>
+<span class="sd">            the output of a call to patsy.dmatrices (in which case, X contains</span>
+<span class="sd">            the response).</span>
+
+<span class="sd">        sample_weight : array-like, optional (default=None), shape = [m]</span>
+<span class="sd">             where m is the number of samples.</span>
+<span class="sd">             Sample weights for training.  Weights must be greater than or equal</span>
+<span class="sd">             to zero. Rows with zero weight do not contribute at all.</span>
+<span class="sd">             Weights are useful when dealing with heteroscedasticity.  In such</span>
+<span class="sd">             cases, the weight should be proportional to the inverse of the</span>
+<span class="sd">             (known) variance.</span>
+
+<span class="sd">        output_weight : array-like, optional (default=None), shape = [p]</span>
+<span class="sd">             where p is the number of outputs.</span>
+<span class="sd">             The total mean squared error (MSE) is a weighted sum of</span>
+<span class="sd">             mean squared errors (MSE) associated to each output, where</span>
+<span class="sd">             the weights are given by output_weight.</span>
+<span class="sd">             Output weights must be greater than or equal</span>
+<span class="sd">             to zero. Outputs with zero weight do not contribute at all</span>
+<span class="sd">             to the total mean squared error (MSE).</span>
+<span class="sd">        </span>
+<span class="sd">        missing : array-like, shape = [m, n] where m is the number of samples</span>
+<span class="sd">            and n is the number of features.</span>
+<span class="sd">            The missing parameter can be a numpy array, a pandas DataFrame, or a </span>
+<span class="sd">            patsy DesignMatrix.  All entries will be interpreted as boolean </span>
+<span class="sd">            values, with True indicating the corresponding entry in X should be</span>
+<span class="sd">            interpreted as missing.  If the missing argument not used but the X</span>
+<span class="sd">            argument is a pandas DataFrame, missing will be inferred from X if </span>
+<span class="sd">            allow_missing is True.</span>
+<span class="sd">        </span>
+<span class="sd">        linvars : iterable of strings or ints, optional (empty by default)</span>
+<span class="sd">            Used to specify features that may only enter terms as linear basis</span>
+<span class="sd">            functions (without knots).  Can include both column numbers an</span>
+<span class="sd">            column names (see xlabels, below).</span>
+
+
+<span class="sd">        xlabels : iterable of strings, optional (empty by default)</span>
+<span class="sd">            The xlabels argument can be used to assign names to data columns.</span>
+<span class="sd">            This argument is not generally needed, as names can be captured</span>
+<span class="sd">            automatically from most standard data structures.  If included, must</span>
+<span class="sd">            have length n, where n is the number of features.  Note that column</span>
+<span class="sd">            order is used to compute term values and make predictions, not</span>
+<span class="sd">            column names.</span>
+
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># Label and format data</span>
+        <span class="k">if</span> <span class="n">xlabels</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xlabels_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrape_labels</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xlabels_</span> <span class="o">=</span> <span class="n">xlabels</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+
+        <span class="c1"># Do the actual work</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pull_forward_args</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+        <span class="n">forward_passer</span> <span class="o">=</span> <span class="n">ForwardPasser</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span>
+            <span class="n">xlabels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xlabels_</span><span class="p">,</span> <span class="n">linvars</span><span class="o">=</span><span class="n">linvars</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">forward_passer</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forward_pass_record_</span> <span class="o">=</span> <span class="n">forward_passer</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">basis_</span> <span class="o">=</span> <span class="n">forward_passer</span><span class="o">.</span><span class="n">get_basis</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__pruning_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">output_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
+                       <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Perform the pruning pass of the multivariate adaptive regression</span>
+<span class="sd">        splines algorithm.  Users will normally want to call the fit</span>
+<span class="sd">        method instead, which performs the forward pass, the pruning</span>
+<span class="sd">        pass, and a linear fit to determine the final model coefficients.</span>
+
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like, shape = [m, n] where m is the number of samples</span>
+<span class="sd">            and n is the number of features The training predictors.</span>
+<span class="sd">            The X parameter can be a numpy array, a pandas DataFrame, a patsy</span>
+<span class="sd">            DesignMatrix, or a tuple of patsy DesignMatrix objects as output</span>
+<span class="sd">            by patsy.dmatrices.</span>
+
+<span class="sd">        y : array-like, optional (default=None), shape = [m, p] where m is the</span>
+<span class="sd">            number of samples, p the number of outputs.</span>
+<span class="sd">            The y parameter can be a numpy array, a pandas DataFrame,</span>
+<span class="sd">            a Patsy DesignMatrix, or can be left as None (default) if X was</span>
+<span class="sd">            the output of a call to patsy.dmatrices (in which case, X contains</span>
+<span class="sd">            the response).</span>
+
+<span class="sd">        sample_weight : array-like, optional (default=None), shape = [m]</span>
+<span class="sd">             where m is the number of samples.</span>
+<span class="sd">             Sample weights for training.  Weights must be greater than or equal</span>
+<span class="sd">             to zero. Rows with zero weight do not contribute at all.</span>
+<span class="sd">             Weights are useful when dealing with heteroscedasticity.  In such</span>
+<span class="sd">             cases, the weight should be proportional to the inverse of the</span>
+<span class="sd">             (known) variance.</span>
+
+<span class="sd">        output_weight : array-like, optional (default=None), shape = [p]</span>
+<span class="sd">             where p is the number of outputs.</span>
+<span class="sd">             The total mean squared error (MSE) is a weighted sum of</span>
+<span class="sd">             mean squared errors (MSE) associated to each output, where</span>
+<span class="sd">             the weights are given by output_weight.</span>
+<span class="sd">             Output weights must be greater than or equal</span>
+<span class="sd">             to zero. Outputs with zero weight do not contribute at all</span>
+<span class="sd">             to the total mean squared error (MSE).</span>
+<span class="sd">             </span>
+<span class="sd">        missing : array-like, shape = [m, n] where m is the number of samples</span>
+<span class="sd">            and n is the number of features.</span>
+<span class="sd">            The missing parameter can be a numpy array, a pandas DataFrame, or a </span>
+<span class="sd">            patsy DesignMatrix.  All entries will be interpreted as boolean </span>
+<span class="sd">            values, with True indicating the corresponding entry in X should be</span>
+<span class="sd">            interpreted as missing.  If the missing argument not used but the X</span>
+<span class="sd">            argument is a pandas DataFrame, missing will be inferred from X if </span>
+<span class="sd">            allow_missing is True.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># Format data</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+
+        <span class="c1"># Pull arguments from self</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pull_pruning_args</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+        <span class="c1"># Do the actual work</span>
+        <span class="n">pruning_passer</span> <span class="o">=</span> <span class="n">PruningPasser</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">basis_</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">pruning_passer</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pruning_pass_record_</span> <span class="o">=</span> <span class="n">pruning_passer</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Earth.forward_trace"><a class="viewcode-back" href="../../content.html#pyearth.Earth.forward_trace">[docs]</a>    <span class="k">def</span> <span class="nf">forward_trace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Return information about the forward pass.&#39;&#39;&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_pass_record_</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span></div>
+
+<div class="viewcode-block" id="Earth.pruning_trace"><a class="viewcode-back" href="../../content.html#pyearth.Earth.pruning_trace">[docs]</a>    <span class="k">def</span> <span class="nf">pruning_trace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Return information about the pruning pass.&#39;&#39;&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pruning_pass_record_</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span></div>
+
+<div class="viewcode-block" id="Earth.trace"><a class="viewcode-back" href="../../content.html#pyearth.Earth.trace">[docs]</a>    <span class="k">def</span> <span class="nf">trace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Return information about the forward and pruning passes.&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">EarthTrace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forward_trace</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">pruning_trace</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="Earth.summary"><a class="viewcode-back" href="../../content.html#pyearth.Earth.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Return a string describing the model.&#39;&#39;&#39;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_trace</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="s1">&#39;Untrained Earth Model&#39;</span>
+            <span class="k">return</span> <span class="n">result</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pruning_trace</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="s1">&#39;Unpruned Earth Model</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="s1">&#39;Earth Model</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Basis Function&#39;</span><span class="p">,</span> <span class="s1">&#39;Pruned&#39;</span><span class="p">,</span> <span class="s1">&#39;Coefficient&#39;</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">bf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis_</span><span class="p">:</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">bf</span><span class="p">),</span> <span class="s1">&#39;Yes&#39;</span>
+                             <span class="k">if</span> <span class="n">bf</span><span class="o">.</span><span class="n">is_pruned</span><span class="p">()</span>
+                             <span class="k">else</span> <span class="s1">&#39;No&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%g</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="n">c</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
+                             <span class="k">if</span> <span class="ow">not</span> <span class="n">bf</span><span class="o">.</span><span class="n">is_pruned</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;None&#39;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">bf</span><span class="o">.</span><span class="n">is_pruned</span><span class="p">():</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="n">ascii_table</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pruning_trace</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pruning_trace</span><span class="p">()</span>
+                <span class="n">selection</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">get_selected</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_trace</span><span class="p">()</span>
+                <span class="n">selection</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">record</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="s1">&#39;MSE: </span><span class="si">%.4f</span><span class="s1">, GCV: </span><span class="si">%.4f</span><span class="s1">, RSQ: </span><span class="si">%.4f</span><span class="s1">, GRSQ: </span><span class="si">%.4f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mse_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gcv_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rsq_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grsq_</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+    <span class="k">def</span> <span class="nf">__linear_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">output_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                     <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Solve the linear least squares problem to determine the coefficients</span>
+<span class="sd">        of the unpruned basis functions.</span>
+
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like, shape = [m, n] where m is the number of samples and n</span>
+<span class="sd">            is the number of features The training predictors.  The X parameter</span>
+<span class="sd">            can be a numpy array, a pandas DataFrame, a patsy</span>
+<span class="sd">            DesignMatrix, or a tuple of patsy DesignMatrix objects as output</span>
+<span class="sd">            by patsy.dmatrices.</span>
+
+<span class="sd">        y : array-like, optional (default=None), shape = [m, p] where m is the</span>
+<span class="sd">            number of samples, p the number of outputs.</span>
+<span class="sd">            The y parameter can be a numpy array, a pandas DataFrame,</span>
+<span class="sd">            a Patsy DesignMatrix, or can be left as None (default) if X was</span>
+<span class="sd">            the output of a call to patsy.dmatrices (in which case, X contains</span>
+<span class="sd">            the response).</span>
+
+<span class="sd">        sample_weight : array-like, optional (default=None), shape = [m]</span>
+<span class="sd">             where m is the number of samples.</span>
+<span class="sd">             Sample weights for training.  Weights must be greater than or equal</span>
+<span class="sd">             to zero. Rows with zero weight do not contribute at all.</span>
+<span class="sd">             Weights are useful when dealing with heteroscedasticity.  In such</span>
+<span class="sd">             cases, the weight should be proportional to the inverse of the</span>
+<span class="sd">             (known) variance.</span>
+
+<span class="sd">        output_weight : array-like, optional (default=None), shape = [p]</span>
+<span class="sd">             where p is the number of outputs.</span>
+<span class="sd">             The total mean squared error (MSE) is a weighted sum of</span>
+<span class="sd">             mean squared errors (MSE) associated to each output, where</span>
+<span class="sd">             the weights are given by output_weight.</span>
+<span class="sd">             Output weights must be greater than or equal</span>
+<span class="sd">             to zero. Outputs with zero weight do not contribute at all</span>
+<span class="sd">             to the total mean squared error (MSE).</span>
+<span class="sd">             </span>
+<span class="sd">        missing : array-like, shape = [m, n] where m is the number of samples</span>
+<span class="sd">            and n is the number of features.</span>
+<span class="sd">            The missing parameter can be a numpy array, a pandas DataFrame, or a </span>
+<span class="sd">            patsy DesignMatrix.  All entries will be interpreted as boolean </span>
+<span class="sd">            values, with True indicating the corresponding entry in X should be</span>
+<span class="sd">            interpreted as missing.  If the missing argument not used but the X</span>
+<span class="sd">            argument is a pandas DataFrame, missing will be inferred from X if </span>
+<span class="sd">            allow_missing is True.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># Format data</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+
+        <span class="c1"># Transform into basis space</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+        
+        <span class="c1"># Apply weights to B</span>
+        <span class="n">apply_weights_2d</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">)</span>
+
+        <span class="c1"># Apply weights to y</span>
+        <span class="n">weighted_y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">weighted_y</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span>
+        <span class="c1"># Solve the linear least squares problem</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">resid_</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">coef</span><span class="p">,</span> <span class="n">resid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">weighted_y</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coef</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">resid</span><span class="p">:</span>
+                <span class="n">resid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">coef</span><span class="p">)</span> <span class="o">-</span> <span class="n">weighted_y</span><span class="p">[:,</span><span class="n">i</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)])</span>
+            <span class="n">resid_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">resid</span><span class="p">)</span>
+        <span class="n">resid_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">resid_</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span>
+        <span class="c1"># Compute the final mse, gcv, rsq, and grsq (may be different from the</span>
+        <span class="c1"># pruning scores if the model has been smoothed)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mse_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">resid_</span> <span class="o">*</span> <span class="n">output_weight</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">gcv_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gcv_</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">coef</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">):</span>
+            <span class="n">mse_p</span> <span class="o">=</span> <span class="n">resid_</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">gcv_</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">gcv</span><span class="p">(</span><span class="n">mse_p</span><span class="p">,</span>
+                          <span class="n">coef</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                          <span class="bp">self</span><span class="o">.</span><span class="n">get_penalty</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gcv_</span> <span class="o">+=</span> <span class="n">gcv_</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">*</span> <span class="n">output_weight</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+        <span class="n">y_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">y_sqr</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_avg</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:])</span> <span class="o">**</span> <span class="mi">2</span>
+
+        <span class="n">rsq_</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">resid_</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">y_sqr</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span> <span class="o">*</span> <span class="n">output_weight</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rsq_</span> <span class="o">=</span> <span class="n">rsq_</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">gcv0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">mse0_p</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_sqr</span><span class="p">[:,</span> <span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">gcv0</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">gcv</span><span class="p">(</span><span class="n">mse0_p</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_penalty</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grsq_</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">gcv_</span> <span class="o">/</span> <span class="n">gcv0</span><span class="p">))</span> <span class="o">*</span> <span class="n">output_weight</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Earth.predict"><a class="viewcode-back" href="../../content.html#pyearth.Earth.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Predict the response based on the input data X.</span>
+
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like, shape = [m, n] where m is the number of samples and n</span>
+<span class="sd">            is the number of features</span>
+<span class="sd">            The training predictors.  The X parameter can be a numpy</span>
+<span class="sd">            array, a pandas DataFrame, or a patsy DesignMatrix.</span>
+<span class="sd">            </span>
+<span class="sd">        missing : array-like, shape = [m, n] where m is the number of samples</span>
+<span class="sd">            and n is the number of features.</span>
+<span class="sd">            The missing parameter can be a numpy array, a pandas DataFrame, or a </span>
+<span class="sd">            patsy DesignMatrix.  All entries will be interpreted as boolean </span>
+<span class="sd">            values, with True indicating the corresponding entry in X should be</span>
+<span class="sd">            interpreted as missing.  If the missing argument not used but the X</span>
+<span class="sd">            argument is a pandas DataFrame, missing will be inferred from X if </span>
+<span class="sd">            allow_missing is True.</span>
+
+<span class="sd">       Returns</span>
+<span class="sd">       -------</span>
+<span class="sd">            y : array of shape = [m] or [m, p] where m is the number of samples</span>
+<span class="sd">                and p is the number of outputs</span>
+<span class="sd">                The predicted values.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub_x</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">y</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">y</span></div>
+
+<div class="viewcode-block" id="Earth.predict_deriv"><a class="viewcode-back" href="../../content.html#pyearth.Earth.predict_deriv">[docs]</a>    <span class="k">def</span> <span class="nf">predict_deriv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Predict the first derivatives of the response based on the input data X.</span>
+
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like, shape = [m, n] where m is the number of samples and n is</span>
+<span class="sd">            the number of features The training predictors.  The X parameter can</span>
+<span class="sd">            be a numpy array, a pandas DataFrame, or a patsy DesignMatrix.</span>
+<span class="sd">        </span>
+<span class="sd">        missing : array-like, shape = [m, n] where m is the number of samples</span>
+<span class="sd">            and n is the number of features.</span>
+<span class="sd">            The missing parameter can be a numpy array, a pandas DataFrame, or a </span>
+<span class="sd">            patsy DesignMatrix.  All entries will be interpreted as boolean </span>
+<span class="sd">            values, with True indicating the corresponding entry in X should be</span>
+<span class="sd">            interpreted as missing.  If the missing argument not used but the X</span>
+<span class="sd">            argument is a pandas DataFrame, missing will be inferred from X if </span>
+<span class="sd">            allow_missing is True.</span>
+
+<span class="sd">        variables : list</span>
+<span class="sd">            The variables over which derivatives will be computed.  Each column</span>
+<span class="sd">            in the resulting array corresponds to a variable.  If not</span>
+<span class="sd">            specified, all variables are used (even if some are not relevant</span>
+<span class="sd">            to the final model and have derivatives that are identically zero).</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">check_is_fitted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;basis_&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">variables</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">variables</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">variables_of_interest</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xlabels_</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">variables_of_interest</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                    <span class="n">variables_of_interest</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">variables_of_interest</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xlabels_</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">var</span><span class="p">))</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub_x</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                            <span class="nb">len</span><span class="p">(</span><span class="n">variables_of_interest</span><span class="p">),</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">basis_</span><span class="o">.</span><span class="n">transform_deriv</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">variables_of_interest</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">J</span></div>
+
+<div class="viewcode-block" id="Earth.score"><a class="viewcode-back" href="../../content.html#pyearth.Earth.score">[docs]</a>    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">output_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
+              <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calculate the generalized r^2 of the model on data X and y.</span>
+
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like, shape = [m, n] where m is the number of samples</span>
+<span class="sd">            and n is the number of features The training predictors.</span>
+<span class="sd">            The X parameter can be a numpy array, a pandas DataFrame, a patsy</span>
+<span class="sd">            DesignMatrix, or a tuple of patsy DesignMatrix objects as output</span>
+<span class="sd">            by patsy.dmatrices.</span>
+
+<span class="sd">        y : array-like, optional (default=None), shape = [m, p] where m is the</span>
+<span class="sd">            number of samples, p the number of outputs.</span>
+<span class="sd">            The y parameter can be a numpy array, a pandas DataFrame,</span>
+<span class="sd">            a Patsy DesignMatrix, or can be left as None (default) if X was</span>
+<span class="sd">            the output of a call to patsy.dmatrices (in which case, X contains</span>
+<span class="sd">            the response).</span>
+
+<span class="sd">        sample_weight : array-like, optional (default=None), shape = [m]</span>
+<span class="sd">             where m is the number of samples.</span>
+<span class="sd">             Sample weights for training.  Weights must be greater than or equal</span>
+<span class="sd">             to zero. Rows with zero weight do not contribute at all.</span>
+<span class="sd">             Weights are useful when dealing with heteroscedasticity.  In such</span>
+<span class="sd">             cases, the weight should be proportional to the inverse of the</span>
+<span class="sd">             (known) variance.</span>
+
+<span class="sd">        output_weight : array-like, optional (default=None), shape = [p]</span>
+<span class="sd">             where p is the number of outputs.</span>
+<span class="sd">             The total mean squared error (MSE) is a weighted sum of</span>
+<span class="sd">             mean squared errors (MSE) associated to each output, where</span>
+<span class="sd">             the weights are given by output_weight.</span>
+<span class="sd">             Output weights must be greater than or equal</span>
+<span class="sd">             to zero. Outputs with zero weight do not contribute at all</span>
+<span class="sd">             to the total mean squared error (MSE).</span>
+<span class="sd">             </span>
+<span class="sd">        missing : array-like, shape = [m, n] where m is the number of samples</span>
+<span class="sd">            and n is the number of features.</span>
+<span class="sd">            The missing parameter can be a numpy array, a pandas DataFrame, or a </span>
+<span class="sd">            patsy DesignMatrix.  All entries will be interpreted as boolean </span>
+<span class="sd">            values, with True indicating the corresponding entry in X should be</span>
+<span class="sd">            interpreted as missing.  If the missing argument not used but the X</span>
+<span class="sd">            argument is a pandas DataFrame, missing will be inferred from X if </span>
+<span class="sd">            allow_missing is True.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">check_is_fitted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;basis_&quot;</span><span class="p">)</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+        <span class="n">y_hat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">m</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">residual</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">y_hat</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="n">mse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">residual</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="n">m</span>
+        <span class="n">y_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">y_sqr</span> <span class="o">=</span> <span class="n">sample_weight</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_avg</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:])</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">mse0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y_sqr</span> <span class="o">*</span> <span class="n">output_weight</span><span class="p">)</span> <span class="o">/</span> <span class="n">m</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">mse</span> <span class="o">/</span> <span class="n">mse0</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">score_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+        <span class="n">y_hat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="n">missing</span><span class="p">)</span>
+        <span class="n">residual</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_hat</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">return</span> <span class="n">residual</span>
+
+<div class="viewcode-block" id="Earth.transform"><a class="viewcode-back" href="../../content.html#pyearth.Earth.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Transform X into the basis space.  Normally, users will call the</span>
+<span class="sd">        predict method instead, which both transforms into basis space</span>
+<span class="sd">        calculates the weighted sum of basis terms to produce a prediction</span>
+<span class="sd">        of the response.  Users may wish to call transform directly in some</span>
+<span class="sd">        cases.  For example, users may wish to apply other statistical or</span>
+<span class="sd">        machine learning algorithms, such as generalized linear regression,</span>
+<span class="sd">        in basis space.</span>
+
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like, shape = [m, n] where m is the number of samples and n</span>
+<span class="sd">            is the number of features</span>
+<span class="sd">            The training predictors.  The X parameter can be a numpy array, a</span>
+<span class="sd">            pandas DataFrame, or a patsy DesignMatrix.</span>
+<span class="sd">            </span>
+<span class="sd">        missing : array-like, shape = [m, n] where m is the number of samples</span>
+<span class="sd">            and n is the number of features.</span>
+<span class="sd">            The missing parameter can be a numpy array, a pandas DataFrame, or a </span>
+<span class="sd">            patsy DesignMatrix.  All entries will be interpreted as boolean </span>
+<span class="sd">            values, with True indicating the corresponding entry in X should be</span>
+<span class="sd">            interpreted as missing.  If the missing argument not used but the X</span>
+<span class="sd">            argument is a pandas DataFrame, missing will be inferred from X if </span>
+<span class="sd">            allow_missing is True.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">check_is_fitted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;basis_&quot;</span><span class="p">)</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub_x</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis_</span><span class="o">.</span><span class="n">plen</span><span class="p">()),</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">basis_</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">B</span></div>
+
+<div class="viewcode-block" id="Earth.get_penalty"><a class="viewcode-back" href="../../content.html#pyearth.Earth.get_penalty">[docs]</a>    <span class="k">def</span> <span class="nf">get_penalty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Get the penalty parameter being used.  Default is 3.&#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="s1">&#39;penalty&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">penalty</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">penalty</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">3.0</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">EarthTrace</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">forward_trace</span><span class="p">,</span> <span class="n">pruning_trace</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forward_trace</span> <span class="o">=</span> <span class="n">forward_trace</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pruning_trace</span> <span class="o">=</span> <span class="n">pruning_trace</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span> <span class="ow">is</span> <span class="n">other</span><span class="o">.</span><span class="n">__class__</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">forward_trace</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">forward_trace</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pruning_trace</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">pruning_trace</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forward_trace</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pruning_trace</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2013, Jason Rudy.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

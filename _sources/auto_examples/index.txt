@@ -1,0 +1,148 @@
+Gallery
+-------
+
+This is the gallery of examples.
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A simple example plotting a fit of the absolute value function.">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_v_function_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_v_function.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_v_function
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A simple example plotting a fit of the sine function. ">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_sine_wave_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_sine_wave.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_sine_wave
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A simple example plotting a fit of two sine functions. ">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_sine_wave_2d_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_sine_wave_2d.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_sine_wave_2d
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A simple example plotting a fit of the sine function and the derivatives computed by Earth. ">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_derivatives_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_derivatives.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_derivatives
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Each row in the grid is a run of an earth model. Each column is an output. In each run, differe...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_output_weight_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_output_weight.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_output_weight
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="An example plotting a fit of the sine function.  There are two  redundant predictors, each of w...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_missing_data_problem_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_missing_data_problem.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_missing_data_problem
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This script recreates the scikit-learn classifier comparison example found at http://scikit-lea...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_classifier_comp_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_classifier_comp.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_classifier_comp
+.. raw:: html
+
+    <div style='clear:both'></div>
+

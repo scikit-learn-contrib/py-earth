@@ -1,0 +1,351 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Plotting sckit-learn classifiers comparison with Earth &mdash; py-earth 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="py-earth 0.1.0 documentation" href="../index.html"/>
+        <link rel="up" title="Gallery" href="index.html"/>
+        <link rel="prev" title="Plotting sine function with redundant predictors an missing data" href="plot_missing_data_problem.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> py-earth
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../content.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content.html#multivariate-adaptive-regression-splines">Multivariate Adaptive Regression Splines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content.html#a-simple-earth-example">A Simple Earth Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content.html#bibliography">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content.html#api">API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Gallery</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="plot_v_function.html">Plotting the absolute value function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_sine_wave.html">Plotting simple sine function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_sine_wave_2d.html">Plotting two simple sine functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_derivatives.html">Plotting derivatives of simple sine function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_output_weight.html">Demonstrating a use of weights in outputs with two sine functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_missing_data_problem.html">Plotting sine function with redundant predictors an missing data</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Plotting sckit-learn classifiers comparison with Earth</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">py-earth</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Gallery</a> &raquo;</li>
+      
+    <li>Plotting sckit-learn classifiers comparison with Earth</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/auto_examples/plot_classifier_comp.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="plotting-sckit-learn-classifiers-comparison-with-earth">
+<span id="sphx-glr-auto-examples-plot-classifier-comp-py"></span><h1>Plotting sckit-learn classifiers comparison with Earth<a class="headerlink" href="#plotting-sckit-learn-classifiers-comparison-with-earth" title="Permalink to this headline">¶</a></h1>
+<p>This script recreates the scikit-learn classifier comparison example found at
+<a class="reference external" href="http://scikit-learn.org/stable/auto_examples/classification/plot_classifier_comparison.html">http://scikit-learn.org/stable/auto_examples/classification/plot_classifier_comparison.html</a>.
+It has been modified to include an Earth based classifier.</p>
+<img alt="../_images/sphx_glr_plot_classifier_comp_001.png" class="align-center" src="../_images/sphx_glr_plot_classifier_comp_001.png" />
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">__doc__</span><span class="p">)</span>
+<span class="c1"># Code source: Gael Varoqueux</span>
+<span class="c1">#              Andreas Mueller</span>
+<span class="c1"># Modified for Documentation merge by Jaques Grobler</span>
+<span class="c1"># License: BSD 3 clause</span>
+<span class="c1"># Modified to include pyearth by Jason Rudy</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">ListedColormap</span>
+<span class="kn">from</span> <span class="nn">sklearn.cross_validation</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">make_moons</span><span class="p">,</span> <span class="n">make_circles</span><span class="p">,</span> <span class="n">make_classification</span>
+<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">KNeighborsClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">SVC</span>
+<span class="kn">from</span> <span class="nn">sklearn.tree</span> <span class="kn">import</span> <span class="n">DecisionTreeClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.naive_bayes</span> <span class="kn">import</span> <span class="n">GaussianNB</span>
+<span class="kn">from</span> <span class="nn">sklearn.lda</span> <span class="kn">import</span> <span class="n">LDA</span>
+<span class="kn">from</span> <span class="nn">sklearn.qda</span> <span class="kn">import</span> <span class="n">QDA</span>
+
+<span class="n">h</span> <span class="o">=</span> <span class="o">.</span><span class="mo">02</span>  <span class="c1"># step size in the mesh</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.linear_model.logistic</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span> <span class="nn">pyearth.earth</span> <span class="kn">import</span> <span class="n">Earth</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Combine Earth with LogisticRegression in a pipeline to do classification</span>
+<span class="n">earth_classifier</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([(</span><span class="s1">&#39;earth&#39;</span><span class="p">,</span> <span class="n">Earth</span><span class="p">(</span><span class="n">max_degree</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)),</span>
+                             <span class="p">(</span><span class="s1">&#39;logistic&#39;</span><span class="p">,</span> <span class="n">LogisticRegression</span><span class="p">())])</span>
+
+<span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Nearest Neighbors&quot;</span><span class="p">,</span> <span class="s2">&quot;Linear SVM&quot;</span><span class="p">,</span> <span class="s2">&quot;RBF SVM&quot;</span><span class="p">,</span> <span class="s2">&quot;Decision Tree&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;Random Forest&quot;</span><span class="p">,</span> <span class="s2">&quot;Naive Bayes&quot;</span><span class="p">,</span> <span class="s2">&quot;LDA&quot;</span><span class="p">,</span> <span class="s2">&quot;QDA&quot;</span><span class="p">,</span> <span class="s2">&quot;Earth&quot;</span><span class="p">]</span>
+<span class="n">classifiers</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">KNeighborsClassifier</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+    <span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mf">0.025</span><span class="p">,</span> <span class="n">probability</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+    <span class="n">SVC</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">probability</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+    <span class="n">DecisionTreeClassifier</span><span class="p">(</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+    <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">n_estimators</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">max_features</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">GaussianNB</span><span class="p">(),</span>
+    <span class="n">LDA</span><span class="p">(),</span>
+    <span class="n">QDA</span><span class="p">(),</span>
+    <span class="n">earth_classifier</span><span class="p">]</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_classification</span><span class="p">(</span><span class="n">n_features</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_redundant</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_informative</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                           <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_clusters_per_class</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">+=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">linearly_separable</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="n">datasets</span> <span class="o">=</span> <span class="p">[</span><span class="n">make_moons</span><span class="p">(</span><span class="n">noise</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+            <span class="n">make_circles</span><span class="p">(</span><span class="n">noise</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">linearly_separable</span>
+            <span class="p">]</span>
+
+<span class="n">figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">27</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+<span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="c1"># iterate over datasets</span>
+<span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">:</span>
+    <span class="c1"># preprocess dataset, split into training and test part</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ds</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=.</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="o">.</span><span class="mi">5</span>
+    <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="o">.</span><span class="mi">5</span>
+    <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">h</span><span class="p">),</span>
+                         <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span>
+
+    <span class="c1"># just plot the dataset first</span>
+    <span class="n">cm</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">RdBu</span>
+    <span class="n">cm_bright</span> <span class="o">=</span> <span class="n">ListedColormap</span><span class="p">([</span><span class="s1">&#39;#FF0000&#39;</span><span class="p">,</span> <span class="s1">&#39;#0000FF&#39;</span><span class="p">])</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">datasets</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">classifiers</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="c1"># Plot the training points</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X_train</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X_train</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">y_train</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm_bright</span><span class="p">)</span>
+    <span class="c1"># and testing points</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X_test</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X_test</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">y_test</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm_bright</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xx</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">xx</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">yy</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">yy</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(())</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(())</span>
+    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># iterate over classifiers</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">clf</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">classifiers</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">datasets</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">classifiers</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+
+        <span class="c1"># Plot the decision boundary. For that, we will assign a color to each</span>
+        <span class="c1"># point in the mesh [x_min, m_max]x[y_min, y_max].</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">Z</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">xx</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">yy</span><span class="o">.</span><span class="n">ravel</span><span class="p">()])[:,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+            <span class="n">Z</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">decision_function</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">xx</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">yy</span><span class="o">.</span><span class="n">ravel</span><span class="p">()])</span>
+
+        <span class="c1"># Put the result into a color plot</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">xx</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">8</span><span class="p">)</span>
+
+        <span class="c1"># Plot also the training points</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X_train</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X_train</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">y_train</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm_bright</span><span class="p">)</span>
+        <span class="c1"># and testing points</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X_test</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X_test</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">y_test</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm_bright</span><span class="p">,</span>
+                   <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xx</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">xx</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">yy</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">yy</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(())</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(())</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">xx</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="o">.</span><span class="mi">3</span><span class="p">,</span> <span class="n">yy</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">+</span> <span class="o">.</span><span class="mi">3</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">score</span><span class="p">)</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">),</span>
+                <span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="n">figure</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">left</span><span class="o">=.</span><span class="mo">02</span><span class="p">,</span> <span class="n">right</span><span class="o">=.</span><span class="mi">98</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;classifier_comp.pdf&#39;</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>Total running time of the script:</strong>
+(0 minutes 4.915 seconds)</p>
+<div class="sphx-glr-download container">
+<strong>Download Python source code:</strong> <a class="reference download internal" href="../_downloads/plot_classifier_comp.py"><code class="xref download docutils literal"><span class="pre">plot_classifier_comp.py</span></code></a></div>
+<div class="sphx-glr-download container">
+<strong>Download IPython notebook:</strong> <a class="reference download internal" href="../_downloads/plot_classifier_comp.ipynb"><code class="xref download docutils literal"><span class="pre">plot_classifier_comp.ipynb</span></code></a></div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="plot_missing_data_problem.html" class="btn btn-neutral" title="Plotting sine function with redundant predictors an missing data" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2013, Jason Rudy.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

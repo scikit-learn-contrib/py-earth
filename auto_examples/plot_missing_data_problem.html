@@ -1,0 +1,402 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Plotting sine function with redundant predictors an missing data &mdash; py-earth 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="py-earth 0.1.0 documentation" href="../index.html"/>
+        <link rel="up" title="Gallery" href="index.html"/>
+        <link rel="next" title="Plotting sckit-learn classifiers comparison with Earth" href="plot_classifier_comp.html"/>
+        <link rel="prev" title="Demonstrating a use of weights in outputs with two sine functions" href="plot_output_weight.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> py-earth
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../content.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content.html#multivariate-adaptive-regression-splines">Multivariate Adaptive Regression Splines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content.html#a-simple-earth-example">A Simple Earth Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content.html#bibliography">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content.html#api">API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Gallery</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="plot_v_function.html">Plotting the absolute value function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_sine_wave.html">Plotting simple sine function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_sine_wave_2d.html">Plotting two simple sine functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_derivatives.html">Plotting derivatives of simple sine function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_output_weight.html">Demonstrating a use of weights in outputs with two sine functions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Plotting sine function with redundant predictors an missing data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_classifier_comp.html">Plotting sckit-learn classifiers comparison with Earth</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">py-earth</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Gallery</a> &raquo;</li>
+      
+    <li>Plotting sine function with redundant predictors an missing data</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/auto_examples/plot_missing_data_problem.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="plotting-sine-function-with-redundant-predictors-an-missing-data">
+<span id="sphx-glr-auto-examples-plot-missing-data-problem-py"></span><h1>Plotting sine function with redundant predictors an missing data<a class="headerlink" href="#plotting-sine-function-with-redundant-predictors-an-missing-data" title="Permalink to this headline">¶</a></h1>
+<p>An example plotting a fit of the sine function.  There are two
+redundant predictors, each of which has independent and random
+missingness.</p>
+<img alt="../_images/sphx_glr_plot_missing_data_problem_001.png" class="align-center" src="../_images/sphx_glr_plot_missing_data_problem_001.png" />
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-python"><div class="highlight"><pre><span></span>  Forward Pass
+---------------------------------------------------------------------
+iter  parent  var  knot  mse          terms  gcv       rsq    grsq
+---------------------------------------------------------------------
+0     -       -    -     4399.475105  1      4400.355  0.000  0.000
+1     0       6    8411  3218.545560  5      3229.517  0.268  0.266
+2     1       6    3011  1000.863126  7      1005.886  0.773  0.771
+3     4       5    8403  775.817661   11     782.219   0.824  0.822
+4     7       5    3044  315.047518   13     318.158   0.928  0.928
+5     0       6    7211  291.456356   15     294.808   0.934  0.933
+6     5       6    911   275.915763   17     279.538   0.937  0.936
+7     13      6    3811  270.854296   19     274.852   0.938  0.938
+8     9       5    7233  266.414253   21     270.783   0.939  0.938
+9     10      7    2401  262.589150   25     267.758   0.940  0.939
+10    24      3    6263  257.376406   29     263.293   0.941  0.940
+---------------------------------------------------------------------
+Stopping Condition 0: Reached maximum number of terms
+
+Pruning Pass
+----------------------------------------------------
+iter  bf  terms  mse      gcv       rsq     grsq
+----------------------------------------------------
+0     -   29     257.38   263.293   0.941   0.940
+1     2   28     257.38   263.080   0.941   0.940
+2     10  27     257.38   262.868   0.941   0.940
+3     28  26     257.38   262.655   0.941   0.940
+4     24  25     257.38   262.443   0.941   0.940
+5     8   24     257.38   262.231   0.941   0.940
+6     3   23     257.38   262.020   0.941   0.940
+7     19  22     257.43   261.858   0.941   0.940
+8     22  21     257.85   262.074   0.941   0.940
+9     18  20     258.36   262.387   0.941   0.940
+10    5   19     258.66   262.481   0.941   0.940
+11    26  18     260.20   263.833   0.941   0.940
+12    23  17     261.86   265.296   0.940   0.940
+13    27  16     262.18   265.412   0.940   0.940
+14    15  15     263.93   266.965   0.940   0.939
+15    21  14     266.66   269.511   0.939   0.939
+16    25  13     269.03   271.682   0.939   0.938
+17    12  12     272.85   275.325   0.938   0.937
+18    13  11     280.73   283.044   0.936   0.936
+19    16  10     298.55   300.768   0.932   0.932
+20    6   9      392.19   394.792   0.911   0.910
+21    9   8      812.25   816.984   0.815   0.814
+22    20  7      876.11   880.506   0.801   0.800
+23    11  6      1009.68  1013.938  0.770   0.770
+24    7   5      1078.57  1082.247  0.755   0.754
+25    14  4      3275.88  3284.414  0.255   0.254
+26    4   3      3587.50  3593.961  0.185   0.183
+27    17  2      4034.07  4038.107  0.083   0.082
+28    1   1      4399.48  4400.355  -0.000  -0.000
+----------------------------------------------------
+Selected iteration: 7
+
+Earth Model
+------------------------------------------------------------------------------------------------------------------------------------
+Basis Function                                                                                                Pruned  Coefficient
+------------------------------------------------------------------------------------------------------------------------------------
+(Intercept)                                                                                                   No      -215.536
+C(x6|s=+1,NAN,-24.506,-18.5194)*present(x6)                                                                   No      -21.4704
+C(x6|s=-1,NAN,-24.506,-18.5194)*present(x6)                                                                   Yes     None
+present(x6)                                                                                                   Yes     None
+missing(x6)                                                                                                   No      -209.533
+C(x6|s=+1,5.4053,9.48699,20.0742)*C(x6|s=+1,NAN,-24.506,-18.5194)*present(x6)                                 No      -0.108466
+C(x6|s=-1,5.4053,9.48699,20.0742)*C(x6|s=+1,NAN,-24.506,-18.5194)*present(x6)                                 No      -0.169322
+C(x5|s=+1,NAN,-24.5341,-18.6855)*present(x5)*missing(x6)                                                      No      11.963
+C(x5|s=-1,NAN,-24.5341,-18.6855)*present(x5)*missing(x6)                                                      Yes     None
+present(x5)*missing(x6)                                                                                       No      -302.191
+missing(x5)*missing(x6)                                                                                       Yes     None
+C(x5|s=+1,-1.78052,9.27579,NAN)*C(x5|s=+1,NAN,-24.5341,-18.6855)*present(x5)*missing(x6)                      No      -0.267958
+C(x5|s=-1,-1.78052,9.27579,NAN)*C(x5|s=+1,NAN,-24.5341,-18.6855)*present(x5)*missing(x6)                      No      0.13054
+C(x6|s=+1,-18.5194,-12.5327,-5.60455)*present(x6)                                                             No      30.0289
+C(x6|s=-1,-18.5194,-12.5327,-5.60455)*present(x6)                                                             No      -20.3807
+C(x6|s=+1,20.0742,30.6613,NAN)*C(x6|s=+1,5.4053,9.48699,20.0742)*C(x6|s=+1,NAN,-24.506,-18.5194)*present(x6)  No      -0.000177273
+C(x6|s=-1,20.0742,30.6613,NAN)*C(x6|s=+1,5.4053,9.48699,20.0742)*C(x6|s=+1,NAN,-24.506,-18.5194)*present(x6)  No      0.00184362
+C(x6|s=+1,-5.60455,1.32361,5.4053)*C(x6|s=+1,-18.5194,-12.5327,-5.60455)*present(x6)                          No      -0.123562
+C(x6|s=-1,-5.60455,1.32361,5.4053)*C(x6|s=+1,-18.5194,-12.5327,-5.60455)*present(x6)                          No      0.205846
+C(x5|s=+1,-18.6855,-12.8368,-1.78052)*present(x5)*missing(x6)                                                 Yes     None
+C(x5|s=-1,-18.6855,-12.8368,-1.78052)*present(x5)*missing(x6)                                                 No      24.4133
+C(x7|s=+1,NAN,15.6535,NAN)*present(x7)*missing(x5)*missing(x6)                                                No      -0.20499
+C(x7|s=-1,NAN,15.6535,NAN)*present(x7)*missing(x5)*missing(x6)                                                No      1.42109e-14
+present(x7)*missing(x5)*missing(x6)                                                                           No      18.9562
+missing(x7)*missing(x5)*missing(x6)                                                                           Yes     None
+C(x3|s=+1,NAN,-1.38678,NAN)*present(x3)*missing(x7)*missing(x5)*missing(x6)                                   No      -0.596508
+C(x3|s=-1,NAN,-1.38678,NAN)*present(x3)*missing(x7)*missing(x5)*missing(x6)                                   No      0
+present(x3)*missing(x7)*missing(x5)*missing(x6)                                                               No      16.9676
+missing(x3)*missing(x7)*missing(x5)*missing(x6)                                                               Yes     None
+------------------------------------------------------------------------------------------------------------------------------------
+MSE: 297.4538, GCV: 302.5757, RSQ: 0.9324, GRSQ: 0.9312
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="kn">from</span> <span class="nn">pyearth</span> <span class="kn">import</span> <span class="n">Earth</span>
+
+<span class="c1"># Create some fake data</span>
+<span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">m</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">X</span> <span class="o">=</span> <span class="mi">80</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span> <span class="o">-</span> <span class="mi">40</span>
+<span class="n">X</span><span class="p">[:,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> \
+    <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">])</span> <span class="o">/</span> <span class="mi">20</span><span class="p">)</span> <span class="o">-</span> <span class="mf">4.0</span><span class="p">)</span> <span class="o">+</span> \
+    <span class="mi">10</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">binomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">.</span><span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+<span class="n">X_full</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">X</span><span class="p">[</span><span class="n">missing</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">idx5</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">missing</span><span class="p">[:,</span> <span class="mi">5</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+<span class="n">idx6</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">missing</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+
+<span class="c1"># Fit an Earth model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Earth</span><span class="p">(</span><span class="n">max_degree</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">minspan_alpha</span><span class="o">=.</span><span class="mi">5</span><span class="p">,</span> <span class="n">allow_missing</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+              <span class="n">enable_pruning</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">1e-15</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Print the model</span>
+<span class="k">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">trace</span><span class="p">())</span>
+<span class="k">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+
+<span class="c1"># Plot the model</span>
+<span class="n">y_hat</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+
+<span class="n">ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X_full</span><span class="p">[</span><span class="n">idx5</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">idx5</span><span class="p">],</span> <span class="s1">&#39;b.&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X_full</span><span class="p">[</span><span class="n">idx5</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">y_hat</span><span class="p">[</span><span class="n">idx5</span><span class="p">],</span> <span class="s1">&#39;r.&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;x5 present&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x5&#39;</span><span class="p">)</span>
+
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X_full</span><span class="p">[</span><span class="n">idx6</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">idx6</span><span class="p">],</span> <span class="s1">&#39;b.&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X_full</span><span class="p">[</span><span class="n">idx6</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">y_hat</span><span class="p">[</span><span class="n">idx6</span><span class="p">],</span> <span class="s1">&#39;r.&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">40</span><span class="p">,</span><span class="mi">40</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;x6 present&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x6&#39;</span><span class="p">)</span>
+
+<span class="n">ax3</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X_full</span><span class="p">[</span><span class="o">~</span><span class="n">idx6</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="o">~</span><span class="n">idx6</span><span class="p">],</span> <span class="s1">&#39;b.&#39;</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X_full</span><span class="p">[</span><span class="o">~</span><span class="n">idx6</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">y_hat</span><span class="p">[</span><span class="o">~</span><span class="n">idx6</span><span class="p">],</span> <span class="s1">&#39;r.&#39;</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;x6 missing&#39;</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x5&#39;</span><span class="p">)</span>
+
+<span class="n">ax4</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax2</span><span class="p">)</span>
+<span class="n">ax4</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X_full</span><span class="p">[</span><span class="o">~</span><span class="n">idx5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="o">~</span><span class="n">idx5</span><span class="p">],</span> <span class="s1">&#39;b.&#39;</span><span class="p">)</span>
+<span class="n">ax4</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X_full</span><span class="p">[</span><span class="o">~</span><span class="n">idx5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">y_hat</span><span class="p">[</span><span class="o">~</span><span class="n">idx5</span><span class="p">],</span> <span class="s1">&#39;r.&#39;</span><span class="p">)</span>
+<span class="n">ax4</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;x5 missing&#39;</span><span class="p">)</span>
+<span class="n">ax4</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x6&#39;</span><span class="p">)</span>
+
+<span class="n">ax5</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span><span class="n">sharex</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
+<span class="n">ax5</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X_full</span><span class="p">[(</span><span class="o">~</span><span class="n">idx6</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">idx5</span><span class="p">),</span> <span class="mi">5</span><span class="p">],</span> <span class="n">y</span><span class="p">[(</span><span class="o">~</span><span class="n">idx6</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">idx5</span><span class="p">)],</span> <span class="s1">&#39;b.&#39;</span><span class="p">)</span>
+<span class="n">ax5</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X_full</span><span class="p">[(</span><span class="o">~</span><span class="n">idx6</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">idx5</span><span class="p">),</span> <span class="mi">5</span><span class="p">],</span> <span class="n">y_hat</span><span class="p">[(</span><span class="o">~</span><span class="n">idx6</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">idx5</span><span class="p">)],</span> <span class="s1">&#39;r.&#39;</span><span class="p">)</span>
+<span class="n">ax5</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;both missing&#39;</span><span class="p">)</span>
+<span class="n">ax5</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x5&#39;</span><span class="p">)</span>
+
+<span class="n">ax6</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax2</span><span class="p">)</span>
+<span class="n">ax6</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X_full</span><span class="p">[(</span><span class="o">~</span><span class="n">idx6</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">idx5</span><span class="p">),</span> <span class="mi">6</span><span class="p">],</span> <span class="n">y</span><span class="p">[(</span><span class="o">~</span><span class="n">idx6</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">idx5</span><span class="p">)],</span> <span class="s1">&#39;b.&#39;</span><span class="p">)</span>
+<span class="n">ax6</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X_full</span><span class="p">[(</span><span class="o">~</span><span class="n">idx6</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">idx5</span><span class="p">),</span> <span class="mi">6</span><span class="p">],</span> <span class="n">y_hat</span><span class="p">[(</span><span class="o">~</span><span class="n">idx6</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">idx5</span><span class="p">)],</span> <span class="s1">&#39;r.&#39;</span><span class="p">)</span>
+<span class="n">ax6</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;both missing&#39;</span><span class="p">)</span>
+<span class="n">ax6</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x6&#39;</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>Total running time of the script:</strong>
+(0 minutes 14.888 seconds)</p>
+<div class="sphx-glr-download container">
+<strong>Download Python source code:</strong> <a class="reference download internal" href="../_downloads/plot_missing_data_problem.py"><code class="xref download docutils literal"><span class="pre">plot_missing_data_problem.py</span></code></a></div>
+<div class="sphx-glr-download container">
+<strong>Download IPython notebook:</strong> <a class="reference download internal" href="../_downloads/plot_missing_data_problem.ipynb"><code class="xref download docutils literal"><span class="pre">plot_missing_data_problem.ipynb</span></code></a></div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="plot_classifier_comp.html" class="btn btn-neutral float-right" title="Plotting sckit-learn classifiers comparison with Earth" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="plot_output_weight.html" class="btn btn-neutral" title="Demonstrating a use of weights in outputs with two sine functions" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2013, Jason Rudy.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

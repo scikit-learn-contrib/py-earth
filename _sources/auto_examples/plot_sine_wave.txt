@@ -1,0 +1,124 @@
+
+
+.. _sphx_glr_auto_examples_plot_sine_wave.py:
+
+
+=============================
+Plotting simple sine function
+=============================
+
+A simple example plotting a fit of the sine function.
+
+
+
+.. image:: /auto_examples/images/sphx_glr_plot_sine_wave_001.png
+    :align: center
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out::
+
+      Forward Pass
+    ---------------------------------------------------------------------
+    iter  parent  var  knot  mse          terms  gcv       rsq    grsq   
+    ---------------------------------------------------------------------
+    0     -       -    -     4430.555176  1      4431.441  0.000  0.000  
+    1     0       6    8011  2964.059135  3      2969.402  0.331  0.330  
+    2     1       6    3811  158.822645   5      159.364   0.964  0.964  
+    3     0       6    6611  130.961663   7      131.619   0.970  0.970  
+    4     3       6    1111  109.598855   9      110.326   0.975  0.975  
+    5     5       6    4811  103.242721   11     104.095   0.977  0.977  
+    6     9       6    3811  101.482622   13     102.485   0.977  0.977  
+    ---------------------------------------------------------------------
+    Stopping Condition 2: Improvement below threshold
+
+    Pruning Pass
+    --------------------------------------------------
+    iter  bf  terms  mse      gcv       rsq    grsq   
+    --------------------------------------------------
+    0     -   13     101.48   102.485   0.977  0.977  
+    1     1   12     101.48   102.402   0.977  0.977  
+    2     12  11     101.93   102.772   0.977  0.977  
+    3     10  10     102.45   103.208   0.977  0.977  
+    4     3   9      103.71   104.394   0.977  0.976  
+    5     7   8      103.97   104.573   0.977  0.976  
+    6     11  7      106.98   107.516   0.976  0.976  
+    7     6   6      114.15   114.633   0.974  0.974  
+    8     8   5      141.05   141.529   0.968  0.968  
+    9     4   4      386.34   387.346   0.913  0.913  
+    10    2   3      1999.02  2002.627  0.549  0.548  
+    11    9   2      3765.62  3769.387  0.150  0.149  
+    12    5   1      4430.56  4431.441  0.000  0.000  
+    --------------------------------------------------
+    Selected iteration: 1
+
+    Earth Model
+    ---------------------------------------------------------------
+    Basis Function                            Pruned  Coefficient  
+    ---------------------------------------------------------------
+    (Intercept)                               No      -390.273     
+    h(x6+24.5573)                             Yes     None         
+    h(-24.5573-x6)                            No      16.0595      
+    h(x6-9.30493)*h(x6+24.5573)               No      -2.10343     
+    h(9.30493-x6)*h(x6+24.5573)               No      -0.427249    
+    h(x6+13.4226)                             No      6.38372      
+    h(-13.4226-x6)                            No      -6.68751     
+    h(x6-31.139)*h(x6-9.30493)*h(x6+24.5573)  No      -0.0879511   
+    h(31.139-x6)*h(x6-9.30493)*h(x6+24.5573)  No      0.0899066    
+    h(x6-1.089)*h(x6+13.4226)                 No      -0.407022    
+    h(1.089-x6)*h(x6+13.4226)                 No      0.140094     
+    h(x6-9.30493)*h(x6-1.089)*h(x6+13.4226)   No      0.0960841    
+    h(9.30493-x6)*h(x6-1.089)*h(x6+13.4226)   No      0.0150274    
+    ---------------------------------------------------------------
+    MSE: 101.4826, GCV: 102.4022, RSQ: 0.9771, GRSQ: 0.9769
+
+
+
+
+|
+
+
+.. code-block:: python
+
+    import numpy
+    import matplotlib.pyplot as plt
+
+    from pyearth import Earth
+
+    # Create some fake data
+    numpy.random.seed(2)
+    m = 10000
+    n = 10
+    X = 80 * numpy.random.uniform(size=(m, n)) - 40
+    y = 100 * \
+        (numpy.sin((X[:, 6]) / 10) - 4.0) + \
+        10 * numpy.random.normal(size=m)
+
+    # Fit an Earth model
+    model = Earth(max_degree=3, minspan_alpha=.5)
+    model.fit(X, y)
+
+    # Print the model
+    print(model.trace())
+    print(model.summary())
+
+    # Plot the model
+    y_hat = model.predict(X)
+    plt.plot(X[:, 6], y, 'r.')
+    plt.plot(X[:, 6], y_hat, 'b.')
+    plt.show()
+
+**Total running time of the script:**
+(0 minutes 1.258 seconds)
+
+
+
+.. container:: sphx-glr-download
+
+    **Download Python source code:** :download:`plot_sine_wave.py <plot_sine_wave.py>`
+
+
+.. container:: sphx-glr-download
+
+    **Download IPython notebook:** :download:`plot_sine_wave.ipynb <plot_sine_wave.ipynb>`
