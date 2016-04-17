@@ -9,14 +9,16 @@ requirements:
   build:
     - python
     - setuptools
-    - numpy
-    - scipy
-    - scikit-learn
     - cython
+    - numpy
+    - scikit-learn
     - nose
     - six  
   run:
     - python
+    - numpy
+    - scipy
+    - scikit-learn
     - six  
 
 test:
