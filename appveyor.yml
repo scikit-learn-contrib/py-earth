@@ -48,16 +48,13 @@ install:
   - "pip install sphinx-gallery"
   - "python setup.py build_ext --inplace --cythonize"
   - "python setup.py bdist_wheel bdist_wininst"
-  - ps: "ls dist"
+  - ps: "ls"
   # build the conda package
-  # TODO : commented because we don't have yet a conda-recipe
-  # - "%CMD_IN_ENV% conda build build_tools/conda-recipe --quiet"
-
+  - "conda build conda-recipe"
   # Move the conda package into the dist directory, to register it
   # as an "artifact" for Appveyor. cmd.exe does't have good globbing, so
   # we'll use a simple python script.
-  # TODO : commented because we don't have yet a conda-recipe
-  # - python build_tools/move-conda-package.py build_tools/conda-recipe
+  - "python conda-recipe/move-conda-package.py conda-recipe"
 
   # Install the generated wheel package to test it
   - "pip install --pre --no-index --find-links dist/ py-earth"
