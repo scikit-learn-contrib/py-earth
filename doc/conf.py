@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.abspath(os.path.join('..')))
 # Create the figures
 import generate_figures
 
-import sphinxgallery
+import sphinx_gallery
 
 # -- General configuration -----------------------------------------------
 
@@ -37,7 +37,7 @@ import sphinxgallery
 extensions = ['sphinx.ext.doctest', 'sphinx.ext.todo', 'sphinx.ext.coverage',
               'sphinx.ext.pngmath', 'sphinx.ext.mathjax', 'sphinx.ext.ifconfig',
               'sphinx.ext.viewcode', 'sphinx.ext.autodoc', 'numpydoc', 'sphinx.ext.autosummary',
-              'sphinxcontrib.bibtex', 'sphinxgallery.gen_gallery']
+              'sphinxcontrib.bibtex', 'sphinx_gallery.gen_gallery']
 
 autosummary_generate = True
 numpydoc_show_class_members = False
@@ -138,7 +138,7 @@ html_theme = 'sphinx_rtd_theme'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static', sphinxgallery.glr_path_static()]
+html_static_path = ['_static', sphinx_gallery.glr_path_static()]
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -261,3 +261,9 @@ texinfo_documents = [
 
 # Create the .nojekyll file for github pages
 open(os.path.join('_build', 'html', '.nojekyll'), 'w').close()
+
+sphinx_gallery_conf = {
+    # path to your examples scripts
+    'examples_dirs' : '../examples',
+    # path where to save gallery generated examples
+    'gallery_dirs'  : 'auto_examples'}

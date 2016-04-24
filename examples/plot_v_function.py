@@ -1,9 +1,10 @@
 """
-===================================
+====================================
 Plotting the absolute value function
 ====================================
 
 A simple example plotting a fit of the absolute value function.
+
 """
 
 import numpy

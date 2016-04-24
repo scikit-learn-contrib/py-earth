@@ -1,4 +1,4 @@
-py-earth [![Build Status](https://travis-ci.org/jcrudy/py-earth.png?branch=master)](https://travis-ci.org/jcrudy/py-earth?branch=master)
+py-earth [![Build Status](https://travis-ci.org/scikit-learn-contrib/py-earth.png?branch=master)](https://travis-ci.org/scikit-learn-contrib/py-earth?branch=master)
 ========
 
 A Python implementation of Jerome Friedman's Multivariate Adaptive Regression Splines algorithm, 
@@ -27,7 +27,7 @@ If there are other features or improvements you'd like to see in py-earth, pleas
 Make sure you have numpy and scikit-learn installed.  Then do the following:
 
 ```
-git clone git://github.com/jcrudy/py-earth.git
+git clone git://github.com/scikit-learn-contrib/py-earth.git
 cd py-earth
 sudo python setup.py install
 ```
