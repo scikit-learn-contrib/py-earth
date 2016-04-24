@@ -81,8 +81,8 @@ A Simple Earth Example
 	model.fit(X,y)
     
 	#Print the model
-	print model.trace()
-	print model.summary()
+	print(model.trace())
+	print(model.summary())
     
 	#Plot the model
 	y_hat = model.predict(X)
