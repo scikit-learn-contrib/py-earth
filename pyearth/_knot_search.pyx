@@ -588,15 +588,15 @@ cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p
                 # predictor column is close to linear dependence on previous 
                 # columns.  In that case, correct everything so that we can move
                 # on.
-                print 'this is a problem!'
-                print 'zeta_squared =', working.state.zeta_squared
-                print 'omega_minus_theta_squared =', outcome.sse_
-                print i
-                print 'epsilon_squared =',  working.state.beta - np.dot(working.gamma[:q], working.gamma[:q])
-                print 'alpha =', working.state.alpha
-                print 'gamma * theta =', dot(working.gamma, outcome.theta, q)
-                print 'beta =', working.state.beta
-                print 'gamma^2 = ', dot(working.gamma, working.gamma, q)
+#                 print 'this is a problem!'
+#                 print 'zeta_squared =', working.state.zeta_squared
+#                 print 'omega_minus_theta_squared =', outcome.sse_
+#                 print i
+#                 print 'epsilon_squared =',  working.state.beta - np.dot(working.gamma[:q], working.gamma[:q])
+#                 print 'alpha =', working.state.alpha
+#                 print 'gamma * theta =', dot(working.gamma, outcome.theta, q)
+#                 print 'beta =', working.state.beta
+#                 print 'gamma^2 = ', dot(working.gamma, working.gamma, q)
                 working.state.zeta_squared = 0.
                 working.state.alpha = dot(working.gamma, outcome.theta, q)
                 working.state.beta = dot(working.gamma, working.gamma, q)
