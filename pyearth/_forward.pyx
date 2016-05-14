@@ -91,8 +91,6 @@ cdef class ForwardPasser:
         if self.allow_missing:
             self.has_missing = np.any(self.missing, axis=0).astype(BOOL)
             
-        self.last_fast_empty = False
-        self.last_fast_low_improvement = False
         self.fast_heap = []
 
         if self.xlabels is None:
@@ -209,13 +207,8 @@ cdef class ForwardPasser:
         if last > 0:
             previous_rsq = self.record.rsq(last - 1)
             if rsq - previous_rsq < self.thresh:
-                if self.use_fast and not self.last_fast_low_improvement:
-                    self.last_fast_low_improvement = True
-                else:
-                    self.record.stopping_condition = NOIMPRV
-                    return True
-            elif self.use_fast:
-                self.last_fast_low_improvement = False
+                self.record.stopping_condition = NOIMPRV
+                return True
         if self.record.grsq(last) < -10:
             self.record.stopping_condition = LOWGRSQ
             return True
@@ -299,12 +292,8 @@ cdef class ForwardPasser:
         cdef cnp.ndarray[FLOAT_t, ndim = 1] b
         cdef cnp.ndarray[FLOAT_t, ndim = 1] p
         
-        if self.use_fast and not (self.last_fast_empty or self.last_fast_low_improvement):
-            # choose only among the top "fast_K" basis functions
-            # as parents
+        if self.use_fast:
             nb_basis = min(self.fast_K, k, len(self.fast_heap))
-        elif self.use_fast:
-            nb_basis = min(k, len(self.fast_heap))
         else:
             nb_basis = k
 
@@ -327,7 +316,7 @@ cdef class ForwardPasser:
 
             if self.use_fast:
                 # each "fast_h" iteration, force to pass through all the variables,
-                if self.iteration_number - parent_basis_content.m > self.fast_h or self.last_fast_empty:
+                if self.iteration_number - parent_basis_content.m > self.fast_h:
                     variables = range(self.n)
                     parent_basis_content.m = self.iteration_number
                 # in the opposite case, just use the last chosen variable
@@ -460,7 +449,6 @@ cdef class ForwardPasser:
                 if mse < mse_choice or first:
                     if first:
                         first = False
-                        self.last_fast_empty = False
                     knot_choice = knot
                     mse_choice = mse
                     knot_idx_choice = knot_idx
@@ -491,12 +479,8 @@ cdef class ForwardPasser:
 
         # Make sure at least one candidate was checked
         if first:
-            if self.use_fast and not self.last_fast_empty:
-                self.last_fast_empty = True
-                return
-            else:
-                self.record[len(self.record) - 1].set_no_candidates(True)
-                return
+            self.record[len(self.record) - 1].set_no_candidates(True)
+            return
         
         # Add the new basis functions
         label = self.xlabels[variable_choice]
