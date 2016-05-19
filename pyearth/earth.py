@@ -8,20 +8,6 @@ from sklearn.utils.validation import (assert_all_finite, check_is_fitted,
 import numpy as np
 from scipy import sparse
 
-
-MAXTERMS = 0
-MAXRSQ = 1
-NOIMPRV = 2
-LOWGRSQ = 3
-NOCAND = 4
-stopping_conditions = {
-    MAXTERMS: "Reached maximum number of terms",
-    MAXRSQ: "Achieved RSQ value within threshold of 1",
-    NOIMPRV: "Improvement below threshold",
-    LOWGRSQ: "GRSQ too low",
-    NOCAND: "No remaining candidate knot locations"
-}
-
 class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
     """
@@ -185,8 +171,11 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
     enable_pruning : bool, optional(default=True)
         If False, the pruning pass will be skipped.
         
-    verbose : bool, optional(default=False)
-        Print out progress information during fitting.
+    verbose : int, optional(default=0)
+        If verbose >= 1, print out progress information during fitting.  If 
+        verbose >= 2, also print out information on numerical difficulties
+        if encountered during fitting. If verbose >= 3, print even more information
+        that is probably only useful to the developers of py-earth.
 
     Attributes
     ----------
@@ -276,7 +265,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                  thresh=None, zero_tol=None, min_search_points=None, 
                  check_every=None,
                  allow_linear=None, use_fast=None, fast_K=None,
-                 fast_h=None, smooth=None, enable_pruning=True, verbose=False):
+                 fast_h=None, smooth=None, enable_pruning=True, verbose=0):
         kwargs = {}
         call = locals()
         for name in self._get_param_names():
@@ -1253,11 +1242,12 @@ class EarthTrace(object):
         result = ''
         result += 'Forward Pass\n'
         result += str(self.forward_trace)
-        result += '\nStopping Condition %d: %s\n' % (
-            self.forward_trace.stopping_condition,
-            stopping_conditions[self.forward_trace.stopping_condition])
         result += '\n'
+        result += self.forward_trace.final_str()
+        result += '\n\n'
         result += 'Pruning Pass\n'
         result += str(self.pruning_trace)
-        result += '\nSelected iteration: ' + str(self.pruning_trace.selected) + '\n'
+        result += '\n'
+        result += self.pruning_trace.final_str()
+        result += '\n'
         return result

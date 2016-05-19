@@ -172,7 +172,7 @@ def test_knot_search():
     # Run fast knot search and compare results to slow knot search
     fast_best_knot, fast_best_k, fast_best_e = knot_search(data, candidates, 
                                                            p, q, m, r, 
-                                                           len(outcomes))
+                                                           len(outcomes), 0)
     assert_almost_equal(fast_best_knot, best_knot)
     assert_equal(candidates[fast_best_k], candidates[best_k])
     assert_almost_equal(fast_best_e, best_e)

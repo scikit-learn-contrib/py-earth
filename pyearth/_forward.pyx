@@ -87,7 +87,7 @@ cdef class ForwardPasser:
         self.fast_h = kwargs.get("fast_h", 1)
         self.zero_tol = kwargs.get('zero_tol', 1e-12)
         self.allow_missing = kwargs.get("allow_missing", False)
-        self.verbose = kwargs.get("verbose", False)
+        self.verbose = kwargs.get("verbose", 0)
         if self.allow_missing:
             self.has_missing = np.any(self.missing, axis=0).astype(BOOL)
             
@@ -183,19 +183,23 @@ cdef class ForwardPasser:
                 linear_variables[variable] = 0
                 
     cpdef run(ForwardPasser self):
-        if self.verbose:
+        if self.verbose >= 1:
             print('Beginning forward pass')
             print(self.record.partial_str(slice(-1, None, None), print_footer=False))
         if self.max_terms > 1:
             while True:
                 self.next_pair()
                 if self.stop_check():
+                    if self.verbose >= 1:
+                        print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=True))
+                        print(self.record.final_str())
                     break
+                else:
+                    if self.verbose >= 1:
+                        print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
                 self.iteration_number += 1
 
     cdef stop_check(ForwardPasser self):
-        if self.verbose:
-            print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
         last = self.record.__len__() - 1
         if self.record.iterations[last].get_size() > self.max_terms:
             self.record.stopping_condition = MAXTERMS
@@ -215,7 +219,9 @@ cdef class ForwardPasser:
         if self.record.iterations[last].no_further_candidates():
             self.record.stopping_condition = NOCAND
             return True
+        
         return False
+        
     
     cpdef orthonormal_update(ForwardPasser self, b):
         # Update the outcome data
@@ -411,7 +417,8 @@ cdef class ForwardPasser:
 
                         # Run knot search
                         knot, knot_idx, mse = knot_search(search_data, candidates, p, q, 
-                                                          self.m, len(candidates), self.n_outcomes)
+                                                          self.m, len(candidates), self.n_outcomes,
+                                                          self.verbose)
                         mse /= self.total_weight
                         knot_idx = candidates_idx[knot_idx]
                         

@@ -514,17 +514,17 @@ cdef inline void fast_update(PredictorDependentData predictor, SingleOutcomeDepe
     working.state.upsilon += delta_upsilon
     
 cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p, INDEX_t q, INDEX_t m, 
-                 INDEX_t r, INDEX_t n_outcomes):
+                 INDEX_t r, INDEX_t n_outcomes, int verbose):
     cdef KnotSearchReadOnlyData constant = data.constant
     cdef PredictorDependentData predictor = constant.predictor
     cdef list outcomes = constant.outcome.outcomes
     cdef list workings = data.workings
     
-    # TODO: Remove these assertions
-    assert len(outcomes) == n_outcomes
-    assert len(workings) == len(outcomes)
-    assert len(candidates) == r
-    assert outcomes[0].k == q
+    # These assertions should be satisfied
+    # assert len(outcomes) == n_outcomes
+    # assert len(workings) == len(outcomes)
+    # assert len(candidates) == r
+    # assert outcomes[0].k == q
     
     # Initialize variables to their pre-loop values.  These are the values
     # they would have for a hypothetical knot candidate, phi, such that
@@ -597,6 +597,25 @@ cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p
 #                 print 'gamma * theta =', dot(working.gamma, outcome.theta, q)
 #                 print 'beta =', working.state.beta
 #                 print 'gamma^2 = ', dot(working.gamma, working.gamma, q)
+                if verbose >= 2:
+                    print('Encountered numerical problem in knot search.  The problem is being corrected by a slower computation.')
+                    if verbose >= 3:
+                        print('Potentially helpful numbers if you are really interested:')
+                        print('zeta_squared = %f') % zeta_squared
+                        print('omega_minus_theta_squared = %f' % outcome.sse_)
+                        print('epsilon_squared =',  working.state.beta - np.dot(working.gamma[:q], working.gamma[:q]))
+                        print('alpha =', working.state.alpha)
+                        print('gamma * theta =', dot(working.gamma, outcome.theta, q))
+                        print('beta =', working.state.beta)
+                        print('gamma^2 = ', dot(working.gamma, working.gamma, q))
+                        print('phi = ' % working.state.phi)
+                        print('phi_next = ' % working.state.phi_next)
+                        print('p = %d' % p)
+                        print('q = %d' % q)
+                        print('m = %d' % m)
+                        print('r = %d' % r)
+                        print('k = %d' % k)
+                        print('i = %d' % i)
                 working.state.zeta_squared = 0.
                 working.state.alpha = dot(working.gamma, outcome.theta, q)
                 working.state.beta = dot(working.gamma, working.gamma, q)

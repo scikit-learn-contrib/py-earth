@@ -6,6 +6,20 @@
 
 from ._util cimport gcv, ascii_table
 
+
+MAXTERMS = 0
+MAXRSQ = 1
+NOIMPRV = 2
+LOWGRSQ = 3
+NOCAND = 4
+stopping_conditions = {
+    MAXTERMS: "Reached maximum number of terms",
+    MAXRSQ: "Achieved RSQ value within threshold of 1",
+    NOIMPRV: "Improvement below threshold",
+    LOWGRSQ: "GRSQ too low",
+    NOCAND: "No remaining candidate knot locations"
+}
+
 cdef class Record:
 
     def __richcmp__(self, other, method):
@@ -108,6 +122,9 @@ cdef class PruningPassRecord(Record):
         result += ascii_table(header, data, print_header, print_footer)
 #         result += '\nSelected iteration: ' + str(self.selected) + '\n'
         return result
+    
+    def final_str(PruningPassRecord self):
+        return 'Selected iteration: ' + str(self.selected)
 
 cdef class ForwardPassRecord(Record):
     def __init__(ForwardPassRecord self,
@@ -180,6 +197,11 @@ cdef class ForwardPassRecord(Record):
 #             stopping_conditions[self.stopping_condition])
         return result
 
+    def final_str(ForwardPassRecord self):
+        return 'Stopping Condition %d: %s' % (
+            self.stopping_condition,
+            stopping_conditions[self.stopping_condition])
+        
 cdef class Iteration:
 
     def __richcmp__(self, other, method):

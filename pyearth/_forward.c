@@ -3025,7 +3025,7 @@ static PyTypeObject *__pyx_ptype_7pyearth_12_knot_search_KnotSearchReadOnlyData 
 static PyTypeObject *__pyx_ptype_7pyearth_12_knot_search_KnotSearchState = 0;
 static PyTypeObject *__pyx_ptype_7pyearth_12_knot_search_KnotSearchWorkingData = 0;
 static PyTypeObject *__pyx_ptype_7pyearth_12_knot_search_KnotSearchData = 0;
-static PyObject *(*__pyx_f_7pyearth_12_knot_search_knot_search)(struct __pyx_obj_7pyearth_12_knot_search_KnotSearchData *, __Pyx_memviewslice, __Pyx_memviewslice, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch); /*proto*/
+static PyObject *(*__pyx_f_7pyearth_12_knot_search_knot_search)(struct __pyx_obj_7pyearth_12_knot_search_KnotSearchData *, __Pyx_memviewslice, __Pyx_memviewslice, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_INDEX_t, int, int __pyx_skip_dispatch); /*proto*/
 
 /* Module declarations from 'pyearth._util' */
 static __pyx_t_7pyearth_6_types_FLOAT_t (*__pyx_f_7pyearth_5_util_log2)(__pyx_t_7pyearth_6_types_FLOAT_t); /*proto*/
@@ -3199,6 +3199,7 @@ static const char __pyx_k_use_fast[] = "use_fast";
 static const char __pyx_k_zero_tol[] = "zero_tol";
 static const char __pyx_k_TypeError[] = "TypeError";
 static const char __pyx_k_enumerate[] = "enumerate";
+static const char __pyx_k_final_str[] = "final_str";
 static const char __pyx_k_get_basis[] = "get_basis";
 static const char __pyx_k_max_terms[] = "max_terms";
 static const char __pyx_k_metaclass[] = "__metaclass__";
@@ -3334,6 +3335,7 @@ static PyObject *__pyx_n_s_error;
 static PyObject *__pyx_n_s_fast_K;
 static PyObject *__pyx_n_s_fast_h;
 static PyObject *__pyx_n_s_file;
+static PyObject *__pyx_n_s_final_str;
 static PyObject *__pyx_n_s_flags;
 static PyObject *__pyx_n_s_float;
 static PyObject *__pyx_n_s_format;
@@ -3508,16 +3510,15 @@ static PyObject *__pyx_tuple__6;
 static PyObject *__pyx_slice__10;
 static PyObject *__pyx_slice__11;
 static PyObject *__pyx_slice__13;
-static PyObject *__pyx_slice__16;
-static PyObject *__pyx_slice__17;
+static PyObject *__pyx_slice__15;
 static PyObject *__pyx_slice__18;
 static PyObject *__pyx_slice__19;
 static PyObject *__pyx_slice__20;
 static PyObject *__pyx_slice__21;
 static PyObject *__pyx_slice__22;
 static PyObject *__pyx_slice__23;
+static PyObject *__pyx_slice__24;
 static PyObject *__pyx_slice__25;
-static PyObject *__pyx_slice__26;
 static PyObject *__pyx_slice__27;
 static PyObject *__pyx_slice__28;
 static PyObject *__pyx_slice__29;
@@ -3526,15 +3527,16 @@ static PyObject *__pyx_slice__31;
 static PyObject *__pyx_slice__32;
 static PyObject *__pyx_slice__33;
 static PyObject *__pyx_slice__34;
-static PyObject *__pyx_slice__51;
-static PyObject *__pyx_slice__52;
+static PyObject *__pyx_slice__35;
+static PyObject *__pyx_slice__36;
 static PyObject *__pyx_slice__53;
+static PyObject *__pyx_slice__54;
+static PyObject *__pyx_slice__55;
 static PyObject *__pyx_tuple__12;
 static PyObject *__pyx_tuple__14;
-static PyObject *__pyx_tuple__15;
-static PyObject *__pyx_tuple__24;
-static PyObject *__pyx_tuple__35;
-static PyObject *__pyx_tuple__36;
+static PyObject *__pyx_tuple__16;
+static PyObject *__pyx_tuple__17;
+static PyObject *__pyx_tuple__26;
 static PyObject *__pyx_tuple__37;
 static PyObject *__pyx_tuple__38;
 static PyObject *__pyx_tuple__39;
@@ -3549,16 +3551,18 @@ static PyObject *__pyx_tuple__47;
 static PyObject *__pyx_tuple__48;
 static PyObject *__pyx_tuple__49;
 static PyObject *__pyx_tuple__50;
-static PyObject *__pyx_tuple__54;
-static PyObject *__pyx_tuple__55;
+static PyObject *__pyx_tuple__51;
+static PyObject *__pyx_tuple__52;
+static PyObject *__pyx_tuple__56;
 static PyObject *__pyx_tuple__57;
 static PyObject *__pyx_tuple__59;
-static PyObject *__pyx_tuple__60;
 static PyObject *__pyx_tuple__61;
 static PyObject *__pyx_tuple__62;
 static PyObject *__pyx_tuple__63;
-static PyObject *__pyx_codeobj__56;
+static PyObject *__pyx_tuple__64;
+static PyObject *__pyx_tuple__65;
 static PyObject *__pyx_codeobj__58;
+static PyObject *__pyx_codeobj__60;
 
 /* "pyearth/_forward.pyx":23
  * class FastHeapContent:
@@ -4361,7 +4365,7 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
  *         self.fast_h = kwargs.get("fast_h", 1)
  *         self.zero_tol = kwargs.get('zero_tol', 1e-12)             # <<<<<<<<<<<<<<
  *         self.allow_missing = kwargs.get("allow_missing", False)
- *         self.verbose = kwargs.get("verbose", False)
+ *         self.verbose = kwargs.get("verbose", 0)
  */
   __pyx_t_3 = __Pyx_PyDict_GetItemDefault(__pyx_v_kwargs, __pyx_n_s_zero_tol, __pyx_float_1eneg_12); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 88, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -4373,7 +4377,7 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
  *         self.fast_h = kwargs.get("fast_h", 1)
  *         self.zero_tol = kwargs.get('zero_tol', 1e-12)
  *         self.allow_missing = kwargs.get("allow_missing", False)             # <<<<<<<<<<<<<<
- *         self.verbose = kwargs.get("verbose", False)
+ *         self.verbose = kwargs.get("verbose", 0)
  *         if self.allow_missing:
  */
   __pyx_t_3 = __Pyx_PyDict_GetItemDefault(__pyx_v_kwargs, __pyx_n_s_allow_missing, Py_False); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 89, __pyx_L1_error)
@@ -4385,19 +4389,19 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
   /* "pyearth/_forward.pyx":90
  *         self.zero_tol = kwargs.get('zero_tol', 1e-12)
  *         self.allow_missing = kwargs.get("allow_missing", False)
- *         self.verbose = kwargs.get("verbose", False)             # <<<<<<<<<<<<<<
+ *         self.verbose = kwargs.get("verbose", 0)             # <<<<<<<<<<<<<<
  *         if self.allow_missing:
  *             self.has_missing = np.any(self.missing, axis=0).astype(BOOL)
  */
-  __pyx_t_3 = __Pyx_PyDict_GetItemDefault(__pyx_v_kwargs, __pyx_n_s_verbose, Py_False); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 90, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_GetItemDefault(__pyx_v_kwargs, __pyx_n_s_verbose, __pyx_int_0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 90, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 90, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 90, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_v_self->verbose = __pyx_t_7;
+  __pyx_v_self->verbose = __pyx_t_5;
 
   /* "pyearth/_forward.pyx":91
  *         self.allow_missing = kwargs.get("allow_missing", False)
- *         self.verbose = kwargs.get("verbose", False)
+ *         self.verbose = kwargs.get("verbose", 0)
  *         if self.allow_missing:             # <<<<<<<<<<<<<<
  *             self.has_missing = np.any(self.missing, axis=0).astype(BOOL)
  * 
@@ -4406,7 +4410,7 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
   if (__pyx_t_7) {
 
     /* "pyearth/_forward.pyx":92
- *         self.verbose = kwargs.get("verbose", False)
+ *         self.verbose = kwargs.get("verbose", 0)
  *         if self.allow_missing:
  *             self.has_missing = np.any(self.missing, axis=0).astype(BOOL)             # <<<<<<<<<<<<<<
  * 
@@ -4470,7 +4474,7 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
 
     /* "pyearth/_forward.pyx":91
  *         self.allow_missing = kwargs.get("allow_missing", False)
- *         self.verbose = kwargs.get("verbose", False)
+ *         self.verbose = kwargs.get("verbose", 0)
  *         if self.allow_missing:             # <<<<<<<<<<<<<<
  *             self.has_missing = np.any(self.missing, axis=0).astype(BOOL)
  * 
@@ -6269,7 +6273,7 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_4init_linear_variab
  *                 linear_variables[variable] = 0
  * 
  *     cpdef run(ForwardPasser self):             # <<<<<<<<<<<<<<
- *         if self.verbose:
+ *         if self.verbose >= 1:
  *             print('Beginning forward pass')
  */
 
@@ -6321,16 +6325,16 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
   /* "pyearth/_forward.pyx":186
  * 
  *     cpdef run(ForwardPasser self):
- *         if self.verbose:             # <<<<<<<<<<<<<<
+ *         if self.verbose >= 1:             # <<<<<<<<<<<<<<
  *             print('Beginning forward pass')
  *             print(self.record.partial_str(slice(-1, None, None), print_footer=False))
  */
-  __pyx_t_5 = (__pyx_v_self->verbose != 0);
+  __pyx_t_5 = ((__pyx_v_self->verbose >= 1) != 0);
   if (__pyx_t_5) {
 
     /* "pyearth/_forward.pyx":187
  *     cpdef run(ForwardPasser self):
- *         if self.verbose:
+ *         if self.verbose >= 1:
  *             print('Beginning forward pass')             # <<<<<<<<<<<<<<
  *             print(self.record.partial_str(slice(-1, None, None), print_footer=False))
  *         if self.max_terms > 1:
@@ -6338,7 +6342,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
     if (__Pyx_PrintOne(0, __pyx_kp_s_Beginning_forward_pass) < 0) __PYX_ERR(0, 187, __pyx_L1_error)
 
     /* "pyearth/_forward.pyx":188
- *         if self.verbose:
+ *         if self.verbose >= 1:
  *             print('Beginning forward pass')
  *             print(self.record.partial_str(slice(-1, None, None), print_footer=False))             # <<<<<<<<<<<<<<
  *         if self.max_terms > 1:
@@ -6359,7 +6363,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
     /* "pyearth/_forward.pyx":186
  * 
  *     cpdef run(ForwardPasser self):
- *         if self.verbose:             # <<<<<<<<<<<<<<
+ *         if self.verbose >= 1:             # <<<<<<<<<<<<<<
  *             print('Beginning forward pass')
  *             print(self.record.partial_str(slice(-1, None, None), print_footer=False))
  */
@@ -6389,7 +6393,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
  *             while True:
  *                 self.next_pair()             # <<<<<<<<<<<<<<
  *                 if self.stop_check():
- *                     break
+ *                     if self.verbose >= 1:
  */
       __pyx_t_3 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->next_pair(__pyx_v_self); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 191, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
@@ -6399,8 +6403,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
  *             while True:
  *                 self.next_pair()
  *                 if self.stop_check():             # <<<<<<<<<<<<<<
- *                     break
- *                 self.iteration_number += 1
+ *                     if self.verbose >= 1:
+ *                         print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=True))
  */
       __pyx_t_3 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->stop_check(__pyx_v_self); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 192, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
@@ -6411,9 +6415,78 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
         /* "pyearth/_forward.pyx":193
  *                 self.next_pair()
  *                 if self.stop_check():
+ *                     if self.verbose >= 1:             # <<<<<<<<<<<<<<
+ *                         print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=True))
+ *                         print(self.record.final_str())
+ */
+        __pyx_t_5 = ((__pyx_v_self->verbose >= 1) != 0);
+        if (__pyx_t_5) {
+
+          /* "pyearth/_forward.pyx":194
+ *                 if self.stop_check():
+ *                     if self.verbose >= 1:
+ *                         print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=True))             # <<<<<<<<<<<<<<
+ *                         print(self.record.final_str())
+ *                     break
+ */
+          __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self->record), __pyx_n_s_partial_str); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 194, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_3);
+          __pyx_t_2 = PyDict_New(); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 194, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_print_header, Py_False) < 0) __PYX_ERR(0, 194, __pyx_L1_error)
+          if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_print_footer, Py_True) < 0) __PYX_ERR(0, 194, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__14, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 194, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+          if (__Pyx_PrintOne(0, __pyx_t_1) < 0) __PYX_ERR(0, 194, __pyx_L1_error)
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+          /* "pyearth/_forward.pyx":195
+ *                     if self.verbose >= 1:
+ *                         print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=True))
+ *                         print(self.record.final_str())             # <<<<<<<<<<<<<<
+ *                     break
+ *                 else:
+ */
+          __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self->record), __pyx_n_s_final_str); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 195, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          __pyx_t_3 = NULL;
+          if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
+            __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+            if (likely(__pyx_t_3)) {
+              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+              __Pyx_INCREF(__pyx_t_3);
+              __Pyx_INCREF(function);
+              __Pyx_DECREF_SET(__pyx_t_2, function);
+            }
+          }
+          if (__pyx_t_3) {
+            __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 195, __pyx_L1_error)
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          } else {
+            __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 195, __pyx_L1_error)
+          }
+          __Pyx_GOTREF(__pyx_t_1);
+          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+          if (__Pyx_PrintOne(0, __pyx_t_1) < 0) __PYX_ERR(0, 195, __pyx_L1_error)
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+          /* "pyearth/_forward.pyx":193
+ *                 self.next_pair()
+ *                 if self.stop_check():
+ *                     if self.verbose >= 1:             # <<<<<<<<<<<<<<
+ *                         print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=True))
+ *                         print(self.record.final_str())
+ */
+        }
+
+        /* "pyearth/_forward.pyx":196
+ *                         print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=True))
+ *                         print(self.record.final_str())
  *                     break             # <<<<<<<<<<<<<<
- *                 self.iteration_number += 1
- * 
+ *                 else:
+ *                     if self.verbose >= 1:
  */
         goto __pyx_L6_break;
 
@@ -6421,14 +6494,55 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
  *             while True:
  *                 self.next_pair()
  *                 if self.stop_check():             # <<<<<<<<<<<<<<
- *                     break
- *                 self.iteration_number += 1
+ *                     if self.verbose >= 1:
+ *                         print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=True))
  */
       }
 
-      /* "pyearth/_forward.pyx":194
- *                 if self.stop_check():
+      /* "pyearth/_forward.pyx":198
  *                     break
+ *                 else:
+ *                     if self.verbose >= 1:             # <<<<<<<<<<<<<<
+ *                         print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
+ *                 self.iteration_number += 1
+ */
+      /*else*/ {
+        __pyx_t_5 = ((__pyx_v_self->verbose >= 1) != 0);
+        if (__pyx_t_5) {
+
+          /* "pyearth/_forward.pyx":199
+ *                 else:
+ *                     if self.verbose >= 1:
+ *                         print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))             # <<<<<<<<<<<<<<
+ *                 self.iteration_number += 1
+ * 
+ */
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self->record), __pyx_n_s_partial_str); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 199, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_t_2 = PyDict_New(); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 199, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_print_header, Py_False) < 0) __PYX_ERR(0, 199, __pyx_L1_error)
+          if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_print_footer, Py_False) < 0) __PYX_ERR(0, 199, __pyx_L1_error)
+          __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__16, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 199, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_3);
+          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+          if (__Pyx_PrintOne(0, __pyx_t_3) < 0) __PYX_ERR(0, 199, __pyx_L1_error)
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+          /* "pyearth/_forward.pyx":198
+ *                     break
+ *                 else:
+ *                     if self.verbose >= 1:             # <<<<<<<<<<<<<<
+ *                         print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
+ *                 self.iteration_number += 1
+ */
+        }
+      }
+
+      /* "pyearth/_forward.pyx":200
+ *                     if self.verbose >= 1:
+ *                         print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
  *                 self.iteration_number += 1             # <<<<<<<<<<<<<<
  * 
  *     cdef stop_check(ForwardPasser self):
@@ -6450,7 +6564,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_run(struct __pyx_obj
  *                 linear_variables[variable] = 0
  * 
  *     cpdef run(ForwardPasser self):             # <<<<<<<<<<<<<<
- *         if self.verbose:
+ *         if self.verbose >= 1:
  *             print('Beginning forward pass')
  */
 
@@ -6506,12 +6620,12 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_6run(struct __pyx_o
   return __pyx_r;
 }
 
-/* "pyearth/_forward.pyx":196
+/* "pyearth/_forward.pyx":202
  *                 self.iteration_number += 1
  * 
  *     cdef stop_check(ForwardPasser self):             # <<<<<<<<<<<<<<
- *         if self.verbose:
- *             print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
+ *         last = self.record.__len__() - 1
+ *         if self.record.iterations[last].get_size() > self.max_terms:
  */
 
 static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __pyx_obj_7pyearth_8_forward_ForwardPasser *__pyx_v_self) {
@@ -6520,87 +6634,48 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
   PyObject *__pyx_v_previous_rsq = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  int __pyx_t_1;
+  PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
-  PyObject *__pyx_t_4 = NULL;
+  int __pyx_t_4;
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_5;
   __Pyx_RefNannySetupContext("stop_check", 0);
 
-  /* "pyearth/_forward.pyx":197
+  /* "pyearth/_forward.pyx":203
  * 
  *     cdef stop_check(ForwardPasser self):
- *         if self.verbose:             # <<<<<<<<<<<<<<
- *             print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
- *         last = self.record.__len__() - 1
- */
-  __pyx_t_1 = (__pyx_v_self->verbose != 0);
-  if (__pyx_t_1) {
-
-    /* "pyearth/_forward.pyx":198
- *     cdef stop_check(ForwardPasser self):
- *         if self.verbose:
- *             print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))             # <<<<<<<<<<<<<<
- *         last = self.record.__len__() - 1
- *         if self.record.iterations[last].get_size() > self.max_terms:
- */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self->record), __pyx_n_s_partial_str); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 198, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PyDict_New(); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 198, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_print_header, Py_False) < 0) __PYX_ERR(0, 198, __pyx_L1_error)
-    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_print_footer, Py_False) < 0) __PYX_ERR(0, 198, __pyx_L1_error)
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_tuple__14, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 198, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (__Pyx_PrintOne(0, __pyx_t_4) < 0) __PYX_ERR(0, 198, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-
-    /* "pyearth/_forward.pyx":197
- * 
- *     cdef stop_check(ForwardPasser self):
- *         if self.verbose:             # <<<<<<<<<<<<<<
- *             print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
- *         last = self.record.__len__() - 1
- */
-  }
-
-  /* "pyearth/_forward.pyx":199
- *         if self.verbose:
- *             print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
  *         last = self.record.__len__() - 1             # <<<<<<<<<<<<<<
  *         if self.record.iterations[last].get_size() > self.max_terms:
  *             self.record.stopping_condition = MAXTERMS
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self->record), __pyx_n_s_len); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 199, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = NULL;
-  if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_3))) {
-    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
-    if (likely(__pyx_t_2)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-      __Pyx_INCREF(__pyx_t_2);
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self->record), __pyx_n_s_len); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = NULL;
+  if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_3);
       __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_3, function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
     }
   }
-  if (__pyx_t_2) {
-    __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 199, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (__pyx_t_3) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 203, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   } else {
-    __pyx_t_4 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 199, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 203, __pyx_L1_error)
   }
-  __Pyx_GOTREF(__pyx_t_4);
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyInt_SubtractObjC(__pyx_t_4, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 199, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_v_last = __pyx_t_3;
-  __pyx_t_3 = 0;
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_PyInt_SubtractObjC(__pyx_t_1, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_last = __pyx_t_2;
+  __pyx_t_2 = 0;
 
-  /* "pyearth/_forward.pyx":200
- *             print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
+  /* "pyearth/_forward.pyx":204
+ *     cdef stop_check(ForwardPasser self):
  *         last = self.record.__len__() - 1
  *         if self.record.iterations[last].get_size() > self.max_terms:             # <<<<<<<<<<<<<<
  *             self.record.stopping_condition = MAXTERMS
@@ -6608,41 +6683,41 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
   if (unlikely(__pyx_v_self->record->__pyx_base.iterations == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 200, __pyx_L1_error)
+    __PYX_ERR(0, 204, __pyx_L1_error)
   }
-  __pyx_t_4 = PyObject_GetItem(__pyx_v_self->record->__pyx_base.iterations, __pyx_v_last); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 200, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_get_size); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 200, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = NULL;
-  if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
-    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_2);
-    if (likely(__pyx_t_4)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-      __Pyx_INCREF(__pyx_t_4);
+  __pyx_t_1 = PyObject_GetItem(__pyx_v_self->record->__pyx_base.iterations, __pyx_v_last); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 204, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_get_size); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 204, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = NULL;
+  if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_1)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_1);
       __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_2, function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
     }
   }
-  if (__pyx_t_4) {
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 200, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  } else {
-    __pyx_t_3 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 200, __pyx_L1_error)
-  }
-  __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->max_terms); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 200, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = PyObject_RichCompare(__pyx_t_3, __pyx_t_2, Py_GT); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 200, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 200, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   if (__pyx_t_1) {
+    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 204, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  } else {
+    __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 204, __pyx_L1_error)
+  }
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_self->max_terms); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 204, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_1 = PyObject_RichCompare(__pyx_t_2, __pyx_t_3, Py_GT); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 204, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 204, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  if (__pyx_t_4) {
 
-    /* "pyearth/_forward.pyx":201
+    /* "pyearth/_forward.pyx":205
  *         last = self.record.__len__() - 1
  *         if self.record.iterations[last].get_size() > self.max_terms:
  *             self.record.stopping_condition = MAXTERMS             # <<<<<<<<<<<<<<
@@ -6651,7 +6726,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
     __pyx_v_self->record->stopping_condition = __pyx_v_7pyearth_8_forward_MAXTERMS;
 
-    /* "pyearth/_forward.pyx":202
+    /* "pyearth/_forward.pyx":206
  *         if self.record.iterations[last].get_size() > self.max_terms:
  *             self.record.stopping_condition = MAXTERMS
  *             return True             # <<<<<<<<<<<<<<
@@ -6663,8 +6738,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
     __pyx_r = Py_True;
     goto __pyx_L0;
 
-    /* "pyearth/_forward.pyx":200
- *             print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
+    /* "pyearth/_forward.pyx":204
+ *     cdef stop_check(ForwardPasser self):
  *         last = self.record.__len__() - 1
  *         if self.record.iterations[last].get_size() > self.max_terms:             # <<<<<<<<<<<<<<
  *             self.record.stopping_condition = MAXTERMS
@@ -6672,35 +6747,35 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
   }
 
-  /* "pyearth/_forward.pyx":203
+  /* "pyearth/_forward.pyx":207
  *             self.record.stopping_condition = MAXTERMS
  *             return True
  *         rsq = self.record.rsq(last)             # <<<<<<<<<<<<<<
  *         if rsq > 1 - self.thresh:
  *             self.record.stopping_condition = MAXRSQ
  */
-  __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_last); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 203, __pyx_L1_error)
-  __pyx_t_4 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->record->__pyx_base.__pyx_vtab)->__pyx_base.rsq(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self->record), __pyx_t_5, 0)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 203, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __pyx_v_rsq = __pyx_t_4;
-  __pyx_t_4 = 0;
+  __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_last); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 207, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->record->__pyx_base.__pyx_vtab)->__pyx_base.rsq(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self->record), __pyx_t_5, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 207, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_rsq = __pyx_t_1;
+  __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":204
+  /* "pyearth/_forward.pyx":208
  *             return True
  *         rsq = self.record.rsq(last)
  *         if rsq > 1 - self.thresh:             # <<<<<<<<<<<<<<
  *             self.record.stopping_condition = MAXRSQ
  *             return True
  */
-  __pyx_t_4 = PyFloat_FromDouble((1.0 - __pyx_v_self->thresh)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 204, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_2 = PyObject_RichCompare(__pyx_v_rsq, __pyx_t_4, Py_GT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 204, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 204, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (__pyx_t_1) {
+  __pyx_t_1 = PyFloat_FromDouble((1.0 - __pyx_v_self->thresh)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 208, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_3 = PyObject_RichCompare(__pyx_v_rsq, __pyx_t_1, Py_GT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 208, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 208, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (__pyx_t_4) {
 
-    /* "pyearth/_forward.pyx":205
+    /* "pyearth/_forward.pyx":209
  *         rsq = self.record.rsq(last)
  *         if rsq > 1 - self.thresh:
  *             self.record.stopping_condition = MAXRSQ             # <<<<<<<<<<<<<<
@@ -6709,7 +6784,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
     __pyx_v_self->record->stopping_condition = __pyx_v_7pyearth_8_forward_MAXRSQ;
 
-    /* "pyearth/_forward.pyx":206
+    /* "pyearth/_forward.pyx":210
  *         if rsq > 1 - self.thresh:
  *             self.record.stopping_condition = MAXRSQ
  *             return True             # <<<<<<<<<<<<<<
@@ -6721,7 +6796,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
     __pyx_r = Py_True;
     goto __pyx_L0;
 
-    /* "pyearth/_forward.pyx":204
+    /* "pyearth/_forward.pyx":208
  *             return True
  *         rsq = self.record.rsq(last)
  *         if rsq > 1 - self.thresh:             # <<<<<<<<<<<<<<
@@ -6730,53 +6805,53 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
   }
 
-  /* "pyearth/_forward.pyx":207
+  /* "pyearth/_forward.pyx":211
  *             self.record.stopping_condition = MAXRSQ
  *             return True
  *         if last > 0:             # <<<<<<<<<<<<<<
  *             previous_rsq = self.record.rsq(last - 1)
  *             if rsq - previous_rsq < self.thresh:
  */
-  __pyx_t_2 = PyObject_RichCompare(__pyx_v_last, __pyx_int_0, Py_GT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 207, __pyx_L1_error)
-  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 207, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (__pyx_t_1) {
+  __pyx_t_3 = PyObject_RichCompare(__pyx_v_last, __pyx_int_0, Py_GT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 211, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 211, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (__pyx_t_4) {
 
-    /* "pyearth/_forward.pyx":208
+    /* "pyearth/_forward.pyx":212
  *             return True
  *         if last > 0:
  *             previous_rsq = self.record.rsq(last - 1)             # <<<<<<<<<<<<<<
  *             if rsq - previous_rsq < self.thresh:
  *                 self.record.stopping_condition = NOIMPRV
  */
-    __pyx_t_2 = __Pyx_PyInt_SubtractObjC(__pyx_v_last, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 208, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_2); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 208, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->record->__pyx_base.__pyx_vtab)->__pyx_base.rsq(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self->record), __pyx_t_5, 0)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 208, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_v_previous_rsq = __pyx_t_2;
-    __pyx_t_2 = 0;
+    __pyx_t_3 = __Pyx_PyInt_SubtractObjC(__pyx_v_last, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 212, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_3); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 212, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_3 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->record->__pyx_base.__pyx_vtab)->__pyx_base.rsq(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self->record), __pyx_t_5, 0)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 212, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_v_previous_rsq = __pyx_t_3;
+    __pyx_t_3 = 0;
 
-    /* "pyearth/_forward.pyx":209
+    /* "pyearth/_forward.pyx":213
  *         if last > 0:
  *             previous_rsq = self.record.rsq(last - 1)
  *             if rsq - previous_rsq < self.thresh:             # <<<<<<<<<<<<<<
  *                 self.record.stopping_condition = NOIMPRV
  *                 return True
  */
-    __pyx_t_2 = PyNumber_Subtract(__pyx_v_rsq, __pyx_v_previous_rsq); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 209, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->thresh); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 209, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_3 = PyObject_RichCompare(__pyx_t_2, __pyx_t_4, Py_LT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 209, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 209, __pyx_L1_error)
+    __pyx_t_3 = PyNumber_Subtract(__pyx_v_rsq, __pyx_v_previous_rsq); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 213, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->thresh); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 213, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_2 = PyObject_RichCompare(__pyx_t_3, __pyx_t_1, Py_LT); __Pyx_XGOTREF(__pyx_t_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 213, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (__pyx_t_1) {
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 213, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    if (__pyx_t_4) {
 
-      /* "pyearth/_forward.pyx":210
+      /* "pyearth/_forward.pyx":214
  *             previous_rsq = self.record.rsq(last - 1)
  *             if rsq - previous_rsq < self.thresh:
  *                 self.record.stopping_condition = NOIMPRV             # <<<<<<<<<<<<<<
@@ -6785,7 +6860,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
       __pyx_v_self->record->stopping_condition = __pyx_v_7pyearth_8_forward_NOIMPRV;
 
-      /* "pyearth/_forward.pyx":211
+      /* "pyearth/_forward.pyx":215
  *             if rsq - previous_rsq < self.thresh:
  *                 self.record.stopping_condition = NOIMPRV
  *                 return True             # <<<<<<<<<<<<<<
@@ -6797,7 +6872,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
       __pyx_r = Py_True;
       goto __pyx_L0;
 
-      /* "pyearth/_forward.pyx":209
+      /* "pyearth/_forward.pyx":213
  *         if last > 0:
  *             previous_rsq = self.record.rsq(last - 1)
  *             if rsq - previous_rsq < self.thresh:             # <<<<<<<<<<<<<<
@@ -6806,7 +6881,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
     }
 
-    /* "pyearth/_forward.pyx":207
+    /* "pyearth/_forward.pyx":211
  *             self.record.stopping_condition = MAXRSQ
  *             return True
  *         if last > 0:             # <<<<<<<<<<<<<<
@@ -6815,18 +6890,18 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
   }
 
-  /* "pyearth/_forward.pyx":212
+  /* "pyearth/_forward.pyx":216
  *                 self.record.stopping_condition = NOIMPRV
  *                 return True
  *         if self.record.grsq(last) < -10:             # <<<<<<<<<<<<<<
  *             self.record.stopping_condition = LOWGRSQ
  *             return True
  */
-  __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_last); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 212, __pyx_L1_error)
-  __pyx_t_1 = ((((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->record->__pyx_base.__pyx_vtab)->__pyx_base.grsq(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self->record), __pyx_t_5, 0) < -10.0) != 0);
-  if (__pyx_t_1) {
+  __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_v_last); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 216, __pyx_L1_error)
+  __pyx_t_4 = ((((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->record->__pyx_base.__pyx_vtab)->__pyx_base.grsq(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self->record), __pyx_t_5, 0) < -10.0) != 0);
+  if (__pyx_t_4) {
 
-    /* "pyearth/_forward.pyx":213
+    /* "pyearth/_forward.pyx":217
  *                 return True
  *         if self.record.grsq(last) < -10:
  *             self.record.stopping_condition = LOWGRSQ             # <<<<<<<<<<<<<<
@@ -6835,7 +6910,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
     __pyx_v_self->record->stopping_condition = __pyx_v_7pyearth_8_forward_LOWGRSQ;
 
-    /* "pyearth/_forward.pyx":214
+    /* "pyearth/_forward.pyx":218
  *         if self.record.grsq(last) < -10:
  *             self.record.stopping_condition = LOWGRSQ
  *             return True             # <<<<<<<<<<<<<<
@@ -6847,7 +6922,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
     __pyx_r = Py_True;
     goto __pyx_L0;
 
-    /* "pyearth/_forward.pyx":212
+    /* "pyearth/_forward.pyx":216
  *                 self.record.stopping_condition = NOIMPRV
  *                 return True
  *         if self.record.grsq(last) < -10:             # <<<<<<<<<<<<<<
@@ -6856,7 +6931,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
   }
 
-  /* "pyearth/_forward.pyx":215
+  /* "pyearth/_forward.pyx":219
  *             self.record.stopping_condition = LOWGRSQ
  *             return True
  *         if self.record.iterations[last].no_further_candidates():             # <<<<<<<<<<<<<<
@@ -6865,57 +6940,57 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
   if (unlikely(__pyx_v_self->record->__pyx_base.iterations == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 215, __pyx_L1_error)
+    __PYX_ERR(0, 219, __pyx_L1_error)
   }
-  __pyx_t_4 = PyObject_GetItem(__pyx_v_self->record->__pyx_base.iterations, __pyx_v_last); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 215, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_no_further_candidates); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 215, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = NULL;
-  if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
-    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_2);
-    if (likely(__pyx_t_4)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-      __Pyx_INCREF(__pyx_t_4);
+  __pyx_t_1 = PyObject_GetItem(__pyx_v_self->record->__pyx_base.iterations, __pyx_v_last); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 219, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_no_further_candidates); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 219, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = NULL;
+  if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_1)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_1);
       __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_2, function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
     }
   }
-  if (__pyx_t_4) {
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 215, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  } else {
-    __pyx_t_3 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 215, __pyx_L1_error)
-  }
-  __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 215, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   if (__pyx_t_1) {
+    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 219, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  } else {
+    __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 219, __pyx_L1_error)
+  }
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 219, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (__pyx_t_4) {
 
-    /* "pyearth/_forward.pyx":216
+    /* "pyearth/_forward.pyx":220
  *             return True
  *         if self.record.iterations[last].no_further_candidates():
  *             self.record.stopping_condition = NOCAND             # <<<<<<<<<<<<<<
  *             return True
- *         return False
+ * 
  */
     __pyx_v_self->record->stopping_condition = __pyx_v_7pyearth_8_forward_NOCAND;
 
-    /* "pyearth/_forward.pyx":217
+    /* "pyearth/_forward.pyx":221
  *         if self.record.iterations[last].no_further_candidates():
  *             self.record.stopping_condition = NOCAND
  *             return True             # <<<<<<<<<<<<<<
- *         return False
  * 
+ *         return False
  */
     __Pyx_XDECREF(__pyx_r);
     __Pyx_INCREF(Py_True);
     __pyx_r = Py_True;
     goto __pyx_L0;
 
-    /* "pyearth/_forward.pyx":215
+    /* "pyearth/_forward.pyx":219
  *             self.record.stopping_condition = LOWGRSQ
  *             return True
  *         if self.record.iterations[last].no_further_candidates():             # <<<<<<<<<<<<<<
@@ -6924,31 +6999,31 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
  */
   }
 
-  /* "pyearth/_forward.pyx":218
- *             self.record.stopping_condition = NOCAND
+  /* "pyearth/_forward.pyx":223
  *             return True
+ * 
  *         return False             # <<<<<<<<<<<<<<
  * 
- *     cpdef orthonormal_update(ForwardPasser self, b):
+ * 
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(Py_False);
   __pyx_r = Py_False;
   goto __pyx_L0;
 
-  /* "pyearth/_forward.pyx":196
+  /* "pyearth/_forward.pyx":202
  *                 self.iteration_number += 1
  * 
  *     cdef stop_check(ForwardPasser self):             # <<<<<<<<<<<<<<
- *         if self.verbose:
- *             print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
+ *         last = self.record.__len__() - 1
+ *         if self.record.iterations[last].get_size() > self.max_terms:
  */
 
   /* function exit code */
   __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_XDECREF(__pyx_t_4);
   __Pyx_AddTraceback("pyearth._forward.ForwardPasser.stop_check", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
@@ -6960,8 +7035,8 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_stop_check(struct __
   return __pyx_r;
 }
 
-/* "pyearth/_forward.pyx":220
- *         return False
+/* "pyearth/_forward.pyx":226
+ * 
  * 
  *     cpdef orthonormal_update(ForwardPasser self, b):             # <<<<<<<<<<<<<<
  *         # Update the outcome data
@@ -6987,7 +7062,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_orthonormal_update); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 220, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_orthonormal_update); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 226, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_8_forward_13ForwardPasser_9orthonormal_update)) {
       __Pyx_XDECREF(__pyx_r);
@@ -7003,16 +7078,16 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
         }
       }
       if (!__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_b); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 220, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_b); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 226, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
       } else {
-        __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 220, __pyx_L1_error)
+        __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 226, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
         __Pyx_INCREF(__pyx_v_b);
         __Pyx_GIVEREF(__pyx_v_b);
         PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_v_b);
-        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 220, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 226, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       }
@@ -7025,7 +7100,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_forward.pyx":222
+  /* "pyearth/_forward.pyx":228
  *     cpdef orthonormal_update(ForwardPasser self, b):
  *         # Update the outcome data
  *         linear_dependence = False             # <<<<<<<<<<<<<<
@@ -7034,19 +7109,19 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
  */
   __pyx_v_linear_dependence = 0;
 
-  /* "pyearth/_forward.pyx":223
+  /* "pyearth/_forward.pyx":229
  *         # Update the outcome data
  *         linear_dependence = False
  *         return_codes = []             # <<<<<<<<<<<<<<
  *         return_code = self.outcome.update_from_array(b)
  *         if return_code == -1:
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 223, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 229, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_return_codes = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":224
+  /* "pyearth/_forward.pyx":230
  *         linear_dependence = False
  *         return_codes = []
  *         return_code = self.outcome.update_from_array(b)             # <<<<<<<<<<<<<<
@@ -7054,40 +7129,40 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
  *             raise ValueError('This should not have happened.')
  */
   __pyx_t_6 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(__pyx_v_b);
-  if (unlikely(!__pyx_t_6.memview)) __PYX_ERR(0, 224, __pyx_L1_error)
-  __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_12_knot_search_MultipleOutcomeDependentData *)__pyx_v_self->outcome->__pyx_vtab)->update_from_array(__pyx_v_self->outcome, __pyx_t_6, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 224, __pyx_L1_error)
+  if (unlikely(!__pyx_t_6.memview)) __PYX_ERR(0, 230, __pyx_L1_error)
+  __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_12_knot_search_MultipleOutcomeDependentData *)__pyx_v_self->outcome->__pyx_vtab)->update_from_array(__pyx_v_self->outcome, __pyx_t_6, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 230, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
   __pyx_v_return_code = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":225
+  /* "pyearth/_forward.pyx":231
  *         return_codes = []
  *         return_code = self.outcome.update_from_array(b)
  *         if return_code == -1:             # <<<<<<<<<<<<<<
  *             raise ValueError('This should not have happened.')
  *         if return_code == 1:
  */
-  __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_v_return_code, __pyx_int_neg_1, -1L, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 225, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_v_return_code, __pyx_int_neg_1, -1L, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 231, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 225, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 231, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_7) {
 
-    /* "pyearth/_forward.pyx":226
+    /* "pyearth/_forward.pyx":232
  *         return_code = self.outcome.update_from_array(b)
  *         if return_code == -1:
  *             raise ValueError('This should not have happened.')             # <<<<<<<<<<<<<<
  *         if return_code == 1:
  *             linear_dependence = True
  */
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__15, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 226, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__17, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 232, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_Raise(__pyx_t_1, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 226, __pyx_L1_error)
+    __PYX_ERR(0, 232, __pyx_L1_error)
 
-    /* "pyearth/_forward.pyx":225
+    /* "pyearth/_forward.pyx":231
  *         return_codes = []
  *         return_code = self.outcome.update_from_array(b)
  *         if return_code == -1:             # <<<<<<<<<<<<<<
@@ -7096,20 +7171,20 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
  */
   }
 
-  /* "pyearth/_forward.pyx":227
+  /* "pyearth/_forward.pyx":233
  *         if return_code == -1:
  *             raise ValueError('This should not have happened.')
  *         if return_code == 1:             # <<<<<<<<<<<<<<
  *             linear_dependence = True
  *         return linear_dependence
  */
-  __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_v_return_code, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 227, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_v_return_code, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 233, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 227, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 233, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_7) {
 
-    /* "pyearth/_forward.pyx":228
+    /* "pyearth/_forward.pyx":234
  *             raise ValueError('This should not have happened.')
  *         if return_code == 1:
  *             linear_dependence = True             # <<<<<<<<<<<<<<
@@ -7118,7 +7193,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
  */
     __pyx_v_linear_dependence = 1;
 
-    /* "pyearth/_forward.pyx":227
+    /* "pyearth/_forward.pyx":233
  *         if return_code == -1:
  *             raise ValueError('This should not have happened.')
  *         if return_code == 1:             # <<<<<<<<<<<<<<
@@ -7127,7 +7202,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
  */
   }
 
-  /* "pyearth/_forward.pyx":229
+  /* "pyearth/_forward.pyx":235
  *         if return_code == 1:
  *             linear_dependence = True
  *         return linear_dependence             # <<<<<<<<<<<<<<
@@ -7135,14 +7210,14 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(s
  *     cpdef orthonormal_downdate(ForwardPasser self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_v_linear_dependence); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 229, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_v_linear_dependence); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 235, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_forward.pyx":220
- *         return False
+  /* "pyearth/_forward.pyx":226
+ * 
  * 
  *     cpdef orthonormal_update(ForwardPasser self, b):             # <<<<<<<<<<<<<<
  *         # Update the outcome data
@@ -7186,7 +7261,7 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_8orthonormal_update
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("orthonormal_update", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(__pyx_v_self, __pyx_v_b, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 220, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_update(__pyx_v_self, __pyx_v_b, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 226, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -7203,7 +7278,7 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_8orthonormal_update
   return __pyx_r;
 }
 
-/* "pyearth/_forward.pyx":231
+/* "pyearth/_forward.pyx":237
  *         return linear_dependence
  * 
  *     cpdef orthonormal_downdate(ForwardPasser self):             # <<<<<<<<<<<<<<
@@ -7224,7 +7299,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_downdate
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_orthonormal_downdate); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 231, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_orthonormal_downdate); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 237, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_8_forward_13ForwardPasser_11orthonormal_downdate)) {
       __Pyx_XDECREF(__pyx_r);
@@ -7240,10 +7315,10 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_downdate
         }
       }
       if (__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 231, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 237, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 231, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 237, __pyx_L1_error)
       }
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -7255,18 +7330,18 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_downdate
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_forward.pyx":232
+  /* "pyearth/_forward.pyx":238
  * 
  *     cpdef orthonormal_downdate(ForwardPasser self):
  *         self.outcome.downdate()             # <<<<<<<<<<<<<<
  * 
  *     def trace(self):
  */
-  __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_12_knot_search_MultipleOutcomeDependentData *)__pyx_v_self->outcome->__pyx_vtab)->downdate(__pyx_v_self->outcome, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 232, __pyx_L1_error)
+  __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_12_knot_search_MultipleOutcomeDependentData *)__pyx_v_self->outcome->__pyx_vtab)->downdate(__pyx_v_self->outcome, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 238, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":231
+  /* "pyearth/_forward.pyx":237
  *         return linear_dependence
  * 
  *     cpdef orthonormal_downdate(ForwardPasser self):             # <<<<<<<<<<<<<<
@@ -7309,7 +7384,7 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_10orthonormal_downd
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("orthonormal_downdate", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_downdate(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 231, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_7pyearth_8_forward_13ForwardPasser_orthonormal_downdate(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 237, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -7326,7 +7401,7 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_10orthonormal_downd
   return __pyx_r;
 }
 
-/* "pyearth/_forward.pyx":234
+/* "pyearth/_forward.pyx":240
  *         self.outcome.downdate()
  * 
  *     def trace(self):             # <<<<<<<<<<<<<<
@@ -7352,7 +7427,7 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_12trace(struct __py
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("trace", 0);
 
-  /* "pyearth/_forward.pyx":235
+  /* "pyearth/_forward.pyx":241
  * 
  *     def trace(self):
  *         return self.record             # <<<<<<<<<<<<<<
@@ -7364,7 +7439,7 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_12trace(struct __py
   __pyx_r = ((PyObject *)__pyx_v_self->record);
   goto __pyx_L0;
 
-  /* "pyearth/_forward.pyx":234
+  /* "pyearth/_forward.pyx":240
  *         self.outcome.downdate()
  * 
  *     def trace(self):             # <<<<<<<<<<<<<<
@@ -7379,7 +7454,7 @@ static PyObject *__pyx_pf_7pyearth_8_forward_13ForwardPasser_12trace(struct __py
   return __pyx_r;
 }
 
-/* "pyearth/_forward.pyx":237
+/* "pyearth/_forward.pyx":243
  *         return self.record
  * 
  *     cdef next_pair(ForwardPasser self):             # <<<<<<<<<<<<<<
@@ -7527,7 +7602,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   __pyx_pybuffernd_p.data = NULL;
   __pyx_pybuffernd_p.rcbuffer = &__pyx_pybuffer_p;
 
-  /* "pyearth/_forward.pyx":256
+  /* "pyearth/_forward.pyx":262
  *         cdef BasisFunction new_parent
  *         cdef BasisFunction new_basis_function
  *         parent_basis_content_choice = None             # <<<<<<<<<<<<<<
@@ -7537,7 +7612,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   __Pyx_INCREF(Py_None);
   __pyx_v_parent_basis_content_choice = Py_None;
 
-  /* "pyearth/_forward.pyx":257
+  /* "pyearth/_forward.pyx":263
  *         cdef BasisFunction new_basis_function
  *         parent_basis_content_choice = None
  *         parent_basis_content = None             # <<<<<<<<<<<<<<
@@ -7547,7 +7622,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   __Pyx_INCREF(Py_None);
   __pyx_v_parent_basis_content = Py_None;
 
-  /* "pyearth/_forward.pyx":259
+  /* "pyearth/_forward.pyx":265
  *         parent_basis_content = None
  *         cdef INDEX_t variable_choice
  *         cdef bint first = True             # <<<<<<<<<<<<<<
@@ -7556,7 +7631,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
   __pyx_v_first = 1;
 
-  /* "pyearth/_forward.pyx":261
+  /* "pyearth/_forward.pyx":267
  *         cdef bint first = True
  *         cdef bint already_covered
  *         cdef INDEX_t k = len(self.basis)             # <<<<<<<<<<<<<<
@@ -7565,11 +7640,11 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
   __pyx_t_1 = ((PyObject *)__pyx_v_self->basis);
   __Pyx_INCREF(__pyx_t_1);
-  __pyx_t_2 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 261, __pyx_L1_error)
+  __pyx_t_2 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 267, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_k = __pyx_t_2;
 
-  /* "pyearth/_forward.pyx":266
+  /* "pyearth/_forward.pyx":272
  *         cdef bint dependent
  *         # TODO: Shouldn't there be weights here?
  *         cdef FLOAT_t gcv_factor_k_plus_1 = gcv_adjust(k + 1, self.m,             # <<<<<<<<<<<<<<
@@ -7578,7 +7653,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
   __pyx_v_gcv_factor_k_plus_1 = __pyx_f_7pyearth_5_util_gcv_adjust((__pyx_v_k + 1), __pyx_v_self->m, __pyx_v_self->penalty, 0);
 
-  /* "pyearth/_forward.pyx":268
+  /* "pyearth/_forward.pyx":274
  *         cdef FLOAT_t gcv_factor_k_plus_1 = gcv_adjust(k + 1, self.m,
  *                                                       self.penalty)
  *         cdef FLOAT_t gcv_factor_k_plus_2 = gcv_adjust(k + 2, self.m,             # <<<<<<<<<<<<<<
@@ -7587,7 +7662,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
   __pyx_v_gcv_factor_k_plus_2 = __pyx_f_7pyearth_5_util_gcv_adjust((__pyx_v_k + 2), __pyx_v_self->m, __pyx_v_self->penalty, 0);
 
-  /* "pyearth/_forward.pyx":270
+  /* "pyearth/_forward.pyx":276
  *         cdef FLOAT_t gcv_factor_k_plus_2 = gcv_adjust(k + 2, self.m,
  *                                                       self.penalty)
  *         cdef FLOAT_t gcv_factor_k_plus_3 = gcv_adjust(k + 3, self.m,             # <<<<<<<<<<<<<<
@@ -7596,7 +7671,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
   __pyx_v_gcv_factor_k_plus_3 = __pyx_f_7pyearth_5_util_gcv_adjust((__pyx_v_k + 3), __pyx_v_self->m, __pyx_v_self->penalty, 0);
 
-  /* "pyearth/_forward.pyx":272
+  /* "pyearth/_forward.pyx":278
  *         cdef FLOAT_t gcv_factor_k_plus_3 = gcv_adjust(k + 3, self.m,
  *                                                       self.penalty)
  *         cdef FLOAT_t gcv_factor_k_plus_4 = gcv_adjust(k + 4, self.m,             # <<<<<<<<<<<<<<
@@ -7605,7 +7680,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
   __pyx_v_gcv_factor_k_plus_4 = __pyx_f_7pyearth_5_util_gcv_adjust((__pyx_v_k + 4), __pyx_v_self->m, __pyx_v_self->penalty, 0);
 
-  /* "pyearth/_forward.pyx":283
+  /* "pyearth/_forward.pyx":289
  * 
  *         cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
  *             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)             # <<<<<<<<<<<<<<
@@ -7618,14 +7693,14 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_X.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_X = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_X.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 282, __pyx_L1_error)
+      __PYX_ERR(0, 288, __pyx_L1_error)
     } else {__pyx_pybuffernd_X.diminfo[0].strides = __pyx_pybuffernd_X.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_X.diminfo[0].shape = __pyx_pybuffernd_X.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_X.diminfo[1].strides = __pyx_pybuffernd_X.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_X.diminfo[1].shape = __pyx_pybuffernd_X.rcbuffer->pybuffer.shape[1];
     }
   }
   __pyx_v_X = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":285
+  /* "pyearth/_forward.pyx":291
  *             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
  *         cdef cnp.ndarray[BOOL_t, ndim = 2] missing = (
  *             <cnp.ndarray[BOOL_t, ndim = 2] > self.missing)             # <<<<<<<<<<<<<<
@@ -7638,14 +7713,14 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_missing.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_BOOL_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_missing = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_missing.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 284, __pyx_L1_error)
+      __PYX_ERR(0, 290, __pyx_L1_error)
     } else {__pyx_pybuffernd_missing.diminfo[0].strides = __pyx_pybuffernd_missing.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_missing.diminfo[0].shape = __pyx_pybuffernd_missing.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_missing.diminfo[1].strides = __pyx_pybuffernd_missing.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_missing.diminfo[1].shape = __pyx_pybuffernd_missing.rcbuffer->pybuffer.shape[1];
     }
   }
   __pyx_v_missing = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":287
+  /* "pyearth/_forward.pyx":293
  *             <cnp.ndarray[BOOL_t, ndim = 2] > self.missing)
  *         cdef cnp.ndarray[FLOAT_t, ndim = 2] B = (
  *             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)             # <<<<<<<<<<<<<<
@@ -7658,14 +7733,14 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_B.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_B = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_B.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 286, __pyx_L1_error)
+      __PYX_ERR(0, 292, __pyx_L1_error)
     } else {__pyx_pybuffernd_B.diminfo[0].strides = __pyx_pybuffernd_B.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_B.diminfo[0].shape = __pyx_pybuffernd_B.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_B.diminfo[1].strides = __pyx_pybuffernd_B.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_B.diminfo[1].shape = __pyx_pybuffernd_B.rcbuffer->pybuffer.shape[1];
     }
   }
   __pyx_v_B = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":289
+  /* "pyearth/_forward.pyx":295
  *             <cnp.ndarray[FLOAT_t, ndim = 2] > self.B)
  *         cdef cnp.ndarray[INT_t, ndim = 1] linear_variables = (
  *             <cnp.ndarray[INT_t, ndim = 1] > self.linear_variables)             # <<<<<<<<<<<<<<
@@ -7678,14 +7753,14 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_linear_variables.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_linear_variables = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_linear_variables.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 288, __pyx_L1_error)
+      __PYX_ERR(0, 294, __pyx_L1_error)
     } else {__pyx_pybuffernd_linear_variables.diminfo[0].strides = __pyx_pybuffernd_linear_variables.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_linear_variables.diminfo[0].shape = __pyx_pybuffernd_linear_variables.rcbuffer->pybuffer.shape[0];
     }
   }
   __pyx_v_linear_variables = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":291
+  /* "pyearth/_forward.pyx":297
  *             <cnp.ndarray[INT_t, ndim = 1] > self.linear_variables)
  *         cdef cnp.ndarray[BOOL_t, ndim = 1] has_missing = (
  *             <cnp.ndarray[BOOL_t, ndim = 1] > self.has_missing)             # <<<<<<<<<<<<<<
@@ -7698,14 +7773,14 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_has_missing.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_BOOL_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_has_missing = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_has_missing.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 290, __pyx_L1_error)
+      __PYX_ERR(0, 296, __pyx_L1_error)
     } else {__pyx_pybuffernd_has_missing.diminfo[0].strides = __pyx_pybuffernd_has_missing.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_has_missing.diminfo[0].shape = __pyx_pybuffernd_has_missing.rcbuffer->pybuffer.shape[0];
     }
   }
   __pyx_v_has_missing = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":295
+  /* "pyearth/_forward.pyx":301
  *         cdef cnp.ndarray[FLOAT_t, ndim = 1] p
  * 
  *         if self.use_fast:             # <<<<<<<<<<<<<<
@@ -7715,7 +7790,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   __pyx_t_3 = (__pyx_v_self->use_fast != 0);
   if (__pyx_t_3) {
 
-    /* "pyearth/_forward.pyx":296
+    /* "pyearth/_forward.pyx":302
  * 
  *         if self.use_fast:
  *             nb_basis = min(self.fast_K, k, len(self.fast_heap))             # <<<<<<<<<<<<<<
@@ -7727,9 +7802,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __Pyx_INCREF(__pyx_t_1);
     if (unlikely(__pyx_t_1 == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-      __PYX_ERR(0, 296, __pyx_L1_error)
+      __PYX_ERR(0, 302, __pyx_L1_error)
     }
-    __pyx_t_2 = PyList_GET_SIZE(__pyx_t_1); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 296, __pyx_L1_error)
+    __pyx_t_2 = PyList_GET_SIZE(__pyx_t_1); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 302, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_5 = __pyx_v_self->fast_K;
     if (((__pyx_t_4 < __pyx_t_5) != 0)) {
@@ -7745,7 +7820,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     }
     __pyx_v_nb_basis = __pyx_t_6;
 
-    /* "pyearth/_forward.pyx":295
+    /* "pyearth/_forward.pyx":301
  *         cdef cnp.ndarray[FLOAT_t, ndim = 1] p
  * 
  *         if self.use_fast:             # <<<<<<<<<<<<<<
@@ -7755,7 +7830,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     goto __pyx_L3;
   }
 
-  /* "pyearth/_forward.pyx":298
+  /* "pyearth/_forward.pyx":304
  *             nb_basis = min(self.fast_K, k, len(self.fast_heap))
  *         else:
  *             nb_basis = k             # <<<<<<<<<<<<<<
@@ -7767,19 +7842,19 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   }
   __pyx_L3:;
 
-  /* "pyearth/_forward.pyx":300
+  /* "pyearth/_forward.pyx":306
  *             nb_basis = k
  * 
  *         content_to_be_repushed = []             # <<<<<<<<<<<<<<
  *         for idx in range(nb_basis):
  *             # Iterate over parents
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 300, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 306, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_content_to_be_repushed = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_forward.pyx":301
+  /* "pyearth/_forward.pyx":307
  * 
  *         content_to_be_repushed = []
  *         for idx in range(nb_basis):             # <<<<<<<<<<<<<<
@@ -7790,7 +7865,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_6; __pyx_t_4+=1) {
     __pyx_v_idx = __pyx_t_4;
 
-    /* "pyearth/_forward.pyx":303
+    /* "pyearth/_forward.pyx":309
  *         for idx in range(nb_basis):
  *             # Iterate over parents
  *             if self.use_fast:             # <<<<<<<<<<<<<<
@@ -7800,14 +7875,14 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __pyx_t_3 = (__pyx_v_self->use_fast != 0);
     if (__pyx_t_3) {
 
-      /* "pyearth/_forward.pyx":305
+      /* "pyearth/_forward.pyx":311
  *             if self.use_fast:
  *                 # retrieve the next basis function to try as parent
  *                 parent_basis_content = heappop(self.fast_heap)             # <<<<<<<<<<<<<<
  *                 content_to_be_repushed.append(parent_basis_content)
  *                 parent_idx = parent_basis_content.idx
  */
-      __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappop); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 305, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappop); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 311, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __pyx_t_9 = NULL;
       if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_8))) {
@@ -7820,16 +7895,16 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         }
       }
       if (!__pyx_t_9) {
-        __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_v_self->fast_heap); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 305, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_v_self->fast_heap); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 311, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
       } else {
-        __pyx_t_10 = PyTuple_New(1+1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 305, __pyx_L1_error)
+        __pyx_t_10 = PyTuple_New(1+1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 311, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_GIVEREF(__pyx_t_9); PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_9); __pyx_t_9 = NULL;
         __Pyx_INCREF(__pyx_v_self->fast_heap);
         __Pyx_GIVEREF(__pyx_v_self->fast_heap);
         PyTuple_SET_ITEM(__pyx_t_10, 0+1, __pyx_v_self->fast_heap);
-        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_10, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 305, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_10, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 311, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       }
@@ -7837,29 +7912,29 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __Pyx_DECREF_SET(__pyx_v_parent_basis_content, __pyx_t_1);
       __pyx_t_1 = 0;
 
-      /* "pyearth/_forward.pyx":306
+      /* "pyearth/_forward.pyx":312
  *                 # retrieve the next basis function to try as parent
  *                 parent_basis_content = heappop(self.fast_heap)
  *                 content_to_be_repushed.append(parent_basis_content)             # <<<<<<<<<<<<<<
  *                 parent_idx = parent_basis_content.idx
  *                 mse_choice_cur_parent = -1
  */
-      __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_content_to_be_repushed, __pyx_v_parent_basis_content); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 306, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_content_to_be_repushed, __pyx_v_parent_basis_content); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 312, __pyx_L1_error)
 
-      /* "pyearth/_forward.pyx":307
+      /* "pyearth/_forward.pyx":313
  *                 parent_basis_content = heappop(self.fast_heap)
  *                 content_to_be_repushed.append(parent_basis_content)
  *                 parent_idx = parent_basis_content.idx             # <<<<<<<<<<<<<<
  *                 mse_choice_cur_parent = -1
  *                 variable_choice_cur_parent = -1
  */
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_idx); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 307, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_idx); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 313, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_7 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_7 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 307, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_7 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 313, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __pyx_v_parent_idx = __pyx_t_7;
 
-      /* "pyearth/_forward.pyx":308
+      /* "pyearth/_forward.pyx":314
  *                 content_to_be_repushed.append(parent_basis_content)
  *                 parent_idx = parent_basis_content.idx
  *                 mse_choice_cur_parent = -1             # <<<<<<<<<<<<<<
@@ -7868,7 +7943,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       __pyx_v_mse_choice_cur_parent = -1.0;
 
-      /* "pyearth/_forward.pyx":309
+      /* "pyearth/_forward.pyx":315
  *                 parent_idx = parent_basis_content.idx
  *                 mse_choice_cur_parent = -1
  *                 variable_choice_cur_parent = -1             # <<<<<<<<<<<<<<
@@ -7877,7 +7952,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       __pyx_v_variable_choice_cur_parent = -1;
 
-      /* "pyearth/_forward.pyx":303
+      /* "pyearth/_forward.pyx":309
  *         for idx in range(nb_basis):
  *             # Iterate over parents
  *             if self.use_fast:             # <<<<<<<<<<<<<<
@@ -7887,7 +7962,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       goto __pyx_L6;
     }
 
-    /* "pyearth/_forward.pyx":311
+    /* "pyearth/_forward.pyx":317
  *                 variable_choice_cur_parent = -1
  *             else:
  *                 parent_idx = idx             # <<<<<<<<<<<<<<
@@ -7899,19 +7974,19 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     }
     __pyx_L6:;
 
-    /* "pyearth/_forward.pyx":313
+    /* "pyearth/_forward.pyx":319
  *                 parent_idx = idx
  * 
  *             parent = self.basis.get(parent_idx)             # <<<<<<<<<<<<<<
  *             if not parent.is_splittable():
  *                 continue
  */
-    __pyx_t_1 = ((PyObject *)((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->get(__pyx_v_self->basis, __pyx_v_parent_idx, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 313, __pyx_L1_error)
+    __pyx_t_1 = ((PyObject *)((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->get(__pyx_v_self->basis, __pyx_v_parent_idx, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 319, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_XDECREF_SET(__pyx_v_parent, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_1));
     __pyx_t_1 = 0;
 
-    /* "pyearth/_forward.pyx":314
+    /* "pyearth/_forward.pyx":320
  * 
  *             parent = self.basis.get(parent_idx)
  *             if not parent.is_splittable():             # <<<<<<<<<<<<<<
@@ -7921,7 +7996,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __pyx_t_3 = ((!(((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_parent->__pyx_vtab)->is_splittable(__pyx_v_parent, 0) != 0)) != 0);
     if (__pyx_t_3) {
 
-      /* "pyearth/_forward.pyx":315
+      /* "pyearth/_forward.pyx":321
  *             parent = self.basis.get(parent_idx)
  *             if not parent.is_splittable():
  *                 continue             # <<<<<<<<<<<<<<
@@ -7930,7 +8005,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       goto __pyx_L4_continue;
 
-      /* "pyearth/_forward.pyx":314
+      /* "pyearth/_forward.pyx":320
  * 
  *             parent = self.basis.get(parent_idx)
  *             if not parent.is_splittable():             # <<<<<<<<<<<<<<
@@ -7939,7 +8014,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
     }
 
-    /* "pyearth/_forward.pyx":317
+    /* "pyearth/_forward.pyx":323
  *                 continue
  * 
  *             if self.use_fast:             # <<<<<<<<<<<<<<
@@ -7949,63 +8024,63 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __pyx_t_3 = (__pyx_v_self->use_fast != 0);
     if (__pyx_t_3) {
 
-      /* "pyearth/_forward.pyx":319
+      /* "pyearth/_forward.pyx":325
  *             if self.use_fast:
  *                 # each "fast_h" iteration, force to pass through all the variables,
  *                 if self.iteration_number - parent_basis_content.m > self.fast_h:             # <<<<<<<<<<<<<<
  *                     variables = range(self.n)
  *                     parent_basis_content.m = self.iteration_number
  */
-      __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->iteration_number); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 319, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->iteration_number); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 325, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_m); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 319, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_m); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 325, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_10 = PyNumber_Subtract(__pyx_t_1, __pyx_t_8); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 319, __pyx_L1_error)
+      __pyx_t_10 = PyNumber_Subtract(__pyx_t_1, __pyx_t_8); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 325, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __pyx_t_8 = __Pyx_PyInt_From_long(__pyx_v_self->fast_h); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 319, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyInt_From_long(__pyx_v_self->fast_h); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 325, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_1 = PyObject_RichCompare(__pyx_t_10, __pyx_t_8, Py_GT); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 319, __pyx_L1_error)
+      __pyx_t_1 = PyObject_RichCompare(__pyx_t_10, __pyx_t_8, Py_GT); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 325, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 319, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 325, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":320
+        /* "pyearth/_forward.pyx":326
  *                 # each "fast_h" iteration, force to pass through all the variables,
  *                 if self.iteration_number - parent_basis_content.m > self.fast_h:
  *                     variables = range(self.n)             # <<<<<<<<<<<<<<
  *                     parent_basis_content.m = self.iteration_number
  *                 # in the opposite case, just use the last chosen variable
  */
-        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 320, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 326, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_8 = PyTuple_New(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 320, __pyx_L1_error)
+        __pyx_t_8 = PyTuple_New(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 326, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_8);
         __Pyx_GIVEREF(__pyx_t_1);
         PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_1);
         __pyx_t_1 = 0;
-        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 320, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 326, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
         __Pyx_XDECREF_SET(__pyx_v_variables, __pyx_t_1);
         __pyx_t_1 = 0;
 
-        /* "pyearth/_forward.pyx":321
+        /* "pyearth/_forward.pyx":327
  *                 if self.iteration_number - parent_basis_content.m > self.fast_h:
  *                     variables = range(self.n)
  *                     parent_basis_content.m = self.iteration_number             # <<<<<<<<<<<<<<
  *                 # in the opposite case, just use the last chosen variable
  *                 else:
  */
-        __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->iteration_number); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 321, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->iteration_number); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 327, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        if (__Pyx_PyObject_SetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_m, __pyx_t_1) < 0) __PYX_ERR(0, 321, __pyx_L1_error)
+        if (__Pyx_PyObject_SetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_m, __pyx_t_1) < 0) __PYX_ERR(0, 327, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-        /* "pyearth/_forward.pyx":319
+        /* "pyearth/_forward.pyx":325
  *             if self.use_fast:
  *                 # each "fast_h" iteration, force to pass through all the variables,
  *                 if self.iteration_number - parent_basis_content.m > self.fast_h:             # <<<<<<<<<<<<<<
@@ -8015,7 +8090,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         goto __pyx_L9;
       }
 
-      /* "pyearth/_forward.pyx":324
+      /* "pyearth/_forward.pyx":330
  *                 # in the opposite case, just use the last chosen variable
  *                 else:
  *                     variables = [parent_basis_content.v]             # <<<<<<<<<<<<<<
@@ -8023,9 +8098,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  *             else:
  */
       /*else*/ {
-        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_v); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 324, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_v); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 330, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_8 = PyList_New(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 324, __pyx_L1_error)
+        __pyx_t_8 = PyList_New(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 330, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_8);
         __Pyx_GIVEREF(__pyx_t_1);
         PyList_SET_ITEM(__pyx_t_8, 0, __pyx_t_1);
@@ -8035,27 +8110,27 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       }
       __pyx_L9:;
 
-      /* "pyearth/_forward.pyx":325
+      /* "pyearth/_forward.pyx":331
  *                 else:
  *                     variables = [parent_basis_content.v]
  *                 variables = range(self.n)             # <<<<<<<<<<<<<<
  *             else:
  *                 variables = range(self.n)
  */
-      __pyx_t_8 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 325, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 331, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 325, __pyx_L1_error)
+      __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 331, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_GIVEREF(__pyx_t_8);
       PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_8);
       __pyx_t_8 = 0;
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_1, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 325, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_1, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 331, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF_SET(__pyx_v_variables, __pyx_t_8);
       __pyx_t_8 = 0;
 
-      /* "pyearth/_forward.pyx":317
+      /* "pyearth/_forward.pyx":323
  *                 continue
  * 
  *             if self.use_fast:             # <<<<<<<<<<<<<<
@@ -8065,7 +8140,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       goto __pyx_L8;
     }
 
-    /* "pyearth/_forward.pyx":327
+    /* "pyearth/_forward.pyx":333
  *                 variables = range(self.n)
  *             else:
  *                 variables = range(self.n)             # <<<<<<<<<<<<<<
@@ -8073,14 +8148,14 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  *             parent_degree = parent.effective_degree()
  */
     /*else*/ {
-      __pyx_t_8 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 327, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 333, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 327, __pyx_L1_error)
+      __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 333, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_GIVEREF(__pyx_t_8);
       PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_8);
       __pyx_t_8 = 0;
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_1, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 327, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_1, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 333, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_XDECREF_SET(__pyx_v_variables, __pyx_t_8);
@@ -8088,7 +8163,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     }
     __pyx_L8:;
 
-    /* "pyearth/_forward.pyx":329
+    /* "pyearth/_forward.pyx":335
  *                 variables = range(self.n)
  * 
  *             parent_degree = parent.effective_degree()             # <<<<<<<<<<<<<<
@@ -8097,7 +8172,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
     __pyx_v_parent_degree = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_parent->__pyx_vtab)->effective_degree(__pyx_v_parent, 0);
 
-    /* "pyearth/_forward.pyx":331
+    /* "pyearth/_forward.pyx":337
  *             parent_degree = parent.effective_degree()
  * 
  *             for variable in variables:             # <<<<<<<<<<<<<<
@@ -8108,26 +8183,26 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __pyx_t_8 = __pyx_v_variables; __Pyx_INCREF(__pyx_t_8); __pyx_t_2 = 0;
       __pyx_t_12 = NULL;
     } else {
-      __pyx_t_2 = -1; __pyx_t_8 = PyObject_GetIter(__pyx_v_variables); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 331, __pyx_L1_error)
+      __pyx_t_2 = -1; __pyx_t_8 = PyObject_GetIter(__pyx_v_variables); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 337, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_12 = Py_TYPE(__pyx_t_8)->tp_iternext; if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 331, __pyx_L1_error)
+      __pyx_t_12 = Py_TYPE(__pyx_t_8)->tp_iternext; if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 337, __pyx_L1_error)
     }
     for (;;) {
       if (likely(!__pyx_t_12)) {
         if (likely(PyList_CheckExact(__pyx_t_8))) {
           if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_8)) break;
           #if CYTHON_COMPILING_IN_CPYTHON
-          __pyx_t_1 = PyList_GET_ITEM(__pyx_t_8, __pyx_t_2); __Pyx_INCREF(__pyx_t_1); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 331, __pyx_L1_error)
+          __pyx_t_1 = PyList_GET_ITEM(__pyx_t_8, __pyx_t_2); __Pyx_INCREF(__pyx_t_1); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 337, __pyx_L1_error)
           #else
-          __pyx_t_1 = PySequence_ITEM(__pyx_t_8, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 331, __pyx_L1_error)
+          __pyx_t_1 = PySequence_ITEM(__pyx_t_8, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 337, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           #endif
         } else {
           if (__pyx_t_2 >= PyTuple_GET_SIZE(__pyx_t_8)) break;
           #if CYTHON_COMPILING_IN_CPYTHON
-          __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_8, __pyx_t_2); __Pyx_INCREF(__pyx_t_1); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 331, __pyx_L1_error)
+          __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_8, __pyx_t_2); __Pyx_INCREF(__pyx_t_1); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 337, __pyx_L1_error)
           #else
-          __pyx_t_1 = PySequence_ITEM(__pyx_t_8, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 331, __pyx_L1_error)
+          __pyx_t_1 = PySequence_ITEM(__pyx_t_8, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 337, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           #endif
         }
@@ -8137,17 +8212,17 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 331, __pyx_L1_error)
+            else __PYX_ERR(0, 337, __pyx_L1_error)
           }
           break;
         }
         __Pyx_GOTREF(__pyx_t_1);
       }
-      __pyx_t_7 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_7 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 331, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_7 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 337, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __pyx_v_variable = __pyx_t_7;
 
-      /* "pyearth/_forward.pyx":333
+      /* "pyearth/_forward.pyx":339
  *             for variable in variables:
  *                 # Determine whether missingness needs to be accounted for.
  *                 if self.allow_missing and has_missing[variable]:             # <<<<<<<<<<<<<<
@@ -8166,7 +8241,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __pyx_L13_bool_binop_done:;
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":334
+        /* "pyearth/_forward.pyx":340
  *                 # Determine whether missingness needs to be accounted for.
  *                 if self.allow_missing and has_missing[variable]:
  *                     missing_flag = True             # <<<<<<<<<<<<<<
@@ -8175,16 +8250,16 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         __pyx_v_missing_flag = 1;
 
-        /* "pyearth/_forward.pyx":335
+        /* "pyearth/_forward.pyx":341
  *                 if self.allow_missing and has_missing[variable]:
  *                     missing_flag = True
  *                     eligible = parent.eligible(variable)             # <<<<<<<<<<<<<<
  *                     covered = parent.covered(variable)
  *                 else:
  */
-        __pyx_t_10 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_parent), __pyx_n_s_eligible); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 335, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_parent), __pyx_n_s_eligible); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 341, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_9 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 335, __pyx_L1_error)
+        __pyx_t_9 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 341, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_9);
         __pyx_t_14 = NULL;
         if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_10))) {
@@ -8197,35 +8272,35 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           }
         }
         if (!__pyx_t_14) {
-          __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 335, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 341, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
           __Pyx_GOTREF(__pyx_t_1);
         } else {
-          __pyx_t_15 = PyTuple_New(1+1); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 335, __pyx_L1_error)
+          __pyx_t_15 = PyTuple_New(1+1); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 341, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_15);
           __Pyx_GIVEREF(__pyx_t_14); PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_14); __pyx_t_14 = NULL;
           __Pyx_GIVEREF(__pyx_t_9);
           PyTuple_SET_ITEM(__pyx_t_15, 0+1, __pyx_t_9);
           __pyx_t_9 = 0;
-          __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_15, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 335, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_15, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 341, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
         }
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 335, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 341, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         __pyx_v_eligible = __pyx_t_3;
 
-        /* "pyearth/_forward.pyx":336
+        /* "pyearth/_forward.pyx":342
  *                     missing_flag = True
  *                     eligible = parent.eligible(variable)
  *                     covered = parent.covered(variable)             # <<<<<<<<<<<<<<
  *                 else:
  *                     missing_flag = False
  */
-        __pyx_t_10 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_parent), __pyx_n_s_covered); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 336, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_parent), __pyx_n_s_covered); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 342, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_15 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 336, __pyx_L1_error)
+        __pyx_t_15 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 342, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_15);
         __pyx_t_9 = NULL;
         if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_10))) {
@@ -8238,26 +8313,26 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           }
         }
         if (!__pyx_t_9) {
-          __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_t_15); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 336, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_t_15); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 342, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
           __Pyx_GOTREF(__pyx_t_1);
         } else {
-          __pyx_t_14 = PyTuple_New(1+1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 336, __pyx_L1_error)
+          __pyx_t_14 = PyTuple_New(1+1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 342, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_14);
           __Pyx_GIVEREF(__pyx_t_9); PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_9); __pyx_t_9 = NULL;
           __Pyx_GIVEREF(__pyx_t_15);
           PyTuple_SET_ITEM(__pyx_t_14, 0+1, __pyx_t_15);
           __pyx_t_15 = 0;
-          __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_14, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 336, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_14, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 342, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
         }
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 336, __pyx_L1_error)
+        __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 342, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         __pyx_v_covered = __pyx_t_3;
 
-        /* "pyearth/_forward.pyx":333
+        /* "pyearth/_forward.pyx":339
  *             for variable in variables:
  *                 # Determine whether missingness needs to be accounted for.
  *                 if self.allow_missing and has_missing[variable]:             # <<<<<<<<<<<<<<
@@ -8267,7 +8342,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         goto __pyx_L12;
       }
 
-      /* "pyearth/_forward.pyx":338
+      /* "pyearth/_forward.pyx":344
  *                     covered = parent.covered(variable)
  *                 else:
  *                     missing_flag = False             # <<<<<<<<<<<<<<
@@ -8279,7 +8354,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       }
       __pyx_L12:;
 
-      /* "pyearth/_forward.pyx":342
+      /* "pyearth/_forward.pyx":348
  *                 # Make sure not to exceed max_degree (but don't count the
  *                 # covering missingness basis function if required)
  *                 if self.max_degree >= 0:             # <<<<<<<<<<<<<<
@@ -8289,7 +8364,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __pyx_t_3 = ((__pyx_v_self->max_degree >= 0) != 0);
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":343
+        /* "pyearth/_forward.pyx":349
  *                 # covering missingness basis function if required)
  *                 if self.max_degree >= 0:
  *                     if parent_degree >= self.max_degree:             # <<<<<<<<<<<<<<
@@ -8299,7 +8374,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         __pyx_t_3 = ((__pyx_v_parent_degree >= __pyx_v_self->max_degree) != 0);
         if (__pyx_t_3) {
 
-          /* "pyearth/_forward.pyx":344
+          /* "pyearth/_forward.pyx":350
  *                 if self.max_degree >= 0:
  *                     if parent_degree >= self.max_degree:
  *                         continue             # <<<<<<<<<<<<<<
@@ -8308,7 +8383,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
           goto __pyx_L10_continue;
 
-          /* "pyearth/_forward.pyx":343
+          /* "pyearth/_forward.pyx":349
  *                 # covering missingness basis function if required)
  *                 if self.max_degree >= 0:
  *                     if parent_degree >= self.max_degree:             # <<<<<<<<<<<<<<
@@ -8317,7 +8392,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         }
 
-        /* "pyearth/_forward.pyx":342
+        /* "pyearth/_forward.pyx":348
  *                 # Make sure not to exceed max_degree (but don't count the
  *                 # covering missingness basis function if required)
  *                 if self.max_degree >= 0:             # <<<<<<<<<<<<<<
@@ -8326,7 +8401,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       }
 
-      /* "pyearth/_forward.pyx":350
+      /* "pyearth/_forward.pyx":356
  *                 # (because it includes a non-missing factor for the variable)
  *                 # then skip this variable.
  *                 if missing_flag and not eligible:             # <<<<<<<<<<<<<<
@@ -8344,7 +8419,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __pyx_L18_bool_binop_done:;
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":351
+        /* "pyearth/_forward.pyx":357
  *                 # then skip this variable.
  *                 if missing_flag and not eligible:
  *                     continue             # <<<<<<<<<<<<<<
@@ -8353,7 +8428,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         goto __pyx_L10_continue;
 
-        /* "pyearth/_forward.pyx":350
+        /* "pyearth/_forward.pyx":356
  *                 # (because it includes a non-missing factor for the variable)
  *                 # then skip this variable.
  *                 if missing_flag and not eligible:             # <<<<<<<<<<<<<<
@@ -8362,7 +8437,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       }
 
-      /* "pyearth/_forward.pyx":354
+      /* "pyearth/_forward.pyx":360
  * 
  *                 # Add the linear term to B
  *                 predictor = self.predictors[variable]             # <<<<<<<<<<<<<<
@@ -8371,14 +8446,14 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       if (unlikely(__pyx_v_self->predictors == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 354, __pyx_L1_error)
+        __PYX_ERR(0, 360, __pyx_L1_error)
       }
       __pyx_t_1 = PyList_GET_ITEM(__pyx_v_self->predictors, __pyx_v_variable);
       __Pyx_INCREF(__pyx_t_1);
       __Pyx_XDECREF_SET(__pyx_v_predictor, __pyx_t_1);
       __pyx_t_1 = 0;
 
-      /* "pyearth/_forward.pyx":363
+      /* "pyearth/_forward.pyx":369
  * #                     linear_dependence = self.orthonormal_update(b)
  * 
  *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
@@ -8396,47 +8471,47 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __pyx_L21_bool_binop_done:;
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":364
+        /* "pyearth/_forward.pyx":370
  * 
  *                 if missing_flag and not covered:
  *                     p = B[:, parent_idx] * (1 - missing[:, variable])             # <<<<<<<<<<<<<<
  *                     b = B[:, parent_idx] * (1 - missing[:, variable])
  *                     self.orthonormal_update(b)
  */
-        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 364, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 370, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 364, __pyx_L1_error)
+        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 370, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_INCREF(__pyx_slice__16);
-        __Pyx_GIVEREF(__pyx_slice__16);
-        PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_slice__16);
+        __Pyx_INCREF(__pyx_slice__18);
+        __Pyx_GIVEREF(__pyx_slice__18);
+        PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_slice__18);
         __Pyx_GIVEREF(__pyx_t_1);
         PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_1);
         __pyx_t_1 = 0;
-        __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 364, __pyx_L1_error)
+        __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 370, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 364, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 370, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_14 = PyTuple_New(2); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 364, __pyx_L1_error)
+        __pyx_t_14 = PyTuple_New(2); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 370, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
-        __Pyx_INCREF(__pyx_slice__17);
-        __Pyx_GIVEREF(__pyx_slice__17);
-        PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_slice__17);
+        __Pyx_INCREF(__pyx_slice__19);
+        __Pyx_GIVEREF(__pyx_slice__19);
+        PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_slice__19);
         __Pyx_GIVEREF(__pyx_t_10);
         PyTuple_SET_ITEM(__pyx_t_14, 1, __pyx_t_10);
         __pyx_t_10 = 0;
-        __pyx_t_10 = PyObject_GetItem(((PyObject *)__pyx_v_missing), __pyx_t_14); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 364, __pyx_L1_error)
+        __pyx_t_10 = PyObject_GetItem(((PyObject *)__pyx_v_missing), __pyx_t_14); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 370, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-        __pyx_t_14 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_10, 1, 0); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 364, __pyx_L1_error)
+        __pyx_t_14 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_10, 1, 0); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 370, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_10 = PyNumber_Multiply(__pyx_t_1, __pyx_t_14); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 364, __pyx_L1_error)
+        __pyx_t_10 = PyNumber_Multiply(__pyx_t_1, __pyx_t_14); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 370, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-        if (!(likely(((__pyx_t_10) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_10, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 364, __pyx_L1_error)
+        if (!(likely(((__pyx_t_10) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_10, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 370, __pyx_L1_error)
         __pyx_t_16 = ((PyArrayObject *)__pyx_t_10);
         {
           __Pyx_BufFmt_StackElem __pyx_stack[1];
@@ -8452,53 +8527,53 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             }
           }
           __pyx_pybuffernd_p.diminfo[0].strides = __pyx_pybuffernd_p.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_p.diminfo[0].shape = __pyx_pybuffernd_p.rcbuffer->pybuffer.shape[0];
-          if (unlikely(__pyx_t_17 < 0)) __PYX_ERR(0, 364, __pyx_L1_error)
+          if (unlikely(__pyx_t_17 < 0)) __PYX_ERR(0, 370, __pyx_L1_error)
         }
         __pyx_t_16 = 0;
         __Pyx_XDECREF_SET(__pyx_v_p, ((PyArrayObject *)__pyx_t_10));
         __pyx_t_10 = 0;
 
-        /* "pyearth/_forward.pyx":365
+        /* "pyearth/_forward.pyx":371
  *                 if missing_flag and not covered:
  *                     p = B[:, parent_idx] * (1 - missing[:, variable])
  *                     b = B[:, parent_idx] * (1 - missing[:, variable])             # <<<<<<<<<<<<<<
  *                     self.orthonormal_update(b)
  *                     b = B[:, parent_idx] * missing[:, variable]
  */
-        __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 365, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 371, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_14 = PyTuple_New(2); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 365, __pyx_L1_error)
+        __pyx_t_14 = PyTuple_New(2); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 371, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
-        __Pyx_INCREF(__pyx_slice__18);
-        __Pyx_GIVEREF(__pyx_slice__18);
-        PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_slice__18);
+        __Pyx_INCREF(__pyx_slice__20);
+        __Pyx_GIVEREF(__pyx_slice__20);
+        PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_slice__20);
         __Pyx_GIVEREF(__pyx_t_10);
         PyTuple_SET_ITEM(__pyx_t_14, 1, __pyx_t_10);
         __pyx_t_10 = 0;
-        __pyx_t_10 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_14); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 365, __pyx_L1_error)
+        __pyx_t_10 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_14); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 371, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-        __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 365, __pyx_L1_error)
+        __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 371, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
-        __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 365, __pyx_L1_error)
+        __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 371, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_INCREF(__pyx_slice__19);
-        __Pyx_GIVEREF(__pyx_slice__19);
-        PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__19);
+        __Pyx_INCREF(__pyx_slice__21);
+        __Pyx_GIVEREF(__pyx_slice__21);
+        PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__21);
         __Pyx_GIVEREF(__pyx_t_14);
         PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_14);
         __pyx_t_14 = 0;
-        __pyx_t_14 = PyObject_GetItem(((PyObject *)__pyx_v_missing), __pyx_t_1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 365, __pyx_L1_error)
+        __pyx_t_14 = PyObject_GetItem(((PyObject *)__pyx_v_missing), __pyx_t_1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 371, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_14, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 365, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_14, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 371, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-        __pyx_t_14 = PyNumber_Multiply(__pyx_t_10, __pyx_t_1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 365, __pyx_L1_error)
+        __pyx_t_14 = PyNumber_Multiply(__pyx_t_10, __pyx_t_1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 371, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        if (!(likely(((__pyx_t_14) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_14, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 365, __pyx_L1_error)
+        if (!(likely(((__pyx_t_14) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_14, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 371, __pyx_L1_error)
         __pyx_t_21 = ((PyArrayObject *)__pyx_t_14);
         {
           __Pyx_BufFmt_StackElem __pyx_stack[1];
@@ -8514,61 +8589,61 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             }
           }
           __pyx_pybuffernd_b.diminfo[0].strides = __pyx_pybuffernd_b.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_b.diminfo[0].shape = __pyx_pybuffernd_b.rcbuffer->pybuffer.shape[0];
-          if (unlikely(__pyx_t_17 < 0)) __PYX_ERR(0, 365, __pyx_L1_error)
+          if (unlikely(__pyx_t_17 < 0)) __PYX_ERR(0, 371, __pyx_L1_error)
         }
         __pyx_t_21 = 0;
         __Pyx_XDECREF_SET(__pyx_v_b, ((PyArrayObject *)__pyx_t_14));
         __pyx_t_14 = 0;
 
-        /* "pyearth/_forward.pyx":366
+        /* "pyearth/_forward.pyx":372
  *                     p = B[:, parent_idx] * (1 - missing[:, variable])
  *                     b = B[:, parent_idx] * (1 - missing[:, variable])
  *                     self.orthonormal_update(b)             # <<<<<<<<<<<<<<
  *                     b = B[:, parent_idx] * missing[:, variable]
  *                     self.orthonormal_update(b)
  */
-        __pyx_t_14 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, ((PyObject *)__pyx_v_b), 0); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 366, __pyx_L1_error)
+        __pyx_t_14 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, ((PyObject *)__pyx_v_b), 0); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 372, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
 
-        /* "pyearth/_forward.pyx":367
+        /* "pyearth/_forward.pyx":373
  *                     b = B[:, parent_idx] * (1 - missing[:, variable])
  *                     self.orthonormal_update(b)
  *                     b = B[:, parent_idx] * missing[:, variable]             # <<<<<<<<<<<<<<
  *                     self.orthonormal_update(b)
  *                     q = k + 3
  */
-        __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 367, __pyx_L1_error)
+        __pyx_t_14 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 373, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
-        __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 367, __pyx_L1_error)
+        __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 373, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_INCREF(__pyx_slice__20);
-        __Pyx_GIVEREF(__pyx_slice__20);
-        PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__20);
+        __Pyx_INCREF(__pyx_slice__22);
+        __Pyx_GIVEREF(__pyx_slice__22);
+        PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__22);
         __Pyx_GIVEREF(__pyx_t_14);
         PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_14);
         __pyx_t_14 = 0;
-        __pyx_t_14 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 367, __pyx_L1_error)
+        __pyx_t_14 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 373, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 367, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 373, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 367, __pyx_L1_error)
+        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 373, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_INCREF(__pyx_slice__21);
-        __Pyx_GIVEREF(__pyx_slice__21);
-        PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_slice__21);
+        __Pyx_INCREF(__pyx_slice__23);
+        __Pyx_GIVEREF(__pyx_slice__23);
+        PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_slice__23);
         __Pyx_GIVEREF(__pyx_t_1);
         PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_1);
         __pyx_t_1 = 0;
-        __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_missing), __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 367, __pyx_L1_error)
+        __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_missing), __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 373, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_10 = PyNumber_Multiply(__pyx_t_14, __pyx_t_1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 367, __pyx_L1_error)
+        __pyx_t_10 = PyNumber_Multiply(__pyx_t_14, __pyx_t_1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 373, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        if (!(likely(((__pyx_t_10) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_10, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 367, __pyx_L1_error)
+        if (!(likely(((__pyx_t_10) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_10, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 373, __pyx_L1_error)
         __pyx_t_21 = ((PyArrayObject *)__pyx_t_10);
         {
           __Pyx_BufFmt_StackElem __pyx_stack[1];
@@ -8584,24 +8659,24 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             }
           }
           __pyx_pybuffernd_b.diminfo[0].strides = __pyx_pybuffernd_b.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_b.diminfo[0].shape = __pyx_pybuffernd_b.rcbuffer->pybuffer.shape[0];
-          if (unlikely(__pyx_t_17 < 0)) __PYX_ERR(0, 367, __pyx_L1_error)
+          if (unlikely(__pyx_t_17 < 0)) __PYX_ERR(0, 373, __pyx_L1_error)
         }
         __pyx_t_21 = 0;
         __Pyx_DECREF_SET(__pyx_v_b, ((PyArrayObject *)__pyx_t_10));
         __pyx_t_10 = 0;
 
-        /* "pyearth/_forward.pyx":368
+        /* "pyearth/_forward.pyx":374
  *                     self.orthonormal_update(b)
  *                     b = B[:, parent_idx] * missing[:, variable]
  *                     self.orthonormal_update(b)             # <<<<<<<<<<<<<<
  *                     q = k + 3
  *                 else:
  */
-        __pyx_t_10 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, ((PyObject *)__pyx_v_b), 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 368, __pyx_L1_error)
+        __pyx_t_10 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, ((PyObject *)__pyx_v_b), 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 374, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-        /* "pyearth/_forward.pyx":369
+        /* "pyearth/_forward.pyx":375
  *                     b = B[:, parent_idx] * missing[:, variable]
  *                     self.orthonormal_update(b)
  *                     q = k + 3             # <<<<<<<<<<<<<<
@@ -8610,7 +8685,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         __pyx_v_q = (__pyx_v_k + 3);
 
-        /* "pyearth/_forward.pyx":363
+        /* "pyearth/_forward.pyx":369
  * #                     linear_dependence = self.orthonormal_update(b)
  * 
  *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
@@ -8620,7 +8695,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         goto __pyx_L20;
       }
 
-      /* "pyearth/_forward.pyx":371
+      /* "pyearth/_forward.pyx":377
  *                     q = k + 3
  *                 else:
  *                     p = self.B[:, parent_idx]             # <<<<<<<<<<<<<<
@@ -8628,20 +8703,20 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  * 
  */
       /*else*/ {
-        __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 371, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 377, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 371, __pyx_L1_error)
+        __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 377, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_INCREF(__pyx_slice__22);
-        __Pyx_GIVEREF(__pyx_slice__22);
-        PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__22);
+        __Pyx_INCREF(__pyx_slice__24);
+        __Pyx_GIVEREF(__pyx_slice__24);
+        PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__24);
         __Pyx_GIVEREF(__pyx_t_10);
         PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_10);
         __pyx_t_10 = 0;
-        __pyx_t_10 = PyObject_GetItem(((PyObject *)__pyx_v_self->B), __pyx_t_1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 371, __pyx_L1_error)
+        __pyx_t_10 = PyObject_GetItem(((PyObject *)__pyx_v_self->B), __pyx_t_1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 377, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        if (!(likely(((__pyx_t_10) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_10, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 371, __pyx_L1_error)
+        if (!(likely(((__pyx_t_10) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_10, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 377, __pyx_L1_error)
         __pyx_t_16 = ((PyArrayObject *)__pyx_t_10);
         {
           __Pyx_BufFmt_StackElem __pyx_stack[1];
@@ -8657,13 +8732,13 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             }
           }
           __pyx_pybuffernd_p.diminfo[0].strides = __pyx_pybuffernd_p.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_p.diminfo[0].shape = __pyx_pybuffernd_p.rcbuffer->pybuffer.shape[0];
-          if (unlikely(__pyx_t_17 < 0)) __PYX_ERR(0, 371, __pyx_L1_error)
+          if (unlikely(__pyx_t_17 < 0)) __PYX_ERR(0, 377, __pyx_L1_error)
         }
         __pyx_t_16 = 0;
         __Pyx_XDECREF_SET(__pyx_v_p, ((PyArrayObject *)__pyx_t_10));
         __pyx_t_10 = 0;
 
-        /* "pyearth/_forward.pyx":372
+        /* "pyearth/_forward.pyx":378
  *                 else:
  *                     p = self.B[:, parent_idx]
  *                     q = k + 1             # <<<<<<<<<<<<<<
@@ -8674,19 +8749,19 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       }
       __pyx_L20:;
 
-      /* "pyearth/_forward.pyx":374
+      /* "pyearth/_forward.pyx":380
  *                     q = k + 1
  * 
  *                 b = p * predictor.x             # <<<<<<<<<<<<<<
  *                 if missing_flag and not covered:
  *                     b[missing[:, variable] == 1] = 0
  */
-      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_v_predictor, __pyx_n_s_x); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 374, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_v_predictor, __pyx_n_s_x); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 380, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_1 = PyNumber_Multiply(((PyObject *)__pyx_v_p), __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 374, __pyx_L1_error)
+      __pyx_t_1 = PyNumber_Multiply(((PyObject *)__pyx_v_p), __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 380, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 374, __pyx_L1_error)
+      if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 380, __pyx_L1_error)
       __pyx_t_21 = ((PyArrayObject *)__pyx_t_1);
       {
         __Pyx_BufFmt_StackElem __pyx_stack[1];
@@ -8702,13 +8777,13 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           }
         }
         __pyx_pybuffernd_b.diminfo[0].strides = __pyx_pybuffernd_b.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_b.diminfo[0].shape = __pyx_pybuffernd_b.rcbuffer->pybuffer.shape[0];
-        if (unlikely(__pyx_t_17 < 0)) __PYX_ERR(0, 374, __pyx_L1_error)
+        if (unlikely(__pyx_t_17 < 0)) __PYX_ERR(0, 380, __pyx_L1_error)
       }
       __pyx_t_21 = 0;
       __Pyx_XDECREF_SET(__pyx_v_b, ((PyArrayObject *)__pyx_t_1));
       __pyx_t_1 = 0;
 
-      /* "pyearth/_forward.pyx":375
+      /* "pyearth/_forward.pyx":381
  * 
  *                 b = p * predictor.x
  *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
@@ -8726,33 +8801,33 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __pyx_L24_bool_binop_done:;
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":376
+        /* "pyearth/_forward.pyx":382
  *                 b = p * predictor.x
  *                 if missing_flag and not covered:
  *                     b[missing[:, variable] == 1] = 0             # <<<<<<<<<<<<<<
  *                 linear_dependence = self.orthonormal_update(b)
  * 
  */
-        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 376, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 382, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 376, __pyx_L1_error)
+        __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 382, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_INCREF(__pyx_slice__23);
-        __Pyx_GIVEREF(__pyx_slice__23);
-        PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_slice__23);
+        __Pyx_INCREF(__pyx_slice__25);
+        __Pyx_GIVEREF(__pyx_slice__25);
+        PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_slice__25);
         __Pyx_GIVEREF(__pyx_t_1);
         PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_1);
         __pyx_t_1 = 0;
-        __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_missing), __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 376, __pyx_L1_error)
+        __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_missing), __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 382, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_10 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 376, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 382, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        if (unlikely(PyObject_SetItem(((PyObject *)__pyx_v_b), __pyx_t_10, __pyx_int_0) < 0)) __PYX_ERR(0, 376, __pyx_L1_error)
+        if (unlikely(PyObject_SetItem(((PyObject *)__pyx_v_b), __pyx_t_10, __pyx_int_0) < 0)) __PYX_ERR(0, 382, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-        /* "pyearth/_forward.pyx":375
+        /* "pyearth/_forward.pyx":381
  * 
  *                 b = p * predictor.x
  *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
@@ -8761,20 +8836,20 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       }
 
-      /* "pyearth/_forward.pyx":377
+      /* "pyearth/_forward.pyx":383
  *                 if missing_flag and not covered:
  *                     b[missing[:, variable] == 1] = 0
  *                 linear_dependence = self.orthonormal_update(b)             # <<<<<<<<<<<<<<
  * 
  *                 # If a new hinge function does not improve the gcv over the
  */
-      __pyx_t_10 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, ((PyObject *)__pyx_v_b), 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 377, __pyx_L1_error)
+      __pyx_t_10 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, ((PyObject *)__pyx_v_b), 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 383, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_10); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 377, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_10); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 383, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __pyx_v_linear_dependence = __pyx_t_3;
 
-      /* "pyearth/_forward.pyx":385
+      /* "pyearth/_forward.pyx":391
  *                 # another term never increases, but the gcv may because it
  *                 # penalizes additional terms.
  *                 mse_ = self.outcome.mse()             # <<<<<<<<<<<<<<
@@ -8783,7 +8858,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       __pyx_v_mse_ = ((struct __pyx_vtabstruct_7pyearth_12_knot_search_MultipleOutcomeDependentData *)__pyx_v_self->outcome->__pyx_vtab)->mse(__pyx_v_self->outcome, 0);
 
-      /* "pyearth/_forward.pyx":386
+      /* "pyearth/_forward.pyx":392
  *                 # penalizes additional terms.
  *                 mse_ = self.outcome.mse()
  *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
@@ -8801,7 +8876,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __pyx_L27_bool_binop_done:;
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":387
+        /* "pyearth/_forward.pyx":393
  *                 mse_ = self.outcome.mse()
  *                 if missing_flag and not covered:
  *                     gcv_ = gcv_factor_k_plus_3 * mse_             # <<<<<<<<<<<<<<
@@ -8810,7 +8885,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         __pyx_v_gcv_ = (__pyx_v_gcv_factor_k_plus_3 * __pyx_v_mse_);
 
-        /* "pyearth/_forward.pyx":386
+        /* "pyearth/_forward.pyx":392
  *                 # penalizes additional terms.
  *                 mse_ = self.outcome.mse()
  *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
@@ -8820,7 +8895,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         goto __pyx_L26;
       }
 
-      /* "pyearth/_forward.pyx":389
+      /* "pyearth/_forward.pyx":395
  *                     gcv_ = gcv_factor_k_plus_3 * mse_
  *                 else:
  *                     gcv_ = gcv_factor_k_plus_1 * mse_             # <<<<<<<<<<<<<<
@@ -8832,7 +8907,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       }
       __pyx_L26:;
 
-      /* "pyearth/_forward.pyx":391
+      /* "pyearth/_forward.pyx":397
  *                     gcv_ = gcv_factor_k_plus_1 * mse_
  * 
  *                 if linear_variables[variable]:             # <<<<<<<<<<<<<<
@@ -8843,7 +8918,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __pyx_t_3 = ((*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_linear_variables.rcbuffer->pybuffer.buf, __pyx_t_22, __pyx_pybuffernd_linear_variables.diminfo[0].strides)) != 0);
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":392
+        /* "pyearth/_forward.pyx":398
  * 
  *                 if linear_variables[variable]:
  *                     mse = mse_             # <<<<<<<<<<<<<<
@@ -8852,7 +8927,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         __pyx_v_mse = __pyx_v_mse_;
 
-        /* "pyearth/_forward.pyx":393
+        /* "pyearth/_forward.pyx":399
  *                 if linear_variables[variable]:
  *                     mse = mse_
  *                     knot_idx = -1             # <<<<<<<<<<<<<<
@@ -8861,7 +8936,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         __pyx_v_knot_idx = -1;
 
-        /* "pyearth/_forward.pyx":391
+        /* "pyearth/_forward.pyx":397
  *                     gcv_ = gcv_factor_k_plus_1 * mse_
  * 
  *                 if linear_variables[variable]:             # <<<<<<<<<<<<<<
@@ -8871,7 +8946,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         goto __pyx_L29;
       }
 
-      /* "pyearth/_forward.pyx":396
+      /* "pyearth/_forward.pyx":402
  *                 else:
  *                     # Find the valid knot candidates
  *                     candidates, candidates_idx = predictor.knot_candidates(p, self.endspan,             # <<<<<<<<<<<<<<
@@ -8879,43 +8954,43 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  *                                                                            self.minspan_alpha,
  */
       /*else*/ {
-        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_predictor, __pyx_n_s_knot_candidates); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 396, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_predictor, __pyx_n_s_knot_candidates); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 402, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_14 = __Pyx_PyInt_From_int(__pyx_v_self->endspan); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 396, __pyx_L1_error)
+        __pyx_t_14 = __Pyx_PyInt_From_int(__pyx_v_self->endspan); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 402, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
 
-        /* "pyearth/_forward.pyx":397
+        /* "pyearth/_forward.pyx":403
  *                     # Find the valid knot candidates
  *                     candidates, candidates_idx = predictor.knot_candidates(p, self.endspan,
  *                                                                            self.minspan,             # <<<<<<<<<<<<<<
  *                                                                            self.minspan_alpha,
  *                                                                            self.n, set(parent.knots(variable)))
  */
-        __pyx_t_15 = __Pyx_PyInt_From_int(__pyx_v_self->minspan); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 397, __pyx_L1_error)
+        __pyx_t_15 = __Pyx_PyInt_From_int(__pyx_v_self->minspan); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 403, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_15);
 
-        /* "pyearth/_forward.pyx":398
+        /* "pyearth/_forward.pyx":404
  *                     candidates, candidates_idx = predictor.knot_candidates(p, self.endspan,
  *                                                                            self.minspan,
  *                                                                            self.minspan_alpha,             # <<<<<<<<<<<<<<
  *                                                                            self.n, set(parent.knots(variable)))
  *                     # Choose the best candidate (if no candidate is an
  */
-        __pyx_t_9 = PyFloat_FromDouble(__pyx_v_self->minspan_alpha); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 398, __pyx_L1_error)
+        __pyx_t_9 = PyFloat_FromDouble(__pyx_v_self->minspan_alpha); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 404, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_9);
 
-        /* "pyearth/_forward.pyx":399
+        /* "pyearth/_forward.pyx":405
  *                                                                            self.minspan,
  *                                                                            self.minspan_alpha,
  *                                                                            self.n, set(parent.knots(variable)))             # <<<<<<<<<<<<<<
  *                     # Choose the best candidate (if no candidate is an
  *                     # improvement on the linear term in terms of gcv, knot_idx
  */
-        __pyx_t_23 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_23)) __PYX_ERR(0, 399, __pyx_L1_error)
+        __pyx_t_23 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->n); if (unlikely(!__pyx_t_23)) __PYX_ERR(0, 405, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_23);
-        __pyx_t_24 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_parent->__pyx_vtab)->knots(__pyx_v_parent, __pyx_v_variable, 0); if (unlikely(!__pyx_t_24)) __PYX_ERR(0, 399, __pyx_L1_error)
+        __pyx_t_24 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_parent->__pyx_vtab)->knots(__pyx_v_parent, __pyx_v_variable, 0); if (unlikely(!__pyx_t_24)) __PYX_ERR(0, 405, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_24);
-        __pyx_t_25 = PySet_New(__pyx_t_24); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 399, __pyx_L1_error)
+        __pyx_t_25 = PySet_New(__pyx_t_24); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 405, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_25);
         __Pyx_DECREF(__pyx_t_24); __pyx_t_24 = 0;
         __pyx_t_24 = NULL;
@@ -8930,7 +9005,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             __pyx_t_26 = 1;
           }
         }
-        __pyx_t_27 = PyTuple_New(6+__pyx_t_26); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 396, __pyx_L1_error)
+        __pyx_t_27 = PyTuple_New(6+__pyx_t_26); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 402, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_27);
         if (__pyx_t_24) {
           __Pyx_GIVEREF(__pyx_t_24); PyTuple_SET_ITEM(__pyx_t_27, 0, __pyx_t_24); __pyx_t_24 = NULL;
@@ -8953,7 +9028,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         __pyx_t_9 = 0;
         __pyx_t_23 = 0;
         __pyx_t_25 = 0;
-        __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_27, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 396, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_27, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 402, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -8967,7 +9042,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           if (unlikely(size != 2)) {
             if (size > 2) __Pyx_RaiseTooManyValuesError(2);
             else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-            __PYX_ERR(0, 396, __pyx_L1_error)
+            __PYX_ERR(0, 402, __pyx_L1_error)
           }
           #if CYTHON_COMPILING_IN_CPYTHON
           if (likely(PyTuple_CheckExact(sequence))) {
@@ -8980,15 +9055,15 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           __Pyx_INCREF(__pyx_t_1);
           __Pyx_INCREF(__pyx_t_27);
           #else
-          __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 396, __pyx_L1_error)
+          __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 402, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_27 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 396, __pyx_L1_error)
+          __pyx_t_27 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 402, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_27);
           #endif
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
         } else {
           Py_ssize_t index = -1;
-          __pyx_t_25 = PyObject_GetIter(__pyx_t_10); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 396, __pyx_L1_error)
+          __pyx_t_25 = PyObject_GetIter(__pyx_t_10); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 402, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_25);
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
           __pyx_t_28 = Py_TYPE(__pyx_t_25)->tp_iternext;
@@ -8996,7 +9071,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           __Pyx_GOTREF(__pyx_t_1);
           index = 1; __pyx_t_27 = __pyx_t_28(__pyx_t_25); if (unlikely(!__pyx_t_27)) goto __pyx_L30_unpacking_failed;
           __Pyx_GOTREF(__pyx_t_27);
-          if (__Pyx_IternextUnpackEndCheck(__pyx_t_28(__pyx_t_25), 2) < 0) __PYX_ERR(0, 396, __pyx_L1_error)
+          if (__Pyx_IternextUnpackEndCheck(__pyx_t_28(__pyx_t_25), 2) < 0) __PYX_ERR(0, 402, __pyx_L1_error)
           __pyx_t_28 = NULL;
           __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
           goto __pyx_L31_unpacking_done;
@@ -9004,18 +9079,18 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
           __pyx_t_28 = NULL;
           if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-          __PYX_ERR(0, 396, __pyx_L1_error)
+          __PYX_ERR(0, 402, __pyx_L1_error)
           __pyx_L31_unpacking_done:;
         }
 
-        /* "pyearth/_forward.pyx":396
+        /* "pyearth/_forward.pyx":402
  *                 else:
  *                     # Find the valid knot candidates
  *                     candidates, candidates_idx = predictor.knot_candidates(p, self.endspan,             # <<<<<<<<<<<<<<
  *                                                                            self.minspan,
  *                                                                            self.minspan_alpha,
  */
-        if (!(likely(((__pyx_t_27) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_27, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 396, __pyx_L1_error)
+        if (!(likely(((__pyx_t_27) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_27, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 402, __pyx_L1_error)
         __Pyx_XDECREF_SET(__pyx_v_candidates, __pyx_t_1);
         __pyx_t_1 = 0;
         __pyx_t_29 = ((PyArrayObject *)__pyx_t_27);
@@ -9033,31 +9108,31 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             }
           }
           __pyx_pybuffernd_candidates_idx.diminfo[0].strides = __pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_candidates_idx.diminfo[0].shape = __pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer.shape[0];
-          if (unlikely(__pyx_t_17 < 0)) __PYX_ERR(0, 396, __pyx_L1_error)
+          if (unlikely(__pyx_t_17 < 0)) __PYX_ERR(0, 402, __pyx_L1_error)
         }
         __pyx_t_29 = 0;
         __Pyx_XDECREF_SET(__pyx_v_candidates_idx, ((PyArrayObject *)__pyx_t_27));
         __pyx_t_27 = 0;
 
-        /* "pyearth/_forward.pyx":403
+        /* "pyearth/_forward.pyx":409
  *                     # improvement on the linear term in terms of gcv, knot_idx
  *                     # is set to -1
  *                     if len(candidates_idx) > 0:             # <<<<<<<<<<<<<<
  * #                         candidates = np.array(predictor.x)[candidates_idx]
  * 
  */
-        __pyx_t_26 = PyObject_Length(((PyObject *)__pyx_v_candidates_idx)); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 403, __pyx_L1_error)
+        __pyx_t_26 = PyObject_Length(((PyObject *)__pyx_v_candidates_idx)); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 409, __pyx_L1_error)
         __pyx_t_3 = ((__pyx_t_26 > 0) != 0);
         if (__pyx_t_3) {
 
-          /* "pyearth/_forward.pyx":409
+          /* "pyearth/_forward.pyx":415
  *                         # variable combination
  *                         # Assemble the knot search data structure
  *                         constant = KnotSearchReadOnlyData(predictor, self.outcome)             # <<<<<<<<<<<<<<
  *                         search_data = KnotSearchData(constant, self.workings, q)
  * 
  */
-          __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 409, __pyx_L1_error)
+          __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 415, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_10);
           __Pyx_INCREF(__pyx_v_predictor);
           __Pyx_GIVEREF(__pyx_v_predictor);
@@ -9065,22 +9140,22 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           __Pyx_INCREF(((PyObject *)__pyx_v_self->outcome));
           __Pyx_GIVEREF(((PyObject *)__pyx_v_self->outcome));
           PyTuple_SET_ITEM(__pyx_t_10, 1, ((PyObject *)__pyx_v_self->outcome));
-          __pyx_t_27 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchReadOnlyData), __pyx_t_10, NULL); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 409, __pyx_L1_error)
+          __pyx_t_27 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchReadOnlyData), __pyx_t_10, NULL); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 415, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_27);
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
           __Pyx_XDECREF_SET(__pyx_v_constant, ((struct __pyx_obj_7pyearth_12_knot_search_KnotSearchReadOnlyData *)__pyx_t_27));
           __pyx_t_27 = 0;
 
-          /* "pyearth/_forward.pyx":410
+          /* "pyearth/_forward.pyx":416
  *                         # Assemble the knot search data structure
  *                         constant = KnotSearchReadOnlyData(predictor, self.outcome)
  *                         search_data = KnotSearchData(constant, self.workings, q)             # <<<<<<<<<<<<<<
  * 
  *                         # Run knot search
  */
-          __pyx_t_27 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_q); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 410, __pyx_L1_error)
+          __pyx_t_27 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_q); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 416, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_27);
-          __pyx_t_10 = PyTuple_New(3); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 410, __pyx_L1_error)
+          __pyx_t_10 = PyTuple_New(3); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 416, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_10);
           __Pyx_INCREF(((PyObject *)__pyx_v_constant));
           __Pyx_GIVEREF(((PyObject *)__pyx_v_constant));
@@ -9091,41 +9166,41 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           __Pyx_GIVEREF(__pyx_t_27);
           PyTuple_SET_ITEM(__pyx_t_10, 2, __pyx_t_27);
           __pyx_t_27 = 0;
-          __pyx_t_27 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchData), __pyx_t_10, NULL); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 410, __pyx_L1_error)
+          __pyx_t_27 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_12_knot_search_KnotSearchData), __pyx_t_10, NULL); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 416, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_27);
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
           __Pyx_XDECREF_SET(__pyx_v_search_data, ((struct __pyx_obj_7pyearth_12_knot_search_KnotSearchData *)__pyx_t_27));
           __pyx_t_27 = 0;
 
-          /* "pyearth/_forward.pyx":413
+          /* "pyearth/_forward.pyx":419
  * 
  *                         # Run knot search
  *                         knot, knot_idx, mse = knot_search(search_data, candidates, p, q,             # <<<<<<<<<<<<<<
- *                                                           self.m, len(candidates), self.n_outcomes)
- *                         mse /= self.total_weight
+ *                                                           self.m, len(candidates), self.n_outcomes,
+ *                                                           self.verbose)
  */
           __pyx_t_30 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(__pyx_v_candidates);
-          if (unlikely(!__pyx_t_30.memview)) __PYX_ERR(0, 413, __pyx_L1_error)
+          if (unlikely(!__pyx_t_30.memview)) __PYX_ERR(0, 419, __pyx_L1_error)
           __pyx_t_31 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_FLOAT_t(((PyObject *)__pyx_v_p));
-          if (unlikely(!__pyx_t_31.memview)) __PYX_ERR(0, 413, __pyx_L1_error)
+          if (unlikely(!__pyx_t_31.memview)) __PYX_ERR(0, 419, __pyx_L1_error)
 
-          /* "pyearth/_forward.pyx":414
+          /* "pyearth/_forward.pyx":420
  *                         # Run knot search
  *                         knot, knot_idx, mse = knot_search(search_data, candidates, p, q,
- *                                                           self.m, len(candidates), self.n_outcomes)             # <<<<<<<<<<<<<<
+ *                                                           self.m, len(candidates), self.n_outcomes,             # <<<<<<<<<<<<<<
+ *                                                           self.verbose)
  *                         mse /= self.total_weight
- *                         knot_idx = candidates_idx[knot_idx]
  */
-          __pyx_t_26 = PyObject_Length(__pyx_v_candidates); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 414, __pyx_L1_error)
+          __pyx_t_26 = PyObject_Length(__pyx_v_candidates); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 420, __pyx_L1_error)
 
-          /* "pyearth/_forward.pyx":413
+          /* "pyearth/_forward.pyx":419
  * 
  *                         # Run knot search
  *                         knot, knot_idx, mse = knot_search(search_data, candidates, p, q,             # <<<<<<<<<<<<<<
- *                                                           self.m, len(candidates), self.n_outcomes)
- *                         mse /= self.total_weight
+ *                                                           self.m, len(candidates), self.n_outcomes,
+ *                                                           self.verbose)
  */
-          __pyx_t_27 = __pyx_f_7pyearth_12_knot_search_knot_search(__pyx_v_search_data, __pyx_t_30, __pyx_t_31, __pyx_v_q, __pyx_v_self->m, __pyx_t_26, __pyx_v_self->n_outcomes, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 413, __pyx_L1_error)
+          __pyx_t_27 = __pyx_f_7pyearth_12_knot_search_knot_search(__pyx_v_search_data, __pyx_t_30, __pyx_t_31, __pyx_v_q, __pyx_v_self->m, __pyx_t_26, __pyx_v_self->n_outcomes, __pyx_v_self->verbose, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 419, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_27);
           __PYX_XDEC_MEMVIEW(&__pyx_t_30, 1);
           __PYX_XDEC_MEMVIEW(&__pyx_t_31, 1);
@@ -9139,7 +9214,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             if (unlikely(size != 3)) {
               if (size > 3) __Pyx_RaiseTooManyValuesError(3);
               else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-              __PYX_ERR(0, 413, __pyx_L1_error)
+              __PYX_ERR(0, 419, __pyx_L1_error)
             }
             #if CYTHON_COMPILING_IN_CPYTHON
             __pyx_t_10 = PyTuple_GET_ITEM(sequence, 0); 
@@ -9149,38 +9224,38 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             __Pyx_INCREF(__pyx_t_1);
             __Pyx_INCREF(__pyx_t_25);
             #else
-            __pyx_t_10 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 413, __pyx_L1_error)
+            __pyx_t_10 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 419, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_10);
-            __pyx_t_1 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 413, __pyx_L1_error)
+            __pyx_t_1 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 419, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_1);
-            __pyx_t_25 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 413, __pyx_L1_error)
+            __pyx_t_25 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 419, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_25);
             #endif
             __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
           } else {
-            __Pyx_RaiseNoneNotIterableError(); __PYX_ERR(0, 413, __pyx_L1_error)
+            __Pyx_RaiseNoneNotIterableError(); __PYX_ERR(0, 419, __pyx_L1_error)
           }
-          __pyx_t_32 = __pyx_PyFloat_AsDouble(__pyx_t_10); if (unlikely((__pyx_t_32 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 413, __pyx_L1_error)
+          __pyx_t_32 = __pyx_PyFloat_AsDouble(__pyx_t_10); if (unlikely((__pyx_t_32 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 419, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __pyx_t_17 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_17 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 413, __pyx_L1_error)
+          __pyx_t_17 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_17 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 419, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __pyx_t_33 = __pyx_PyFloat_AsDouble(__pyx_t_25); if (unlikely((__pyx_t_33 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 413, __pyx_L1_error)
+          __pyx_t_33 = __pyx_PyFloat_AsDouble(__pyx_t_25); if (unlikely((__pyx_t_33 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 419, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
           __pyx_v_knot = __pyx_t_32;
           __pyx_v_knot_idx = __pyx_t_17;
           __pyx_v_mse = __pyx_t_33;
 
-          /* "pyearth/_forward.pyx":415
- *                         knot, knot_idx, mse = knot_search(search_data, candidates, p, q,
- *                                                           self.m, len(candidates), self.n_outcomes)
+          /* "pyearth/_forward.pyx":422
+ *                                                           self.m, len(candidates), self.n_outcomes,
+ *                                                           self.verbose)
  *                         mse /= self.total_weight             # <<<<<<<<<<<<<<
  *                         knot_idx = candidates_idx[knot_idx]
  * 
  */
           __pyx_v_mse = (__pyx_v_mse / __pyx_v_self->total_weight);
 
-          /* "pyearth/_forward.pyx":416
- *                                                           self.m, len(candidates), self.n_outcomes)
+          /* "pyearth/_forward.pyx":423
+ *                                                           self.verbose)
  *                         mse /= self.total_weight
  *                         knot_idx = candidates_idx[knot_idx]             # <<<<<<<<<<<<<<
  * 
@@ -9189,7 +9264,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           __pyx_t_34 = __pyx_v_knot_idx;
           __pyx_v_knot_idx = (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer.buf, __pyx_t_34, __pyx_pybuffernd_candidates_idx.diminfo[0].strides));
 
-          /* "pyearth/_forward.pyx":420
+          /* "pyearth/_forward.pyx":427
  *                         # If the hinge function does not decrease the gcv then
  *                         # just keep the linear term (if allow_linear is True)
  *                         if self.allow_linear:             # <<<<<<<<<<<<<<
@@ -9199,7 +9274,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           __pyx_t_3 = (__pyx_v_self->allow_linear != 0);
           if (__pyx_t_3) {
 
-            /* "pyearth/_forward.pyx":421
+            /* "pyearth/_forward.pyx":428
  *                         # just keep the linear term (if allow_linear is True)
  *                         if self.allow_linear:
  *                             if missing_flag and not covered:             # <<<<<<<<<<<<<<
@@ -9217,7 +9292,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             __pyx_L35_bool_binop_done:;
             if (__pyx_t_3) {
 
-              /* "pyearth/_forward.pyx":422
+              /* "pyearth/_forward.pyx":429
  *                         if self.allow_linear:
  *                             if missing_flag and not covered:
  *                                 if gcv_factor_k_plus_4 * mse >= gcv_:             # <<<<<<<<<<<<<<
@@ -9227,7 +9302,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
               __pyx_t_3 = (((__pyx_v_gcv_factor_k_plus_4 * __pyx_v_mse) >= __pyx_v_gcv_) != 0);
               if (__pyx_t_3) {
 
-                /* "pyearth/_forward.pyx":423
+                /* "pyearth/_forward.pyx":430
  *                             if missing_flag and not covered:
  *                                 if gcv_factor_k_plus_4 * mse >= gcv_:
  *                                     mse = mse_             # <<<<<<<<<<<<<<
@@ -9236,7 +9311,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
                 __pyx_v_mse = __pyx_v_mse_;
 
-                /* "pyearth/_forward.pyx":424
+                /* "pyearth/_forward.pyx":431
  *                                 if gcv_factor_k_plus_4 * mse >= gcv_:
  *                                     mse = mse_
  *                                     knot_idx = -1             # <<<<<<<<<<<<<<
@@ -9245,7 +9320,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
                 __pyx_v_knot_idx = -1;
 
-                /* "pyearth/_forward.pyx":422
+                /* "pyearth/_forward.pyx":429
  *                         if self.allow_linear:
  *                             if missing_flag and not covered:
  *                                 if gcv_factor_k_plus_4 * mse >= gcv_:             # <<<<<<<<<<<<<<
@@ -9254,7 +9329,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
               }
 
-              /* "pyearth/_forward.pyx":421
+              /* "pyearth/_forward.pyx":428
  *                         # just keep the linear term (if allow_linear is True)
  *                         if self.allow_linear:
  *                             if missing_flag and not covered:             # <<<<<<<<<<<<<<
@@ -9264,7 +9339,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
               goto __pyx_L34;
             }
 
-            /* "pyearth/_forward.pyx":426
+            /* "pyearth/_forward.pyx":433
  *                                     knot_idx = -1
  *                             else:
  *                                 if gcv_factor_k_plus_2 * mse >= gcv_:             # <<<<<<<<<<<<<<
@@ -9275,7 +9350,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
               __pyx_t_3 = (((__pyx_v_gcv_factor_k_plus_2 * __pyx_v_mse) >= __pyx_v_gcv_) != 0);
               if (__pyx_t_3) {
 
-                /* "pyearth/_forward.pyx":427
+                /* "pyearth/_forward.pyx":434
  *                             else:
  *                                 if gcv_factor_k_plus_2 * mse >= gcv_:
  *                                     mse = mse_             # <<<<<<<<<<<<<<
@@ -9284,7 +9359,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
                 __pyx_v_mse = __pyx_v_mse_;
 
-                /* "pyearth/_forward.pyx":428
+                /* "pyearth/_forward.pyx":435
  *                                 if gcv_factor_k_plus_2 * mse >= gcv_:
  *                                     mse = mse_
  *                                     knot_idx = -1             # <<<<<<<<<<<<<<
@@ -9293,7 +9368,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
                 __pyx_v_knot_idx = -1;
 
-                /* "pyearth/_forward.pyx":426
+                /* "pyearth/_forward.pyx":433
  *                                     knot_idx = -1
  *                             else:
  *                                 if gcv_factor_k_plus_2 * mse >= gcv_:             # <<<<<<<<<<<<<<
@@ -9304,7 +9379,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             }
             __pyx_L34:;
 
-            /* "pyearth/_forward.pyx":420
+            /* "pyearth/_forward.pyx":427
  *                         # If the hinge function does not decrease the gcv then
  *                         # just keep the linear term (if allow_linear is True)
  *                         if self.allow_linear:             # <<<<<<<<<<<<<<
@@ -9313,7 +9388,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
           }
 
-          /* "pyearth/_forward.pyx":403
+          /* "pyearth/_forward.pyx":409
  *                     # improvement on the linear term in terms of gcv, knot_idx
  *                     # is set to -1
  *                     if len(candidates_idx) > 0:             # <<<<<<<<<<<<<<
@@ -9323,7 +9398,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           goto __pyx_L32;
         }
 
-        /* "pyearth/_forward.pyx":430
+        /* "pyearth/_forward.pyx":437
  *                                     knot_idx = -1
  *                     else:
  *                         if self.allow_linear:             # <<<<<<<<<<<<<<
@@ -9334,7 +9409,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           __pyx_t_3 = (__pyx_v_self->allow_linear != 0);
           if (__pyx_t_3) {
 
-            /* "pyearth/_forward.pyx":431
+            /* "pyearth/_forward.pyx":438
  *                     else:
  *                         if self.allow_linear:
  *                             mse = mse_             # <<<<<<<<<<<<<<
@@ -9343,7 +9418,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
             __pyx_v_mse = __pyx_v_mse_;
 
-            /* "pyearth/_forward.pyx":432
+            /* "pyearth/_forward.pyx":439
  *                         if self.allow_linear:
  *                             mse = mse_
  *                             knot_idx = -1             # <<<<<<<<<<<<<<
@@ -9352,7 +9427,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
             __pyx_v_knot_idx = -1;
 
-            /* "pyearth/_forward.pyx":430
+            /* "pyearth/_forward.pyx":437
  *                                     knot_idx = -1
  *                     else:
  *                         if self.allow_linear:             # <<<<<<<<<<<<<<
@@ -9362,7 +9437,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             goto __pyx_L39;
           }
 
-          /* "pyearth/_forward.pyx":436
+          /* "pyearth/_forward.pyx":443
  *                             # Do an orthonormal downdate and skip to the next
  *                             # iteration
  *                             if missing_flag and not covered:             # <<<<<<<<<<<<<<
@@ -9381,29 +9456,29 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             __pyx_L41_bool_binop_done:;
             if (__pyx_t_3) {
 
-              /* "pyearth/_forward.pyx":437
+              /* "pyearth/_forward.pyx":444
  *                             # iteration
  *                             if missing_flag and not covered:
  *                                 self.orthonormal_downdate()             # <<<<<<<<<<<<<<
  *                                 self.orthonormal_downdate()
  *                             self.orthonormal_downdate()
  */
-              __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 437, __pyx_L1_error)
+              __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 444, __pyx_L1_error)
               __Pyx_GOTREF(__pyx_t_27);
               __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
 
-              /* "pyearth/_forward.pyx":438
+              /* "pyearth/_forward.pyx":445
  *                             if missing_flag and not covered:
  *                                 self.orthonormal_downdate()
  *                                 self.orthonormal_downdate()             # <<<<<<<<<<<<<<
  *                             self.orthonormal_downdate()
  *                             continue
  */
-              __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 438, __pyx_L1_error)
+              __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 445, __pyx_L1_error)
               __Pyx_GOTREF(__pyx_t_27);
               __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
 
-              /* "pyearth/_forward.pyx":436
+              /* "pyearth/_forward.pyx":443
  *                             # Do an orthonormal downdate and skip to the next
  *                             # iteration
  *                             if missing_flag and not covered:             # <<<<<<<<<<<<<<
@@ -9412,18 +9487,18 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
             }
 
-            /* "pyearth/_forward.pyx":439
+            /* "pyearth/_forward.pyx":446
  *                                 self.orthonormal_downdate()
  *                                 self.orthonormal_downdate()
  *                             self.orthonormal_downdate()             # <<<<<<<<<<<<<<
  *                             continue
  * 
  */
-            __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 439, __pyx_L1_error)
+            __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 446, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_27);
             __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
 
-            /* "pyearth/_forward.pyx":440
+            /* "pyearth/_forward.pyx":447
  *                                 self.orthonormal_downdate()
  *                             self.orthonormal_downdate()
  *                             continue             # <<<<<<<<<<<<<<
@@ -9438,7 +9513,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       }
       __pyx_L29:;
 
-      /* "pyearth/_forward.pyx":443
+      /* "pyearth/_forward.pyx":450
  * 
  *                 # Do an orthonormal downdate
  *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
@@ -9456,29 +9531,29 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __pyx_L44_bool_binop_done:;
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":444
+        /* "pyearth/_forward.pyx":451
  *                 # Do an orthonormal downdate
  *                 if missing_flag and not covered:
  *                     self.orthonormal_downdate()             # <<<<<<<<<<<<<<
  *                     self.orthonormal_downdate()
  *                 self.orthonormal_downdate()
  */
-        __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 444, __pyx_L1_error)
+        __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 451, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_27);
         __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
 
-        /* "pyearth/_forward.pyx":445
+        /* "pyearth/_forward.pyx":452
  *                 if missing_flag and not covered:
  *                     self.orthonormal_downdate()
  *                     self.orthonormal_downdate()             # <<<<<<<<<<<<<<
  *                 self.orthonormal_downdate()
  * 
  */
-        __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 445, __pyx_L1_error)
+        __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 452, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_27);
         __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
 
-        /* "pyearth/_forward.pyx":443
+        /* "pyearth/_forward.pyx":450
  * 
  *                 # Do an orthonormal downdate
  *                 if missing_flag and not covered:             # <<<<<<<<<<<<<<
@@ -9487,18 +9562,18 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       }
 
-      /* "pyearth/_forward.pyx":446
+      /* "pyearth/_forward.pyx":453
  *                     self.orthonormal_downdate()
  *                     self.orthonormal_downdate()
  *                 self.orthonormal_downdate()             # <<<<<<<<<<<<<<
  * 
  *                 # Update the choices
  */
-      __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 446, __pyx_L1_error)
+      __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_downdate(__pyx_v_self, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 453, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
       __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
 
-      /* "pyearth/_forward.pyx":449
+      /* "pyearth/_forward.pyx":456
  * 
  *                 # Update the choices
  *                 if mse < mse_choice or first:             # <<<<<<<<<<<<<<
@@ -9516,7 +9591,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __pyx_L47_bool_binop_done:;
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":450
+        /* "pyearth/_forward.pyx":457
  *                 # Update the choices
  *                 if mse < mse_choice or first:
  *                     if first:             # <<<<<<<<<<<<<<
@@ -9526,7 +9601,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         __pyx_t_3 = (__pyx_v_first != 0);
         if (__pyx_t_3) {
 
-          /* "pyearth/_forward.pyx":451
+          /* "pyearth/_forward.pyx":458
  *                 if mse < mse_choice or first:
  *                     if first:
  *                         first = False             # <<<<<<<<<<<<<<
@@ -9535,7 +9610,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
           __pyx_v_first = 0;
 
-          /* "pyearth/_forward.pyx":450
+          /* "pyearth/_forward.pyx":457
  *                 # Update the choices
  *                 if mse < mse_choice or first:
  *                     if first:             # <<<<<<<<<<<<<<
@@ -9544,7 +9619,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         }
 
-        /* "pyearth/_forward.pyx":452
+        /* "pyearth/_forward.pyx":459
  *                     if first:
  *                         first = False
  *                     knot_choice = knot             # <<<<<<<<<<<<<<
@@ -9553,7 +9628,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         __pyx_v_knot_choice = __pyx_v_knot;
 
-        /* "pyearth/_forward.pyx":453
+        /* "pyearth/_forward.pyx":460
  *                         first = False
  *                     knot_choice = knot
  *                     mse_choice = mse             # <<<<<<<<<<<<<<
@@ -9562,7 +9637,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         __pyx_v_mse_choice = __pyx_v_mse;
 
-        /* "pyearth/_forward.pyx":454
+        /* "pyearth/_forward.pyx":461
  *                     knot_choice = knot
  *                     mse_choice = mse
  *                     knot_idx_choice = knot_idx             # <<<<<<<<<<<<<<
@@ -9571,7 +9646,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         __pyx_v_knot_idx_choice = __pyx_v_knot_idx;
 
-        /* "pyearth/_forward.pyx":455
+        /* "pyearth/_forward.pyx":462
  *                     mse_choice = mse
  *                     knot_idx_choice = knot_idx
  *                     parent_idx_choice = parent_idx             # <<<<<<<<<<<<<<
@@ -9580,7 +9655,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         __pyx_v_parent_idx_choice = __pyx_v_parent_idx;
 
-        /* "pyearth/_forward.pyx":456
+        /* "pyearth/_forward.pyx":463
  *                     knot_idx_choice = knot_idx
  *                     parent_idx_choice = parent_idx
  *                     parent_choice = parent             # <<<<<<<<<<<<<<
@@ -9590,7 +9665,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         __Pyx_INCREF(((PyObject *)__pyx_v_parent));
         __Pyx_XDECREF_SET(__pyx_v_parent_choice, __pyx_v_parent);
 
-        /* "pyearth/_forward.pyx":457
+        /* "pyearth/_forward.pyx":464
  *                     parent_idx_choice = parent_idx
  *                     parent_choice = parent
  *                     if self.use_fast is True:             # <<<<<<<<<<<<<<
@@ -9600,7 +9675,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
         if (__pyx_t_3) {
 
-          /* "pyearth/_forward.pyx":458
+          /* "pyearth/_forward.pyx":465
  *                     parent_choice = parent
  *                     if self.use_fast is True:
  *                         parent_basis_content_choice = parent_basis_content             # <<<<<<<<<<<<<<
@@ -9610,7 +9685,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           __Pyx_INCREF(__pyx_v_parent_basis_content);
           __Pyx_DECREF_SET(__pyx_v_parent_basis_content_choice, __pyx_v_parent_basis_content);
 
-          /* "pyearth/_forward.pyx":457
+          /* "pyearth/_forward.pyx":464
  *                     parent_idx_choice = parent_idx
  *                     parent_choice = parent
  *                     if self.use_fast is True:             # <<<<<<<<<<<<<<
@@ -9619,7 +9694,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         }
 
-        /* "pyearth/_forward.pyx":459
+        /* "pyearth/_forward.pyx":466
  *                     if self.use_fast is True:
  *                         parent_basis_content_choice = parent_basis_content
  *                     variable_choice = variable             # <<<<<<<<<<<<<<
@@ -9628,7 +9703,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         __pyx_v_variable_choice = __pyx_v_variable;
 
-        /* "pyearth/_forward.pyx":460
+        /* "pyearth/_forward.pyx":467
  *                         parent_basis_content_choice = parent_basis_content
  *                     variable_choice = variable
  *                     dependent = linear_dependence             # <<<<<<<<<<<<<<
@@ -9637,7 +9712,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         __pyx_v_dependent = __pyx_v_linear_dependence;
 
-        /* "pyearth/_forward.pyx":461
+        /* "pyearth/_forward.pyx":468
  *                     variable_choice = variable
  *                     dependent = linear_dependence
  *                     if missing_flag and not covered:             # <<<<<<<<<<<<<<
@@ -9655,7 +9730,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         __pyx_L52_bool_binop_done:;
         if (__pyx_t_3) {
 
-          /* "pyearth/_forward.pyx":462
+          /* "pyearth/_forward.pyx":469
  *                     dependent = linear_dependence
  *                     if missing_flag and not covered:
  *                         choice_needs_coverage = True             # <<<<<<<<<<<<<<
@@ -9664,7 +9739,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
           __pyx_v_choice_needs_coverage = 1;
 
-          /* "pyearth/_forward.pyx":461
+          /* "pyearth/_forward.pyx":468
  *                     variable_choice = variable
  *                     dependent = linear_dependence
  *                     if missing_flag and not covered:             # <<<<<<<<<<<<<<
@@ -9674,7 +9749,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           goto __pyx_L51;
         }
 
-        /* "pyearth/_forward.pyx":464
+        /* "pyearth/_forward.pyx":471
  *                         choice_needs_coverage = True
  *                     else:
  *                         choice_needs_coverage = False             # <<<<<<<<<<<<<<
@@ -9686,7 +9761,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         }
         __pyx_L51:;
 
-        /* "pyearth/_forward.pyx":449
+        /* "pyearth/_forward.pyx":456
  * 
  *                 # Update the choices
  *                 if mse < mse_choice or first:             # <<<<<<<<<<<<<<
@@ -9695,7 +9770,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       }
 
-      /* "pyearth/_forward.pyx":466
+      /* "pyearth/_forward.pyx":473
  *                         choice_needs_coverage = False
  * 
  *                 if self.use_fast is True:             # <<<<<<<<<<<<<<
@@ -9705,7 +9780,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":467
+        /* "pyearth/_forward.pyx":474
  * 
  *                 if self.use_fast is True:
  *                     if (mse_choice_cur_parent == -1) or \             # <<<<<<<<<<<<<<
@@ -9719,7 +9794,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           goto __pyx_L56_bool_binop_done;
         }
 
-        /* "pyearth/_forward.pyx":468
+        /* "pyearth/_forward.pyx":475
  *                 if self.use_fast is True:
  *                     if (mse_choice_cur_parent == -1) or \
  *                        (mse < mse_choice_cur_parent):             # <<<<<<<<<<<<<<
@@ -9730,7 +9805,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         __pyx_t_3 = __pyx_t_13;
         __pyx_L56_bool_binop_done:;
 
-        /* "pyearth/_forward.pyx":467
+        /* "pyearth/_forward.pyx":474
  * 
  *                 if self.use_fast is True:
  *                     if (mse_choice_cur_parent == -1) or \             # <<<<<<<<<<<<<<
@@ -9739,7 +9814,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         if (__pyx_t_3) {
 
-          /* "pyearth/_forward.pyx":469
+          /* "pyearth/_forward.pyx":476
  *                     if (mse_choice_cur_parent == -1) or \
  *                        (mse < mse_choice_cur_parent):
  *                         mse_choice_cur_parent = mse             # <<<<<<<<<<<<<<
@@ -9748,7 +9823,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
           __pyx_v_mse_choice_cur_parent = __pyx_v_mse;
 
-          /* "pyearth/_forward.pyx":470
+          /* "pyearth/_forward.pyx":477
  *                        (mse < mse_choice_cur_parent):
  *                         mse_choice_cur_parent = mse
  *                         variable_choice_cur_parent = variable             # <<<<<<<<<<<<<<
@@ -9757,7 +9832,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
           __pyx_v_variable_choice_cur_parent = __pyx_v_variable;
 
-          /* "pyearth/_forward.pyx":467
+          /* "pyearth/_forward.pyx":474
  * 
  *                 if self.use_fast is True:
  *                     if (mse_choice_cur_parent == -1) or \             # <<<<<<<<<<<<<<
@@ -9766,7 +9841,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
         }
 
-        /* "pyearth/_forward.pyx":466
+        /* "pyearth/_forward.pyx":473
  *                         choice_needs_coverage = False
  * 
  *                 if self.use_fast is True:             # <<<<<<<<<<<<<<
@@ -9775,7 +9850,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       }
 
-      /* "pyearth/_forward.pyx":331
+      /* "pyearth/_forward.pyx":337
  *             parent_degree = parent.effective_degree()
  * 
  *             for variable in variables:             # <<<<<<<<<<<<<<
@@ -9786,7 +9861,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     }
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-    /* "pyearth/_forward.pyx":471
+    /* "pyearth/_forward.pyx":478
  *                         mse_choice_cur_parent = mse
  *                         variable_choice_cur_parent = variable
  *             if self.use_fast is True:             # <<<<<<<<<<<<<<
@@ -9796,7 +9871,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
     if (__pyx_t_3) {
 
-      /* "pyearth/_forward.pyx":472
+      /* "pyearth/_forward.pyx":479
  *                         variable_choice_cur_parent = variable
  *             if self.use_fast is True:
  *                 if mse_choice_cur_parent != -1:             # <<<<<<<<<<<<<<
@@ -9806,31 +9881,31 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __pyx_t_3 = ((__pyx_v_mse_choice_cur_parent != -1.0) != 0);
       if (__pyx_t_3) {
 
-        /* "pyearth/_forward.pyx":473
+        /* "pyearth/_forward.pyx":480
  *             if self.use_fast is True:
  *                 if mse_choice_cur_parent != -1:
  *                     parent_basis_content.mse = mse_choice_cur_parent             # <<<<<<<<<<<<<<
  *                     parent_basis_content.v = variable_choice_cur_parent
  * 
  */
-        __pyx_t_8 = PyFloat_FromDouble(__pyx_v_mse_choice_cur_parent); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 473, __pyx_L1_error)
+        __pyx_t_8 = PyFloat_FromDouble(__pyx_v_mse_choice_cur_parent); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 480, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_8);
-        if (__Pyx_PyObject_SetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_mse, __pyx_t_8) < 0) __PYX_ERR(0, 473, __pyx_L1_error)
+        if (__Pyx_PyObject_SetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_mse, __pyx_t_8) < 0) __PYX_ERR(0, 480, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-        /* "pyearth/_forward.pyx":474
+        /* "pyearth/_forward.pyx":481
  *                 if mse_choice_cur_parent != -1:
  *                     parent_basis_content.mse = mse_choice_cur_parent
  *                     parent_basis_content.v = variable_choice_cur_parent             # <<<<<<<<<<<<<<
  * 
  *         if self.use_fast is True:
  */
-        __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_variable_choice_cur_parent); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 474, __pyx_L1_error)
+        __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_variable_choice_cur_parent); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 481, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_8);
-        if (__Pyx_PyObject_SetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_v, __pyx_t_8) < 0) __PYX_ERR(0, 474, __pyx_L1_error)
+        if (__Pyx_PyObject_SetAttrStr(__pyx_v_parent_basis_content, __pyx_n_s_v, __pyx_t_8) < 0) __PYX_ERR(0, 481, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-        /* "pyearth/_forward.pyx":472
+        /* "pyearth/_forward.pyx":479
  *                         variable_choice_cur_parent = variable
  *             if self.use_fast is True:
  *                 if mse_choice_cur_parent != -1:             # <<<<<<<<<<<<<<
@@ -9839,7 +9914,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       }
 
-      /* "pyearth/_forward.pyx":471
+      /* "pyearth/_forward.pyx":478
  *                         mse_choice_cur_parent = mse
  *                         variable_choice_cur_parent = variable
  *             if self.use_fast is True:             # <<<<<<<<<<<<<<
@@ -9850,7 +9925,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __pyx_L4_continue:;
   }
 
-  /* "pyearth/_forward.pyx":476
+  /* "pyearth/_forward.pyx":483
  *                     parent_basis_content.v = variable_choice_cur_parent
  * 
  *         if self.use_fast is True:             # <<<<<<<<<<<<<<
@@ -9860,7 +9935,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
   if (__pyx_t_3) {
 
-    /* "pyearth/_forward.pyx":477
+    /* "pyearth/_forward.pyx":484
  * 
  *         if self.use_fast is True:
  *             for content in content_to_be_repushed:             # <<<<<<<<<<<<<<
@@ -9871,22 +9946,22 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     for (;;) {
       if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_8)) break;
       #if CYTHON_COMPILING_IN_CPYTHON
-      __pyx_t_27 = PyList_GET_ITEM(__pyx_t_8, __pyx_t_2); __Pyx_INCREF(__pyx_t_27); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 477, __pyx_L1_error)
+      __pyx_t_27 = PyList_GET_ITEM(__pyx_t_8, __pyx_t_2); __Pyx_INCREF(__pyx_t_27); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 484, __pyx_L1_error)
       #else
-      __pyx_t_27 = PySequence_ITEM(__pyx_t_8, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 477, __pyx_L1_error)
+      __pyx_t_27 = PySequence_ITEM(__pyx_t_8, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 484, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
       #endif
       __Pyx_XDECREF_SET(__pyx_v_content, __pyx_t_27);
       __pyx_t_27 = 0;
 
-      /* "pyearth/_forward.pyx":478
+      /* "pyearth/_forward.pyx":485
  *         if self.use_fast is True:
  *             for content in content_to_be_repushed:
  *                 heappush(self.fast_heap, content)             # <<<<<<<<<<<<<<
  * 
  *         # Make sure at least one candidate was checked
  */
-      __pyx_t_25 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 478, __pyx_L1_error)
+      __pyx_t_25 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 485, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_25);
       __pyx_t_1 = NULL;
       __pyx_t_26 = 0;
@@ -9900,7 +9975,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           __pyx_t_26 = 1;
         }
       }
-      __pyx_t_10 = PyTuple_New(2+__pyx_t_26); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 478, __pyx_L1_error)
+      __pyx_t_10 = PyTuple_New(2+__pyx_t_26); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 485, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       if (__pyx_t_1) {
         __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_1); __pyx_t_1 = NULL;
@@ -9911,13 +9986,13 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __Pyx_INCREF(__pyx_v_content);
       __Pyx_GIVEREF(__pyx_v_content);
       PyTuple_SET_ITEM(__pyx_t_10, 1+__pyx_t_26, __pyx_v_content);
-      __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_25, __pyx_t_10, NULL); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 478, __pyx_L1_error)
+      __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_25, __pyx_t_10, NULL); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 485, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
       __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
 
-      /* "pyearth/_forward.pyx":477
+      /* "pyearth/_forward.pyx":484
  * 
  *         if self.use_fast is True:
  *             for content in content_to_be_repushed:             # <<<<<<<<<<<<<<
@@ -9927,7 +10002,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     }
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-    /* "pyearth/_forward.pyx":476
+    /* "pyearth/_forward.pyx":483
  *                     parent_basis_content.v = variable_choice_cur_parent
  * 
  *         if self.use_fast is True:             # <<<<<<<<<<<<<<
@@ -9936,7 +10011,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
   }
 
-  /* "pyearth/_forward.pyx":481
+  /* "pyearth/_forward.pyx":488
  * 
  *         # Make sure at least one candidate was checked
  *         if first:             # <<<<<<<<<<<<<<
@@ -9946,7 +10021,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   __pyx_t_3 = (__pyx_v_first != 0);
   if (__pyx_t_3) {
 
-    /* "pyearth/_forward.pyx":482
+    /* "pyearth/_forward.pyx":489
  *         # Make sure at least one candidate was checked
  *         if first:
  *             self.record[len(self.record) - 1].set_no_candidates(True)             # <<<<<<<<<<<<<<
@@ -9955,20 +10030,20 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
     __pyx_t_8 = ((PyObject *)__pyx_v_self->record);
     __Pyx_INCREF(__pyx_t_8);
-    __pyx_t_2 = PyObject_Length(__pyx_t_8); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 482, __pyx_L1_error)
+    __pyx_t_2 = PyObject_Length(__pyx_t_8); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __pyx_t_26 = (__pyx_t_2 - 1);
-    __pyx_t_8 = __Pyx_GetItemInt(((PyObject *)__pyx_v_self->record), __pyx_t_26, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 0, 0); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 482, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_GetItemInt(((PyObject *)__pyx_v_self->record), __pyx_t_26, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 0, 0); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_27 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_set_no_candidates); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 482, __pyx_L1_error)
+    __pyx_t_27 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_set_no_candidates); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_27, __pyx_tuple__24, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 482, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_27, __pyx_tuple__26, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-    /* "pyearth/_forward.pyx":483
+    /* "pyearth/_forward.pyx":490
  *         if first:
  *             self.record[len(self.record) - 1].set_no_candidates(True)
  *             return             # <<<<<<<<<<<<<<
@@ -9979,7 +10054,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __pyx_r = Py_None; __Pyx_INCREF(Py_None);
     goto __pyx_L0;
 
-    /* "pyearth/_forward.pyx":481
+    /* "pyearth/_forward.pyx":488
  * 
  *         # Make sure at least one candidate was checked
  *         if first:             # <<<<<<<<<<<<<<
@@ -9988,7 +10063,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
   }
 
-  /* "pyearth/_forward.pyx":486
+  /* "pyearth/_forward.pyx":493
  * 
  *         # Add the new basis functions
  *         label = self.xlabels[variable_choice]             # <<<<<<<<<<<<<<
@@ -9997,14 +10072,14 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
   if (unlikely(__pyx_v_self->xlabels == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 486, __pyx_L1_error)
+    __PYX_ERR(0, 493, __pyx_L1_error)
   }
   __pyx_t_8 = PyList_GET_ITEM(__pyx_v_self->xlabels, __pyx_v_variable_choice);
   __Pyx_INCREF(__pyx_t_8);
   __pyx_v_label = __pyx_t_8;
   __pyx_t_8 = 0;
 
-  /* "pyearth/_forward.pyx":487
+  /* "pyearth/_forward.pyx":494
  *         # Add the new basis functions
  *         label = self.xlabels[variable_choice]
  *         if self.use_fast is True:             # <<<<<<<<<<<<<<
@@ -10014,25 +10089,25 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   __pyx_t_3 = ((__pyx_v_self->use_fast == 1) != 0);
   if (__pyx_t_3) {
 
-    /* "pyearth/_forward.pyx":488
+    /* "pyearth/_forward.pyx":495
  *         label = self.xlabels[variable_choice]
  *         if self.use_fast is True:
  *             parent_basis_content_choice.m = -np.inf             # <<<<<<<<<<<<<<
  *         if choice_needs_coverage:
  *             new_parent = parent_choice.get_coverage(variable_choice)
  */
-    __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 488, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 495, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_27 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_inf); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 488, __pyx_L1_error)
+    __pyx_t_27 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_inf); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 495, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_8 = PyNumber_Negative(__pyx_t_27); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 488, __pyx_L1_error)
+    __pyx_t_8 = PyNumber_Negative(__pyx_t_27); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 495, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
-    if (__Pyx_PyObject_SetAttrStr(__pyx_v_parent_basis_content_choice, __pyx_n_s_m, __pyx_t_8) < 0) __PYX_ERR(0, 488, __pyx_L1_error)
+    if (__Pyx_PyObject_SetAttrStr(__pyx_v_parent_basis_content_choice, __pyx_n_s_m, __pyx_t_8) < 0) __PYX_ERR(0, 495, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-    /* "pyearth/_forward.pyx":487
+    /* "pyearth/_forward.pyx":494
  *         # Add the new basis functions
  *         label = self.xlabels[variable_choice]
  *         if self.use_fast is True:             # <<<<<<<<<<<<<<
@@ -10041,7 +10116,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
   }
 
-  /* "pyearth/_forward.pyx":489
+  /* "pyearth/_forward.pyx":496
  *         if self.use_fast is True:
  *             parent_basis_content_choice.m = -np.inf
  *         if choice_needs_coverage:             # <<<<<<<<<<<<<<
@@ -10051,20 +10126,20 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   __pyx_t_3 = (__pyx_v_choice_needs_coverage != 0);
   if (__pyx_t_3) {
 
-    /* "pyearth/_forward.pyx":490
+    /* "pyearth/_forward.pyx":497
  *             parent_basis_content_choice.m = -np.inf
  *         if choice_needs_coverage:
  *             new_parent = parent_choice.get_coverage(variable_choice)             # <<<<<<<<<<<<<<
  *             if new_parent is None:
  *                 new_basis_function = MissingnessBasisFunction(parent_choice, variable_choice,
  */
-    if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); __PYX_ERR(0, 490, __pyx_L1_error) }
-    __pyx_t_8 = ((PyObject *)((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_parent_choice->__pyx_vtab)->get_coverage(__pyx_v_parent_choice, __pyx_v_variable_choice, 0)); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 490, __pyx_L1_error)
+    if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); __PYX_ERR(0, 497, __pyx_L1_error) }
+    __pyx_t_8 = ((PyObject *)((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_parent_choice->__pyx_vtab)->get_coverage(__pyx_v_parent_choice, __pyx_v_variable_choice, 0)); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 497, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __pyx_v_new_parent = ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_8);
     __pyx_t_8 = 0;
 
-    /* "pyearth/_forward.pyx":491
+    /* "pyearth/_forward.pyx":498
  *         if choice_needs_coverage:
  *             new_parent = parent_choice.get_coverage(variable_choice)
  *             if new_parent is None:             # <<<<<<<<<<<<<<
@@ -10075,25 +10150,25 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __pyx_t_13 = (__pyx_t_3 != 0);
     if (__pyx_t_13) {
 
-      /* "pyearth/_forward.pyx":492
+      /* "pyearth/_forward.pyx":499
  *             new_parent = parent_choice.get_coverage(variable_choice)
  *             if new_parent is None:
  *                 new_basis_function = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
  *                                                True, label)
  *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
  */
-      if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); __PYX_ERR(0, 492, __pyx_L1_error) }
-      __pyx_t_8 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 492, __pyx_L1_error)
+      if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); __PYX_ERR(0, 499, __pyx_L1_error) }
+      __pyx_t_8 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 499, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
 
-      /* "pyearth/_forward.pyx":493
+      /* "pyearth/_forward.pyx":500
  *             if new_parent is None:
  *                 new_basis_function = MissingnessBasisFunction(parent_choice, variable_choice,
  *                                                True, label)             # <<<<<<<<<<<<<<
  *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *                 self.orthonormal_update(B[:, len(self.basis)])
  */
-      __pyx_t_27 = PyTuple_New(4); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 492, __pyx_L1_error)
+      __pyx_t_27 = PyTuple_New(4); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 499, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
       __Pyx_INCREF(((PyObject *)__pyx_v_parent_choice));
       __Pyx_GIVEREF(((PyObject *)__pyx_v_parent_choice));
@@ -10108,20 +10183,20 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       PyTuple_SET_ITEM(__pyx_t_27, 3, __pyx_v_label);
       __pyx_t_8 = 0;
 
-      /* "pyearth/_forward.pyx":492
+      /* "pyearth/_forward.pyx":499
  *             new_parent = parent_choice.get_coverage(variable_choice)
  *             if new_parent is None:
  *                 new_basis_function = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
  *                                                True, label)
  *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction), __pyx_t_27, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 492, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction), __pyx_t_27, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 499, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
       __pyx_v_new_basis_function = ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_8);
       __pyx_t_8 = 0;
 
-      /* "pyearth/_forward.pyx":494
+      /* "pyearth/_forward.pyx":501
  *                 new_basis_function = MissingnessBasisFunction(parent_choice, variable_choice,
  *                                                True, label)
  *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])             # <<<<<<<<<<<<<<
@@ -10130,28 +10205,28 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       __pyx_t_8 = ((PyObject *)__pyx_v_self->basis);
       __Pyx_INCREF(__pyx_t_8);
-      __pyx_t_26 = PyObject_Length(__pyx_t_8); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 494, __pyx_L1_error)
+      __pyx_t_26 = PyObject_Length(__pyx_t_8); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 501, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __pyx_t_8 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 494, __pyx_L1_error)
+      __pyx_t_8 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 501, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_27 = PyTuple_New(2); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 494, __pyx_L1_error)
+      __pyx_t_27 = PyTuple_New(2); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 501, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
-      __Pyx_INCREF(__pyx_slice__25);
-      __Pyx_GIVEREF(__pyx_slice__25);
-      PyTuple_SET_ITEM(__pyx_t_27, 0, __pyx_slice__25);
+      __Pyx_INCREF(__pyx_slice__27);
+      __Pyx_GIVEREF(__pyx_slice__27);
+      PyTuple_SET_ITEM(__pyx_t_27, 0, __pyx_slice__27);
       __Pyx_GIVEREF(__pyx_t_8);
       PyTuple_SET_ITEM(__pyx_t_27, 1, __pyx_t_8);
       __pyx_t_8 = 0;
-      __pyx_t_8 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_27); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 494, __pyx_L1_error)
+      __pyx_t_8 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_27); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 501, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
-      if (!(likely(((__pyx_t_8) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_8, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 494, __pyx_L1_error)
-      __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_new_basis_function->__pyx_vtab)->apply(__pyx_v_new_basis_function, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_8), 0, NULL); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 494, __pyx_L1_error)
+      if (!(likely(((__pyx_t_8) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_8, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 501, __pyx_L1_error)
+      __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_new_basis_function->__pyx_vtab)->apply(__pyx_v_new_basis_function, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_8), 0, NULL); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 501, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
 
-      /* "pyearth/_forward.pyx":495
+      /* "pyearth/_forward.pyx":502
  *                                                True, label)
  *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *                 self.orthonormal_update(B[:, len(self.basis)])             # <<<<<<<<<<<<<<
@@ -10160,27 +10235,27 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       __pyx_t_27 = ((PyObject *)__pyx_v_self->basis);
       __Pyx_INCREF(__pyx_t_27);
-      __pyx_t_26 = PyObject_Length(__pyx_t_27); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 495, __pyx_L1_error)
+      __pyx_t_26 = PyObject_Length(__pyx_t_27); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 502, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
-      __pyx_t_27 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 495, __pyx_L1_error)
+      __pyx_t_27 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 502, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
-      __pyx_t_8 = PyTuple_New(2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 495, __pyx_L1_error)
+      __pyx_t_8 = PyTuple_New(2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 502, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
-      __Pyx_INCREF(__pyx_slice__26);
-      __Pyx_GIVEREF(__pyx_slice__26);
-      PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_slice__26);
+      __Pyx_INCREF(__pyx_slice__28);
+      __Pyx_GIVEREF(__pyx_slice__28);
+      PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_slice__28);
       __Pyx_GIVEREF(__pyx_t_27);
       PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_t_27);
       __pyx_t_27 = 0;
-      __pyx_t_27 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_8); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 495, __pyx_L1_error)
+      __pyx_t_27 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_8); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 502, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __pyx_t_8 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_27, 0); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 495, __pyx_L1_error)
+      __pyx_t_8 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_27, 0); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 502, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-      /* "pyearth/_forward.pyx":496
+      /* "pyearth/_forward.pyx":503
  *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *                 self.orthonormal_update(B[:, len(self.basis)])
  *                 if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:             # <<<<<<<<<<<<<<
@@ -10204,40 +10279,40 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __pyx_L68_bool_binop_done:;
       if (__pyx_t_13) {
 
-        /* "pyearth/_forward.pyx":497
+        /* "pyearth/_forward.pyx":504
  *                 self.orthonormal_update(B[:, len(self.basis)])
  *                 if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
  *                     content = FastHeapContent(idx=len(self.basis))             # <<<<<<<<<<<<<<
  *                     heappush(self.fast_heap, content)
  *                 self.basis.append(new_basis_function)
  */
-        __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 497, __pyx_L1_error)
+        __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 504, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_8);
-        __pyx_t_27 = PyDict_New(); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 497, __pyx_L1_error)
+        __pyx_t_27 = PyDict_New(); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 504, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_27);
         __pyx_t_25 = ((PyObject *)__pyx_v_self->basis);
         __Pyx_INCREF(__pyx_t_25);
-        __pyx_t_26 = PyObject_Length(__pyx_t_25); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 497, __pyx_L1_error)
+        __pyx_t_26 = PyObject_Length(__pyx_t_25); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 504, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
-        __pyx_t_25 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 497, __pyx_L1_error)
+        __pyx_t_25 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 504, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_25);
-        if (PyDict_SetItem(__pyx_t_27, __pyx_n_s_idx, __pyx_t_25) < 0) __PYX_ERR(0, 497, __pyx_L1_error)
+        if (PyDict_SetItem(__pyx_t_27, __pyx_n_s_idx, __pyx_t_25) < 0) __PYX_ERR(0, 504, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
-        __pyx_t_25 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_empty_tuple, __pyx_t_27); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 497, __pyx_L1_error)
+        __pyx_t_25 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_empty_tuple, __pyx_t_27); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 504, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_25);
         __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
         __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
         __Pyx_XDECREF_SET(__pyx_v_content, __pyx_t_25);
         __pyx_t_25 = 0;
 
-        /* "pyearth/_forward.pyx":498
+        /* "pyearth/_forward.pyx":505
  *                 if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
  *                     content = FastHeapContent(idx=len(self.basis))
  *                     heappush(self.fast_heap, content)             # <<<<<<<<<<<<<<
  *                 self.basis.append(new_basis_function)
  *                 new_parent = new_basis_function
  */
-        __pyx_t_27 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 498, __pyx_L1_error)
+        __pyx_t_27 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 505, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_27);
         __pyx_t_8 = NULL;
         __pyx_t_26 = 0;
@@ -10251,7 +10326,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             __pyx_t_26 = 1;
           }
         }
-        __pyx_t_10 = PyTuple_New(2+__pyx_t_26); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 498, __pyx_L1_error)
+        __pyx_t_10 = PyTuple_New(2+__pyx_t_26); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 505, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         if (__pyx_t_8) {
           __Pyx_GIVEREF(__pyx_t_8); PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_8); __pyx_t_8 = NULL;
@@ -10262,13 +10337,13 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         __Pyx_INCREF(__pyx_v_content);
         __Pyx_GIVEREF(__pyx_v_content);
         PyTuple_SET_ITEM(__pyx_t_10, 1+__pyx_t_26, __pyx_v_content);
-        __pyx_t_25 = __Pyx_PyObject_Call(__pyx_t_27, __pyx_t_10, NULL); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 498, __pyx_L1_error)
+        __pyx_t_25 = __Pyx_PyObject_Call(__pyx_t_27, __pyx_t_10, NULL); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 505, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_25);
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
         __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
         __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
 
-        /* "pyearth/_forward.pyx":496
+        /* "pyearth/_forward.pyx":503
  *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *                 self.orthonormal_update(B[:, len(self.basis)])
  *                 if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:             # <<<<<<<<<<<<<<
@@ -10277,18 +10352,18 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       }
 
-      /* "pyearth/_forward.pyx":499
+      /* "pyearth/_forward.pyx":506
  *                     content = FastHeapContent(idx=len(self.basis))
  *                     heappush(self.fast_heap, content)
  *                 self.basis.append(new_basis_function)             # <<<<<<<<<<<<<<
  *                 new_parent = new_basis_function
  * 
  */
-      __pyx_t_25 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->append(__pyx_v_self->basis, __pyx_v_new_basis_function, 0); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 499, __pyx_L1_error)
+      __pyx_t_25 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->append(__pyx_v_self->basis, __pyx_v_new_basis_function, 0); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 506, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_25);
       __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
 
-      /* "pyearth/_forward.pyx":500
+      /* "pyearth/_forward.pyx":507
  *                     heappush(self.fast_heap, content)
  *                 self.basis.append(new_basis_function)
  *                 new_parent = new_basis_function             # <<<<<<<<<<<<<<
@@ -10298,25 +10373,25 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __Pyx_INCREF(((PyObject *)__pyx_v_new_basis_function));
       __Pyx_DECREF_SET(__pyx_v_new_parent, __pyx_v_new_basis_function);
 
-      /* "pyearth/_forward.pyx":502
+      /* "pyearth/_forward.pyx":509
  *                 new_parent = new_basis_function
  * 
  *                 new_basis_function = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
  *                                                False, label)
  *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
  */
-      if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); __PYX_ERR(0, 502, __pyx_L1_error) }
-      __pyx_t_25 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 502, __pyx_L1_error)
+      if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); __PYX_ERR(0, 509, __pyx_L1_error) }
+      __pyx_t_25 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 509, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_25);
 
-      /* "pyearth/_forward.pyx":503
+      /* "pyearth/_forward.pyx":510
  * 
  *                 new_basis_function = MissingnessBasisFunction(parent_choice, variable_choice,
  *                                                False, label)             # <<<<<<<<<<<<<<
  *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *                 self.orthonormal_update(B[:, len(self.basis)])
  */
-      __pyx_t_27 = PyTuple_New(4); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 502, __pyx_L1_error)
+      __pyx_t_27 = PyTuple_New(4); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 509, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
       __Pyx_INCREF(((PyObject *)__pyx_v_parent_choice));
       __Pyx_GIVEREF(((PyObject *)__pyx_v_parent_choice));
@@ -10331,20 +10406,20 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       PyTuple_SET_ITEM(__pyx_t_27, 3, __pyx_v_label);
       __pyx_t_25 = 0;
 
-      /* "pyearth/_forward.pyx":502
+      /* "pyearth/_forward.pyx":509
  *                 new_parent = new_basis_function
  * 
  *                 new_basis_function = MissingnessBasisFunction(parent_choice, variable_choice,             # <<<<<<<<<<<<<<
  *                                                False, label)
  *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
  */
-      __pyx_t_25 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction), __pyx_t_27, NULL); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 502, __pyx_L1_error)
+      __pyx_t_25 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_MissingnessBasisFunction), __pyx_t_27, NULL); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 509, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_25);
       __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
       __Pyx_DECREF_SET(__pyx_v_new_basis_function, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_25));
       __pyx_t_25 = 0;
 
-      /* "pyearth/_forward.pyx":504
+      /* "pyearth/_forward.pyx":511
  *                 new_basis_function = MissingnessBasisFunction(parent_choice, variable_choice,
  *                                                False, label)
  *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])             # <<<<<<<<<<<<<<
@@ -10353,28 +10428,28 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       __pyx_t_25 = ((PyObject *)__pyx_v_self->basis);
       __Pyx_INCREF(__pyx_t_25);
-      __pyx_t_26 = PyObject_Length(__pyx_t_25); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 504, __pyx_L1_error)
+      __pyx_t_26 = PyObject_Length(__pyx_t_25); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 511, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
-      __pyx_t_25 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 504, __pyx_L1_error)
+      __pyx_t_25 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 511, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_25);
-      __pyx_t_27 = PyTuple_New(2); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 504, __pyx_L1_error)
+      __pyx_t_27 = PyTuple_New(2); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 511, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
-      __Pyx_INCREF(__pyx_slice__27);
-      __Pyx_GIVEREF(__pyx_slice__27);
-      PyTuple_SET_ITEM(__pyx_t_27, 0, __pyx_slice__27);
+      __Pyx_INCREF(__pyx_slice__29);
+      __Pyx_GIVEREF(__pyx_slice__29);
+      PyTuple_SET_ITEM(__pyx_t_27, 0, __pyx_slice__29);
       __Pyx_GIVEREF(__pyx_t_25);
       PyTuple_SET_ITEM(__pyx_t_27, 1, __pyx_t_25);
       __pyx_t_25 = 0;
-      __pyx_t_25 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_27); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 504, __pyx_L1_error)
+      __pyx_t_25 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_27); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 511, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_25);
       __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
-      if (!(likely(((__pyx_t_25) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_25, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 504, __pyx_L1_error)
-      __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_new_basis_function->__pyx_vtab)->apply(__pyx_v_new_basis_function, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_25), 0, NULL); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 504, __pyx_L1_error)
+      if (!(likely(((__pyx_t_25) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_25, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 511, __pyx_L1_error)
+      __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_new_basis_function->__pyx_vtab)->apply(__pyx_v_new_basis_function, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_25), 0, NULL); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 511, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
       __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
       __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
 
-      /* "pyearth/_forward.pyx":505
+      /* "pyearth/_forward.pyx":512
  *                                                False, label)
  *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *                 self.orthonormal_update(B[:, len(self.basis)])             # <<<<<<<<<<<<<<
@@ -10383,27 +10458,27 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       __pyx_t_27 = ((PyObject *)__pyx_v_self->basis);
       __Pyx_INCREF(__pyx_t_27);
-      __pyx_t_26 = PyObject_Length(__pyx_t_27); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 505, __pyx_L1_error)
+      __pyx_t_26 = PyObject_Length(__pyx_t_27); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 512, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
-      __pyx_t_27 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 505, __pyx_L1_error)
+      __pyx_t_27 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 512, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
-      __pyx_t_25 = PyTuple_New(2); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 505, __pyx_L1_error)
+      __pyx_t_25 = PyTuple_New(2); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 512, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_25);
-      __Pyx_INCREF(__pyx_slice__28);
-      __Pyx_GIVEREF(__pyx_slice__28);
-      PyTuple_SET_ITEM(__pyx_t_25, 0, __pyx_slice__28);
+      __Pyx_INCREF(__pyx_slice__30);
+      __Pyx_GIVEREF(__pyx_slice__30);
+      PyTuple_SET_ITEM(__pyx_t_25, 0, __pyx_slice__30);
       __Pyx_GIVEREF(__pyx_t_27);
       PyTuple_SET_ITEM(__pyx_t_25, 1, __pyx_t_27);
       __pyx_t_27 = 0;
-      __pyx_t_27 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_25); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 505, __pyx_L1_error)
+      __pyx_t_27 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_25); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 512, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
       __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
-      __pyx_t_25 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_27, 0); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 505, __pyx_L1_error)
+      __pyx_t_25 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_27, 0); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 512, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_25);
       __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
       __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
 
-      /* "pyearth/_forward.pyx":506
+      /* "pyearth/_forward.pyx":513
  *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *                 self.orthonormal_update(B[:, len(self.basis)])
  *                 if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:             # <<<<<<<<<<<<<<
@@ -10427,40 +10502,40 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __pyx_L72_bool_binop_done:;
       if (__pyx_t_13) {
 
-        /* "pyearth/_forward.pyx":507
+        /* "pyearth/_forward.pyx":514
  *                 self.orthonormal_update(B[:, len(self.basis)])
  *                 if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
  *                     content = FastHeapContent(idx=len(self.basis))             # <<<<<<<<<<<<<<
  *                     heappush(self.fast_heap, content)
  *                 self.basis.append(new_basis_function)
  */
-        __pyx_t_25 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 507, __pyx_L1_error)
+        __pyx_t_25 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 514, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_25);
-        __pyx_t_27 = PyDict_New(); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 507, __pyx_L1_error)
+        __pyx_t_27 = PyDict_New(); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 514, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_27);
         __pyx_t_10 = ((PyObject *)__pyx_v_self->basis);
         __Pyx_INCREF(__pyx_t_10);
-        __pyx_t_26 = PyObject_Length(__pyx_t_10); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 507, __pyx_L1_error)
+        __pyx_t_26 = PyObject_Length(__pyx_t_10); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 514, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_10 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 507, __pyx_L1_error)
+        __pyx_t_10 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 514, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        if (PyDict_SetItem(__pyx_t_27, __pyx_n_s_idx, __pyx_t_10) < 0) __PYX_ERR(0, 507, __pyx_L1_error)
+        if (PyDict_SetItem(__pyx_t_27, __pyx_n_s_idx, __pyx_t_10) < 0) __PYX_ERR(0, 514, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_25, __pyx_empty_tuple, __pyx_t_27); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 507, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_25, __pyx_empty_tuple, __pyx_t_27); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 514, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
         __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
         __Pyx_XDECREF_SET(__pyx_v_content, __pyx_t_10);
         __pyx_t_10 = 0;
 
-        /* "pyearth/_forward.pyx":508
+        /* "pyearth/_forward.pyx":515
  *                 if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
  *                     content = FastHeapContent(idx=len(self.basis))
  *                     heappush(self.fast_heap, content)             # <<<<<<<<<<<<<<
  *                 self.basis.append(new_basis_function)
  *         else:
  */
-        __pyx_t_27 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 508, __pyx_L1_error)
+        __pyx_t_27 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 515, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_27);
         __pyx_t_25 = NULL;
         __pyx_t_26 = 0;
@@ -10474,7 +10549,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
             __pyx_t_26 = 1;
           }
         }
-        __pyx_t_8 = PyTuple_New(2+__pyx_t_26); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 508, __pyx_L1_error)
+        __pyx_t_8 = PyTuple_New(2+__pyx_t_26); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 515, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_8);
         if (__pyx_t_25) {
           __Pyx_GIVEREF(__pyx_t_25); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_25); __pyx_t_25 = NULL;
@@ -10485,13 +10560,13 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         __Pyx_INCREF(__pyx_v_content);
         __Pyx_GIVEREF(__pyx_v_content);
         PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_26, __pyx_v_content);
-        __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_27, __pyx_t_8, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 508, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_27, __pyx_t_8, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 515, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
         __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-        /* "pyearth/_forward.pyx":506
+        /* "pyearth/_forward.pyx":513
  *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *                 self.orthonormal_update(B[:, len(self.basis)])
  *                 if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:             # <<<<<<<<<<<<<<
@@ -10500,18 +10575,18 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
       }
 
-      /* "pyearth/_forward.pyx":509
+      /* "pyearth/_forward.pyx":516
  *                     content = FastHeapContent(idx=len(self.basis))
  *                     heappush(self.fast_heap, content)
  *                 self.basis.append(new_basis_function)             # <<<<<<<<<<<<<<
  *         else:
  *             new_parent = parent_choice
  */
-      __pyx_t_10 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->append(__pyx_v_self->basis, __pyx_v_new_basis_function, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 509, __pyx_L1_error)
+      __pyx_t_10 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->append(__pyx_v_self->basis, __pyx_v_new_basis_function, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 516, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-      /* "pyearth/_forward.pyx":491
+      /* "pyearth/_forward.pyx":498
  *         if choice_needs_coverage:
  *             new_parent = parent_choice.get_coverage(variable_choice)
  *             if new_parent is None:             # <<<<<<<<<<<<<<
@@ -10520,7 +10595,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
     }
 
-    /* "pyearth/_forward.pyx":489
+    /* "pyearth/_forward.pyx":496
  *         if self.use_fast is True:
  *             parent_basis_content_choice.m = -np.inf
  *         if choice_needs_coverage:             # <<<<<<<<<<<<<<
@@ -10530,7 +10605,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     goto __pyx_L65;
   }
 
-  /* "pyearth/_forward.pyx":511
+  /* "pyearth/_forward.pyx":518
  *                 self.basis.append(new_basis_function)
  *         else:
  *             new_parent = parent_choice             # <<<<<<<<<<<<<<
@@ -10538,13 +10613,13 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  *             # Add the new basis functions
  */
   /*else*/ {
-    if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); __PYX_ERR(0, 511, __pyx_L1_error) }
+    if (unlikely(!__pyx_v_parent_choice)) { __Pyx_RaiseUnboundLocalError("parent_choice"); __PYX_ERR(0, 518, __pyx_L1_error) }
     __Pyx_INCREF(((PyObject *)__pyx_v_parent_choice));
     __pyx_v_new_parent = __pyx_v_parent_choice;
   }
   __pyx_L65:;
 
-  /* "pyearth/_forward.pyx":512
+  /* "pyearth/_forward.pyx":519
  *         else:
  *             new_parent = parent_choice
  *         if knot_idx_choice != -1:             # <<<<<<<<<<<<<<
@@ -10554,36 +10629,36 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   __pyx_t_13 = ((__pyx_v_knot_idx_choice != -1L) != 0);
   if (__pyx_t_13) {
 
-    /* "pyearth/_forward.pyx":515
+    /* "pyearth/_forward.pyx":522
  *             # Add the new basis functions
  *             new_basis_function = HingeBasisFunction(new_parent,
  *                                      knot_choice, knot_idx_choice,             # <<<<<<<<<<<<<<
  *                                      variable_choice,
  *                                      False, label)
  */
-    __pyx_t_10 = PyFloat_FromDouble(__pyx_v_knot_choice); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 515, __pyx_L1_error)
+    __pyx_t_10 = PyFloat_FromDouble(__pyx_v_knot_choice); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 522, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_27 = __Pyx_PyInt_From_int(__pyx_v_knot_idx_choice); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 515, __pyx_L1_error)
+    __pyx_t_27 = __Pyx_PyInt_From_int(__pyx_v_knot_idx_choice); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 522, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
 
-    /* "pyearth/_forward.pyx":516
+    /* "pyearth/_forward.pyx":523
  *             new_basis_function = HingeBasisFunction(new_parent,
  *                                      knot_choice, knot_idx_choice,
  *                                      variable_choice,             # <<<<<<<<<<<<<<
  *                                      False, label)
  *             new_basis_function.apply(X, missing, B[:, len(self.basis)])
  */
-    __pyx_t_8 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 516, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 523, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
 
-    /* "pyearth/_forward.pyx":514
+    /* "pyearth/_forward.pyx":521
  *         if knot_idx_choice != -1:
  *             # Add the new basis functions
  *             new_basis_function = HingeBasisFunction(new_parent,             # <<<<<<<<<<<<<<
  *                                      knot_choice, knot_idx_choice,
  *                                      variable_choice,
  */
-    __pyx_t_25 = PyTuple_New(6); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 514, __pyx_L1_error)
+    __pyx_t_25 = PyTuple_New(6); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 521, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_25);
     __Pyx_INCREF(((PyObject *)__pyx_v_new_parent));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_new_parent));
@@ -10603,13 +10678,13 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __pyx_t_10 = 0;
     __pyx_t_27 = 0;
     __pyx_t_8 = 0;
-    __pyx_t_8 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_HingeBasisFunction), __pyx_t_25, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 514, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_HingeBasisFunction), __pyx_t_25, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 521, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
     __Pyx_XDECREF_SET(__pyx_v_new_basis_function, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_8));
     __pyx_t_8 = 0;
 
-    /* "pyearth/_forward.pyx":518
+    /* "pyearth/_forward.pyx":525
  *                                      variable_choice,
  *                                      False, label)
  *             new_basis_function.apply(X, missing, B[:, len(self.basis)])             # <<<<<<<<<<<<<<
@@ -10618,28 +10693,28 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
     __pyx_t_8 = ((PyObject *)__pyx_v_self->basis);
     __Pyx_INCREF(__pyx_t_8);
-    __pyx_t_26 = PyObject_Length(__pyx_t_8); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 518, __pyx_L1_error)
+    __pyx_t_26 = PyObject_Length(__pyx_t_8); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 525, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_8 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 518, __pyx_L1_error)
+    __pyx_t_8 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 525, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_25 = PyTuple_New(2); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 518, __pyx_L1_error)
+    __pyx_t_25 = PyTuple_New(2); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 525, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_25);
-    __Pyx_INCREF(__pyx_slice__29);
-    __Pyx_GIVEREF(__pyx_slice__29);
-    PyTuple_SET_ITEM(__pyx_t_25, 0, __pyx_slice__29);
+    __Pyx_INCREF(__pyx_slice__31);
+    __Pyx_GIVEREF(__pyx_slice__31);
+    PyTuple_SET_ITEM(__pyx_t_25, 0, __pyx_slice__31);
     __Pyx_GIVEREF(__pyx_t_8);
     PyTuple_SET_ITEM(__pyx_t_25, 1, __pyx_t_8);
     __pyx_t_8 = 0;
-    __pyx_t_8 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_25); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 518, __pyx_L1_error)
+    __pyx_t_8 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_25); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 525, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
-    if (!(likely(((__pyx_t_8) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_8, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 518, __pyx_L1_error)
-    __pyx_t_25 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_new_basis_function->__pyx_vtab)->apply(__pyx_v_new_basis_function, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_8), 0, NULL); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 518, __pyx_L1_error)
+    if (!(likely(((__pyx_t_8) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_8, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 525, __pyx_L1_error)
+    __pyx_t_25 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_new_basis_function->__pyx_vtab)->apply(__pyx_v_new_basis_function, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_8), 0, NULL); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 525, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_25);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
 
-    /* "pyearth/_forward.pyx":519
+    /* "pyearth/_forward.pyx":526
  *                                      False, label)
  *             new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *             self.orthonormal_update(B[:, len(self.basis)])             # <<<<<<<<<<<<<<
@@ -10648,27 +10723,27 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
     __pyx_t_25 = ((PyObject *)__pyx_v_self->basis);
     __Pyx_INCREF(__pyx_t_25);
-    __pyx_t_26 = PyObject_Length(__pyx_t_25); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 519, __pyx_L1_error)
+    __pyx_t_26 = PyObject_Length(__pyx_t_25); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 526, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
-    __pyx_t_25 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 519, __pyx_L1_error)
+    __pyx_t_25 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 526, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_25);
-    __pyx_t_8 = PyTuple_New(2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 519, __pyx_L1_error)
+    __pyx_t_8 = PyTuple_New(2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 526, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __Pyx_INCREF(__pyx_slice__30);
-    __Pyx_GIVEREF(__pyx_slice__30);
-    PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_slice__30);
+    __Pyx_INCREF(__pyx_slice__32);
+    __Pyx_GIVEREF(__pyx_slice__32);
+    PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_slice__32);
     __Pyx_GIVEREF(__pyx_t_25);
     PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_t_25);
     __pyx_t_25 = 0;
-    __pyx_t_25 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_8); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 519, __pyx_L1_error)
+    __pyx_t_25 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_8); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 526, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_25);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_8 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_25, 0); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 519, __pyx_L1_error)
+    __pyx_t_8 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_25, 0); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 526, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-    /* "pyearth/_forward.pyx":520
+    /* "pyearth/_forward.pyx":527
  *             new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *             self.orthonormal_update(B[:, len(self.basis)])
  *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:             # <<<<<<<<<<<<<<
@@ -10692,54 +10767,54 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __pyx_L77_bool_binop_done:;
     if (__pyx_t_13) {
 
-      /* "pyearth/_forward.pyx":521
+      /* "pyearth/_forward.pyx":528
  *             self.orthonormal_update(B[:, len(self.basis)])
  *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
  *                 content = FastHeapContent(idx=len(self.basis))             # <<<<<<<<<<<<<<
  *                 heappush(self.fast_heap, FastHeapContent(idx=len(self.basis)))
  *             self.basis.append(new_basis_function)
  */
-      __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 521, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 528, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_25 = PyDict_New(); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 521, __pyx_L1_error)
+      __pyx_t_25 = PyDict_New(); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 528, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_25);
       __pyx_t_27 = ((PyObject *)__pyx_v_self->basis);
       __Pyx_INCREF(__pyx_t_27);
-      __pyx_t_26 = PyObject_Length(__pyx_t_27); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 521, __pyx_L1_error)
+      __pyx_t_26 = PyObject_Length(__pyx_t_27); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 528, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
-      __pyx_t_27 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 521, __pyx_L1_error)
+      __pyx_t_27 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 528, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
-      if (PyDict_SetItem(__pyx_t_25, __pyx_n_s_idx, __pyx_t_27) < 0) __PYX_ERR(0, 521, __pyx_L1_error)
+      if (PyDict_SetItem(__pyx_t_25, __pyx_n_s_idx, __pyx_t_27) < 0) __PYX_ERR(0, 528, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
-      __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_empty_tuple, __pyx_t_25); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 521, __pyx_L1_error)
+      __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_empty_tuple, __pyx_t_25); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 528, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
       __Pyx_XDECREF_SET(__pyx_v_content, __pyx_t_27);
       __pyx_t_27 = 0;
 
-      /* "pyearth/_forward.pyx":522
+      /* "pyearth/_forward.pyx":529
  *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
  *                 content = FastHeapContent(idx=len(self.basis))
  *                 heappush(self.fast_heap, FastHeapContent(idx=len(self.basis)))             # <<<<<<<<<<<<<<
  *             self.basis.append(new_basis_function)
  * 
  */
-      __pyx_t_25 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 522, __pyx_L1_error)
+      __pyx_t_25 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 529, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_25);
-      __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 522, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 529, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_10 = PyDict_New(); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 522, __pyx_L1_error)
+      __pyx_t_10 = PyDict_New(); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 529, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __pyx_t_1 = ((PyObject *)__pyx_v_self->basis);
       __Pyx_INCREF(__pyx_t_1);
-      __pyx_t_26 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 522, __pyx_L1_error)
+      __pyx_t_26 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 529, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 522, __pyx_L1_error)
+      __pyx_t_1 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 529, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      if (PyDict_SetItem(__pyx_t_10, __pyx_n_s_idx, __pyx_t_1) < 0) __PYX_ERR(0, 522, __pyx_L1_error)
+      if (PyDict_SetItem(__pyx_t_10, __pyx_n_s_idx, __pyx_t_1) < 0) __PYX_ERR(0, 529, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_empty_tuple, __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 522, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_empty_tuple, __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 529, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
@@ -10755,7 +10830,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           __pyx_t_26 = 1;
         }
       }
-      __pyx_t_8 = PyTuple_New(2+__pyx_t_26); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 522, __pyx_L1_error)
+      __pyx_t_8 = PyTuple_New(2+__pyx_t_26); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 529, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       if (__pyx_t_10) {
         __Pyx_GIVEREF(__pyx_t_10); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_10); __pyx_t_10 = NULL;
@@ -10766,13 +10841,13 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __Pyx_GIVEREF(__pyx_t_1);
       PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_26, __pyx_t_1);
       __pyx_t_1 = 0;
-      __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_25, __pyx_t_8, NULL); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 522, __pyx_L1_error)
+      __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_25, __pyx_t_8, NULL); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 529, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
       __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
 
-      /* "pyearth/_forward.pyx":520
+      /* "pyearth/_forward.pyx":527
  *             new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *             self.orthonormal_update(B[:, len(self.basis)])
  *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:             # <<<<<<<<<<<<<<
@@ -10781,47 +10856,47 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
     }
 
-    /* "pyearth/_forward.pyx":523
+    /* "pyearth/_forward.pyx":530
  *                 content = FastHeapContent(idx=len(self.basis))
  *                 heappush(self.fast_heap, FastHeapContent(idx=len(self.basis)))
  *             self.basis.append(new_basis_function)             # <<<<<<<<<<<<<<
  * 
  *             new_basis_function = HingeBasisFunction(new_parent,
  */
-    __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->append(__pyx_v_self->basis, __pyx_v_new_basis_function, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 523, __pyx_L1_error)
+    __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->append(__pyx_v_self->basis, __pyx_v_new_basis_function, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 530, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
     __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
 
-    /* "pyearth/_forward.pyx":526
+    /* "pyearth/_forward.pyx":533
  * 
  *             new_basis_function = HingeBasisFunction(new_parent,
  *                                      knot_choice, knot_idx_choice,             # <<<<<<<<<<<<<<
  *                                      variable_choice,
  *                                      True, label)
  */
-    __pyx_t_27 = PyFloat_FromDouble(__pyx_v_knot_choice); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 526, __pyx_L1_error)
+    __pyx_t_27 = PyFloat_FromDouble(__pyx_v_knot_choice); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 533, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
-    __pyx_t_25 = __Pyx_PyInt_From_int(__pyx_v_knot_idx_choice); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 526, __pyx_L1_error)
+    __pyx_t_25 = __Pyx_PyInt_From_int(__pyx_v_knot_idx_choice); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 533, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_25);
 
-    /* "pyearth/_forward.pyx":527
+    /* "pyearth/_forward.pyx":534
  *             new_basis_function = HingeBasisFunction(new_parent,
  *                                      knot_choice, knot_idx_choice,
  *                                      variable_choice,             # <<<<<<<<<<<<<<
  *                                      True, label)
  *             new_basis_function.apply(X, missing, B[:, len(self.basis)])
  */
-    __pyx_t_8 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 527, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 534, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
 
-    /* "pyearth/_forward.pyx":525
+    /* "pyearth/_forward.pyx":532
  *             self.basis.append(new_basis_function)
  * 
  *             new_basis_function = HingeBasisFunction(new_parent,             # <<<<<<<<<<<<<<
  *                                      knot_choice, knot_idx_choice,
  *                                      variable_choice,
  */
-    __pyx_t_1 = PyTuple_New(6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 525, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 532, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_INCREF(((PyObject *)__pyx_v_new_parent));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_new_parent));
@@ -10841,13 +10916,13 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __pyx_t_27 = 0;
     __pyx_t_25 = 0;
     __pyx_t_8 = 0;
-    __pyx_t_8 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_HingeBasisFunction), __pyx_t_1, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 525, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_HingeBasisFunction), __pyx_t_1, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 532, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF_SET(__pyx_v_new_basis_function, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_8));
     __pyx_t_8 = 0;
 
-    /* "pyearth/_forward.pyx":529
+    /* "pyearth/_forward.pyx":536
  *                                      variable_choice,
  *                                      True, label)
  *             new_basis_function.apply(X, missing, B[:, len(self.basis)])             # <<<<<<<<<<<<<<
@@ -10856,28 +10931,28 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
     __pyx_t_8 = ((PyObject *)__pyx_v_self->basis);
     __Pyx_INCREF(__pyx_t_8);
-    __pyx_t_26 = PyObject_Length(__pyx_t_8); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 529, __pyx_L1_error)
+    __pyx_t_26 = PyObject_Length(__pyx_t_8); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 536, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_8 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 529, __pyx_L1_error)
+    __pyx_t_8 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 536, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 529, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 536, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_INCREF(__pyx_slice__31);
-    __Pyx_GIVEREF(__pyx_slice__31);
-    PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__31);
+    __Pyx_INCREF(__pyx_slice__33);
+    __Pyx_GIVEREF(__pyx_slice__33);
+    PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__33);
     __Pyx_GIVEREF(__pyx_t_8);
     PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_8);
     __pyx_t_8 = 0;
-    __pyx_t_8 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 529, __pyx_L1_error)
+    __pyx_t_8 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 536, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (!(likely(((__pyx_t_8) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_8, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 529, __pyx_L1_error)
-    __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_new_basis_function->__pyx_vtab)->apply(__pyx_v_new_basis_function, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_8), 0, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 529, __pyx_L1_error)
+    if (!(likely(((__pyx_t_8) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_8, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 536, __pyx_L1_error)
+    __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_new_basis_function->__pyx_vtab)->apply(__pyx_v_new_basis_function, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_8), 0, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 536, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "pyearth/_forward.pyx":530
+    /* "pyearth/_forward.pyx":537
  *                                      True, label)
  *             new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *             self.orthonormal_update(B[:, len(self.basis)])             # <<<<<<<<<<<<<<
@@ -10886,27 +10961,27 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
     __pyx_t_1 = ((PyObject *)__pyx_v_self->basis);
     __Pyx_INCREF(__pyx_t_1);
-    __pyx_t_26 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 530, __pyx_L1_error)
+    __pyx_t_26 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 537, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 530, __pyx_L1_error)
+    __pyx_t_1 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 537, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_8 = PyTuple_New(2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 530, __pyx_L1_error)
+    __pyx_t_8 = PyTuple_New(2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 537, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __Pyx_INCREF(__pyx_slice__32);
-    __Pyx_GIVEREF(__pyx_slice__32);
-    PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_slice__32);
+    __Pyx_INCREF(__pyx_slice__34);
+    __Pyx_GIVEREF(__pyx_slice__34);
+    PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_slice__34);
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_t_1);
     __pyx_t_1 = 0;
-    __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 530, __pyx_L1_error)
+    __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 537, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_8 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_1, 0); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 530, __pyx_L1_error)
+    __pyx_t_8 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_1, 0); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 537, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-    /* "pyearth/_forward.pyx":531
+    /* "pyearth/_forward.pyx":538
  *             new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *             self.orthonormal_update(B[:, len(self.basis)])
  *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:             # <<<<<<<<<<<<<<
@@ -10930,40 +11005,40 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __pyx_L81_bool_binop_done:;
     if (__pyx_t_13) {
 
-      /* "pyearth/_forward.pyx":532
+      /* "pyearth/_forward.pyx":539
  *             self.orthonormal_update(B[:, len(self.basis)])
  *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
  *                 content = FastHeapContent(idx=len(self.basis))             # <<<<<<<<<<<<<<
  *                 heappush(self.fast_heap, content)
  *             self.basis.append(new_basis_function)
  */
-      __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 532, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 539, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 532, __pyx_L1_error)
+      __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 539, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __pyx_t_25 = ((PyObject *)__pyx_v_self->basis);
       __Pyx_INCREF(__pyx_t_25);
-      __pyx_t_26 = PyObject_Length(__pyx_t_25); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 532, __pyx_L1_error)
+      __pyx_t_26 = PyObject_Length(__pyx_t_25); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 539, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
-      __pyx_t_25 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 532, __pyx_L1_error)
+      __pyx_t_25 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 539, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_25);
-      if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_idx, __pyx_t_25) < 0) __PYX_ERR(0, 532, __pyx_L1_error)
+      if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_idx, __pyx_t_25) < 0) __PYX_ERR(0, 539, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
-      __pyx_t_25 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 532, __pyx_L1_error)
+      __pyx_t_25 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 539, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_25);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_XDECREF_SET(__pyx_v_content, __pyx_t_25);
       __pyx_t_25 = 0;
 
-      /* "pyearth/_forward.pyx":533
+      /* "pyearth/_forward.pyx":540
  *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
  *                 content = FastHeapContent(idx=len(self.basis))
  *                 heappush(self.fast_heap, content)             # <<<<<<<<<<<<<<
  *             self.basis.append(new_basis_function)
  * 
  */
-      __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 533, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 540, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __pyx_t_8 = NULL;
       __pyx_t_26 = 0;
@@ -10977,7 +11052,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           __pyx_t_26 = 1;
         }
       }
-      __pyx_t_27 = PyTuple_New(2+__pyx_t_26); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 533, __pyx_L1_error)
+      __pyx_t_27 = PyTuple_New(2+__pyx_t_26); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 540, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
       if (__pyx_t_8) {
         __Pyx_GIVEREF(__pyx_t_8); PyTuple_SET_ITEM(__pyx_t_27, 0, __pyx_t_8); __pyx_t_8 = NULL;
@@ -10988,13 +11063,13 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __Pyx_INCREF(__pyx_v_content);
       __Pyx_GIVEREF(__pyx_v_content);
       PyTuple_SET_ITEM(__pyx_t_27, 1+__pyx_t_26, __pyx_v_content);
-      __pyx_t_25 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_27, NULL); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 533, __pyx_L1_error)
+      __pyx_t_25 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_27, NULL); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 540, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_25);
       __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
 
-      /* "pyearth/_forward.pyx":531
+      /* "pyearth/_forward.pyx":538
  *             new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *             self.orthonormal_update(B[:, len(self.basis)])
  *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:             # <<<<<<<<<<<<<<
@@ -11003,18 +11078,18 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
     }
 
-    /* "pyearth/_forward.pyx":534
+    /* "pyearth/_forward.pyx":541
  *                 content = FastHeapContent(idx=len(self.basis))
  *                 heappush(self.fast_heap, content)
  *             self.basis.append(new_basis_function)             # <<<<<<<<<<<<<<
  * 
  *         elif not dependent and knot_idx_choice == -1:
  */
-    __pyx_t_25 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->append(__pyx_v_self->basis, __pyx_v_new_basis_function, 0); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 534, __pyx_L1_error)
+    __pyx_t_25 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->append(__pyx_v_self->basis, __pyx_v_new_basis_function, 0); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 541, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_25);
     __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
 
-    /* "pyearth/_forward.pyx":512
+    /* "pyearth/_forward.pyx":519
  *         else:
  *             new_parent = parent_choice
  *         if knot_idx_choice != -1:             # <<<<<<<<<<<<<<
@@ -11024,7 +11099,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     goto __pyx_L75;
   }
 
-  /* "pyearth/_forward.pyx":536
+  /* "pyearth/_forward.pyx":543
  *             self.basis.append(new_basis_function)
  * 
  *         elif not dependent and knot_idx_choice == -1:             # <<<<<<<<<<<<<<
@@ -11042,16 +11117,16 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   __pyx_L84_bool_binop_done:;
   if (__pyx_t_13) {
 
-    /* "pyearth/_forward.pyx":539
+    /* "pyearth/_forward.pyx":546
  *             # In this case, only add the linear basis function (in addition to
  *             # covering missingness basis functions if needed)
  *             new_basis_function = LinearBasisFunction(new_parent, variable_choice, label)             # <<<<<<<<<<<<<<
  *             new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *             self.orthonormal_update(B[:, len(self.basis)])
  */
-    __pyx_t_25 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 539, __pyx_L1_error)
+    __pyx_t_25 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 546, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_25);
-    __pyx_t_1 = PyTuple_New(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 539, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 546, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_INCREF(((PyObject *)__pyx_v_new_parent));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_new_parent));
@@ -11062,13 +11137,13 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __Pyx_GIVEREF(__pyx_v_label);
     PyTuple_SET_ITEM(__pyx_t_1, 2, __pyx_v_label);
     __pyx_t_25 = 0;
-    __pyx_t_25 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_LinearBasisFunction), __pyx_t_1, NULL); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 539, __pyx_L1_error)
+    __pyx_t_25 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_6_basis_LinearBasisFunction), __pyx_t_1, NULL); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 546, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_25);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_XDECREF_SET(__pyx_v_new_basis_function, ((struct __pyx_obj_7pyearth_6_basis_BasisFunction *)__pyx_t_25));
     __pyx_t_25 = 0;
 
-    /* "pyearth/_forward.pyx":540
+    /* "pyearth/_forward.pyx":547
  *             # covering missingness basis functions if needed)
  *             new_basis_function = LinearBasisFunction(new_parent, variable_choice, label)
  *             new_basis_function.apply(X, missing, B[:, len(self.basis)])             # <<<<<<<<<<<<<<
@@ -11077,28 +11152,28 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
     __pyx_t_25 = ((PyObject *)__pyx_v_self->basis);
     __Pyx_INCREF(__pyx_t_25);
-    __pyx_t_26 = PyObject_Length(__pyx_t_25); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 540, __pyx_L1_error)
+    __pyx_t_26 = PyObject_Length(__pyx_t_25); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 547, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
-    __pyx_t_25 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 540, __pyx_L1_error)
+    __pyx_t_25 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 547, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_25);
-    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 540, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 547, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_INCREF(__pyx_slice__33);
-    __Pyx_GIVEREF(__pyx_slice__33);
-    PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__33);
+    __Pyx_INCREF(__pyx_slice__35);
+    __Pyx_GIVEREF(__pyx_slice__35);
+    PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_slice__35);
     __Pyx_GIVEREF(__pyx_t_25);
     PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_25);
     __pyx_t_25 = 0;
-    __pyx_t_25 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_1); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 540, __pyx_L1_error)
+    __pyx_t_25 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_1); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 547, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_25);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (!(likely(((__pyx_t_25) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_25, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 540, __pyx_L1_error)
-    __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_new_basis_function->__pyx_vtab)->apply(__pyx_v_new_basis_function, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_25), 0, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 540, __pyx_L1_error)
+    if (!(likely(((__pyx_t_25) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_25, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 547, __pyx_L1_error)
+    __pyx_t_1 = ((struct __pyx_vtabstruct_7pyearth_6_basis_BasisFunction *)__pyx_v_new_basis_function->__pyx_vtab)->apply(__pyx_v_new_basis_function, ((PyArrayObject *)__pyx_v_X), ((PyArrayObject *)__pyx_v_missing), ((PyArrayObject *)__pyx_t_25), 0, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 547, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "pyearth/_forward.pyx":541
+    /* "pyearth/_forward.pyx":548
  *             new_basis_function = LinearBasisFunction(new_parent, variable_choice, label)
  *             new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *             self.orthonormal_update(B[:, len(self.basis)])             # <<<<<<<<<<<<<<
@@ -11107,27 +11182,27 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
     __pyx_t_1 = ((PyObject *)__pyx_v_self->basis);
     __Pyx_INCREF(__pyx_t_1);
-    __pyx_t_26 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 541, __pyx_L1_error)
+    __pyx_t_26 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 548, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 541, __pyx_L1_error)
+    __pyx_t_1 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 548, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_25 = PyTuple_New(2); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 541, __pyx_L1_error)
+    __pyx_t_25 = PyTuple_New(2); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 548, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_25);
-    __Pyx_INCREF(__pyx_slice__34);
-    __Pyx_GIVEREF(__pyx_slice__34);
-    PyTuple_SET_ITEM(__pyx_t_25, 0, __pyx_slice__34);
+    __Pyx_INCREF(__pyx_slice__36);
+    __Pyx_GIVEREF(__pyx_slice__36);
+    PyTuple_SET_ITEM(__pyx_t_25, 0, __pyx_slice__36);
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_25, 1, __pyx_t_1);
     __pyx_t_1 = 0;
-    __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_25); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 541, __pyx_L1_error)
+    __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_B), __pyx_t_25); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 548, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
-    __pyx_t_25 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_1, 0); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 541, __pyx_L1_error)
+    __pyx_t_25 = ((struct __pyx_vtabstruct_7pyearth_8_forward_ForwardPasser *)__pyx_v_self->__pyx_vtab)->orthonormal_update(__pyx_v_self, __pyx_t_1, 0); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 548, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_25);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
 
-    /* "pyearth/_forward.pyx":542
+    /* "pyearth/_forward.pyx":549
  *             new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *             self.orthonormal_update(B[:, len(self.basis)])
  *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:             # <<<<<<<<<<<<<<
@@ -11151,40 +11226,40 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     __pyx_L87_bool_binop_done:;
     if (__pyx_t_13) {
 
-      /* "pyearth/_forward.pyx":543
+      /* "pyearth/_forward.pyx":550
  *             self.orthonormal_update(B[:, len(self.basis)])
  *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
  *                 content = FastHeapContent(idx=len(self.basis))             # <<<<<<<<<<<<<<
  *                 heappush(self.fast_heap, content)
  *             self.basis.append(new_basis_function)
  */
-      __pyx_t_25 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 543, __pyx_L1_error)
+      __pyx_t_25 = __Pyx_GetModuleGlobalName(__pyx_n_s_FastHeapContent); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 550, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_25);
-      __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 543, __pyx_L1_error)
+      __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 550, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __pyx_t_27 = ((PyObject *)__pyx_v_self->basis);
       __Pyx_INCREF(__pyx_t_27);
-      __pyx_t_26 = PyObject_Length(__pyx_t_27); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 543, __pyx_L1_error)
+      __pyx_t_26 = PyObject_Length(__pyx_t_27); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 550, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
-      __pyx_t_27 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 543, __pyx_L1_error)
+      __pyx_t_27 = PyInt_FromSsize_t(__pyx_t_26); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 550, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
-      if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_idx, __pyx_t_27) < 0) __PYX_ERR(0, 543, __pyx_L1_error)
+      if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_idx, __pyx_t_27) < 0) __PYX_ERR(0, 550, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
-      __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_25, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 543, __pyx_L1_error)
+      __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_25, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 550, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
       __Pyx_DECREF(__pyx_t_25); __pyx_t_25 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_XDECREF_SET(__pyx_v_content, __pyx_t_27);
       __pyx_t_27 = 0;
 
-      /* "pyearth/_forward.pyx":544
+      /* "pyearth/_forward.pyx":551
  *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
  *                 content = FastHeapContent(idx=len(self.basis))
  *                 heappush(self.fast_heap, content)             # <<<<<<<<<<<<<<
  *             self.basis.append(new_basis_function)
  *         else:  # dependent and knot_idx_choice == -1
  */
-      __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 544, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_heappush); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 551, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __pyx_t_25 = NULL;
       __pyx_t_26 = 0;
@@ -11198,7 +11273,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           __pyx_t_26 = 1;
         }
       }
-      __pyx_t_8 = PyTuple_New(2+__pyx_t_26); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 544, __pyx_L1_error)
+      __pyx_t_8 = PyTuple_New(2+__pyx_t_26); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 551, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       if (__pyx_t_25) {
         __Pyx_GIVEREF(__pyx_t_25); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_25); __pyx_t_25 = NULL;
@@ -11209,13 +11284,13 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       __Pyx_INCREF(__pyx_v_content);
       __Pyx_GIVEREF(__pyx_v_content);
       PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_26, __pyx_v_content);
-      __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_8, NULL); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 544, __pyx_L1_error)
+      __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_8, NULL); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 551, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_27);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
 
-      /* "pyearth/_forward.pyx":542
+      /* "pyearth/_forward.pyx":549
  *             new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *             self.orthonormal_update(B[:, len(self.basis)])
  *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:             # <<<<<<<<<<<<<<
@@ -11224,18 +11299,18 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
     }
 
-    /* "pyearth/_forward.pyx":545
+    /* "pyearth/_forward.pyx":552
  *                 content = FastHeapContent(idx=len(self.basis))
  *                 heappush(self.fast_heap, content)
  *             self.basis.append(new_basis_function)             # <<<<<<<<<<<<<<
  *         else:  # dependent and knot_idx_choice == -1
  *             # In this case there were no acceptable choices remaining, so end
  */
-    __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->append(__pyx_v_self->basis, __pyx_v_new_basis_function, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 545, __pyx_L1_error)
+    __pyx_t_27 = ((struct __pyx_vtabstruct_7pyearth_6_basis_Basis *)__pyx_v_self->basis->__pyx_vtab)->append(__pyx_v_self->basis, __pyx_v_new_basis_function, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 552, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
     __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
 
-    /* "pyearth/_forward.pyx":536
+    /* "pyearth/_forward.pyx":543
  *             self.basis.append(new_basis_function)
  * 
  *         elif not dependent and knot_idx_choice == -1:             # <<<<<<<<<<<<<<
@@ -11245,7 +11320,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
     goto __pyx_L75;
   }
 
-  /* "pyearth/_forward.pyx":549
+  /* "pyearth/_forward.pyx":556
  *             # In this case there were no acceptable choices remaining, so end
  *             # the forward pass
  *             self.record[len(self.record) - 1].set_no_candidates(True)             # <<<<<<<<<<<<<<
@@ -11255,20 +11330,20 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   /*else*/ {
     __pyx_t_27 = ((PyObject *)__pyx_v_self->record);
     __Pyx_INCREF(__pyx_t_27);
-    __pyx_t_26 = PyObject_Length(__pyx_t_27); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 549, __pyx_L1_error)
+    __pyx_t_26 = PyObject_Length(__pyx_t_27); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 556, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
     __pyx_t_2 = (__pyx_t_26 - 1);
-    __pyx_t_27 = __Pyx_GetItemInt(((PyObject *)__pyx_v_self->record), __pyx_t_2, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 0, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 549, __pyx_L1_error)
+    __pyx_t_27 = __Pyx_GetItemInt(((PyObject *)__pyx_v_self->record), __pyx_t_2, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 0, 0); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 556, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_27, __pyx_n_s_set_no_candidates); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 549, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_27, __pyx_n_s_set_no_candidates); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 556, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
-    __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__35, NULL); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 549, __pyx_L1_error)
+    __pyx_t_27 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__37, NULL); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 556, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_27);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
 
-    /* "pyearth/_forward.pyx":550
+    /* "pyearth/_forward.pyx":557
  *             # the forward pass
  *             self.record[len(self.record) - 1].set_no_candidates(True)
  *             return             # <<<<<<<<<<<<<<
@@ -11281,7 +11356,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   }
   __pyx_L75:;
 
-  /* "pyearth/_forward.pyx":555
+  /* "pyearth/_forward.pyx":562
  *         # orthonormal updates and not the mse that comes directly from
  *         # the knot search
  *         cdef FLOAT_t final_mse = self.outcome.mse()             # <<<<<<<<<<<<<<
@@ -11290,57 +11365,57 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  */
   __pyx_v_final_mse = ((struct __pyx_vtabstruct_7pyearth_12_knot_search_MultipleOutcomeDependentData *)__pyx_v_self->outcome->__pyx_vtab)->mse(__pyx_v_self->outcome, 0);
 
-  /* "pyearth/_forward.pyx":558
+  /* "pyearth/_forward.pyx":565
  * 
  *         # Update the build record
  *         self.record.append(ForwardPassIteration(parent_idx_choice,             # <<<<<<<<<<<<<<
  *                                                 variable_choice,
  *                                                 knot_idx_choice, final_mse,
  */
-  __pyx_t_27 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx_choice); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 558, __pyx_L1_error)
+  __pyx_t_27 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_parent_idx_choice); if (unlikely(!__pyx_t_27)) __PYX_ERR(0, 565, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_27);
 
-  /* "pyearth/_forward.pyx":559
+  /* "pyearth/_forward.pyx":566
  *         # Update the build record
  *         self.record.append(ForwardPassIteration(parent_idx_choice,
  *                                                 variable_choice,             # <<<<<<<<<<<<<<
  *                                                 knot_idx_choice, final_mse,
  *                                                 len(self.basis)))
  */
-  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 559, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_variable_choice); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 566, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
 
-  /* "pyearth/_forward.pyx":560
+  /* "pyearth/_forward.pyx":567
  *         self.record.append(ForwardPassIteration(parent_idx_choice,
  *                                                 variable_choice,
  *                                                 knot_idx_choice, final_mse,             # <<<<<<<<<<<<<<
  *                                                 len(self.basis)))
  */
-  __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_knot_idx_choice); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 560, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_knot_idx_choice); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 567, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_25 = PyFloat_FromDouble(__pyx_v_final_mse); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 560, __pyx_L1_error)
+  __pyx_t_25 = PyFloat_FromDouble(__pyx_v_final_mse); if (unlikely(!__pyx_t_25)) __PYX_ERR(0, 567, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_25);
 
-  /* "pyearth/_forward.pyx":561
+  /* "pyearth/_forward.pyx":568
  *                                                 variable_choice,
  *                                                 knot_idx_choice, final_mse,
  *                                                 len(self.basis)))             # <<<<<<<<<<<<<<
  */
   __pyx_t_10 = ((PyObject *)__pyx_v_self->basis);
   __Pyx_INCREF(__pyx_t_10);
-  __pyx_t_2 = PyObject_Length(__pyx_t_10); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 561, __pyx_L1_error)
+  __pyx_t_2 = PyObject_Length(__pyx_t_10); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 568, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-  __pyx_t_10 = PyInt_FromSsize_t(__pyx_t_2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 561, __pyx_L1_error)
+  __pyx_t_10 = PyInt_FromSsize_t(__pyx_t_2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 568, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
 
-  /* "pyearth/_forward.pyx":558
+  /* "pyearth/_forward.pyx":565
  * 
  *         # Update the build record
  *         self.record.append(ForwardPassIteration(parent_idx_choice,             # <<<<<<<<<<<<<<
  *                                                 variable_choice,
  *                                                 knot_idx_choice, final_mse,
  */
-  __pyx_t_23 = PyTuple_New(5); if (unlikely(!__pyx_t_23)) __PYX_ERR(0, 558, __pyx_L1_error)
+  __pyx_t_23 = PyTuple_New(5); if (unlikely(!__pyx_t_23)) __PYX_ERR(0, 565, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_23);
   __Pyx_GIVEREF(__pyx_t_27);
   PyTuple_SET_ITEM(__pyx_t_23, 0, __pyx_t_27);
@@ -11357,15 +11432,15 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   __pyx_t_8 = 0;
   __pyx_t_25 = 0;
   __pyx_t_10 = 0;
-  __pyx_t_10 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_7_record_ForwardPassIteration), __pyx_t_23, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 558, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_7_record_ForwardPassIteration), __pyx_t_23, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 565, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
   __Pyx_DECREF(__pyx_t_23); __pyx_t_23 = 0;
-  __pyx_t_23 = ((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->record->__pyx_base.__pyx_vtab)->__pyx_base.append(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self->record), ((struct __pyx_obj_7pyearth_7_record_Iteration *)__pyx_t_10), 0); if (unlikely(!__pyx_t_23)) __PYX_ERR(0, 558, __pyx_L1_error)
+  __pyx_t_23 = ((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->record->__pyx_base.__pyx_vtab)->__pyx_base.append(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self->record), ((struct __pyx_obj_7pyearth_7_record_Iteration *)__pyx_t_10), 0); if (unlikely(!__pyx_t_23)) __PYX_ERR(0, 565, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_23);
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
   __Pyx_DECREF(__pyx_t_23); __pyx_t_23 = 0;
 
-  /* "pyearth/_forward.pyx":237
+  /* "pyearth/_forward.pyx":243
  *         return self.record
  * 
  *     cdef next_pair(ForwardPasser self):             # <<<<<<<<<<<<<<
@@ -11611,7 +11686,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  * 
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__36, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 218, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__38, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 218, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -11667,7 +11742,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  * 
  *             info.buf = PyArray_DATA(self)
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__37, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 222, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__39, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 222, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -11976,7 +12051,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *                 if   t == NPY_BYTE:        f = "b"
  *                 elif t == NPY_UBYTE:       f = "B"
  */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__38, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 259, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__40, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 259, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -12791,7 +12866,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  * 
  *         if ((child.byteorder == c'>' and little_endian) or
  */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__39, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 799, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__41, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 799, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -12859,7 +12934,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *             # One could encode it in the format string and have Cython
  *             # complain instead, BUT: < and > in format strings also imply
  */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__40, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 803, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__42, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 803, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -12968,7 +13043,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  * 
  *             # Until ticket #99 is fixed, use integers to avoid warnings
  */
-        __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__41, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 823, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__43, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 823, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_Raise(__pyx_t_4, 0, 0, 0);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -13749,7 +13824,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  *         if itemsize <= 0:
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__42, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 131, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__44, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 131, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -13781,7 +13856,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  *         if not isinstance(format, bytes):
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__43, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 134, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__45, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 134, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -13816,7 +13891,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  */
     __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_format, __pyx_n_s_encode); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 137, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__44, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 137, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__46, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 137, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF_SET(__pyx_v_format, __pyx_t_5);
@@ -13892,7 +13967,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  * 
  */
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__45, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 146, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__47, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 146, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_Raise(__pyx_t_5, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -14176,7 +14251,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
  * 
  *             if self.dtype_is_object:
  */
-      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__46, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 174, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__48, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 174, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_Raise(__pyx_t_5, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -14414,7 +14489,7 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array_2__getbuffer__(stru
  *         info.buf = self.data
  *         info.len = self.len
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__47, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 190, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__49, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 190, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -17361,7 +17436,7 @@ static PyObject *__pyx_memoryview_convert_item_to_object(struct __pyx_memoryview
  *         else:
  *             if len(self.view.format) == 1:
  */
-      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__48, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(2, 484, __pyx_L5_except_error)
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__50, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(2, 484, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_Raise(__pyx_t_6, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
@@ -18181,7 +18256,7 @@ static PyObject *__pyx_pf_15View_dot_MemoryView_10memoryview_7strides___get__(st
  * 
  *         return tuple([stride for stride in self.view.strides[:self.view.ndim]])
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__49, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 556, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__51, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 556, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -18295,7 +18370,7 @@ static PyObject *__pyx_pf_15View_dot_MemoryView_10memoryview_10suboffsets___get_
     __Pyx_XDECREF(__pyx_r);
     __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->view.ndim); if (unlikely(!__pyx_t_2)) __PYX_ERR(2, 563, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PyNumber_Multiply(__pyx_tuple__50, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 563, __pyx_L1_error)
+    __pyx_t_3 = PyNumber_Multiply(__pyx_tuple__52, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 563, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_r = __pyx_t_3;
@@ -19599,9 +19674,9 @@ static PyObject *_unellipsify(PyObject *__pyx_v_index, int __pyx_v_ndim) {
         __Pyx_GOTREF(__pyx_t_7);
         { Py_ssize_t __pyx_temp;
           for (__pyx_temp=0; __pyx_temp < ((__pyx_v_ndim - __pyx_t_8) + 1); __pyx_temp++) {
-            __Pyx_INCREF(__pyx_slice__51);
-            __Pyx_GIVEREF(__pyx_slice__51);
-            PyList_SET_ITEM(__pyx_t_7, __pyx_temp, __pyx_slice__51);
+            __Pyx_INCREF(__pyx_slice__53);
+            __Pyx_GIVEREF(__pyx_slice__53);
+            PyList_SET_ITEM(__pyx_t_7, __pyx_temp, __pyx_slice__53);
           }
         }
         __pyx_t_9 = __Pyx_PyList_Extend(__pyx_v_result, __pyx_t_7); if (unlikely(__pyx_t_9 == -1)) __PYX_ERR(2, 668, __pyx_L1_error)
@@ -19634,7 +19709,7 @@ static PyObject *_unellipsify(PyObject *__pyx_v_index, int __pyx_v_ndim) {
  *         else:
  */
       /*else*/ {
-        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_result, __pyx_slice__52); if (unlikely(__pyx_t_9 == -1)) __PYX_ERR(2, 671, __pyx_L1_error)
+        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_result, __pyx_slice__54); if (unlikely(__pyx_t_9 == -1)) __PYX_ERR(2, 671, __pyx_L1_error)
       }
       __pyx_L7:;
 
@@ -19779,9 +19854,9 @@ static PyObject *_unellipsify(PyObject *__pyx_v_index, int __pyx_v_ndim) {
     __Pyx_GOTREF(__pyx_t_3);
     { Py_ssize_t __pyx_temp;
       for (__pyx_temp=0; __pyx_temp < __pyx_v_nslices; __pyx_temp++) {
-        __Pyx_INCREF(__pyx_slice__53);
-        __Pyx_GIVEREF(__pyx_slice__53);
-        PyList_SET_ITEM(__pyx_t_3, __pyx_temp, __pyx_slice__53);
+        __Pyx_INCREF(__pyx_slice__55);
+        __Pyx_GIVEREF(__pyx_slice__55);
+        PyList_SET_ITEM(__pyx_t_3, __pyx_temp, __pyx_slice__55);
       }
     }
     __pyx_t_9 = __Pyx_PyList_Extend(__pyx_v_result, __pyx_t_3); if (unlikely(__pyx_t_9 == -1)) __PYX_ERR(2, 682, __pyx_L1_error)
@@ -19905,7 +19980,7 @@ static PyObject *assert_direct_dimensions(Py_ssize_t *__pyx_v_suboffsets, int __
  * 
  * 
  */
-      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__54, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 689, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__56, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(2, 689, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_Raise(__pyx_t_5, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -26204,6 +26279,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_fast_K, __pyx_k_fast_K, sizeof(__pyx_k_fast_K), 0, 0, 1, 1},
   {&__pyx_n_s_fast_h, __pyx_k_fast_h, sizeof(__pyx_k_fast_h), 0, 0, 1, 1},
   {&__pyx_n_s_file, __pyx_k_file, sizeof(__pyx_k_file), 0, 0, 1, 1},
+  {&__pyx_n_s_final_str, __pyx_k_final_str, sizeof(__pyx_k_final_str), 0, 0, 1, 1},
   {&__pyx_n_s_flags, __pyx_k_flags, sizeof(__pyx_k_flags), 0, 0, 1, 1},
   {&__pyx_n_s_float, __pyx_k_float, sizeof(__pyx_k_float), 0, 0, 1, 1},
   {&__pyx_n_s_format, __pyx_k_format, sizeof(__pyx_k_format), 0, 0, 1, 1},
@@ -26312,7 +26388,7 @@ static int __Pyx_InitCachedBuiltins(void) {
   __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 97, __pyx_L1_error)
   __pyx_builtin_round = __Pyx_GetBuiltinName(__pyx_n_s_round); if (!__pyx_builtin_round) __PYX_ERR(0, 118, __pyx_L1_error)
   __pyx_builtin_IndexError = __Pyx_GetBuiltinName(__pyx_n_s_IndexError); if (!__pyx_builtin_IndexError) __PYX_ERR(0, 133, __pyx_L1_error)
-  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(0, 226, __pyx_L1_error)
+  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(0, 232, __pyx_L1_error)
   __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) __PYX_ERR(1, 799, __pyx_L1_error)
   __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(2, 146, __pyx_L1_error)
   __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(2, 149, __pyx_L1_error)
@@ -26407,7 +26483,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_slice__10);
 
   /* "pyearth/_forward.pyx":188
- *         if self.verbose:
+ *         if self.verbose >= 1:
  *             print('Beginning forward pass')
  *             print(self.record.partial_str(slice(-1, None, None), print_footer=False))             # <<<<<<<<<<<<<<
  *         if self.max_terms > 1:
@@ -26420,226 +26496,240 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__12);
   __Pyx_GIVEREF(__pyx_tuple__12);
 
-  /* "pyearth/_forward.pyx":198
- *     cdef stop_check(ForwardPasser self):
- *         if self.verbose:
- *             print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))             # <<<<<<<<<<<<<<
- *         last = self.record.__len__() - 1
- *         if self.record.iterations[last].get_size() > self.max_terms:
+  /* "pyearth/_forward.pyx":194
+ *                 if self.stop_check():
+ *                     if self.verbose >= 1:
+ *                         print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=True))             # <<<<<<<<<<<<<<
+ *                         print(self.record.final_str())
+ *                     break
  */
-  __pyx_slice__13 = PySlice_New(__pyx_int_neg_1, Py_None, Py_None); if (unlikely(!__pyx_slice__13)) __PYX_ERR(0, 198, __pyx_L1_error)
+  __pyx_slice__13 = PySlice_New(__pyx_int_neg_1, Py_None, Py_None); if (unlikely(!__pyx_slice__13)) __PYX_ERR(0, 194, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__13);
   __Pyx_GIVEREF(__pyx_slice__13);
-  __pyx_tuple__14 = PyTuple_Pack(1, __pyx_slice__13); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 198, __pyx_L1_error)
+  __pyx_tuple__14 = PyTuple_Pack(1, __pyx_slice__13); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 194, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__14);
   __Pyx_GIVEREF(__pyx_tuple__14);
 
-  /* "pyearth/_forward.pyx":226
+  /* "pyearth/_forward.pyx":199
+ *                 else:
+ *                     if self.verbose >= 1:
+ *                         print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))             # <<<<<<<<<<<<<<
+ *                 self.iteration_number += 1
+ * 
+ */
+  __pyx_slice__15 = PySlice_New(__pyx_int_neg_1, Py_None, Py_None); if (unlikely(!__pyx_slice__15)) __PYX_ERR(0, 199, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__15);
+  __Pyx_GIVEREF(__pyx_slice__15);
+  __pyx_tuple__16 = PyTuple_Pack(1, __pyx_slice__15); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(0, 199, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__16);
+  __Pyx_GIVEREF(__pyx_tuple__16);
+
+  /* "pyearth/_forward.pyx":232
  *         return_code = self.outcome.update_from_array(b)
  *         if return_code == -1:
  *             raise ValueError('This should not have happened.')             # <<<<<<<<<<<<<<
  *         if return_code == 1:
  *             linear_dependence = True
  */
-  __pyx_tuple__15 = PyTuple_Pack(1, __pyx_kp_s_This_should_not_have_happened); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 226, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__15);
-  __Pyx_GIVEREF(__pyx_tuple__15);
+  __pyx_tuple__17 = PyTuple_Pack(1, __pyx_kp_s_This_should_not_have_happened); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(0, 232, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__17);
+  __Pyx_GIVEREF(__pyx_tuple__17);
 
-  /* "pyearth/_forward.pyx":364
+  /* "pyearth/_forward.pyx":370
  * 
  *                 if missing_flag and not covered:
  *                     p = B[:, parent_idx] * (1 - missing[:, variable])             # <<<<<<<<<<<<<<
  *                     b = B[:, parent_idx] * (1 - missing[:, variable])
  *                     self.orthonormal_update(b)
  */
-  __pyx_slice__16 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__16)) __PYX_ERR(0, 364, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__16);
-  __Pyx_GIVEREF(__pyx_slice__16);
-  __pyx_slice__17 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__17)) __PYX_ERR(0, 364, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__17);
-  __Pyx_GIVEREF(__pyx_slice__17);
+  __pyx_slice__18 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__18)) __PYX_ERR(0, 370, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__18);
+  __Pyx_GIVEREF(__pyx_slice__18);
+  __pyx_slice__19 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__19)) __PYX_ERR(0, 370, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__19);
+  __Pyx_GIVEREF(__pyx_slice__19);
 
-  /* "pyearth/_forward.pyx":365
+  /* "pyearth/_forward.pyx":371
  *                 if missing_flag and not covered:
  *                     p = B[:, parent_idx] * (1 - missing[:, variable])
  *                     b = B[:, parent_idx] * (1 - missing[:, variable])             # <<<<<<<<<<<<<<
  *                     self.orthonormal_update(b)
  *                     b = B[:, parent_idx] * missing[:, variable]
  */
-  __pyx_slice__18 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__18)) __PYX_ERR(0, 365, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__18);
-  __Pyx_GIVEREF(__pyx_slice__18);
-  __pyx_slice__19 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__19)) __PYX_ERR(0, 365, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__19);
-  __Pyx_GIVEREF(__pyx_slice__19);
+  __pyx_slice__20 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__20)) __PYX_ERR(0, 371, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__20);
+  __Pyx_GIVEREF(__pyx_slice__20);
+  __pyx_slice__21 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__21)) __PYX_ERR(0, 371, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__21);
+  __Pyx_GIVEREF(__pyx_slice__21);
 
-  /* "pyearth/_forward.pyx":367
+  /* "pyearth/_forward.pyx":373
  *                     b = B[:, parent_idx] * (1 - missing[:, variable])
  *                     self.orthonormal_update(b)
  *                     b = B[:, parent_idx] * missing[:, variable]             # <<<<<<<<<<<<<<
  *                     self.orthonormal_update(b)
  *                     q = k + 3
  */
-  __pyx_slice__20 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__20)) __PYX_ERR(0, 367, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__20);
-  __Pyx_GIVEREF(__pyx_slice__20);
-  __pyx_slice__21 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__21)) __PYX_ERR(0, 367, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__21);
-  __Pyx_GIVEREF(__pyx_slice__21);
+  __pyx_slice__22 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__22)) __PYX_ERR(0, 373, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__22);
+  __Pyx_GIVEREF(__pyx_slice__22);
+  __pyx_slice__23 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__23)) __PYX_ERR(0, 373, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__23);
+  __Pyx_GIVEREF(__pyx_slice__23);
 
-  /* "pyearth/_forward.pyx":371
+  /* "pyearth/_forward.pyx":377
  *                     q = k + 3
  *                 else:
  *                     p = self.B[:, parent_idx]             # <<<<<<<<<<<<<<
  *                     q = k + 1
  * 
  */
-  __pyx_slice__22 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__22)) __PYX_ERR(0, 371, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__22);
-  __Pyx_GIVEREF(__pyx_slice__22);
+  __pyx_slice__24 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__24)) __PYX_ERR(0, 377, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__24);
+  __Pyx_GIVEREF(__pyx_slice__24);
 
-  /* "pyearth/_forward.pyx":376
+  /* "pyearth/_forward.pyx":382
  *                 b = p * predictor.x
  *                 if missing_flag and not covered:
  *                     b[missing[:, variable] == 1] = 0             # <<<<<<<<<<<<<<
  *                 linear_dependence = self.orthonormal_update(b)
  * 
  */
-  __pyx_slice__23 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__23)) __PYX_ERR(0, 376, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__23);
-  __Pyx_GIVEREF(__pyx_slice__23);
+  __pyx_slice__25 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__25)) __PYX_ERR(0, 382, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__25);
+  __Pyx_GIVEREF(__pyx_slice__25);
 
-  /* "pyearth/_forward.pyx":482
+  /* "pyearth/_forward.pyx":489
  *         # Make sure at least one candidate was checked
  *         if first:
  *             self.record[len(self.record) - 1].set_no_candidates(True)             # <<<<<<<<<<<<<<
  *             return
  * 
  */
-  __pyx_tuple__24 = PyTuple_Pack(1, Py_True); if (unlikely(!__pyx_tuple__24)) __PYX_ERR(0, 482, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__24);
-  __Pyx_GIVEREF(__pyx_tuple__24);
+  __pyx_tuple__26 = PyTuple_Pack(1, Py_True); if (unlikely(!__pyx_tuple__26)) __PYX_ERR(0, 489, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__26);
+  __Pyx_GIVEREF(__pyx_tuple__26);
 
-  /* "pyearth/_forward.pyx":494
+  /* "pyearth/_forward.pyx":501
  *                 new_basis_function = MissingnessBasisFunction(parent_choice, variable_choice,
  *                                                True, label)
  *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])             # <<<<<<<<<<<<<<
  *                 self.orthonormal_update(B[:, len(self.basis)])
  *                 if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
  */
-  __pyx_slice__25 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__25)) __PYX_ERR(0, 494, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__25);
-  __Pyx_GIVEREF(__pyx_slice__25);
-
-  /* "pyearth/_forward.pyx":495
- *                                                True, label)
- *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
- *                 self.orthonormal_update(B[:, len(self.basis)])             # <<<<<<<<<<<<<<
- *                 if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
- *                     content = FastHeapContent(idx=len(self.basis))
- */
-  __pyx_slice__26 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__26)) __PYX_ERR(0, 495, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__26);
-  __Pyx_GIVEREF(__pyx_slice__26);
-
-  /* "pyearth/_forward.pyx":504
- *                 new_basis_function = MissingnessBasisFunction(parent_choice, variable_choice,
- *                                                False, label)
- *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])             # <<<<<<<<<<<<<<
- *                 self.orthonormal_update(B[:, len(self.basis)])
- *                 if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
- */
-  __pyx_slice__27 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__27)) __PYX_ERR(0, 504, __pyx_L1_error)
+  __pyx_slice__27 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__27)) __PYX_ERR(0, 501, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__27);
   __Pyx_GIVEREF(__pyx_slice__27);
 
-  /* "pyearth/_forward.pyx":505
+  /* "pyearth/_forward.pyx":502
+ *                                                True, label)
+ *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
+ *                 self.orthonormal_update(B[:, len(self.basis)])             # <<<<<<<<<<<<<<
+ *                 if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
+ *                     content = FastHeapContent(idx=len(self.basis))
+ */
+  __pyx_slice__28 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__28)) __PYX_ERR(0, 502, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__28);
+  __Pyx_GIVEREF(__pyx_slice__28);
+
+  /* "pyearth/_forward.pyx":511
+ *                 new_basis_function = MissingnessBasisFunction(parent_choice, variable_choice,
+ *                                                False, label)
+ *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])             # <<<<<<<<<<<<<<
+ *                 self.orthonormal_update(B[:, len(self.basis)])
+ *                 if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
+ */
+  __pyx_slice__29 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__29)) __PYX_ERR(0, 511, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__29);
+  __Pyx_GIVEREF(__pyx_slice__29);
+
+  /* "pyearth/_forward.pyx":512
  *                                                False, label)
  *                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *                 self.orthonormal_update(B[:, len(self.basis)])             # <<<<<<<<<<<<<<
  *                 if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
  *                     content = FastHeapContent(idx=len(self.basis))
  */
-  __pyx_slice__28 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__28)) __PYX_ERR(0, 505, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__28);
-  __Pyx_GIVEREF(__pyx_slice__28);
-
-  /* "pyearth/_forward.pyx":518
- *                                      variable_choice,
- *                                      False, label)
- *             new_basis_function.apply(X, missing, B[:, len(self.basis)])             # <<<<<<<<<<<<<<
- *             self.orthonormal_update(B[:, len(self.basis)])
- *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
- */
-  __pyx_slice__29 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__29)) __PYX_ERR(0, 518, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__29);
-  __Pyx_GIVEREF(__pyx_slice__29);
-
-  /* "pyearth/_forward.pyx":519
- *                                      False, label)
- *             new_basis_function.apply(X, missing, B[:, len(self.basis)])
- *             self.orthonormal_update(B[:, len(self.basis)])             # <<<<<<<<<<<<<<
- *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
- *                 content = FastHeapContent(idx=len(self.basis))
- */
-  __pyx_slice__30 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__30)) __PYX_ERR(0, 519, __pyx_L1_error)
+  __pyx_slice__30 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__30)) __PYX_ERR(0, 512, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__30);
   __Pyx_GIVEREF(__pyx_slice__30);
 
-  /* "pyearth/_forward.pyx":529
+  /* "pyearth/_forward.pyx":525
+ *                                      variable_choice,
+ *                                      False, label)
+ *             new_basis_function.apply(X, missing, B[:, len(self.basis)])             # <<<<<<<<<<<<<<
+ *             self.orthonormal_update(B[:, len(self.basis)])
+ *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
+ */
+  __pyx_slice__31 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__31)) __PYX_ERR(0, 525, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__31);
+  __Pyx_GIVEREF(__pyx_slice__31);
+
+  /* "pyearth/_forward.pyx":526
+ *                                      False, label)
+ *             new_basis_function.apply(X, missing, B[:, len(self.basis)])
+ *             self.orthonormal_update(B[:, len(self.basis)])             # <<<<<<<<<<<<<<
+ *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
+ *                 content = FastHeapContent(idx=len(self.basis))
+ */
+  __pyx_slice__32 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__32)) __PYX_ERR(0, 526, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__32);
+  __Pyx_GIVEREF(__pyx_slice__32);
+
+  /* "pyearth/_forward.pyx":536
  *                                      variable_choice,
  *                                      True, label)
  *             new_basis_function.apply(X, missing, B[:, len(self.basis)])             # <<<<<<<<<<<<<<
  *             self.orthonormal_update(B[:, len(self.basis)])
  *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
  */
-  __pyx_slice__31 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__31)) __PYX_ERR(0, 529, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__31);
-  __Pyx_GIVEREF(__pyx_slice__31);
+  __pyx_slice__33 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__33)) __PYX_ERR(0, 536, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__33);
+  __Pyx_GIVEREF(__pyx_slice__33);
 
-  /* "pyearth/_forward.pyx":530
+  /* "pyearth/_forward.pyx":537
  *                                      True, label)
  *             new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *             self.orthonormal_update(B[:, len(self.basis)])             # <<<<<<<<<<<<<<
  *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
  *                 content = FastHeapContent(idx=len(self.basis))
  */
-  __pyx_slice__32 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__32)) __PYX_ERR(0, 530, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__32);
-  __Pyx_GIVEREF(__pyx_slice__32);
+  __pyx_slice__34 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__34)) __PYX_ERR(0, 537, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__34);
+  __Pyx_GIVEREF(__pyx_slice__34);
 
-  /* "pyearth/_forward.pyx":540
+  /* "pyearth/_forward.pyx":547
  *             # covering missingness basis functions if needed)
  *             new_basis_function = LinearBasisFunction(new_parent, variable_choice, label)
  *             new_basis_function.apply(X, missing, B[:, len(self.basis)])             # <<<<<<<<<<<<<<
  *             self.orthonormal_update(B[:, len(self.basis)])
  *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
  */
-  __pyx_slice__33 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__33)) __PYX_ERR(0, 540, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__33);
-  __Pyx_GIVEREF(__pyx_slice__33);
+  __pyx_slice__35 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__35)) __PYX_ERR(0, 547, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__35);
+  __Pyx_GIVEREF(__pyx_slice__35);
 
-  /* "pyearth/_forward.pyx":541
+  /* "pyearth/_forward.pyx":548
  *             new_basis_function = LinearBasisFunction(new_parent, variable_choice, label)
  *             new_basis_function.apply(X, missing, B[:, len(self.basis)])
  *             self.orthonormal_update(B[:, len(self.basis)])             # <<<<<<<<<<<<<<
  *             if self.use_fast and new_basis_function.is_splittable() and new_basis_function.effective_degree() < self.max_degree:
  *                 content = FastHeapContent(idx=len(self.basis))
  */
-  __pyx_slice__34 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__34)) __PYX_ERR(0, 541, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__34);
-  __Pyx_GIVEREF(__pyx_slice__34);
+  __pyx_slice__36 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__36)) __PYX_ERR(0, 548, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__36);
+  __Pyx_GIVEREF(__pyx_slice__36);
 
-  /* "pyearth/_forward.pyx":549
+  /* "pyearth/_forward.pyx":556
  *             # In this case there were no acceptable choices remaining, so end
  *             # the forward pass
  *             self.record[len(self.record) - 1].set_no_candidates(True)             # <<<<<<<<<<<<<<
  *             return
  * 
  */
-  __pyx_tuple__35 = PyTuple_Pack(1, Py_True); if (unlikely(!__pyx_tuple__35)) __PYX_ERR(0, 549, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__35);
-  __Pyx_GIVEREF(__pyx_tuple__35);
+  __pyx_tuple__37 = PyTuple_Pack(1, Py_True); if (unlikely(!__pyx_tuple__37)) __PYX_ERR(0, 556, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__37);
+  __Pyx_GIVEREF(__pyx_tuple__37);
 
   /* "../../anaconda/envs/pyearthdev/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":218
  *             if ((flags & pybuf.PyBUF_C_CONTIGUOUS == pybuf.PyBUF_C_CONTIGUOUS)
@@ -26648,9 +26738,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  */
-  __pyx_tuple__36 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_C_contiguous); if (unlikely(!__pyx_tuple__36)) __PYX_ERR(1, 218, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__36);
-  __Pyx_GIVEREF(__pyx_tuple__36);
+  __pyx_tuple__38 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_C_contiguous); if (unlikely(!__pyx_tuple__38)) __PYX_ERR(1, 218, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__38);
+  __Pyx_GIVEREF(__pyx_tuple__38);
 
   /* "../../anaconda/envs/pyearthdev/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":222
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
@@ -26659,9 +26749,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *             info.buf = PyArray_DATA(self)
  */
-  __pyx_tuple__37 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_Fortran_contiguou); if (unlikely(!__pyx_tuple__37)) __PYX_ERR(1, 222, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__37);
-  __Pyx_GIVEREF(__pyx_tuple__37);
+  __pyx_tuple__39 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_Fortran_contiguou); if (unlikely(!__pyx_tuple__39)) __PYX_ERR(1, 222, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__39);
+  __Pyx_GIVEREF(__pyx_tuple__39);
 
   /* "../../anaconda/envs/pyearthdev/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":259
  *                 if ((descr.byteorder == c'>' and little_endian) or
@@ -26670,9 +26760,9 @@ static int __Pyx_InitCachedConstants(void) {
  *                 if   t == NPY_BYTE:        f = "b"
  *                 elif t == NPY_UBYTE:       f = "B"
  */
-  __pyx_tuple__38 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__38)) __PYX_ERR(1, 259, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__38);
-  __Pyx_GIVEREF(__pyx_tuple__38);
+  __pyx_tuple__40 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__40)) __PYX_ERR(1, 259, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__40);
+  __Pyx_GIVEREF(__pyx_tuple__40);
 
   /* "../../anaconda/envs/pyearthdev/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":799
  * 
@@ -26681,9 +26771,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         if ((child.byteorder == c'>' and little_endian) or
  */
-  __pyx_tuple__39 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor); if (unlikely(!__pyx_tuple__39)) __PYX_ERR(1, 799, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__39);
-  __Pyx_GIVEREF(__pyx_tuple__39);
+  __pyx_tuple__41 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor); if (unlikely(!__pyx_tuple__41)) __PYX_ERR(1, 799, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__41);
+  __Pyx_GIVEREF(__pyx_tuple__41);
 
   /* "../../anaconda/envs/pyearthdev/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":803
  *         if ((child.byteorder == c'>' and little_endian) or
@@ -26692,9 +26782,9 @@ static int __Pyx_InitCachedConstants(void) {
  *             # One could encode it in the format string and have Cython
  *             # complain instead, BUT: < and > in format strings also imply
  */
-  __pyx_tuple__40 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__40)) __PYX_ERR(1, 803, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__40);
-  __Pyx_GIVEREF(__pyx_tuple__40);
+  __pyx_tuple__42 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__42)) __PYX_ERR(1, 803, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__42);
+  __Pyx_GIVEREF(__pyx_tuple__42);
 
   /* "../../anaconda/envs/pyearthdev/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":823
  *             t = child.type_num
@@ -26703,9 +26793,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *             # Until ticket #99 is fixed, use integers to avoid warnings
  */
-  __pyx_tuple__41 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor_2); if (unlikely(!__pyx_tuple__41)) __PYX_ERR(1, 823, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__41);
-  __Pyx_GIVEREF(__pyx_tuple__41);
+  __pyx_tuple__43 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor_2); if (unlikely(!__pyx_tuple__43)) __PYX_ERR(1, 823, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__43);
+  __Pyx_GIVEREF(__pyx_tuple__43);
 
   /* "View.MemoryView":131
  * 
@@ -26714,9 +26804,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         if itemsize <= 0:
  */
-  __pyx_tuple__42 = PyTuple_Pack(1, __pyx_kp_s_Empty_shape_tuple_for_cython_arr); if (unlikely(!__pyx_tuple__42)) __PYX_ERR(2, 131, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__42);
-  __Pyx_GIVEREF(__pyx_tuple__42);
+  __pyx_tuple__44 = PyTuple_Pack(1, __pyx_kp_s_Empty_shape_tuple_for_cython_arr); if (unlikely(!__pyx_tuple__44)) __PYX_ERR(2, 131, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__44);
+  __Pyx_GIVEREF(__pyx_tuple__44);
 
   /* "View.MemoryView":134
  * 
@@ -26725,9 +26815,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         if not isinstance(format, bytes):
  */
-  __pyx_tuple__43 = PyTuple_Pack(1, __pyx_kp_s_itemsize_0_for_cython_array); if (unlikely(!__pyx_tuple__43)) __PYX_ERR(2, 134, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__43);
-  __Pyx_GIVEREF(__pyx_tuple__43);
+  __pyx_tuple__45 = PyTuple_Pack(1, __pyx_kp_s_itemsize_0_for_cython_array); if (unlikely(!__pyx_tuple__45)) __PYX_ERR(2, 134, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__45);
+  __Pyx_GIVEREF(__pyx_tuple__45);
 
   /* "View.MemoryView":137
  * 
@@ -26736,9 +26826,9 @@ static int __Pyx_InitCachedConstants(void) {
  *         self._format = format  # keep a reference to the byte string
  *         self.format = self._format
  */
-  __pyx_tuple__44 = PyTuple_Pack(1, __pyx_n_s_ASCII); if (unlikely(!__pyx_tuple__44)) __PYX_ERR(2, 137, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__44);
-  __Pyx_GIVEREF(__pyx_tuple__44);
+  __pyx_tuple__46 = PyTuple_Pack(1, __pyx_n_s_ASCII); if (unlikely(!__pyx_tuple__46)) __PYX_ERR(2, 137, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__46);
+  __Pyx_GIVEREF(__pyx_tuple__46);
 
   /* "View.MemoryView":146
  * 
@@ -26747,9 +26837,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__45 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_shape_and_str); if (unlikely(!__pyx_tuple__45)) __PYX_ERR(2, 146, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__45);
-  __Pyx_GIVEREF(__pyx_tuple__45);
+  __pyx_tuple__47 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_shape_and_str); if (unlikely(!__pyx_tuple__47)) __PYX_ERR(2, 146, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__47);
+  __Pyx_GIVEREF(__pyx_tuple__47);
 
   /* "View.MemoryView":174
  *             self.data = <char *>malloc(self.len)
@@ -26758,9 +26848,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *             if self.dtype_is_object:
  */
-  __pyx_tuple__46 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_array_data); if (unlikely(!__pyx_tuple__46)) __PYX_ERR(2, 174, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__46);
-  __Pyx_GIVEREF(__pyx_tuple__46);
+  __pyx_tuple__48 = PyTuple_Pack(1, __pyx_kp_s_unable_to_allocate_array_data); if (unlikely(!__pyx_tuple__48)) __PYX_ERR(2, 174, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__48);
+  __Pyx_GIVEREF(__pyx_tuple__48);
 
   /* "View.MemoryView":190
  *             bufmode = PyBUF_F_CONTIGUOUS | PyBUF_ANY_CONTIGUOUS
@@ -26769,9 +26859,9 @@ static int __Pyx_InitCachedConstants(void) {
  *         info.buf = self.data
  *         info.len = self.len
  */
-  __pyx_tuple__47 = PyTuple_Pack(1, __pyx_kp_s_Can_only_create_a_buffer_that_is); if (unlikely(!__pyx_tuple__47)) __PYX_ERR(2, 190, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__47);
-  __Pyx_GIVEREF(__pyx_tuple__47);
+  __pyx_tuple__49 = PyTuple_Pack(1, __pyx_kp_s_Can_only_create_a_buffer_that_is); if (unlikely(!__pyx_tuple__49)) __PYX_ERR(2, 190, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__49);
+  __Pyx_GIVEREF(__pyx_tuple__49);
 
   /* "View.MemoryView":484
  *             result = struct.unpack(self.view.format, bytesitem)
@@ -26780,9 +26870,9 @@ static int __Pyx_InitCachedConstants(void) {
  *         else:
  *             if len(self.view.format) == 1:
  */
-  __pyx_tuple__48 = PyTuple_Pack(1, __pyx_kp_s_Unable_to_convert_item_to_object); if (unlikely(!__pyx_tuple__48)) __PYX_ERR(2, 484, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__48);
-  __Pyx_GIVEREF(__pyx_tuple__48);
+  __pyx_tuple__50 = PyTuple_Pack(1, __pyx_kp_s_Unable_to_convert_item_to_object); if (unlikely(!__pyx_tuple__50)) __PYX_ERR(2, 484, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__50);
+  __Pyx_GIVEREF(__pyx_tuple__50);
 
   /* "View.MemoryView":556
  *         if self.view.strides == NULL:
@@ -26791,9 +26881,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         return tuple([stride for stride in self.view.strides[:self.view.ndim]])
  */
-  __pyx_tuple__49 = PyTuple_Pack(1, __pyx_kp_s_Buffer_view_does_not_expose_stri); if (unlikely(!__pyx_tuple__49)) __PYX_ERR(2, 556, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__49);
-  __Pyx_GIVEREF(__pyx_tuple__49);
+  __pyx_tuple__51 = PyTuple_Pack(1, __pyx_kp_s_Buffer_view_does_not_expose_stri); if (unlikely(!__pyx_tuple__51)) __PYX_ERR(2, 556, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__51);
+  __Pyx_GIVEREF(__pyx_tuple__51);
 
   /* "View.MemoryView":563
  *     def suboffsets(self):
@@ -26802,12 +26892,12 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         return tuple([suboffset for suboffset in self.view.suboffsets[:self.view.ndim]])
  */
-  __pyx_tuple__50 = PyTuple_New(1); if (unlikely(!__pyx_tuple__50)) __PYX_ERR(2, 563, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__50);
+  __pyx_tuple__52 = PyTuple_New(1); if (unlikely(!__pyx_tuple__52)) __PYX_ERR(2, 563, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__52);
   __Pyx_INCREF(__pyx_int_neg_1);
   __Pyx_GIVEREF(__pyx_int_neg_1);
-  PyTuple_SET_ITEM(__pyx_tuple__50, 0, __pyx_int_neg_1);
-  __Pyx_GIVEREF(__pyx_tuple__50);
+  PyTuple_SET_ITEM(__pyx_tuple__52, 0, __pyx_int_neg_1);
+  __Pyx_GIVEREF(__pyx_tuple__52);
 
   /* "View.MemoryView":668
  *         if item is Ellipsis:
@@ -26816,9 +26906,9 @@ static int __Pyx_InitCachedConstants(void) {
  *                 seen_ellipsis = True
  *             else:
  */
-  __pyx_slice__51 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__51)) __PYX_ERR(2, 668, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__51);
-  __Pyx_GIVEREF(__pyx_slice__51);
+  __pyx_slice__53 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__53)) __PYX_ERR(2, 668, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__53);
+  __Pyx_GIVEREF(__pyx_slice__53);
 
   /* "View.MemoryView":671
  *                 seen_ellipsis = True
@@ -26827,9 +26917,9 @@ static int __Pyx_InitCachedConstants(void) {
  *             have_slices = True
  *         else:
  */
-  __pyx_slice__52 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__52)) __PYX_ERR(2, 671, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__52);
-  __Pyx_GIVEREF(__pyx_slice__52);
+  __pyx_slice__54 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__54)) __PYX_ERR(2, 671, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__54);
+  __Pyx_GIVEREF(__pyx_slice__54);
 
   /* "View.MemoryView":682
  *     nslices = ndim - len(result)
@@ -26838,9 +26928,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *     return have_slices or nslices, tuple(result)
  */
-  __pyx_slice__53 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__53)) __PYX_ERR(2, 682, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_slice__53);
-  __Pyx_GIVEREF(__pyx_slice__53);
+  __pyx_slice__55 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__55)) __PYX_ERR(2, 682, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_slice__55);
+  __Pyx_GIVEREF(__pyx_slice__55);
 
   /* "View.MemoryView":689
  *     for suboffset in suboffsets[:ndim]:
@@ -26849,9 +26939,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__54 = PyTuple_Pack(1, __pyx_kp_s_Indirect_dimensions_not_supporte); if (unlikely(!__pyx_tuple__54)) __PYX_ERR(2, 689, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__54);
-  __Pyx_GIVEREF(__pyx_tuple__54);
+  __pyx_tuple__56 = PyTuple_Pack(1, __pyx_kp_s_Indirect_dimensions_not_supporte); if (unlikely(!__pyx_tuple__56)) __PYX_ERR(2, 689, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__56);
+  __Pyx_GIVEREF(__pyx_tuple__56);
 
   /* "pyearth/_forward.pyx":23
  * class FastHeapContent:
@@ -26860,10 +26950,10 @@ static int __Pyx_InitCachedConstants(void) {
  *         """
  *         This class defines an entry of the priority queue as defined in [1].
  */
-  __pyx_tuple__55 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_idx, __pyx_n_s_mse, __pyx_n_s_m, __pyx_n_s_v); if (unlikely(!__pyx_tuple__55)) __PYX_ERR(0, 23, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__55);
-  __Pyx_GIVEREF(__pyx_tuple__55);
-  __pyx_codeobj__56 = (PyObject*)__Pyx_PyCode_New(5, 0, 5, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__55, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jason_projects_py_earth_py, __pyx_n_s_init, 23, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__56)) __PYX_ERR(0, 23, __pyx_L1_error)
+  __pyx_tuple__57 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_idx, __pyx_n_s_mse, __pyx_n_s_m, __pyx_n_s_v); if (unlikely(!__pyx_tuple__57)) __PYX_ERR(0, 23, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__57);
+  __Pyx_GIVEREF(__pyx_tuple__57);
+  __pyx_codeobj__58 = (PyObject*)__Pyx_PyCode_New(5, 0, 5, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__57, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jason_projects_py_earth_py, __pyx_n_s_init, 23, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__58)) __PYX_ERR(0, 23, __pyx_L1_error)
 
   /* "pyearth/_forward.pyx":40
  *         self.v = v
@@ -26872,10 +26962,10 @@ static int __Pyx_InitCachedConstants(void) {
  *         return self.mse < other.mse
  * 
  */
-  __pyx_tuple__57 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_other); if (unlikely(!__pyx_tuple__57)) __PYX_ERR(0, 40, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__57);
-  __Pyx_GIVEREF(__pyx_tuple__57);
-  __pyx_codeobj__58 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__57, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jason_projects_py_earth_py, __pyx_n_s_lt, 40, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__58)) __PYX_ERR(0, 40, __pyx_L1_error)
+  __pyx_tuple__59 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_other); if (unlikely(!__pyx_tuple__59)) __PYX_ERR(0, 40, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__59);
+  __Pyx_GIVEREF(__pyx_tuple__59);
+  __pyx_codeobj__60 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__59, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_jason_projects_py_earth_py, __pyx_n_s_lt, 40, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__60)) __PYX_ERR(0, 40, __pyx_L1_error)
 
   /* "View.MemoryView":282
  *         return self.name
@@ -26884,9 +26974,9 @@ static int __Pyx_InitCachedConstants(void) {
  * cdef strided = Enum("<strided and direct>") # default
  * cdef indirect = Enum("<strided and indirect>")
  */
-  __pyx_tuple__59 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct_or_indirect); if (unlikely(!__pyx_tuple__59)) __PYX_ERR(2, 282, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__59);
-  __Pyx_GIVEREF(__pyx_tuple__59);
+  __pyx_tuple__61 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct_or_indirect); if (unlikely(!__pyx_tuple__61)) __PYX_ERR(2, 282, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__61);
+  __Pyx_GIVEREF(__pyx_tuple__61);
 
   /* "View.MemoryView":283
  * 
@@ -26895,9 +26985,9 @@ static int __Pyx_InitCachedConstants(void) {
  * cdef indirect = Enum("<strided and indirect>")
  * 
  */
-  __pyx_tuple__60 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct); if (unlikely(!__pyx_tuple__60)) __PYX_ERR(2, 283, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__60);
-  __Pyx_GIVEREF(__pyx_tuple__60);
+  __pyx_tuple__62 = PyTuple_Pack(1, __pyx_kp_s_strided_and_direct); if (unlikely(!__pyx_tuple__62)) __PYX_ERR(2, 283, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__62);
+  __Pyx_GIVEREF(__pyx_tuple__62);
 
   /* "View.MemoryView":284
  * cdef generic = Enum("<strided and direct or indirect>")
@@ -26906,9 +26996,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__61 = PyTuple_Pack(1, __pyx_kp_s_strided_and_indirect); if (unlikely(!__pyx_tuple__61)) __PYX_ERR(2, 284, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__61);
-  __Pyx_GIVEREF(__pyx_tuple__61);
+  __pyx_tuple__63 = PyTuple_Pack(1, __pyx_kp_s_strided_and_indirect); if (unlikely(!__pyx_tuple__63)) __PYX_ERR(2, 284, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__63);
+  __Pyx_GIVEREF(__pyx_tuple__63);
 
   /* "View.MemoryView":287
  * 
@@ -26917,9 +27007,9 @@ static int __Pyx_InitCachedConstants(void) {
  * cdef indirect_contiguous = Enum("<contiguous and indirect>")
  * 
  */
-  __pyx_tuple__62 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_direct); if (unlikely(!__pyx_tuple__62)) __PYX_ERR(2, 287, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__62);
-  __Pyx_GIVEREF(__pyx_tuple__62);
+  __pyx_tuple__64 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_direct); if (unlikely(!__pyx_tuple__64)) __PYX_ERR(2, 287, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__64);
+  __Pyx_GIVEREF(__pyx_tuple__64);
 
   /* "View.MemoryView":288
  * 
@@ -26928,9 +27018,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * 
  */
-  __pyx_tuple__63 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_indirect); if (unlikely(!__pyx_tuple__63)) __PYX_ERR(2, 288, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__63);
-  __Pyx_GIVEREF(__pyx_tuple__63);
+  __pyx_tuple__65 = PyTuple_Pack(1, __pyx_kp_s_contiguous_and_indirect); if (unlikely(!__pyx_tuple__65)) __PYX_ERR(2, 288, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__65);
+  __Pyx_GIVEREF(__pyx_tuple__65);
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -27165,7 +27255,7 @@ PyMODINIT_FUNC PyInit__forward(void)
   /*--- Variable import code ---*/
   /*--- Function import code ---*/
   __pyx_t_1 = __Pyx_ImportModule("pyearth._knot_search"); if (!__pyx_t_1) __PYX_ERR(0, 1, __pyx_L1_error)
-  if (__Pyx_ImportFunction(__pyx_t_1, "knot_search", (void (**)(void))&__pyx_f_7pyearth_12_knot_search_knot_search, "PyObject *(struct __pyx_obj_7pyearth_12_knot_search_KnotSearchData *, __Pyx_memviewslice, __Pyx_memviewslice, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (__Pyx_ImportFunction(__pyx_t_1, "knot_search", (void (**)(void))&__pyx_f_7pyearth_12_knot_search_knot_search, "PyObject *(struct __pyx_obj_7pyearth_12_knot_search_KnotSearchData *, __Pyx_memviewslice, __Pyx_memviewslice, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_INDEX_t, __pyx_t_7pyearth_6_types_INDEX_t, int, int __pyx_skip_dispatch)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   Py_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_2 = __Pyx_ImportModule("pyearth._util"); if (!__pyx_t_2) __PYX_ERR(0, 1, __pyx_L1_error)
   if (__Pyx_ImportFunction(__pyx_t_2, "log2", (void (**)(void))&__pyx_f_7pyearth_5_util_log2, "__pyx_t_7pyearth_6_types_FLOAT_t (__pyx_t_7pyearth_6_types_FLOAT_t)") < 0) __PYX_ERR(0, 1, __pyx_L1_error)
@@ -27277,7 +27367,7 @@ PyMODINIT_FUNC PyInit__forward(void)
  *         """
  *         This class defines an entry of the priority queue as defined in [1].
  */
-  __pyx_t_4 = __Pyx_CyFunction_NewEx(&__pyx_mdef_7pyearth_8_forward_15FastHeapContent_1__init__, 0, __pyx_n_s_FastHeapContent___init, NULL, __pyx_n_s_pyearth__forward, __pyx_d, ((PyObject *)__pyx_codeobj__56)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 23, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_CyFunction_NewEx(&__pyx_mdef_7pyearth_8_forward_15FastHeapContent_1__init__, 0, __pyx_n_s_FastHeapContent___init, NULL, __pyx_n_s_pyearth__forward, __pyx_d, ((PyObject *)__pyx_codeobj__58)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 23, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   if (!__Pyx_CyFunction_InitDefaults(__pyx_t_4, sizeof(__pyx_defaults), 2)) __PYX_ERR(0, 23, __pyx_L1_error)
   __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 23, __pyx_L1_error)
@@ -27313,7 +27403,7 @@ PyMODINIT_FUNC PyInit__forward(void)
  *         return self.mse < other.mse
  * 
  */
-  __pyx_t_4 = __Pyx_CyFunction_NewEx(&__pyx_mdef_7pyearth_8_forward_15FastHeapContent_3__lt__, 0, __pyx_n_s_FastHeapContent___lt, NULL, __pyx_n_s_pyearth__forward, __pyx_d, ((PyObject *)__pyx_codeobj__58)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 40, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_CyFunction_NewEx(&__pyx_mdef_7pyearth_8_forward_15FastHeapContent_3__lt__, 0, __pyx_n_s_FastHeapContent___lt, NULL, __pyx_n_s_pyearth__forward, __pyx_d, ((PyObject *)__pyx_codeobj__60)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 40, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   if (PyObject_SetItem(__pyx_t_3, __pyx_n_s_lt, __pyx_t_4) < 0) __PYX_ERR(0, 40, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -27470,7 +27560,7 @@ PyMODINIT_FUNC PyInit__forward(void)
  * cdef strided = Enum("<strided and direct>") # default
  * cdef indirect = Enum("<strided and indirect>")
  */
-  __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__59, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 282, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__61, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 282, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_XGOTREF(generic);
   __Pyx_DECREF_SET(generic, __pyx_t_3);
@@ -27484,7 +27574,7 @@ PyMODINIT_FUNC PyInit__forward(void)
  * cdef indirect = Enum("<strided and indirect>")
  * 
  */
-  __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__60, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 283, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__62, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 283, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_XGOTREF(strided);
   __Pyx_DECREF_SET(strided, __pyx_t_3);
@@ -27498,7 +27588,7 @@ PyMODINIT_FUNC PyInit__forward(void)
  * 
  * 
  */
-  __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__61, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 284, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__63, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 284, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_XGOTREF(indirect);
   __Pyx_DECREF_SET(indirect, __pyx_t_3);
@@ -27512,7 +27602,7 @@ PyMODINIT_FUNC PyInit__forward(void)
  * cdef indirect_contiguous = Enum("<contiguous and indirect>")
  * 
  */
-  __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__62, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 287, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__64, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 287, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_XGOTREF(contiguous);
   __Pyx_DECREF_SET(contiguous, __pyx_t_3);
@@ -27526,7 +27616,7 @@ PyMODINIT_FUNC PyInit__forward(void)
  * 
  * 
  */
-  __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__63, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 288, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_MemviewEnum_type), __pyx_tuple__65, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(2, 288, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_XGOTREF(indirect_contiguous);
   __Pyx_DECREF_SET(indirect_contiguous, __pyx_t_3);

@@ -90,5 +90,5 @@ cdef w2dot(FLOAT_t[:] w, FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q)
 cdef wdot(FLOAT_t[:] w, FLOAT_t[:] x1, FLOAT_t[:] x2, INDEX_t q)
 cdef inline void fast_update(PredictorDependentData predictor, SingleOutcomeDependentData outcome, 
                         KnotSearchWorkingData working, FLOAT_t[:] p, INDEX_t q, INDEX_t m ,INDEX_t r) except *
-cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p, INDEX_t q, INDEX_t m, INDEX_t r, INDEX_t n_outcomes)
+cpdef tuple knot_search(KnotSearchData data, FLOAT_t[:] candidates, FLOAT_t[:] p, INDEX_t q, INDEX_t m, INDEX_t r, INDEX_t n_outcomes, int verbose)
 

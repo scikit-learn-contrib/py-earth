@@ -1381,8 +1381,8 @@ struct __pyx_vtabstruct_7pyearth_6_basis_Basis {
 static struct __pyx_vtabstruct_7pyearth_6_basis_Basis *__pyx_vtabptr_7pyearth_6_basis_Basis;
 
 
-/* "pyearth/_record.pyx":9
- * from ._util cimport gcv, ascii_table
+/* "pyearth/_record.pyx":23
+ * }
  * 
  * cdef class Record:             # <<<<<<<<<<<<<<
  * 
@@ -1399,7 +1399,7 @@ struct __pyx_vtabstruct_7pyearth_7_record_Record {
 static struct __pyx_vtabstruct_7pyearth_7_record_Record *__pyx_vtabptr_7pyearth_7_record_Record;
 
 
-/* "pyearth/_record.pyx":53
+/* "pyearth/_record.pyx":67
  *         return 1 - (gcv_ / gcv0)
  * 
  * cdef class PruningPassRecord(Record):             # <<<<<<<<<<<<<<
@@ -1416,8 +1416,8 @@ struct __pyx_vtabstruct_7pyearth_7_record_PruningPassRecord {
 static struct __pyx_vtabstruct_7pyearth_7_record_PruningPassRecord *__pyx_vtabptr_7pyearth_7_record_PruningPassRecord;
 
 
-/* "pyearth/_record.pyx":112
- *         return result
+/* "pyearth/_record.pyx":129
+ *         return 'Selected iteration: ' + str(self.selected)
  * 
  * cdef class ForwardPassRecord(Record):             # <<<<<<<<<<<<<<
  *     def __init__(ForwardPassRecord self,
@@ -1431,8 +1431,8 @@ struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord {
 static struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *__pyx_vtabptr_7pyearth_7_record_ForwardPassRecord;
 
 
-/* "pyearth/_record.pyx":183
- *         return result
+/* "pyearth/_record.pyx":205
+ *             stopping_conditions[self.stopping_condition])
  * 
  * cdef class Iteration:             # <<<<<<<<<<<<<<
  * 
@@ -1446,7 +1446,7 @@ struct __pyx_vtabstruct_7pyearth_7_record_Iteration {
 static struct __pyx_vtabstruct_7pyearth_7_record_Iteration *__pyx_vtabptr_7pyearth_7_record_Iteration;
 
 
-/* "pyearth/_record.pyx":203
+/* "pyearth/_record.pyx":225
  *         return self.size
  * 
  * cdef class PruningPassIteration(Iteration):             # <<<<<<<<<<<<<<
@@ -1461,7 +1461,7 @@ struct __pyx_vtabstruct_7pyearth_7_record_PruningPassIteration {
 static struct __pyx_vtabstruct_7pyearth_7_record_PruningPassIteration *__pyx_vtabptr_7pyearth_7_record_PruningPassIteration;
 
 
-/* "pyearth/_record.pyx":232
+/* "pyearth/_record.pyx":254
  *         return result
  * 
  * cdef class FirstPruningPassIteration(PruningPassIteration):             # <<<<<<<<<<<<<<
@@ -1475,7 +1475,7 @@ struct __pyx_vtabstruct_7pyearth_7_record_FirstPruningPassIteration {
 static struct __pyx_vtabstruct_7pyearth_7_record_FirstPruningPassIteration *__pyx_vtabptr_7pyearth_7_record_FirstPruningPassIteration;
 
 
-/* "pyearth/_record.pyx":253
+/* "pyearth/_record.pyx":275
  *         return result
  * 
  * cdef class ForwardPassIteration(Iteration):             # <<<<<<<<<<<<<<
@@ -1491,7 +1491,7 @@ struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassIteration {
 static struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassIteration *__pyx_vtabptr_7pyearth_7_record_ForwardPassIteration;
 
 
-/* "pyearth/_record.pyx":292
+/* "pyearth/_record.pyx":314
  *         return self.no_candidates
  * 
  * cdef class FirstForwardPassIteration(ForwardPassIteration):             # <<<<<<<<<<<<<<
@@ -1710,6 +1710,31 @@ static PyObject* __Pyx_PyInt_AddObjC(PyObject *op1, PyObject *op2, long intval, 
 #define __Pyx_PyInt_AddObjC(op1, op2, intval, inplace)\
     (inplace ? PyNumber_InPlaceAdd(op1, op2) : PyNumber_Add(op1, op2))
 #endif
+
+/* GetModuleGlobalName.proto */
+static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name);
+
+/* GetItemInt.proto */
+#define __Pyx_GetItemInt(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
+    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
+    __Pyx_GetItemInt_Fast(o, (Py_ssize_t)i, is_list, wraparound, boundscheck) :\
+    (is_list ? (PyErr_SetString(PyExc_IndexError, "list index out of range"), (PyObject*)NULL) :\
+               __Pyx_GetItemInt_Generic(o, to_py_func(i))))
+#define __Pyx_GetItemInt_List(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
+    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
+    __Pyx_GetItemInt_List_Fast(o, (Py_ssize_t)i, wraparound, boundscheck) :\
+    (PyErr_SetString(PyExc_IndexError, "list index out of range"), (PyObject*)NULL))
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_List_Fast(PyObject *o, Py_ssize_t i,
+                                                              int wraparound, int boundscheck);
+#define __Pyx_GetItemInt_Tuple(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
+    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
+    __Pyx_GetItemInt_Tuple_Fast(o, (Py_ssize_t)i, wraparound, boundscheck) :\
+    (PyErr_SetString(PyExc_IndexError, "tuple index out of range"), (PyObject*)NULL))
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Tuple_Fast(PyObject *o, Py_ssize_t i,
+                                                              int wraparound, int boundscheck);
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j);
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i,
+                                                     int is_list, int wraparound, int boundscheck);
 
 /* RaiseException.proto */
 static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause);
@@ -2066,15 +2091,20 @@ static const char __pyx_k_range[] = "range";
 static const char __pyx_k_s_s_s[] = "%s\t%s\t%s";
 static const char __pyx_k_split[] = "split";
 static const char __pyx_k_terms[] = "terms";
+static const char __pyx_k_MAXRSQ[] = "MAXRSQ";
+static const char __pyx_k_NOCAND[] = "NOCAND";
 static const char __pyx_k_append[] = "append";
 static const char __pyx_k_parent[] = "parent";
 static const char __pyx_k_pruned[] = "pruned";
+static const char __pyx_k_LOWGRSQ[] = "LOWGRSQ";
+static const char __pyx_k_NOIMPRV[] = "NOIMPRV";
 static const char __pyx_k_get_mse[] = "get_mse";
 static const char __pyx_k_indices[] = "indices";
 static const char __pyx_k_penalty[] = "penalty";
 static const char __pyx_k_unprune[] = "unprune";
 static const char __pyx_k_xlabels[] = "xlabels";
 static const char __pyx_k_3f_3f_3f[] = "\t%.3f\t%.3f\t%.3f";
+static const char __pyx_k_MAXTERMS[] = "MAXTERMS";
 static const char __pyx_k_get_size[] = "get_size";
 static const char __pyx_k_getstate[] = "_getstate";
 static const char __pyx_k_selected[] = "selected";
@@ -2090,6 +2120,7 @@ static const char __pyx_k_pyx_vtable[] = "__pyx_vtable__";
 static const char __pyx_k_s_s_s_4f_s[] = "%s\t%s\t%s\t%4f\t%s";
 static const char __pyx_k_num_samples[] = "num_samples";
 static const char __pyx_k_partial_str[] = "partial_str";
+static const char __pyx_k_GRSQ_too_low[] = "GRSQ too low";
 static const char __pyx_k_RuntimeError[] = "RuntimeError";
 static const char __pyx_k_get_selected[] = "get_selected";
 static const char __pyx_k_print_footer[] = "print_footer";
@@ -2098,23 +2129,42 @@ static const char __pyx_k_set_selected[] = "set_selected";
 static const char __pyx_k_num_variables[] = "num_variables";
 static const char __pyx_k_NotImplemented[] = "NotImplemented";
 static const char __pyx_k_set_no_candidates[] = "set_no_candidates";
+static const char __pyx_k_Selected_iteration[] = "Selected iteration: ";
+static const char __pyx_k_stopping_conditions[] = "stopping_conditions";
 static const char __pyx_k_no_further_candidates[] = "no_further_candidates";
+static const char __pyx_k_Stopping_Condition_d_s[] = "Stopping Condition %d: %s";
 static const char __pyx_k_set_stopping_condition[] = "set_stopping_condition";
+static const char __pyx_k_Improvement_below_threshold[] = "Improvement below threshold";
 static const char __pyx_k_ndarray_is_not_C_contiguous[] = "ndarray is not C contiguous";
 static const char __pyx_k_iter_bf_terms_mse_gcv_rsq_grsq[] = "iter\tbf\tterms\tmse\tgcv\trsq\tgrsq";
+static const char __pyx_k_Reached_maximum_number_of_terms[] = "Reached maximum number of terms";
 static const char __pyx_k_unknown_dtype_code_in_numpy_pxd[] = "unknown dtype code in numpy.pxd (%d)";
+static const char __pyx_k_Achieved_RSQ_value_within_thresh[] = "Achieved RSQ value within threshold of 1";
 static const char __pyx_k_Format_string_allocated_too_shor[] = "Format string allocated too short, see comment in numpy.pxd";
+static const char __pyx_k_No_remaining_candidate_knot_loca[] = "No remaining candidate knot locations";
 static const char __pyx_k_Non_native_byte_order_not_suppor[] = "Non-native byte order not supported";
 static const char __pyx_k_ndarray_is_not_Fortran_contiguou[] = "ndarray is not Fortran contiguous";
 static const char __pyx_k_Format_string_allocated_too_shor_2[] = "Format string allocated too short.";
 static PyObject *__pyx_kp_s_2f;
 static PyObject *__pyx_kp_s_3f_3f_3f;
 static PyObject *__pyx_kp_s_3f_3f_3f_2;
+static PyObject *__pyx_kp_s_Achieved_RSQ_value_within_thresh;
 static PyObject *__pyx_kp_u_Format_string_allocated_too_shor;
 static PyObject *__pyx_kp_u_Format_string_allocated_too_shor_2;
+static PyObject *__pyx_kp_s_GRSQ_too_low;
+static PyObject *__pyx_kp_s_Improvement_below_threshold;
+static PyObject *__pyx_n_s_LOWGRSQ;
+static PyObject *__pyx_n_s_MAXRSQ;
+static PyObject *__pyx_n_s_MAXTERMS;
+static PyObject *__pyx_n_s_NOCAND;
+static PyObject *__pyx_n_s_NOIMPRV;
+static PyObject *__pyx_kp_s_No_remaining_candidate_knot_loca;
 static PyObject *__pyx_kp_u_Non_native_byte_order_not_suppor;
 static PyObject *__pyx_n_s_NotImplemented;
+static PyObject *__pyx_kp_s_Reached_maximum_number_of_terms;
 static PyObject *__pyx_n_s_RuntimeError;
+static PyObject *__pyx_kp_s_Selected_iteration;
+static PyObject *__pyx_kp_s_Stopping_Condition_d_s;
 static PyObject *__pyx_n_s_ValueError;
 static PyObject *__pyx_kp_s__14;
 static PyObject *__pyx_kp_s__4;
@@ -2163,6 +2213,7 @@ static PyObject *__pyx_n_s_set_stopping_condition;
 static PyObject *__pyx_n_s_size;
 static PyObject *__pyx_n_s_split;
 static PyObject *__pyx_n_s_sst;
+static PyObject *__pyx_n_s_stopping_conditions;
 static PyObject *__pyx_n_s_terms;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_kp_u_unknown_dtype_code_in_numpy_pxd;
@@ -2188,6 +2239,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_10get_selected(s
 static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_12roll_back(struct __pyx_obj_7pyearth_7_record_PruningPassRecord *__pyx_v_self, struct __pyx_obj_7pyearth_6_basis_Basis *__pyx_v_basis); /* proto */
 static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_14__str__(struct __pyx_obj_7pyearth_7_record_PruningPassRecord *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_16partial_str(struct __pyx_obj_7pyearth_7_record_PruningPassRecord *__pyx_v_self, PyObject *__pyx_v_rows, PyObject *__pyx_v_print_header, PyObject *__pyx_v_print_footer); /* proto */
+static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_18final_str(struct __pyx_obj_7pyearth_7_record_PruningPassRecord *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_8selected___get__(struct __pyx_obj_7pyearth_7_record_PruningPassRecord *__pyx_v_self); /* proto */
 static int __pyx_pf_7pyearth_7_record_17ForwardPassRecord___init__(struct __pyx_obj_7pyearth_7_record_ForwardPassRecord *__pyx_v_self, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_num_samples, __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_num_variables, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_penalty, __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_sst, PyObject *__pyx_v_xlabels); /* proto */
 static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_2__reduce__(struct __pyx_obj_7pyearth_7_record_ForwardPassRecord *__pyx_v_self); /* proto */
@@ -2196,6 +2248,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_6__setstate__(st
 static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_8set_stopping_condition(struct __pyx_obj_7pyearth_7_record_ForwardPassRecord *__pyx_v_self, int __pyx_v_stopping_condition); /* proto */
 static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_10__str__(struct __pyx_obj_7pyearth_7_record_ForwardPassRecord *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_12partial_str(struct __pyx_obj_7pyearth_7_record_ForwardPassRecord *__pyx_v_self, PyObject *__pyx_v_rows, PyObject *__pyx_v_print_header, PyObject *__pyx_v_print_footer); /* proto */
+static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_14final_str(struct __pyx_obj_7pyearth_7_record_ForwardPassRecord *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_18stopping_condition___get__(struct __pyx_obj_7pyearth_7_record_ForwardPassRecord *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_7pyearth_7_record_9Iteration___richcmp__(PyObject *__pyx_v_self, PyObject *__pyx_v_other, PyObject *__pyx_v_method); /* proto */
 static PyObject *__pyx_pf_7pyearth_7_record_9Iteration_2_eq(struct __pyx_obj_7pyearth_7_record_Iteration *__pyx_v_self, PyObject *__pyx_v_other); /* proto */
@@ -2240,6 +2293,7 @@ static PyObject *__pyx_int_0;
 static PyObject *__pyx_int_1;
 static PyObject *__pyx_int_2;
 static PyObject *__pyx_int_3;
+static PyObject *__pyx_int_4;
 static PyObject *__pyx_tuple_;
 static PyObject *__pyx_slice__2;
 static PyObject *__pyx_slice__8;
@@ -2260,7 +2314,7 @@ static PyObject *__pyx_tuple__20;
 static PyObject *__pyx_tuple__21;
 static PyObject *__pyx_tuple__22;
 
-/* "pyearth/_record.pyx":11
+/* "pyearth/_record.pyx":25
  * cdef class Record:
  * 
  *     def __richcmp__(self, other, method):             # <<<<<<<<<<<<<<
@@ -2275,7 +2329,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_6Record_1__richcmp__(PyObject *__pyx
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__richcmp__ (wrapper)", 0);
-  __pyx_v_method = __Pyx_PyInt_From_int(__pyx_arg_method); if (unlikely(!__pyx_v_method)) __PYX_ERR(0, 11, __pyx_L3_error)
+  __pyx_v_method = __Pyx_PyInt_From_int(__pyx_arg_method); if (unlikely(!__pyx_v_method)) __PYX_ERR(0, 25, __pyx_L3_error)
   __Pyx_GOTREF(__pyx_v_method);
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -2301,20 +2355,20 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record___richcmp__(PyObject *__pyx_
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("__richcmp__", 0);
 
-  /* "pyearth/_record.pyx":12
+  /* "pyearth/_record.pyx":26
  * 
  *     def __richcmp__(self, other, method):
  *         if method == 2:             # <<<<<<<<<<<<<<
  *             return self._eq(other)
  *         elif method == 3:
  */
-  __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_v_method, __pyx_int_2, 2, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 12, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_v_method, __pyx_int_2, 2, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 12, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 26, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_2) {
 
-    /* "pyearth/_record.pyx":13
+    /* "pyearth/_record.pyx":27
  *     def __richcmp__(self, other, method):
  *         if method == 2:
  *             return self._eq(other)             # <<<<<<<<<<<<<<
@@ -2322,7 +2376,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record___richcmp__(PyObject *__pyx_
  *             return not self._eq(other)
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_eq); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 13, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_eq); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 27, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_4 = NULL;
     if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_3))) {
@@ -2335,16 +2389,16 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record___richcmp__(PyObject *__pyx_
       }
     }
     if (!__pyx_t_4) {
-      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_other); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_other); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 27, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
     } else {
-      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 13, __pyx_L1_error)
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 27, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
       __Pyx_INCREF(__pyx_v_other);
       __Pyx_GIVEREF(__pyx_v_other);
       PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_v_other);
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 27, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
@@ -2353,7 +2407,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record___richcmp__(PyObject *__pyx_
     __pyx_t_1 = 0;
     goto __pyx_L0;
 
-    /* "pyearth/_record.pyx":12
+    /* "pyearth/_record.pyx":26
  * 
  *     def __richcmp__(self, other, method):
  *         if method == 2:             # <<<<<<<<<<<<<<
@@ -2362,20 +2416,20 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record___richcmp__(PyObject *__pyx_
  */
   }
 
-  /* "pyearth/_record.pyx":14
+  /* "pyearth/_record.pyx":28
  *         if method == 2:
  *             return self._eq(other)
  *         elif method == 3:             # <<<<<<<<<<<<<<
  *             return not self._eq(other)
  *         else:
  */
-  __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_v_method, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 14, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_v_method, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 28, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 14, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 28, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_2) {
 
-    /* "pyearth/_record.pyx":15
+    /* "pyearth/_record.pyx":29
  *             return self._eq(other)
  *         elif method == 3:
  *             return not self._eq(other)             # <<<<<<<<<<<<<<
@@ -2383,7 +2437,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record___richcmp__(PyObject *__pyx_
  *             return NotImplemented
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_eq); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 15, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_eq); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 29, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_5 = NULL;
     if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_3))) {
@@ -2396,29 +2450,29 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record___richcmp__(PyObject *__pyx_
       }
     }
     if (!__pyx_t_5) {
-      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_other); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 15, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_other); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 29, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
     } else {
-      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 15, __pyx_L1_error)
+      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 29, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_5); __pyx_t_5 = NULL;
       __Pyx_INCREF(__pyx_v_other);
       __Pyx_GIVEREF(__pyx_v_other);
       PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_v_other);
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 15, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 29, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 15, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 29, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyBool_FromLong((!__pyx_t_2)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 15, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyBool_FromLong((!__pyx_t_2)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 29, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_r = __pyx_t_1;
     __pyx_t_1 = 0;
     goto __pyx_L0;
 
-    /* "pyearth/_record.pyx":14
+    /* "pyearth/_record.pyx":28
  *         if method == 2:
  *             return self._eq(other)
  *         elif method == 3:             # <<<<<<<<<<<<<<
@@ -2427,7 +2481,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record___richcmp__(PyObject *__pyx_
  */
   }
 
-  /* "pyearth/_record.pyx":17
+  /* "pyearth/_record.pyx":31
  *             return not self._eq(other)
  *         else:
  *             return NotImplemented             # <<<<<<<<<<<<<<
@@ -2441,7 +2495,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record___richcmp__(PyObject *__pyx_
     goto __pyx_L0;
   }
 
-  /* "pyearth/_record.pyx":11
+  /* "pyearth/_record.pyx":25
  * cdef class Record:
  * 
  *     def __richcmp__(self, other, method):             # <<<<<<<<<<<<<<
@@ -2463,7 +2517,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record___richcmp__(PyObject *__pyx_
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":19
+/* "pyearth/_record.pyx":33
  *             return NotImplemented
  * 
  *     def _eq(self, other):             # <<<<<<<<<<<<<<
@@ -2495,7 +2549,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record_2_eq(struct __pyx_obj_7pyear
   PyObject *__pyx_t_6 = NULL;
   __Pyx_RefNannySetupContext("_eq", 0);
 
-  /* "pyearth/_record.pyx":20
+  /* "pyearth/_record.pyx":34
  * 
  *     def _eq(self, other):
  *         return (self.__class__ is other.__class__ and             # <<<<<<<<<<<<<<
@@ -2503,30 +2557,30 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record_2_eq(struct __pyx_obj_7pyear
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_class); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 20, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_class); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 34, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_other, __pyx_n_s_class); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 20, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_other, __pyx_n_s_class); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 34, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = (__pyx_t_2 == __pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   if (__pyx_t_4) {
   } else {
-    __pyx_t_3 = __Pyx_PyBool_FromLong(__pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 20, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyBool_FromLong(__pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 34, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_1 = __pyx_t_3;
     __pyx_t_3 = 0;
     goto __pyx_L3_bool_binop_done;
   }
 
-  /* "pyearth/_record.pyx":21
+  /* "pyearth/_record.pyx":35
  *     def _eq(self, other):
  *         return (self.__class__ is other.__class__ and
  *                 self._getstate() == other._getstate())             # <<<<<<<<<<<<<<
  * 
  *     def __getitem__(Record self, int idx):
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getstate); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getstate); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 35, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_5 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
@@ -2539,14 +2593,14 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record_2_eq(struct __pyx_obj_7pyear
     }
   }
   if (__pyx_t_5) {
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 21, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 35, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   } else {
-    __pyx_t_3 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 21, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 35, __pyx_L1_error)
   }
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_other, __pyx_n_s_getstate); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_other, __pyx_n_s_getstate); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 35, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_6 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_5))) {
@@ -2559,14 +2613,14 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record_2_eq(struct __pyx_obj_7pyear
     }
   }
   if (__pyx_t_6) {
-    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 21, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 35, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   } else {
-    __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 21, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 35, __pyx_L1_error)
   }
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = PyObject_RichCompare(__pyx_t_3, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __pyx_t_5 = PyObject_RichCompare(__pyx_t_3, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 35, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_INCREF(__pyx_t_5);
@@ -2577,7 +2631,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record_2_eq(struct __pyx_obj_7pyear
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":19
+  /* "pyearth/_record.pyx":33
  *             return NotImplemented
  * 
  *     def _eq(self, other):             # <<<<<<<<<<<<<<
@@ -2600,7 +2654,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record_2_eq(struct __pyx_obj_7pyear
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":23
+/* "pyearth/_record.pyx":37
  *                 self._getstate() == other._getstate())
  * 
  *     def __getitem__(Record self, int idx):             # <<<<<<<<<<<<<<
@@ -2616,7 +2670,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_6Record_5__getitem__(PyObject *__pyx
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__getitem__ (wrapper)", 0);
   assert(__pyx_arg_idx); {
-    __pyx_v_idx = __Pyx_PyInt_As_int(__pyx_arg_idx); if (unlikely((__pyx_v_idx == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 23, __pyx_L3_error)
+    __pyx_v_idx = __Pyx_PyInt_As_int(__pyx_arg_idx); if (unlikely((__pyx_v_idx == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 37, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -2636,7 +2690,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record_4__getitem__(struct __pyx_ob
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__getitem__", 0);
 
-  /* "pyearth/_record.pyx":24
+  /* "pyearth/_record.pyx":38
  * 
  *     def __getitem__(Record self, int idx):
  *         return self.iterations[idx]             # <<<<<<<<<<<<<<
@@ -2646,13 +2700,13 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record_4__getitem__(struct __pyx_ob
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(__pyx_v_self->iterations == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 24, __pyx_L1_error)
+    __PYX_ERR(0, 38, __pyx_L1_error)
   }
   __Pyx_INCREF(PyList_GET_ITEM(__pyx_v_self->iterations, __pyx_v_idx));
   __pyx_r = PyList_GET_ITEM(__pyx_v_self->iterations, __pyx_v_idx);
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":23
+  /* "pyearth/_record.pyx":37
  *                 self._getstate() == other._getstate())
  * 
  *     def __getitem__(Record self, int idx):             # <<<<<<<<<<<<<<
@@ -2670,7 +2724,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record_4__getitem__(struct __pyx_ob
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":26
+/* "pyearth/_record.pyx":40
  *         return self.iterations[idx]
  * 
  *     def __len__(Record self):             # <<<<<<<<<<<<<<
@@ -2698,7 +2752,7 @@ static Py_ssize_t __pyx_pf_7pyearth_7_record_6Record_6__len__(struct __pyx_obj_7
   Py_ssize_t __pyx_t_2;
   __Pyx_RefNannySetupContext("__len__", 0);
 
-  /* "pyearth/_record.pyx":27
+  /* "pyearth/_record.pyx":41
  * 
  *     def __len__(Record self):
  *         return len(self.iterations)             # <<<<<<<<<<<<<<
@@ -2709,14 +2763,14 @@ static Py_ssize_t __pyx_pf_7pyearth_7_record_6Record_6__len__(struct __pyx_obj_7
   __Pyx_INCREF(__pyx_t_1);
   if (unlikely(__pyx_t_1 == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 27, __pyx_L1_error)
+    __PYX_ERR(0, 41, __pyx_L1_error)
   }
-  __pyx_t_2 = PyList_GET_SIZE(__pyx_t_1); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 27, __pyx_L1_error)
+  __pyx_t_2 = PyList_GET_SIZE(__pyx_t_1); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 41, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_r = __pyx_t_2;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":26
+  /* "pyearth/_record.pyx":40
  *         return self.iterations[idx]
  * 
  *     def __len__(Record self):             # <<<<<<<<<<<<<<
@@ -2734,7 +2788,7 @@ static Py_ssize_t __pyx_pf_7pyearth_7_record_6Record_6__len__(struct __pyx_obj_7
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":29
+/* "pyearth/_record.pyx":43
  *         return len(self.iterations)
  * 
  *     cpdef append(Record self, Iteration iteration):             # <<<<<<<<<<<<<<
@@ -2757,7 +2811,7 @@ static PyObject *__pyx_f_7pyearth_7_record_6Record_append(struct __pyx_obj_7pyea
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_append); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 29, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_append); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 43, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_7_record_6Record_9append)) {
       __Pyx_XDECREF(__pyx_r);
@@ -2773,16 +2827,16 @@ static PyObject *__pyx_f_7pyearth_7_record_6Record_append(struct __pyx_obj_7pyea
         }
       }
       if (!__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, ((PyObject *)__pyx_v_iteration)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 29, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, ((PyObject *)__pyx_v_iteration)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 43, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
       } else {
-        __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 29, __pyx_L1_error)
+        __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 43, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
         __Pyx_INCREF(((PyObject *)__pyx_v_iteration));
         __Pyx_GIVEREF(((PyObject *)__pyx_v_iteration));
         PyTuple_SET_ITEM(__pyx_t_5, 0+1, ((PyObject *)__pyx_v_iteration));
-        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 29, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 43, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       }
@@ -2795,7 +2849,7 @@ static PyObject *__pyx_f_7pyearth_7_record_6Record_append(struct __pyx_obj_7pyea
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_record.pyx":30
+  /* "pyearth/_record.pyx":44
  * 
  *     cpdef append(Record self, Iteration iteration):
  *         self.iterations.append(iteration)             # <<<<<<<<<<<<<<
@@ -2804,11 +2858,11 @@ static PyObject *__pyx_f_7pyearth_7_record_6Record_append(struct __pyx_obj_7pyea
  */
   if (unlikely(__pyx_v_self->iterations == Py_None)) {
     PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%s'", "append");
-    __PYX_ERR(0, 30, __pyx_L1_error)
+    __PYX_ERR(0, 44, __pyx_L1_error)
   }
-  __pyx_t_6 = __Pyx_PyList_Append(__pyx_v_self->iterations, ((PyObject *)__pyx_v_iteration)); if (unlikely(__pyx_t_6 == -1)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyList_Append(__pyx_v_self->iterations, ((PyObject *)__pyx_v_iteration)); if (unlikely(__pyx_t_6 == -1)) __PYX_ERR(0, 44, __pyx_L1_error)
 
-  /* "pyearth/_record.pyx":29
+  /* "pyearth/_record.pyx":43
  *         return len(self.iterations)
  * 
  *     cpdef append(Record self, Iteration iteration):             # <<<<<<<<<<<<<<
@@ -2839,7 +2893,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_6Record_9append(PyObject *__pyx_v_se
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("append (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_iteration), __pyx_ptype_7pyearth_7_record_Iteration, 1, "iteration", 0))) __PYX_ERR(0, 29, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_iteration), __pyx_ptype_7pyearth_7_record_Iteration, 1, "iteration", 0))) __PYX_ERR(0, 43, __pyx_L1_error)
   __pyx_r = __pyx_pf_7pyearth_7_record_6Record_8append(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self), ((struct __pyx_obj_7pyearth_7_record_Iteration *)__pyx_v_iteration));
 
   /* function exit code */
@@ -2857,7 +2911,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record_8append(struct __pyx_obj_7py
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("append", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_7pyearth_7_record_6Record_append(__pyx_v_self, __pyx_v_iteration, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 29, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_7pyearth_7_record_6Record_append(__pyx_v_self, __pyx_v_iteration, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 43, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2874,7 +2928,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record_8append(struct __pyx_obj_7py
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":32
+/* "pyearth/_record.pyx":46
  *         self.iterations.append(iteration)
  * 
  *     cpdef FLOAT_t mse(Record self, INDEX_t iteration):             # <<<<<<<<<<<<<<
@@ -2898,10 +2952,10 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_mse(st
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_mse); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 32, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_mse); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 46, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_7_record_6Record_11mse)) {
-      __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_iteration); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 32, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_iteration); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 46, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_4 = __pyx_t_1; __pyx_t_5 = NULL;
@@ -2915,22 +2969,22 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_mse(st
         }
       }
       if (!__pyx_t_5) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 32, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 46, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_GOTREF(__pyx_t_2);
       } else {
-        __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 32, __pyx_L1_error)
+        __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 46, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
         __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_5); __pyx_t_5 = NULL;
         __Pyx_GIVEREF(__pyx_t_3);
         PyTuple_SET_ITEM(__pyx_t_6, 0+1, __pyx_t_3);
         __pyx_t_3 = 0;
-        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 32, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 46, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       }
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_7 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 32, __pyx_L1_error)
+      __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_7 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 46, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_7;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -2939,7 +2993,7 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_mse(st
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_record.pyx":33
+  /* "pyearth/_record.pyx":47
  * 
  *     cpdef FLOAT_t mse(Record self, INDEX_t iteration):
  *         return self.iterations[iteration].get_mse()             # <<<<<<<<<<<<<<
@@ -2948,9 +3002,9 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_mse(st
  */
   if (unlikely(__pyx_v_self->iterations == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 33, __pyx_L1_error)
+    __PYX_ERR(0, 47, __pyx_L1_error)
   }
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(PyList_GET_ITEM(__pyx_v_self->iterations, __pyx_v_iteration), __pyx_n_s_get_mse); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 33, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(PyList_GET_ITEM(__pyx_v_self->iterations, __pyx_v_iteration), __pyx_n_s_get_mse); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 47, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
@@ -2963,19 +3017,19 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_mse(st
     }
   }
   if (__pyx_t_4) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 33, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 47, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   } else {
-    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 33, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 47, __pyx_L1_error)
   }
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_7 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 33, __pyx_L1_error)
+  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_7 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 47, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_r = __pyx_t_7;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":32
+  /* "pyearth/_record.pyx":46
  *         self.iterations.append(iteration)
  * 
  *     cpdef FLOAT_t mse(Record self, INDEX_t iteration):             # <<<<<<<<<<<<<<
@@ -3006,7 +3060,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_6Record_11mse(PyObject *__pyx_v_self
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("mse (wrapper)", 0);
   assert(__pyx_arg_iteration); {
-    __pyx_v_iteration = __Pyx_PyInt_As_npy_ulonglong(__pyx_arg_iteration); if (unlikely((__pyx_v_iteration == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 32, __pyx_L3_error)
+    __pyx_v_iteration = __Pyx_PyInt_As_npy_ulonglong(__pyx_arg_iteration); if (unlikely((__pyx_v_iteration == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 46, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -3027,7 +3081,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record_10mse(struct __pyx_obj_7pyea
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("mse", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7pyearth_7_record_6Record_mse(__pyx_v_self, __pyx_v_iteration, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 32, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7pyearth_7_record_6Record_mse(__pyx_v_self, __pyx_v_iteration, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 46, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3044,7 +3098,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record_10mse(struct __pyx_obj_7pyea
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":35
+/* "pyearth/_record.pyx":49
  *         return self.iterations[iteration].get_mse()
  * 
  *     cpdef FLOAT_t gcv(Record self, INDEX_t iteration):             # <<<<<<<<<<<<<<
@@ -3070,10 +3124,10 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_gcv(st
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_gcv); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 35, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_gcv); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 49, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_7_record_6Record_13gcv)) {
-      __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_iteration); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 35, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_iteration); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 49, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_4 = __pyx_t_1; __pyx_t_5 = NULL;
@@ -3087,22 +3141,22 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_gcv(st
         }
       }
       if (!__pyx_t_5) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 35, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 49, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_GOTREF(__pyx_t_2);
       } else {
-        __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 35, __pyx_L1_error)
+        __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 49, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
         __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_5); __pyx_t_5 = NULL;
         __Pyx_GIVEREF(__pyx_t_3);
         PyTuple_SET_ITEM(__pyx_t_6, 0+1, __pyx_t_3);
         __pyx_t_3 = 0;
-        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 35, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 49, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       }
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_7 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 35, __pyx_L1_error)
+      __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_7 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 49, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_7;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -3111,7 +3165,7 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_gcv(st
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_record.pyx":36
+  /* "pyearth/_record.pyx":50
  * 
  *     cpdef FLOAT_t gcv(Record self, INDEX_t iteration):
  *         cdef Iteration it = self.iterations[iteration]             # <<<<<<<<<<<<<<
@@ -3120,15 +3174,15 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_gcv(st
  */
   if (unlikely(__pyx_v_self->iterations == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 36, __pyx_L1_error)
+    __PYX_ERR(0, 50, __pyx_L1_error)
   }
-  if (!(likely(((PyList_GET_ITEM(__pyx_v_self->iterations, __pyx_v_iteration)) == Py_None) || likely(__Pyx_TypeTest(PyList_GET_ITEM(__pyx_v_self->iterations, __pyx_v_iteration), __pyx_ptype_7pyearth_7_record_Iteration))))) __PYX_ERR(0, 36, __pyx_L1_error)
+  if (!(likely(((PyList_GET_ITEM(__pyx_v_self->iterations, __pyx_v_iteration)) == Py_None) || likely(__Pyx_TypeTest(PyList_GET_ITEM(__pyx_v_self->iterations, __pyx_v_iteration), __pyx_ptype_7pyearth_7_record_Iteration))))) __PYX_ERR(0, 50, __pyx_L1_error)
   __pyx_t_1 = PyList_GET_ITEM(__pyx_v_self->iterations, __pyx_v_iteration);
   __Pyx_INCREF(__pyx_t_1);
   __pyx_v_it = ((struct __pyx_obj_7pyearth_7_record_Iteration *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_record.pyx":37
+  /* "pyearth/_record.pyx":51
  *     cpdef FLOAT_t gcv(Record self, INDEX_t iteration):
  *         cdef Iteration it = self.iterations[iteration]
  *         cdef FLOAT_t mse = it.mse             # <<<<<<<<<<<<<<
@@ -3138,7 +3192,7 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_gcv(st
   __pyx_t_7 = __pyx_v_it->mse;
   __pyx_v_mse = __pyx_t_7;
 
-  /* "pyearth/_record.pyx":38
+  /* "pyearth/_record.pyx":52
  *         cdef Iteration it = self.iterations[iteration]
  *         cdef FLOAT_t mse = it.mse
  *         return gcv(mse, it.get_size(), self.num_samples, self.penalty)             # <<<<<<<<<<<<<<
@@ -3148,7 +3202,7 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_gcv(st
   __pyx_r = __pyx_f_7pyearth_5_util_gcv(__pyx_v_mse, ((struct __pyx_vtabstruct_7pyearth_7_record_Iteration *)__pyx_v_it->__pyx_vtab)->get_size(__pyx_v_it, 0), __pyx_v_self->num_samples, __pyx_v_self->penalty, 0);
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":35
+  /* "pyearth/_record.pyx":49
  *         return self.iterations[iteration].get_mse()
  * 
  *     cpdef FLOAT_t gcv(Record self, INDEX_t iteration):             # <<<<<<<<<<<<<<
@@ -3180,7 +3234,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_6Record_13gcv(PyObject *__pyx_v_self
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("gcv (wrapper)", 0);
   assert(__pyx_arg_iteration); {
-    __pyx_v_iteration = __Pyx_PyInt_As_npy_ulonglong(__pyx_arg_iteration); if (unlikely((__pyx_v_iteration == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 35, __pyx_L3_error)
+    __pyx_v_iteration = __Pyx_PyInt_As_npy_ulonglong(__pyx_arg_iteration); if (unlikely((__pyx_v_iteration == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 49, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -3201,7 +3255,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record_12gcv(struct __pyx_obj_7pyea
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("gcv", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7pyearth_7_record_6Record_gcv(__pyx_v_self, __pyx_v_iteration, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 35, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7pyearth_7_record_6Record_gcv(__pyx_v_self, __pyx_v_iteration, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 49, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3218,7 +3272,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record_12gcv(struct __pyx_obj_7pyea
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":40
+/* "pyearth/_record.pyx":54
  *         return gcv(mse, it.get_size(), self.num_samples, self.penalty)
  * 
  *     cpdef FLOAT_t rsq(Record self, INDEX_t iteration):             # <<<<<<<<<<<<<<
@@ -3244,10 +3298,10 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_rsq(st
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_rsq); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 40, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_rsq); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_7_record_6Record_15rsq)) {
-      __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_iteration); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 40, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_iteration); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 54, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_4 = __pyx_t_1; __pyx_t_5 = NULL;
@@ -3261,22 +3315,22 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_rsq(st
         }
       }
       if (!__pyx_t_5) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 40, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 54, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_GOTREF(__pyx_t_2);
       } else {
-        __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 40, __pyx_L1_error)
+        __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 54, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
         __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_5); __pyx_t_5 = NULL;
         __Pyx_GIVEREF(__pyx_t_3);
         PyTuple_SET_ITEM(__pyx_t_6, 0+1, __pyx_t_3);
         __pyx_t_3 = 0;
-        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 40, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 54, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       }
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_7 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 40, __pyx_L1_error)
+      __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_7 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 54, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_7;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -3285,7 +3339,7 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_rsq(st
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_record.pyx":42
+  /* "pyearth/_record.pyx":56
  *     cpdef FLOAT_t rsq(Record self, INDEX_t iteration):
  *         # gcv(self.sst,1,self.num_samples,self.penalty)
  *         cdef FLOAT_t mse0 = self.sst             # <<<<<<<<<<<<<<
@@ -3295,7 +3349,7 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_rsq(st
   __pyx_t_7 = __pyx_v_self->sst;
   __pyx_v_mse0 = __pyx_t_7;
 
-  /* "pyearth/_record.pyx":45
+  /* "pyearth/_record.pyx":59
  *         # gcv(self.mse(iteration):,self.iterations[iteration].get_size(),
  *         #        self.num_samples,self.penalty)#self.gcv(iteration)
  *         cdef FLOAT_t mse = self.mse(iteration)             # <<<<<<<<<<<<<<
@@ -3304,7 +3358,7 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_rsq(st
  */
   __pyx_v_mse = ((struct __pyx_vtabstruct_7pyearth_7_record_Record *)__pyx_v_self->__pyx_vtab)->mse(__pyx_v_self, __pyx_v_iteration, 0);
 
-  /* "pyearth/_record.pyx":46
+  /* "pyearth/_record.pyx":60
  *         #        self.num_samples,self.penalty)#self.gcv(iteration)
  *         cdef FLOAT_t mse = self.mse(iteration)
  *         return 1 - (mse / mse0)             # <<<<<<<<<<<<<<
@@ -3314,7 +3368,7 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_rsq(st
   __pyx_r = (1.0 - (__pyx_v_mse / __pyx_v_mse0));
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":40
+  /* "pyearth/_record.pyx":54
  *         return gcv(mse, it.get_size(), self.num_samples, self.penalty)
  * 
  *     cpdef FLOAT_t rsq(Record self, INDEX_t iteration):             # <<<<<<<<<<<<<<
@@ -3345,7 +3399,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_6Record_15rsq(PyObject *__pyx_v_self
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("rsq (wrapper)", 0);
   assert(__pyx_arg_iteration); {
-    __pyx_v_iteration = __Pyx_PyInt_As_npy_ulonglong(__pyx_arg_iteration); if (unlikely((__pyx_v_iteration == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 40, __pyx_L3_error)
+    __pyx_v_iteration = __Pyx_PyInt_As_npy_ulonglong(__pyx_arg_iteration); if (unlikely((__pyx_v_iteration == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 54, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -3366,7 +3420,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record_14rsq(struct __pyx_obj_7pyea
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("rsq", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7pyearth_7_record_6Record_rsq(__pyx_v_self, __pyx_v_iteration, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 40, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7pyearth_7_record_6Record_rsq(__pyx_v_self, __pyx_v_iteration, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3383,7 +3437,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record_14rsq(struct __pyx_obj_7pyea
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":48
+/* "pyearth/_record.pyx":62
  *         return 1 - (mse / mse0)
  * 
  *     cpdef FLOAT_t grsq(Record self, INDEX_t iteration):             # <<<<<<<<<<<<<<
@@ -3409,10 +3463,10 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_grsq(s
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_grsq); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 48, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_grsq); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_7_record_6Record_17grsq)) {
-      __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_iteration); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 48, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_iteration); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 62, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_4 = __pyx_t_1; __pyx_t_5 = NULL;
@@ -3426,22 +3480,22 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_grsq(s
         }
       }
       if (!__pyx_t_5) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 48, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 62, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_GOTREF(__pyx_t_2);
       } else {
-        __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 48, __pyx_L1_error)
+        __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 62, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
         __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_5); __pyx_t_5 = NULL;
         __Pyx_GIVEREF(__pyx_t_3);
         PyTuple_SET_ITEM(__pyx_t_6, 0+1, __pyx_t_3);
         __pyx_t_3 = 0;
-        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 48, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 62, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       }
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_7 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 48, __pyx_L1_error)
+      __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_7 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 62, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_7;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -3450,7 +3504,7 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_grsq(s
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_record.pyx":49
+  /* "pyearth/_record.pyx":63
  * 
  *     cpdef FLOAT_t grsq(Record self, INDEX_t iteration):
  *         cdef FLOAT_t gcv0 = gcv(self.sst, 1, self.num_samples, self.penalty)             # <<<<<<<<<<<<<<
@@ -3459,7 +3513,7 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_grsq(s
  */
   __pyx_v_gcv0 = __pyx_f_7pyearth_5_util_gcv(__pyx_v_self->sst, 1.0, __pyx_v_self->num_samples, __pyx_v_self->penalty, 0);
 
-  /* "pyearth/_record.pyx":50
+  /* "pyearth/_record.pyx":64
  *     cpdef FLOAT_t grsq(Record self, INDEX_t iteration):
  *         cdef FLOAT_t gcv0 = gcv(self.sst, 1, self.num_samples, self.penalty)
  *         cdef FLOAT_t gcv_ = self.gcv(iteration)             # <<<<<<<<<<<<<<
@@ -3468,7 +3522,7 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_grsq(s
  */
   __pyx_v_gcv_ = ((struct __pyx_vtabstruct_7pyearth_7_record_Record *)__pyx_v_self->__pyx_vtab)->gcv(__pyx_v_self, __pyx_v_iteration, 0);
 
-  /* "pyearth/_record.pyx":51
+  /* "pyearth/_record.pyx":65
  *         cdef FLOAT_t gcv0 = gcv(self.sst, 1, self.num_samples, self.penalty)
  *         cdef FLOAT_t gcv_ = self.gcv(iteration)
  *         return 1 - (gcv_ / gcv0)             # <<<<<<<<<<<<<<
@@ -3478,7 +3532,7 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_6Record_grsq(s
   __pyx_r = (1.0 - (__pyx_v_gcv_ / __pyx_v_gcv0));
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":48
+  /* "pyearth/_record.pyx":62
  *         return 1 - (mse / mse0)
  * 
  *     cpdef FLOAT_t grsq(Record self, INDEX_t iteration):             # <<<<<<<<<<<<<<
@@ -3509,7 +3563,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_6Record_17grsq(PyObject *__pyx_v_sel
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("grsq (wrapper)", 0);
   assert(__pyx_arg_iteration); {
-    __pyx_v_iteration = __Pyx_PyInt_As_npy_ulonglong(__pyx_arg_iteration); if (unlikely((__pyx_v_iteration == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 48, __pyx_L3_error)
+    __pyx_v_iteration = __Pyx_PyInt_As_npy_ulonglong(__pyx_arg_iteration); if (unlikely((__pyx_v_iteration == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 62, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -3530,7 +3584,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record_16grsq(struct __pyx_obj_7pye
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("grsq", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7pyearth_7_record_6Record_grsq(__pyx_v_self, __pyx_v_iteration, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 48, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7pyearth_7_record_6Record_grsq(__pyx_v_self, __pyx_v_iteration, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3547,7 +3601,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_6Record_16grsq(struct __pyx_obj_7pye
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":54
+/* "pyearth/_record.pyx":68
  * 
  * cdef class PruningPassRecord(Record):
  *     def __init__(PruningPassRecord self, INDEX_t num_samples,             # <<<<<<<<<<<<<<
@@ -3591,31 +3645,31 @@ static int __pyx_pw_7pyearth_7_record_17PruningPassRecord_1__init__(PyObject *__
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_num_variables)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 1); __PYX_ERR(0, 54, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 1); __PYX_ERR(0, 68, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_penalty)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 2); __PYX_ERR(0, 54, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 2); __PYX_ERR(0, 68, __pyx_L3_error)
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_sst)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 3); __PYX_ERR(0, 54, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 3); __PYX_ERR(0, 68, __pyx_L3_error)
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_size)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 4); __PYX_ERR(0, 54, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 4); __PYX_ERR(0, 68, __pyx_L3_error)
         }
         case  5:
         if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_mse)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 5); __PYX_ERR(0, 54, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, 5); __PYX_ERR(0, 68, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 54, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 68, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 6) {
       goto __pyx_L5_argtuple_error;
@@ -3627,16 +3681,16 @@ static int __pyx_pw_7pyearth_7_record_17PruningPassRecord_1__init__(PyObject *__
       values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
       values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
     }
-    __pyx_v_num_samples = __Pyx_PyInt_As_npy_ulonglong(values[0]); if (unlikely((__pyx_v_num_samples == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 54, __pyx_L3_error)
-    __pyx_v_num_variables = __Pyx_PyInt_As_npy_ulonglong(values[1]); if (unlikely((__pyx_v_num_variables == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 55, __pyx_L3_error)
-    __pyx_v_penalty = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_penalty == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 55, __pyx_L3_error)
-    __pyx_v_sst = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_sst == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 56, __pyx_L3_error)
-    __pyx_v_size = __Pyx_PyInt_As_npy_ulonglong(values[4]); if (unlikely((__pyx_v_size == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 56, __pyx_L3_error)
-    __pyx_v_mse = __pyx_PyFloat_AsDouble(values[5]); if (unlikely((__pyx_v_mse == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 56, __pyx_L3_error)
+    __pyx_v_num_samples = __Pyx_PyInt_As_npy_ulonglong(values[0]); if (unlikely((__pyx_v_num_samples == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 68, __pyx_L3_error)
+    __pyx_v_num_variables = __Pyx_PyInt_As_npy_ulonglong(values[1]); if (unlikely((__pyx_v_num_variables == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 69, __pyx_L3_error)
+    __pyx_v_penalty = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_penalty == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 69, __pyx_L3_error)
+    __pyx_v_sst = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_sst == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 70, __pyx_L3_error)
+    __pyx_v_size = __Pyx_PyInt_As_npy_ulonglong(values[4]); if (unlikely((__pyx_v_size == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 70, __pyx_L3_error)
+    __pyx_v_mse = __pyx_PyFloat_AsDouble(values[5]); if (unlikely((__pyx_v_mse == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 70, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 54, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 68, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._record.PruningPassRecord.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3657,7 +3711,7 @@ static int __pyx_pf_7pyearth_7_record_17PruningPassRecord___init__(struct __pyx_
   PyObject *__pyx_t_3 = NULL;
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "pyearth/_record.pyx":57
+  /* "pyearth/_record.pyx":71
  *                  INDEX_t num_variables, FLOAT_t penalty,
  *                  FLOAT_t sst, INDEX_t size, FLOAT_t mse):
  *         self.num_samples = num_samples             # <<<<<<<<<<<<<<
@@ -3666,7 +3720,7 @@ static int __pyx_pf_7pyearth_7_record_17PruningPassRecord___init__(struct __pyx_
  */
   __pyx_v_self->__pyx_base.num_samples = __pyx_v_num_samples;
 
-  /* "pyearth/_record.pyx":58
+  /* "pyearth/_record.pyx":72
  *                  FLOAT_t sst, INDEX_t size, FLOAT_t mse):
  *         self.num_samples = num_samples
  *         self.num_variables = num_variables             # <<<<<<<<<<<<<<
@@ -3675,7 +3729,7 @@ static int __pyx_pf_7pyearth_7_record_17PruningPassRecord___init__(struct __pyx_
  */
   __pyx_v_self->__pyx_base.num_variables = __pyx_v_num_variables;
 
-  /* "pyearth/_record.pyx":59
+  /* "pyearth/_record.pyx":73
  *         self.num_samples = num_samples
  *         self.num_variables = num_variables
  *         self.penalty = penalty             # <<<<<<<<<<<<<<
@@ -3684,7 +3738,7 @@ static int __pyx_pf_7pyearth_7_record_17PruningPassRecord___init__(struct __pyx_
  */
   __pyx_v_self->__pyx_base.penalty = __pyx_v_penalty;
 
-  /* "pyearth/_record.pyx":60
+  /* "pyearth/_record.pyx":74
  *         self.num_variables = num_variables
  *         self.penalty = penalty
  *         self.sst = sst             # <<<<<<<<<<<<<<
@@ -3693,18 +3747,18 @@ static int __pyx_pf_7pyearth_7_record_17PruningPassRecord___init__(struct __pyx_
  */
   __pyx_v_self->__pyx_base.sst = __pyx_v_sst;
 
-  /* "pyearth/_record.pyx":61
+  /* "pyearth/_record.pyx":75
  *         self.penalty = penalty
  *         self.sst = sst
  *         self.iterations = [FirstPruningPassIteration(size, mse)]             # <<<<<<<<<<<<<<
  * 
  *     def __reduce__(PruningPassRecord self):
  */
-  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 61, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 75, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_mse); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 61, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_mse); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 75, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 61, __pyx_L1_error)
+  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 75, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_1);
@@ -3712,10 +3766,10 @@ static int __pyx_pf_7pyearth_7_record_17PruningPassRecord___init__(struct __pyx_
   PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_2);
   __pyx_t_1 = 0;
   __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_7_record_FirstPruningPassIteration), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 61, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_7_record_FirstPruningPassIteration), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 75, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = PyList_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 61, __pyx_L1_error)
+  __pyx_t_3 = PyList_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 75, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_2);
   PyList_SET_ITEM(__pyx_t_3, 0, __pyx_t_2);
@@ -3726,7 +3780,7 @@ static int __pyx_pf_7pyearth_7_record_17PruningPassRecord___init__(struct __pyx_
   __pyx_v_self->__pyx_base.iterations = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "pyearth/_record.pyx":54
+  /* "pyearth/_record.pyx":68
  * 
  * cdef class PruningPassRecord(Record):
  *     def __init__(PruningPassRecord self, INDEX_t num_samples,             # <<<<<<<<<<<<<<
@@ -3748,7 +3802,7 @@ static int __pyx_pf_7pyearth_7_record_17PruningPassRecord___init__(struct __pyx_
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":63
+/* "pyearth/_record.pyx":77
  *         self.iterations = [FirstPruningPassIteration(size, mse)]
  * 
  *     def __reduce__(PruningPassRecord self):             # <<<<<<<<<<<<<<
@@ -3777,7 +3831,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_2__reduce__(stru
   PyObject *__pyx_t_3 = NULL;
   __Pyx_RefNannySetupContext("__reduce__", 0);
 
-  /* "pyearth/_record.pyx":64
+  /* "pyearth/_record.pyx":78
  * 
  *     def __reduce__(PruningPassRecord self):
  *         return (PruningPassRecord, (1, 1, 1.0, 1.0, 1, 1.0), self._getstate())             # <<<<<<<<<<<<<<
@@ -3785,7 +3839,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_2__reduce__(stru
  *     def _getstate(PruningPassRecord self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getstate); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 64, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getstate); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
@@ -3798,14 +3852,14 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_2__reduce__(stru
     }
   }
   if (__pyx_t_3) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 64, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   } else {
-    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 64, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
   }
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyTuple_New(3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 64, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_INCREF(((PyObject *)__pyx_ptype_7pyearth_7_record_PruningPassRecord));
   __Pyx_GIVEREF(((PyObject *)__pyx_ptype_7pyearth_7_record_PruningPassRecord));
@@ -3820,7 +3874,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_2__reduce__(stru
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":63
+  /* "pyearth/_record.pyx":77
  *         self.iterations = [FirstPruningPassIteration(size, mse)]
  * 
  *     def __reduce__(PruningPassRecord self):             # <<<<<<<<<<<<<<
@@ -3841,7 +3895,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_2__reduce__(stru
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":66
+/* "pyearth/_record.pyx":80
  *         return (PruningPassRecord, (1, 1, 1.0, 1.0, 1, 1.0), self._getstate())
  * 
  *     def _getstate(PruningPassRecord self):             # <<<<<<<<<<<<<<
@@ -3870,80 +3924,80 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_4_getstate(struc
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("_getstate", 0);
 
-  /* "pyearth/_record.pyx":67
+  /* "pyearth/_record.pyx":81
  * 
  *     def _getstate(PruningPassRecord self):
  *         result = {'num_samples': self.num_samples,             # <<<<<<<<<<<<<<
  *                   'num_variables': self.num_variables,
  *                   'penalty': self.penalty,
  */
-  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 67, __pyx_L1_error)
+  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->__pyx_base.num_samples); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 67, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->__pyx_base.num_samples); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_num_samples, __pyx_t_2) < 0) __PYX_ERR(0, 67, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_num_samples, __pyx_t_2) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":68
+  /* "pyearth/_record.pyx":82
  *     def _getstate(PruningPassRecord self):
  *         result = {'num_samples': self.num_samples,
  *                   'num_variables': self.num_variables,             # <<<<<<<<<<<<<<
  *                   'penalty': self.penalty,
  *                   'sst': self.sst,
  */
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->__pyx_base.num_variables); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 68, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->__pyx_base.num_variables); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 82, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_num_variables, __pyx_t_2) < 0) __PYX_ERR(0, 67, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_num_variables, __pyx_t_2) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":69
+  /* "pyearth/_record.pyx":83
  *         result = {'num_samples': self.num_samples,
  *                   'num_variables': self.num_variables,
  *                   'penalty': self.penalty,             # <<<<<<<<<<<<<<
  *                   'sst': self.sst,
  *                   'iterations': self.iterations,
  */
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.penalty); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 69, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.penalty); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_penalty, __pyx_t_2) < 0) __PYX_ERR(0, 67, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_penalty, __pyx_t_2) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":70
+  /* "pyearth/_record.pyx":84
  *                   'num_variables': self.num_variables,
  *                   'penalty': self.penalty,
  *                   'sst': self.sst,             # <<<<<<<<<<<<<<
  *                   'iterations': self.iterations,
  *                   'selected': self.selected}
  */
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.sst); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 70, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.sst); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_sst, __pyx_t_2) < 0) __PYX_ERR(0, 67, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_sst, __pyx_t_2) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":71
+  /* "pyearth/_record.pyx":85
  *                   'penalty': self.penalty,
  *                   'sst': self.sst,
  *                   'iterations': self.iterations,             # <<<<<<<<<<<<<<
  *                   'selected': self.selected}
  *         return result
  */
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_iterations, __pyx_v_self->__pyx_base.iterations) < 0) __PYX_ERR(0, 67, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_iterations, __pyx_v_self->__pyx_base.iterations) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
 
-  /* "pyearth/_record.pyx":72
+  /* "pyearth/_record.pyx":86
  *                   'sst': self.sst,
  *                   'iterations': self.iterations,
  *                   'selected': self.selected}             # <<<<<<<<<<<<<<
  *         return result
  * 
  */
-  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->selected); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 72, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->selected); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_selected, __pyx_t_2) < 0) __PYX_ERR(0, 67, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_selected, __pyx_t_2) < 0) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_result = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_record.pyx":73
+  /* "pyearth/_record.pyx":87
  *                   'iterations': self.iterations,
  *                   'selected': self.selected}
  *         return result             # <<<<<<<<<<<<<<
@@ -3955,7 +4009,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_4_getstate(struc
   __pyx_r = __pyx_v_result;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":66
+  /* "pyearth/_record.pyx":80
  *         return (PruningPassRecord, (1, 1, 1.0, 1.0, 1, 1.0), self._getstate())
  * 
  *     def _getstate(PruningPassRecord self):             # <<<<<<<<<<<<<<
@@ -3976,7 +4030,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_4_getstate(struc
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":75
+/* "pyearth/_record.pyx":89
  *         return result
  * 
  *     def __setstate__(PruningPassRecord self, dict state):             # <<<<<<<<<<<<<<
@@ -3990,7 +4044,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_17PruningPassRecord_7__setstate__(Py
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__setstate__ (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_state), (&PyDict_Type), 1, "state", 1))) __PYX_ERR(0, 75, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_state), (&PyDict_Type), 1, "state", 1))) __PYX_ERR(0, 89, __pyx_L1_error)
   __pyx_r = __pyx_pf_7pyearth_7_record_17PruningPassRecord_6__setstate__(((struct __pyx_obj_7pyearth_7_record_PruningPassRecord *)__pyx_v_self), ((PyObject*)__pyx_v_state));
 
   /* function exit code */
@@ -4011,7 +4065,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_6__setstate__(st
   __pyx_t_7pyearth_6_types_INDEX_t __pyx_t_4;
   __Pyx_RefNannySetupContext("__setstate__", 0);
 
-  /* "pyearth/_record.pyx":76
+  /* "pyearth/_record.pyx":90
  * 
  *     def __setstate__(PruningPassRecord self, dict state):
  *         self.num_samples = state['num_samples']             # <<<<<<<<<<<<<<
@@ -4020,15 +4074,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_6__setstate__(st
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 76, __pyx_L1_error)
+    __PYX_ERR(0, 90, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_num_samples); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_num_samples); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 90, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 76, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 90, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->__pyx_base.num_samples = __pyx_t_2;
 
-  /* "pyearth/_record.pyx":77
+  /* "pyearth/_record.pyx":91
  *     def __setstate__(PruningPassRecord self, dict state):
  *         self.num_samples = state['num_samples']
  *         self.num_variables = state['num_variables']             # <<<<<<<<<<<<<<
@@ -4037,15 +4091,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_6__setstate__(st
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 77, __pyx_L1_error)
+    __PYX_ERR(0, 91, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_num_variables); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_num_variables); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 91, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 91, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->__pyx_base.num_variables = __pyx_t_2;
 
-  /* "pyearth/_record.pyx":78
+  /* "pyearth/_record.pyx":92
  *         self.num_samples = state['num_samples']
  *         self.num_variables = state['num_variables']
  *         self.penalty = state['penalty']             # <<<<<<<<<<<<<<
@@ -4054,15 +4108,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_6__setstate__(st
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 78, __pyx_L1_error)
+    __PYX_ERR(0, 92, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_penalty); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_penalty); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 92, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 78, __pyx_L1_error)
+  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 92, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->__pyx_base.penalty = __pyx_t_3;
 
-  /* "pyearth/_record.pyx":79
+  /* "pyearth/_record.pyx":93
  *         self.num_variables = state['num_variables']
  *         self.penalty = state['penalty']
  *         self.sst = state['sst']             # <<<<<<<<<<<<<<
@@ -4071,15 +4125,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_6__setstate__(st
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 79, __pyx_L1_error)
+    __PYX_ERR(0, 93, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_sst); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 79, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_sst); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 93, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 79, __pyx_L1_error)
+  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 93, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->__pyx_base.sst = __pyx_t_3;
 
-  /* "pyearth/_record.pyx":80
+  /* "pyearth/_record.pyx":94
  *         self.penalty = state['penalty']
  *         self.sst = state['sst']
  *         self.iterations = state['iterations']             # <<<<<<<<<<<<<<
@@ -4088,18 +4142,18 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_6__setstate__(st
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 80, __pyx_L1_error)
+    __PYX_ERR(0, 94, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_iterations); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_iterations); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 94, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 80, __pyx_L1_error)
+  if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 94, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->__pyx_base.iterations);
   __Pyx_DECREF(__pyx_v_self->__pyx_base.iterations);
   __pyx_v_self->__pyx_base.iterations = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_record.pyx":81
+  /* "pyearth/_record.pyx":95
  *         self.sst = state['sst']
  *         self.iterations = state['iterations']
  *         self.selected = state['selected']             # <<<<<<<<<<<<<<
@@ -4108,15 +4162,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_6__setstate__(st
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 81, __pyx_L1_error)
+    __PYX_ERR(0, 95, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_selected); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_selected); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_4 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_4 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 81, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_4 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 95, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->selected = __pyx_t_4;
 
-  /* "pyearth/_record.pyx":75
+  /* "pyearth/_record.pyx":89
  *         return result
  * 
  *     def __setstate__(PruningPassRecord self, dict state):             # <<<<<<<<<<<<<<
@@ -4137,7 +4191,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_6__setstate__(st
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":83
+/* "pyearth/_record.pyx":97
  *         self.selected = state['selected']
  * 
  *     cpdef set_selected(PruningPassRecord self, INDEX_t selected):             # <<<<<<<<<<<<<<
@@ -4160,11 +4214,11 @@ static PyObject *__pyx_f_7pyearth_7_record_17PruningPassRecord_set_selected(stru
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_set_selected); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 83, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_set_selected); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_7_record_17PruningPassRecord_9set_selected)) {
       __Pyx_XDECREF(__pyx_r);
-      __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_selected); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 83, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_selected); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 97, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_4 = __pyx_t_1; __pyx_t_5 = NULL;
@@ -4178,17 +4232,17 @@ static PyObject *__pyx_f_7pyearth_7_record_17PruningPassRecord_set_selected(stru
         }
       }
       if (!__pyx_t_5) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 97, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_GOTREF(__pyx_t_2);
       } else {
-        __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 83, __pyx_L1_error)
+        __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 97, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
         __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_5); __pyx_t_5 = NULL;
         __Pyx_GIVEREF(__pyx_t_3);
         PyTuple_SET_ITEM(__pyx_t_6, 0+1, __pyx_t_3);
         __pyx_t_3 = 0;
-        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 97, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       }
@@ -4201,7 +4255,7 @@ static PyObject *__pyx_f_7pyearth_7_record_17PruningPassRecord_set_selected(stru
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_record.pyx":84
+  /* "pyearth/_record.pyx":98
  * 
  *     cpdef set_selected(PruningPassRecord self, INDEX_t selected):
  *         self.selected = selected             # <<<<<<<<<<<<<<
@@ -4210,7 +4264,7 @@ static PyObject *__pyx_f_7pyearth_7_record_17PruningPassRecord_set_selected(stru
  */
   __pyx_v_self->selected = __pyx_v_selected;
 
-  /* "pyearth/_record.pyx":83
+  /* "pyearth/_record.pyx":97
  *         self.selected = state['selected']
  * 
  *     cpdef set_selected(PruningPassRecord self, INDEX_t selected):             # <<<<<<<<<<<<<<
@@ -4244,7 +4298,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_17PruningPassRecord_9set_selected(Py
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_selected (wrapper)", 0);
   assert(__pyx_arg_selected); {
-    __pyx_v_selected = __Pyx_PyInt_As_npy_ulonglong(__pyx_arg_selected); if (unlikely((__pyx_v_selected == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 83, __pyx_L3_error)
+    __pyx_v_selected = __Pyx_PyInt_As_npy_ulonglong(__pyx_arg_selected); if (unlikely((__pyx_v_selected == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 97, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -4265,7 +4319,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_8set_selected(st
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("set_selected", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_7pyearth_7_record_17PruningPassRecord_set_selected(__pyx_v_self, __pyx_v_selected, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_7pyearth_7_record_17PruningPassRecord_set_selected(__pyx_v_self, __pyx_v_selected, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4282,7 +4336,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_8set_selected(st
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":86
+/* "pyearth/_record.pyx":100
  *         self.selected = selected
  * 
  *     cpdef INDEX_t get_selected(PruningPassRecord self):             # <<<<<<<<<<<<<<
@@ -4304,7 +4358,7 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_7_record_17PruningPassR
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_selected); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 86, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_selected); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 100, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_7_record_17PruningPassRecord_11get_selected)) {
       __Pyx_INCREF(__pyx_t_1);
@@ -4319,14 +4373,14 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_7_record_17PruningPassR
         }
       }
       if (__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 100, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 100, __pyx_L1_error)
       }
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_2); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 86, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_2); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 100, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_5;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -4335,7 +4389,7 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_7_record_17PruningPassR
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_record.pyx":87
+  /* "pyearth/_record.pyx":101
  * 
  *     cpdef INDEX_t get_selected(PruningPassRecord self):
  *         return self.selected             # <<<<<<<<<<<<<<
@@ -4345,7 +4399,7 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_7_record_17PruningPassR
   __pyx_r = __pyx_v_self->selected;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":86
+  /* "pyearth/_record.pyx":100
  *         self.selected = selected
  * 
  *     cpdef INDEX_t get_selected(PruningPassRecord self):             # <<<<<<<<<<<<<<
@@ -4385,7 +4439,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_10get_selected(s
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_selected", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_f_7pyearth_7_record_17PruningPassRecord_get_selected(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 86, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_f_7pyearth_7_record_17PruningPassRecord_get_selected(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4402,7 +4456,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_10get_selected(s
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":89
+/* "pyearth/_record.pyx":103
  *         return self.selected
  * 
  *     cpdef roll_back(PruningPassRecord self, Basis basis):             # <<<<<<<<<<<<<<
@@ -4430,7 +4484,7 @@ static PyObject *__pyx_f_7pyearth_7_record_17PruningPassRecord_roll_back(struct 
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_roll_back); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_roll_back); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_7_record_17PruningPassRecord_13roll_back)) {
       __Pyx_XDECREF(__pyx_r);
@@ -4446,16 +4500,16 @@ static PyObject *__pyx_f_7pyearth_7_record_17PruningPassRecord_roll_back(struct 
         }
       }
       if (!__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, ((PyObject *)__pyx_v_basis)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 89, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, ((PyObject *)__pyx_v_basis)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 103, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
       } else {
-        __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 89, __pyx_L1_error)
+        __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 103, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
         __Pyx_INCREF(((PyObject *)__pyx_v_basis));
         __Pyx_GIVEREF(((PyObject *)__pyx_v_basis));
         PyTuple_SET_ITEM(__pyx_t_5, 0+1, ((PyObject *)__pyx_v_basis));
-        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 89, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 103, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       }
@@ -4468,7 +4522,7 @@ static PyObject *__pyx_f_7pyearth_7_record_17PruningPassRecord_roll_back(struct 
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_record.pyx":90
+  /* "pyearth/_record.pyx":104
  * 
  *     cpdef roll_back(PruningPassRecord self, Basis basis):
  *         cdef INDEX_t n = len(self.iterations)             # <<<<<<<<<<<<<<
@@ -4479,13 +4533,13 @@ static PyObject *__pyx_f_7pyearth_7_record_17PruningPassRecord_roll_back(struct 
   __Pyx_INCREF(__pyx_t_1);
   if (unlikely(__pyx_t_1 == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 90, __pyx_L1_error)
+    __PYX_ERR(0, 104, __pyx_L1_error)
   }
-  __pyx_t_6 = PyList_GET_SIZE(__pyx_t_1); if (unlikely(__pyx_t_6 == -1)) __PYX_ERR(0, 90, __pyx_L1_error)
+  __pyx_t_6 = PyList_GET_SIZE(__pyx_t_1); if (unlikely(__pyx_t_6 == -1)) __PYX_ERR(0, 104, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_n = __pyx_t_6;
 
-  /* "pyearth/_record.pyx":92
+  /* "pyearth/_record.pyx":106
  *         cdef INDEX_t n = len(self.iterations)
  *         cdef INDEX_t i
  *         for i in range(n - self.selected - 1):             # <<<<<<<<<<<<<<
@@ -4496,7 +4550,7 @@ static PyObject *__pyx_f_7pyearth_7_record_17PruningPassRecord_roll_back(struct 
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
     __pyx_v_i = __pyx_t_8;
 
-    /* "pyearth/_record.pyx":93
+    /* "pyearth/_record.pyx":107
  *         cdef INDEX_t i
  *         for i in range(n - self.selected - 1):
  *             basis[self.iterations[n - i - 1].get_pruned()].unprune()             # <<<<<<<<<<<<<<
@@ -4505,10 +4559,10 @@ static PyObject *__pyx_f_7pyearth_7_record_17PruningPassRecord_roll_back(struct 
  */
     if (unlikely(__pyx_v_self->__pyx_base.iterations == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 93, __pyx_L1_error)
+      __PYX_ERR(0, 107, __pyx_L1_error)
     }
     __pyx_t_9 = ((__pyx_v_n - __pyx_v_i) - 1);
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(PyList_GET_ITEM(__pyx_v_self->__pyx_base.iterations, __pyx_t_9), __pyx_n_s_get_pruned); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 93, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(PyList_GET_ITEM(__pyx_v_self->__pyx_base.iterations, __pyx_t_9), __pyx_n_s_get_pruned); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 107, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_5 = NULL;
     if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_3))) {
@@ -4521,17 +4575,17 @@ static PyObject *__pyx_f_7pyearth_7_record_17PruningPassRecord_roll_back(struct 
       }
     }
     if (__pyx_t_5) {
-      __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 93, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 107, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     } else {
-      __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 93, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 107, __pyx_L1_error)
     }
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = PyObject_GetItem(((PyObject *)__pyx_v_basis), __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 93, __pyx_L1_error)
+    __pyx_t_3 = PyObject_GetItem(((PyObject *)__pyx_v_basis), __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 107, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_unprune); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 93, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_unprune); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 107, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_t_3 = NULL;
@@ -4545,17 +4599,17 @@ static PyObject *__pyx_f_7pyearth_7_record_17PruningPassRecord_roll_back(struct 
       }
     }
     if (__pyx_t_3) {
-      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 93, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 107, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     } else {
-      __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 93, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 107, __pyx_L1_error)
     }
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_record.pyx":89
+  /* "pyearth/_record.pyx":103
  *         return self.selected
  * 
  *     cpdef roll_back(PruningPassRecord self, Basis basis):             # <<<<<<<<<<<<<<
@@ -4586,7 +4640,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_17PruningPassRecord_13roll_back(PyOb
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("roll_back (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_basis), __pyx_ptype_7pyearth_6_basis_Basis, 1, "basis", 0))) __PYX_ERR(0, 89, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_basis), __pyx_ptype_7pyearth_6_basis_Basis, 1, "basis", 0))) __PYX_ERR(0, 103, __pyx_L1_error)
   __pyx_r = __pyx_pf_7pyearth_7_record_17PruningPassRecord_12roll_back(((struct __pyx_obj_7pyearth_7_record_PruningPassRecord *)__pyx_v_self), ((struct __pyx_obj_7pyearth_6_basis_Basis *)__pyx_v_basis));
 
   /* function exit code */
@@ -4604,7 +4658,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_12roll_back(stru
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("roll_back", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_7pyearth_7_record_17PruningPassRecord_roll_back(__pyx_v_self, __pyx_v_basis, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_7pyearth_7_record_17PruningPassRecord_roll_back(__pyx_v_self, __pyx_v_basis, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4621,7 +4675,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_12roll_back(stru
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":95
+/* "pyearth/_record.pyx":109
  *             basis[self.iterations[n - i - 1].get_pruned()].unprune()
  * 
  *     def __str__(PruningPassRecord self):             # <<<<<<<<<<<<<<
@@ -4649,7 +4703,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_14__str__(struct
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("__str__", 0);
 
-  /* "pyearth/_record.pyx":96
+  /* "pyearth/_record.pyx":110
  * 
  *     def __str__(PruningPassRecord self):
  *         return self.partial_str(slice(None))             # <<<<<<<<<<<<<<
@@ -4657,16 +4711,16 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_14__str__(struct
  *     def partial_str(PruningPassRecord self, rows, print_header=True, print_footer=True):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_partial_str); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_partial_str); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 110, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 110, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":95
+  /* "pyearth/_record.pyx":109
  *             basis[self.iterations[n - i - 1].get_pruned()].unprune()
  * 
  *     def __str__(PruningPassRecord self):             # <<<<<<<<<<<<<<
@@ -4686,7 +4740,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_14__str__(struct
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":98
+/* "pyearth/_record.pyx":112
  *         return self.partial_str(slice(None))
  * 
  *     def partial_str(PruningPassRecord self, rows, print_header=True, print_footer=True):             # <<<<<<<<<<<<<<
@@ -4735,7 +4789,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_17PruningPassRecord_17partial_str(Py
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "partial_str") < 0)) __PYX_ERR(0, 98, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "partial_str") < 0)) __PYX_ERR(0, 112, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -4752,7 +4806,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_17PruningPassRecord_17partial_str(Py
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("partial_str", 0, 1, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 98, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("partial_str", 0, 1, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 112, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._record.PruningPassRecord.partial_str", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4789,7 +4843,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_16partial_str(st
   struct __pyx_opt_args_7pyearth_5_util_ascii_table __pyx_t_12;
   __Pyx_RefNannySetupContext("partial_str", 0);
 
-  /* "pyearth/_record.pyx":99
+  /* "pyearth/_record.pyx":113
  * 
  *     def partial_str(PruningPassRecord self, rows, print_header=True, print_footer=True):
  *         result = ''             # <<<<<<<<<<<<<<
@@ -4799,51 +4853,51 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_16partial_str(st
   __Pyx_INCREF(__pyx_kp_s__4);
   __pyx_v_result = __pyx_kp_s__4;
 
-  /* "pyearth/_record.pyx":101
+  /* "pyearth/_record.pyx":115
  *         result = ''
  * #         result += 'Pruning Pass\n'
  *         header = 'iter\tbf\tterms\tmse\tgcv\trsq\tgrsq'.split('\t')             # <<<<<<<<<<<<<<
  *         data = []
  *         map_back = list(range(*rows.indices(len(self.iterations))))
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_iter_bf_terms_mse_gcv_rsq_grsq, __pyx_n_s_split); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 101, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_kp_s_iter_bf_terms_mse_gcv_rsq_grsq, __pyx_n_s_split); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 101, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_header = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":102
+  /* "pyearth/_record.pyx":116
  * #         result += 'Pruning Pass\n'
  *         header = 'iter\tbf\tterms\tmse\tgcv\trsq\tgrsq'.split('\t')
  *         data = []             # <<<<<<<<<<<<<<
  *         map_back = list(range(*rows.indices(len(self.iterations))))
  *         for i, iteration in enumerate(self.iterations[rows]):
  */
-  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 102, __pyx_L1_error)
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 116, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_data = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":103
+  /* "pyearth/_record.pyx":117
  *         header = 'iter\tbf\tterms\tmse\tgcv\trsq\tgrsq'.split('\t')
  *         data = []
  *         map_back = list(range(*rows.indices(len(self.iterations))))             # <<<<<<<<<<<<<<
  *         for i, iteration in enumerate(self.iterations[rows]):
  *             row = str(map_back[i]) + '\t' + str(iteration) + '\t%.3f\t%.3f\t%.3f' % (
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_rows, __pyx_n_s_indices); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_rows, __pyx_n_s_indices); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 117, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_3 = __pyx_v_self->__pyx_base.iterations;
   __Pyx_INCREF(__pyx_t_3);
   if (unlikely(__pyx_t_3 == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 103, __pyx_L1_error)
+    __PYX_ERR(0, 117, __pyx_L1_error)
   }
-  __pyx_t_4 = PyList_GET_SIZE(__pyx_t_3); if (unlikely(__pyx_t_4 == -1)) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_t_4 = PyList_GET_SIZE(__pyx_t_3); if (unlikely(__pyx_t_4 == -1)) __PYX_ERR(0, 117, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = PyInt_FromSsize_t(__pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_t_3 = PyInt_FromSsize_t(__pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 117, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_5 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_1))) {
@@ -4856,34 +4910,34 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_16partial_str(st
     }
   }
   if (!__pyx_t_5) {
-    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 103, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 117, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_GOTREF(__pyx_t_2);
   } else {
-    __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 103, __pyx_L1_error)
+    __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 117, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_5); __pyx_t_5 = NULL;
     __Pyx_GIVEREF(__pyx_t_3);
     PyTuple_SET_ITEM(__pyx_t_6, 0+1, __pyx_t_3);
     __pyx_t_3 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 103, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 117, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PySequence_Tuple(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_t_1 = PySequence_Tuple(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 117, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_1, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_1, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 117, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PySequence_List(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_t_1 = PySequence_List(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 117, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_map_back = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_record.pyx":104
+  /* "pyearth/_record.pyx":118
  *         data = []
  *         map_back = list(range(*rows.indices(len(self.iterations))))
  *         for i, iteration in enumerate(self.iterations[rows]):             # <<<<<<<<<<<<<<
@@ -4894,17 +4948,17 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_16partial_str(st
   __pyx_t_1 = __pyx_int_0;
   if (unlikely(__pyx_v_self->__pyx_base.iterations == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 104, __pyx_L1_error)
+    __PYX_ERR(0, 118, __pyx_L1_error)
   }
-  __pyx_t_2 = PyObject_GetItem(__pyx_v_self->__pyx_base.iterations, __pyx_v_rows); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 104, __pyx_L1_error)
+  __pyx_t_2 = PyObject_GetItem(__pyx_v_self->__pyx_base.iterations, __pyx_v_rows); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 118, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (likely(PyList_CheckExact(__pyx_t_2)) || PyTuple_CheckExact(__pyx_t_2)) {
     __pyx_t_6 = __pyx_t_2; __Pyx_INCREF(__pyx_t_6); __pyx_t_4 = 0;
     __pyx_t_7 = NULL;
   } else {
-    __pyx_t_4 = -1; __pyx_t_6 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 104, __pyx_L1_error)
+    __pyx_t_4 = -1; __pyx_t_6 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 118, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_7 = Py_TYPE(__pyx_t_6)->tp_iternext; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 104, __pyx_L1_error)
+    __pyx_t_7 = Py_TYPE(__pyx_t_6)->tp_iternext; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 118, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   for (;;) {
@@ -4912,17 +4966,17 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_16partial_str(st
       if (likely(PyList_CheckExact(__pyx_t_6))) {
         if (__pyx_t_4 >= PyList_GET_SIZE(__pyx_t_6)) break;
         #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_6, __pyx_t_4); __Pyx_INCREF(__pyx_t_2); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 104, __pyx_L1_error)
+        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_6, __pyx_t_4); __Pyx_INCREF(__pyx_t_2); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 118, __pyx_L1_error)
         #else
-        __pyx_t_2 = PySequence_ITEM(__pyx_t_6, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 104, __pyx_L1_error)
+        __pyx_t_2 = PySequence_ITEM(__pyx_t_6, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 118, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         #endif
       } else {
         if (__pyx_t_4 >= PyTuple_GET_SIZE(__pyx_t_6)) break;
         #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_6, __pyx_t_4); __Pyx_INCREF(__pyx_t_2); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 104, __pyx_L1_error)
+        __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_6, __pyx_t_4); __Pyx_INCREF(__pyx_t_2); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 118, __pyx_L1_error)
         #else
-        __pyx_t_2 = PySequence_ITEM(__pyx_t_6, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 104, __pyx_L1_error)
+        __pyx_t_2 = PySequence_ITEM(__pyx_t_6, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 118, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         #endif
       }
@@ -4932,7 +4986,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_16partial_str(st
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 104, __pyx_L1_error)
+          else __PYX_ERR(0, 118, __pyx_L1_error)
         }
         break;
       }
@@ -4942,71 +4996,71 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_16partial_str(st
     __pyx_t_2 = 0;
     __Pyx_INCREF(__pyx_t_1);
     __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_1);
-    __pyx_t_2 = __Pyx_PyInt_AddObjC(__pyx_t_1, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 104, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyInt_AddObjC(__pyx_t_1, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 118, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1);
     __pyx_t_1 = __pyx_t_2;
     __pyx_t_2 = 0;
 
-    /* "pyearth/_record.pyx":105
+    /* "pyearth/_record.pyx":119
  *         map_back = list(range(*rows.indices(len(self.iterations))))
  *         for i, iteration in enumerate(self.iterations[rows]):
  *             row = str(map_back[i]) + '\t' + str(iteration) + '\t%.3f\t%.3f\t%.3f' % (             # <<<<<<<<<<<<<<
  *                 self.gcv(map_back[i]), self.rsq(map_back[i]), self.grsq(map_back[i]))
  *             data.append(row.split('\t'))
  */
-    __pyx_t_2 = PyObject_GetItem(__pyx_v_map_back, __pyx_v_i); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __pyx_t_2 = PyObject_GetItem(__pyx_v_map_back, __pyx_v_i); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 119, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 119, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)(&PyString_Type)), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)(&PyString_Type)), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 119, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = PyNumber_Add(__pyx_t_2, __pyx_kp_s__5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __pyx_t_3 = PyNumber_Add(__pyx_t_2, __pyx_kp_s__5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 119, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 119, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_v_iteration);
     __Pyx_GIVEREF(__pyx_v_iteration);
     PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_iteration);
-    __pyx_t_5 = __Pyx_PyObject_Call(((PyObject *)(&PyString_Type)), __pyx_t_2, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(((PyObject *)(&PyString_Type)), __pyx_t_2, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 119, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PyNumber_Add(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __pyx_t_2 = PyNumber_Add(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 119, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-    /* "pyearth/_record.pyx":106
+    /* "pyearth/_record.pyx":120
  *         for i, iteration in enumerate(self.iterations[rows]):
  *             row = str(map_back[i]) + '\t' + str(iteration) + '\t%.3f\t%.3f\t%.3f' % (
  *                 self.gcv(map_back[i]), self.rsq(map_back[i]), self.grsq(map_back[i]))             # <<<<<<<<<<<<<<
  *             data.append(row.split('\t'))
  *         result += ascii_table(header, data, print_header, print_footer)
  */
-    __pyx_t_5 = PyObject_GetItem(__pyx_v_map_back, __pyx_v_i); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetItem(__pyx_v_map_back, __pyx_v_i); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 120, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_8 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_5); if (unlikely((__pyx_t_8 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_5); if (unlikely((__pyx_t_8 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 120, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_PruningPassRecord *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.gcv(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self), __pyx_t_8, 0)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_5 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_PruningPassRecord *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.gcv(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self), __pyx_t_8, 0)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 120, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_3 = PyObject_GetItem(__pyx_v_map_back, __pyx_v_i); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_3 = PyObject_GetItem(__pyx_v_map_back, __pyx_v_i); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 120, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_8 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_3); if (unlikely((__pyx_t_8 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_3); if (unlikely((__pyx_t_8 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 120, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_PruningPassRecord *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.rsq(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self), __pyx_t_8, 0)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_3 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_PruningPassRecord *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.rsq(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self), __pyx_t_8, 0)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 120, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_9 = PyObject_GetItem(__pyx_v_map_back, __pyx_v_i); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_9 = PyObject_GetItem(__pyx_v_map_back, __pyx_v_i); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 120, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
-    __pyx_t_8 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_9); if (unlikely((__pyx_t_8 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_9); if (unlikely((__pyx_t_8 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 120, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __pyx_t_9 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_PruningPassRecord *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.grsq(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self), __pyx_t_8, 0)); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_9 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_PruningPassRecord *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.grsq(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self), __pyx_t_8, 0)); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 120, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
-    __pyx_t_10 = PyTuple_New(3); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 106, __pyx_L1_error)
+    __pyx_t_10 = PyTuple_New(3); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 120, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     __Pyx_GIVEREF(__pyx_t_5);
     PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_5);
@@ -5018,39 +5072,39 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_16partial_str(st
     __pyx_t_3 = 0;
     __pyx_t_9 = 0;
 
-    /* "pyearth/_record.pyx":105
+    /* "pyearth/_record.pyx":119
  *         map_back = list(range(*rows.indices(len(self.iterations))))
  *         for i, iteration in enumerate(self.iterations[rows]):
  *             row = str(map_back[i]) + '\t' + str(iteration) + '\t%.3f\t%.3f\t%.3f' % (             # <<<<<<<<<<<<<<
  *                 self.gcv(map_back[i]), self.rsq(map_back[i]), self.grsq(map_back[i]))
  *             data.append(row.split('\t'))
  */
-    __pyx_t_9 = __Pyx_PyString_Format(__pyx_kp_s_3f_3f_3f, __pyx_t_10); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyString_Format(__pyx_kp_s_3f_3f_3f, __pyx_t_10); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 119, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __pyx_t_10 = PyNumber_Add(__pyx_t_2, __pyx_t_9); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 105, __pyx_L1_error)
+    __pyx_t_10 = PyNumber_Add(__pyx_t_2, __pyx_t_9); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 119, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __Pyx_XDECREF_SET(__pyx_v_row, __pyx_t_10);
     __pyx_t_10 = 0;
 
-    /* "pyearth/_record.pyx":107
+    /* "pyearth/_record.pyx":121
  *             row = str(map_back[i]) + '\t' + str(iteration) + '\t%.3f\t%.3f\t%.3f' % (
  *                 self.gcv(map_back[i]), self.rsq(map_back[i]), self.grsq(map_back[i]))
  *             data.append(row.split('\t'))             # <<<<<<<<<<<<<<
  *         result += ascii_table(header, data, print_header, print_footer)
  * #         result += '\nSelected iteration: ' + str(self.selected) + '\n'
  */
-    __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_v_row, __pyx_n_s_split); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 107, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_v_row, __pyx_n_s_split); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 121, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 107, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 121, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_data, __pyx_t_9); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 107, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_data, __pyx_t_9); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 121, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-    /* "pyearth/_record.pyx":104
+    /* "pyearth/_record.pyx":118
  *         data = []
  *         map_back = list(range(*rows.indices(len(self.iterations))))
  *         for i, iteration in enumerate(self.iterations[rows]):             # <<<<<<<<<<<<<<
@@ -5061,7 +5115,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_16partial_str(st
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "pyearth/_record.pyx":108
+  /* "pyearth/_record.pyx":122
  *                 self.gcv(map_back[i]), self.rsq(map_back[i]), self.grsq(map_back[i]))
  *             data.append(row.split('\t'))
  *         result += ascii_table(header, data, print_header, print_footer)             # <<<<<<<<<<<<<<
@@ -5071,27 +5125,27 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_16partial_str(st
   __pyx_t_12.__pyx_n = 2;
   __pyx_t_12.print_header = __pyx_v_print_header;
   __pyx_t_12.print_footer = __pyx_v_print_footer;
-  __pyx_t_1 = __pyx_f_7pyearth_5_util_ascii_table(__pyx_v_header, __pyx_v_data, 0, &__pyx_t_12); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 108, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_7pyearth_5_util_ascii_table(__pyx_v_header, __pyx_v_data, 0, &__pyx_t_12); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 122, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_6 = PyNumber_InPlaceAdd(__pyx_v_result, __pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 108, __pyx_L1_error)
+  __pyx_t_6 = PyNumber_InPlaceAdd(__pyx_v_result, __pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 122, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF_SET(__pyx_v_result, __pyx_t_6);
   __pyx_t_6 = 0;
 
-  /* "pyearth/_record.pyx":110
+  /* "pyearth/_record.pyx":124
  *         result += ascii_table(header, data, print_header, print_footer)
  * #         result += '\nSelected iteration: ' + str(self.selected) + '\n'
  *         return result             # <<<<<<<<<<<<<<
  * 
- * cdef class ForwardPassRecord(Record):
+ *     def final_str(PruningPassRecord self):
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v_result);
   __pyx_r = __pyx_v_result;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":98
+  /* "pyearth/_record.pyx":112
  *         return self.partial_str(slice(None))
  * 
  *     def partial_str(PruningPassRecord self, rows, print_header=True, print_footer=True):             # <<<<<<<<<<<<<<
@@ -5118,6 +5172,79 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_16partial_str(st
   __Pyx_XDECREF(__pyx_v_i);
   __Pyx_XDECREF(__pyx_v_iteration);
   __Pyx_XDECREF(__pyx_v_row);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "pyearth/_record.pyx":126
+ *         return result
+ * 
+ *     def final_str(PruningPassRecord self):             # <<<<<<<<<<<<<<
+ *         return 'Selected iteration: ' + str(self.selected)
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_7pyearth_7_record_17PruningPassRecord_19final_str(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_7pyearth_7_record_17PruningPassRecord_19final_str(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("final_str (wrapper)", 0);
+  __pyx_r = __pyx_pf_7pyearth_7_record_17PruningPassRecord_18final_str(((struct __pyx_obj_7pyearth_7_record_PruningPassRecord *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_18final_str(struct __pyx_obj_7pyearth_7_record_PruningPassRecord *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  __Pyx_RefNannySetupContext("final_str", 0);
+
+  /* "pyearth/_record.pyx":127
+ * 
+ *     def final_str(PruningPassRecord self):
+ *         return 'Selected iteration: ' + str(self.selected)             # <<<<<<<<<<<<<<
+ * 
+ * cdef class ForwardPassRecord(Record):
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->selected); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 127, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
+  __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)(&PyString_Type)), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = PyNumber_Add(__pyx_kp_s_Selected_iteration, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 127, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_r = __pyx_t_2;
+  __pyx_t_2 = 0;
+  goto __pyx_L0;
+
+  /* "pyearth/_record.pyx":126
+ *         return result
+ * 
+ *     def final_str(PruningPassRecord self):             # <<<<<<<<<<<<<<
+ *         return 'Selected iteration: ' + str(self.selected)
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_AddTraceback("pyearth._record.PruningPassRecord.final_str", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
@@ -5167,7 +5294,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17PruningPassRecord_8selected___get_
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":113
+/* "pyearth/_record.pyx":130
  * 
  * cdef class ForwardPassRecord(Record):
  *     def __init__(ForwardPassRecord self,             # <<<<<<<<<<<<<<
@@ -5209,26 +5336,26 @@ static int __pyx_pw_7pyearth_7_record_17ForwardPassRecord_1__init__(PyObject *__
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_num_variables)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 1); __PYX_ERR(0, 113, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 1); __PYX_ERR(0, 130, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_penalty)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 2); __PYX_ERR(0, 113, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 2); __PYX_ERR(0, 130, __pyx_L3_error)
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_sst)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 3); __PYX_ERR(0, 113, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 3); __PYX_ERR(0, 130, __pyx_L3_error)
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_xlabels)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 4); __PYX_ERR(0, 113, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 4); __PYX_ERR(0, 130, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 113, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 130, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 5) {
       goto __pyx_L5_argtuple_error;
@@ -5239,21 +5366,21 @@ static int __pyx_pw_7pyearth_7_record_17ForwardPassRecord_1__init__(PyObject *__
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
       values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
     }
-    __pyx_v_num_samples = __Pyx_PyInt_As_npy_ulonglong(values[0]); if (unlikely((__pyx_v_num_samples == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 114, __pyx_L3_error)
-    __pyx_v_num_variables = __Pyx_PyInt_As_npy_ulonglong(values[1]); if (unlikely((__pyx_v_num_variables == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 114, __pyx_L3_error)
-    __pyx_v_penalty = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_penalty == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 115, __pyx_L3_error)
-    __pyx_v_sst = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_sst == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 115, __pyx_L3_error)
+    __pyx_v_num_samples = __Pyx_PyInt_As_npy_ulonglong(values[0]); if (unlikely((__pyx_v_num_samples == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 131, __pyx_L3_error)
+    __pyx_v_num_variables = __Pyx_PyInt_As_npy_ulonglong(values[1]); if (unlikely((__pyx_v_num_variables == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 131, __pyx_L3_error)
+    __pyx_v_penalty = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_penalty == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 132, __pyx_L3_error)
+    __pyx_v_sst = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_sst == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 132, __pyx_L3_error)
     __pyx_v_xlabels = ((PyObject*)values[4]);
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 113, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 130, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._record.ForwardPassRecord.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_xlabels), (&PyList_Type), 1, "xlabels", 1))) __PYX_ERR(0, 116, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_xlabels), (&PyList_Type), 1, "xlabels", 1))) __PYX_ERR(0, 133, __pyx_L1_error)
   __pyx_r = __pyx_pf_7pyearth_7_record_17ForwardPassRecord___init__(((struct __pyx_obj_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self), __pyx_v_num_samples, __pyx_v_num_variables, __pyx_v_penalty, __pyx_v_sst, __pyx_v_xlabels);
 
   /* function exit code */
@@ -5272,7 +5399,7 @@ static int __pyx_pf_7pyearth_7_record_17ForwardPassRecord___init__(struct __pyx_
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "pyearth/_record.pyx":117
+  /* "pyearth/_record.pyx":134
  *                  FLOAT_t penalty, FLOAT_t sst,
  *                  list xlabels):
  *         self.num_samples = num_samples             # <<<<<<<<<<<<<<
@@ -5281,7 +5408,7 @@ static int __pyx_pf_7pyearth_7_record_17ForwardPassRecord___init__(struct __pyx_
  */
   __pyx_v_self->__pyx_base.num_samples = __pyx_v_num_samples;
 
-  /* "pyearth/_record.pyx":118
+  /* "pyearth/_record.pyx":135
  *                  list xlabels):
  *         self.num_samples = num_samples
  *         self.num_variables = num_variables             # <<<<<<<<<<<<<<
@@ -5290,7 +5417,7 @@ static int __pyx_pf_7pyearth_7_record_17ForwardPassRecord___init__(struct __pyx_
  */
   __pyx_v_self->__pyx_base.num_variables = __pyx_v_num_variables;
 
-  /* "pyearth/_record.pyx":119
+  /* "pyearth/_record.pyx":136
  *         self.num_samples = num_samples
  *         self.num_variables = num_variables
  *         self.penalty = penalty             # <<<<<<<<<<<<<<
@@ -5299,7 +5426,7 @@ static int __pyx_pf_7pyearth_7_record_17ForwardPassRecord___init__(struct __pyx_
  */
   __pyx_v_self->__pyx_base.penalty = __pyx_v_penalty;
 
-  /* "pyearth/_record.pyx":120
+  /* "pyearth/_record.pyx":137
  *         self.num_variables = num_variables
  *         self.penalty = penalty
  *         self.sst = sst             # <<<<<<<<<<<<<<
@@ -5308,24 +5435,24 @@ static int __pyx_pf_7pyearth_7_record_17ForwardPassRecord___init__(struct __pyx_
  */
   __pyx_v_self->__pyx_base.sst = __pyx_v_sst;
 
-  /* "pyearth/_record.pyx":121
+  /* "pyearth/_record.pyx":138
  *         self.penalty = penalty
  *         self.sst = sst
  *         self.iterations = [FirstForwardPassIteration(self.sst)]             # <<<<<<<<<<<<<<
  *         self.xlabels = xlabels
  * 
  */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.sst); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 121, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.sst); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 138, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 121, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 138, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
   __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_7_record_FirstForwardPassIteration), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 121, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7pyearth_7_record_FirstForwardPassIteration), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 138, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 121, __pyx_L1_error)
+  __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 138, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_1);
   PyList_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
@@ -5336,7 +5463,7 @@ static int __pyx_pf_7pyearth_7_record_17ForwardPassRecord___init__(struct __pyx_
   __pyx_v_self->__pyx_base.iterations = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":122
+  /* "pyearth/_record.pyx":139
  *         self.sst = sst
  *         self.iterations = [FirstForwardPassIteration(self.sst)]
  *         self.xlabels = xlabels             # <<<<<<<<<<<<<<
@@ -5349,7 +5476,7 @@ static int __pyx_pf_7pyearth_7_record_17ForwardPassRecord___init__(struct __pyx_
   __Pyx_DECREF(__pyx_v_self->xlabels);
   __pyx_v_self->xlabels = __pyx_v_xlabels;
 
-  /* "pyearth/_record.pyx":113
+  /* "pyearth/_record.pyx":130
  * 
  * cdef class ForwardPassRecord(Record):
  *     def __init__(ForwardPassRecord self,             # <<<<<<<<<<<<<<
@@ -5370,7 +5497,7 @@ static int __pyx_pf_7pyearth_7_record_17ForwardPassRecord___init__(struct __pyx_
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":124
+/* "pyearth/_record.pyx":141
  *         self.xlabels = xlabels
  * 
  *     def __reduce__(ForwardPassRecord self):             # <<<<<<<<<<<<<<
@@ -5401,7 +5528,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_2__reduce__(stru
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("__reduce__", 0);
 
-  /* "pyearth/_record.pyx":125
+  /* "pyearth/_record.pyx":142
  * 
  *     def __reduce__(ForwardPassRecord self):
  *         return (ForwardPassRecord, (self.num_samples, self.num_variables,             # <<<<<<<<<<<<<<
@@ -5409,31 +5536,31 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_2__reduce__(stru
  *                 self._getstate())
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->__pyx_base.num_samples); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 125, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->__pyx_base.num_samples); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 142, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->__pyx_base.num_variables); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 125, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->__pyx_base.num_variables); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 142, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
 
-  /* "pyearth/_record.pyx":126
+  /* "pyearth/_record.pyx":143
  *     def __reduce__(ForwardPassRecord self):
  *         return (ForwardPassRecord, (self.num_samples, self.num_variables,
  *                                     self.penalty, self.sst, self.xlabels),             # <<<<<<<<<<<<<<
  *                 self._getstate())
  * 
  */
-  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.penalty); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 126, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.penalty); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 143, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.sst); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 126, __pyx_L1_error)
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.sst); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 143, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
 
-  /* "pyearth/_record.pyx":125
+  /* "pyearth/_record.pyx":142
  * 
  *     def __reduce__(ForwardPassRecord self):
  *         return (ForwardPassRecord, (self.num_samples, self.num_variables,             # <<<<<<<<<<<<<<
  *                                     self.penalty, self.sst, self.xlabels),
  *                 self._getstate())
  */
-  __pyx_t_5 = PyTuple_New(5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 125, __pyx_L1_error)
+  __pyx_t_5 = PyTuple_New(5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 142, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_1);
@@ -5451,14 +5578,14 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_2__reduce__(stru
   __pyx_t_3 = 0;
   __pyx_t_4 = 0;
 
-  /* "pyearth/_record.pyx":127
+  /* "pyearth/_record.pyx":144
  *         return (ForwardPassRecord, (self.num_samples, self.num_variables,
  *                                     self.penalty, self.sst, self.xlabels),
  *                 self._getstate())             # <<<<<<<<<<<<<<
  * 
  *     def _getstate(ForwardPassRecord self):
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getstate); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 127, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getstate); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 144, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_2 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_3))) {
@@ -5471,22 +5598,22 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_2__reduce__(stru
     }
   }
   if (__pyx_t_2) {
-    __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 127, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 144, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   } else {
-    __pyx_t_4 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 127, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 144, __pyx_L1_error)
   }
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "pyearth/_record.pyx":125
+  /* "pyearth/_record.pyx":142
  * 
  *     def __reduce__(ForwardPassRecord self):
  *         return (ForwardPassRecord, (self.num_samples, self.num_variables,             # <<<<<<<<<<<<<<
  *                                     self.penalty, self.sst, self.xlabels),
  *                 self._getstate())
  */
-  __pyx_t_3 = PyTuple_New(3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 125, __pyx_L1_error)
+  __pyx_t_3 = PyTuple_New(3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 142, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_INCREF(((PyObject *)__pyx_ptype_7pyearth_7_record_ForwardPassRecord));
   __Pyx_GIVEREF(((PyObject *)__pyx_ptype_7pyearth_7_record_ForwardPassRecord));
@@ -5501,7 +5628,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_2__reduce__(stru
   __pyx_t_3 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":124
+  /* "pyearth/_record.pyx":141
  *         self.xlabels = xlabels
  * 
  *     def __reduce__(ForwardPassRecord self):             # <<<<<<<<<<<<<<
@@ -5524,7 +5651,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_2__reduce__(stru
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":129
+/* "pyearth/_record.pyx":146
  *                 self._getstate())
  * 
  *     def _getstate(ForwardPassRecord self):             # <<<<<<<<<<<<<<
@@ -5552,7 +5679,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_4_getstate(struc
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("_getstate", 0);
 
-  /* "pyearth/_record.pyx":130
+  /* "pyearth/_record.pyx":147
  * 
  *     def _getstate(ForwardPassRecord self):
  *         return {'num_samples': self.num_samples,             # <<<<<<<<<<<<<<
@@ -5560,71 +5687,71 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_4_getstate(struc
  *                 'penalty': self.penalty,
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
+  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->__pyx_base.num_samples); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 130, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->__pyx_base.num_samples); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_num_samples, __pyx_t_2) < 0) __PYX_ERR(0, 130, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_num_samples, __pyx_t_2) < 0) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":131
+  /* "pyearth/_record.pyx":148
  *     def _getstate(ForwardPassRecord self):
  *         return {'num_samples': self.num_samples,
  *                 'num_variables': self.num_variables,             # <<<<<<<<<<<<<<
  *                 'penalty': self.penalty,
  *                 'sst': self.sst,
  */
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->__pyx_base.num_variables); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 131, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->__pyx_base.num_variables); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 148, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_num_variables, __pyx_t_2) < 0) __PYX_ERR(0, 130, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_num_variables, __pyx_t_2) < 0) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":132
+  /* "pyearth/_record.pyx":149
  *         return {'num_samples': self.num_samples,
  *                 'num_variables': self.num_variables,
  *                 'penalty': self.penalty,             # <<<<<<<<<<<<<<
  *                 'sst': self.sst,
  *                 'iterations': self.iterations,
  */
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.penalty); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 132, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.penalty); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 149, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_penalty, __pyx_t_2) < 0) __PYX_ERR(0, 130, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_penalty, __pyx_t_2) < 0) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":133
+  /* "pyearth/_record.pyx":150
  *                 'num_variables': self.num_variables,
  *                 'penalty': self.penalty,
  *                 'sst': self.sst,             # <<<<<<<<<<<<<<
  *                 'iterations': self.iterations,
  *                 'xlabels': self.xlabels}
  */
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.sst); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 133, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.sst); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 150, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_sst, __pyx_t_2) < 0) __PYX_ERR(0, 130, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_sst, __pyx_t_2) < 0) __PYX_ERR(0, 147, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":134
+  /* "pyearth/_record.pyx":151
  *                 'penalty': self.penalty,
  *                 'sst': self.sst,
  *                 'iterations': self.iterations,             # <<<<<<<<<<<<<<
  *                 'xlabels': self.xlabels}
  * 
  */
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_iterations, __pyx_v_self->__pyx_base.iterations) < 0) __PYX_ERR(0, 130, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_iterations, __pyx_v_self->__pyx_base.iterations) < 0) __PYX_ERR(0, 147, __pyx_L1_error)
 
-  /* "pyearth/_record.pyx":135
+  /* "pyearth/_record.pyx":152
  *                 'sst': self.sst,
  *                 'iterations': self.iterations,
  *                 'xlabels': self.xlabels}             # <<<<<<<<<<<<<<
  * 
  *     def __setstate__(ForwardPassRecord self, dict state):
  */
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_xlabels, __pyx_v_self->xlabels) < 0) __PYX_ERR(0, 130, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_xlabels, __pyx_v_self->xlabels) < 0) __PYX_ERR(0, 147, __pyx_L1_error)
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":129
+  /* "pyearth/_record.pyx":146
  *                 self._getstate())
  * 
  *     def _getstate(ForwardPassRecord self):             # <<<<<<<<<<<<<<
@@ -5644,7 +5771,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_4_getstate(struc
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":137
+/* "pyearth/_record.pyx":154
  *                 'xlabels': self.xlabels}
  * 
  *     def __setstate__(ForwardPassRecord self, dict state):             # <<<<<<<<<<<<<<
@@ -5658,7 +5785,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_17ForwardPassRecord_7__setstate__(Py
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__setstate__ (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_state), (&PyDict_Type), 1, "state", 1))) __PYX_ERR(0, 137, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_state), (&PyDict_Type), 1, "state", 1))) __PYX_ERR(0, 154, __pyx_L1_error)
   __pyx_r = __pyx_pf_7pyearth_7_record_17ForwardPassRecord_6__setstate__(((struct __pyx_obj_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self), ((PyObject*)__pyx_v_state));
 
   /* function exit code */
@@ -5678,7 +5805,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_6__setstate__(st
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_3;
   __Pyx_RefNannySetupContext("__setstate__", 0);
 
-  /* "pyearth/_record.pyx":138
+  /* "pyearth/_record.pyx":155
  * 
  *     def __setstate__(ForwardPassRecord self, dict state):
  *         self.num_samples = state['num_samples']             # <<<<<<<<<<<<<<
@@ -5687,15 +5814,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_6__setstate__(st
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 138, __pyx_L1_error)
+    __PYX_ERR(0, 155, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_num_samples); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 138, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_num_samples); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 155, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 138, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 155, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->__pyx_base.num_samples = __pyx_t_2;
 
-  /* "pyearth/_record.pyx":139
+  /* "pyearth/_record.pyx":156
  *     def __setstate__(ForwardPassRecord self, dict state):
  *         self.num_samples = state['num_samples']
  *         self.num_variables = state['num_variables']             # <<<<<<<<<<<<<<
@@ -5704,15 +5831,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_6__setstate__(st
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 139, __pyx_L1_error)
+    __PYX_ERR(0, 156, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_num_variables); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 139, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_num_variables); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 156, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 139, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 156, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->__pyx_base.num_variables = __pyx_t_2;
 
-  /* "pyearth/_record.pyx":140
+  /* "pyearth/_record.pyx":157
  *         self.num_samples = state['num_samples']
  *         self.num_variables = state['num_variables']
  *         self.penalty = state['penalty']             # <<<<<<<<<<<<<<
@@ -5721,15 +5848,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_6__setstate__(st
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 140, __pyx_L1_error)
+    __PYX_ERR(0, 157, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_penalty); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 140, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_penalty); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 157, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 140, __pyx_L1_error)
+  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 157, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->__pyx_base.penalty = __pyx_t_3;
 
-  /* "pyearth/_record.pyx":141
+  /* "pyearth/_record.pyx":158
  *         self.num_variables = state['num_variables']
  *         self.penalty = state['penalty']
  *         self.sst = state['sst']             # <<<<<<<<<<<<<<
@@ -5738,15 +5865,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_6__setstate__(st
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 141, __pyx_L1_error)
+    __PYX_ERR(0, 158, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_sst); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_sst); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 158, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 141, __pyx_L1_error)
+  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 158, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->__pyx_base.sst = __pyx_t_3;
 
-  /* "pyearth/_record.pyx":142
+  /* "pyearth/_record.pyx":159
  *         self.penalty = state['penalty']
  *         self.sst = state['sst']
  *         self.iterations = state['iterations']             # <<<<<<<<<<<<<<
@@ -5755,18 +5882,18 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_6__setstate__(st
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 142, __pyx_L1_error)
+    __PYX_ERR(0, 159, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_iterations); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 142, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_iterations); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 159, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 142, __pyx_L1_error)
+  if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 159, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->__pyx_base.iterations);
   __Pyx_DECREF(__pyx_v_self->__pyx_base.iterations);
   __pyx_v_self->__pyx_base.iterations = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_record.pyx":143
+  /* "pyearth/_record.pyx":160
  *         self.sst = state['sst']
  *         self.iterations = state['iterations']
  *         self.xlabels = state['xlabels']             # <<<<<<<<<<<<<<
@@ -5775,18 +5902,18 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_6__setstate__(st
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 143, __pyx_L1_error)
+    __PYX_ERR(0, 160, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_xlabels); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 143, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_xlabels); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 160, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 143, __pyx_L1_error)
+  if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 160, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->xlabels);
   __Pyx_DECREF(__pyx_v_self->xlabels);
   __pyx_v_self->xlabels = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_record.pyx":137
+  /* "pyearth/_record.pyx":154
  *                 'xlabels': self.xlabels}
  * 
  *     def __setstate__(ForwardPassRecord self, dict state):             # <<<<<<<<<<<<<<
@@ -5807,7 +5934,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_6__setstate__(st
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":145
+/* "pyearth/_record.pyx":162
  *         self.xlabels = state['xlabels']
  * 
  *     cpdef set_stopping_condition(ForwardPassRecord self,             # <<<<<<<<<<<<<<
@@ -5830,11 +5957,11 @@ static PyObject *__pyx_f_7pyearth_7_record_17ForwardPassRecord_set_stopping_cond
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_set_stopping_condition); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 145, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_set_stopping_condition); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 162, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_7_record_17ForwardPassRecord_9set_stopping_condition)) {
       __Pyx_XDECREF(__pyx_r);
-      __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_stopping_condition); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 145, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_stopping_condition); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 162, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_4 = __pyx_t_1; __pyx_t_5 = NULL;
@@ -5848,17 +5975,17 @@ static PyObject *__pyx_f_7pyearth_7_record_17ForwardPassRecord_set_stopping_cond
         }
       }
       if (!__pyx_t_5) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 145, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 162, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_GOTREF(__pyx_t_2);
       } else {
-        __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 145, __pyx_L1_error)
+        __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 162, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
         __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_5); __pyx_t_5 = NULL;
         __Pyx_GIVEREF(__pyx_t_3);
         PyTuple_SET_ITEM(__pyx_t_6, 0+1, __pyx_t_3);
         __pyx_t_3 = 0;
-        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 145, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 162, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       }
@@ -5871,7 +5998,7 @@ static PyObject *__pyx_f_7pyearth_7_record_17ForwardPassRecord_set_stopping_cond
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_record.pyx":147
+  /* "pyearth/_record.pyx":164
  *     cpdef set_stopping_condition(ForwardPassRecord self,
  *                                  int stopping_condition):
  *         self.stopping_condition = stopping_condition             # <<<<<<<<<<<<<<
@@ -5880,7 +6007,7 @@ static PyObject *__pyx_f_7pyearth_7_record_17ForwardPassRecord_set_stopping_cond
  */
   __pyx_v_self->stopping_condition = __pyx_v_stopping_condition;
 
-  /* "pyearth/_record.pyx":145
+  /* "pyearth/_record.pyx":162
  *         self.xlabels = state['xlabels']
  * 
  *     cpdef set_stopping_condition(ForwardPassRecord self,             # <<<<<<<<<<<<<<
@@ -5914,7 +6041,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_17ForwardPassRecord_9set_stopping_co
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_stopping_condition (wrapper)", 0);
   assert(__pyx_arg_stopping_condition); {
-    __pyx_v_stopping_condition = __Pyx_PyInt_As_int(__pyx_arg_stopping_condition); if (unlikely((__pyx_v_stopping_condition == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 146, __pyx_L3_error)
+    __pyx_v_stopping_condition = __Pyx_PyInt_As_int(__pyx_arg_stopping_condition); if (unlikely((__pyx_v_stopping_condition == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 163, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -5935,7 +6062,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_8set_stopping_co
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("set_stopping_condition", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_7pyearth_7_record_17ForwardPassRecord_set_stopping_condition(__pyx_v_self, __pyx_v_stopping_condition, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 145, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_7pyearth_7_record_17ForwardPassRecord_set_stopping_condition(__pyx_v_self, __pyx_v_stopping_condition, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -5952,7 +6079,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_8set_stopping_co
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":149
+/* "pyearth/_record.pyx":166
  *         self.stopping_condition = stopping_condition
  * 
  *     def __str__(ForwardPassRecord self):             # <<<<<<<<<<<<<<
@@ -5980,7 +6107,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_10__str__(struct
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("__str__", 0);
 
-  /* "pyearth/_record.pyx":150
+  /* "pyearth/_record.pyx":167
  * 
  *     def __str__(ForwardPassRecord self):
  *         return self.partial_str(slice(None))             # <<<<<<<<<<<<<<
@@ -5988,16 +6115,16 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_10__str__(struct
  * #                   'mse', 'terms', 'gcv', 'rsq', 'grsq']
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_partial_str); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 150, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_partial_str); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 167, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 150, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 167, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":149
+  /* "pyearth/_record.pyx":166
  *         self.stopping_condition = stopping_condition
  * 
  *     def __str__(ForwardPassRecord self):             # <<<<<<<<<<<<<<
@@ -6017,7 +6144,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_10__str__(struct
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":166
+/* "pyearth/_record.pyx":183
  * #         return result
  * 
  *     def partial_str(ForwardPassRecord self, rows, print_header=True, print_footer=True):             # <<<<<<<<<<<<<<
@@ -6066,7 +6193,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_17ForwardPassRecord_13partial_str(Py
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "partial_str") < 0)) __PYX_ERR(0, 166, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "partial_str") < 0)) __PYX_ERR(0, 183, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -6083,7 +6210,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_17ForwardPassRecord_13partial_str(Py
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("partial_str", 0, 1, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 166, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("partial_str", 0, 1, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 183, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._record.ForwardPassRecord.partial_str", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -6119,14 +6246,14 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_12partial_str(st
   struct __pyx_opt_args_7pyearth_5_util_ascii_table __pyx_t_12;
   __Pyx_RefNannySetupContext("partial_str", 0);
 
-  /* "pyearth/_record.pyx":167
+  /* "pyearth/_record.pyx":184
  * 
  *     def partial_str(ForwardPassRecord self, rows, print_header=True, print_footer=True):
  *         header = ['iter', 'parent', 'var', 'knot',             # <<<<<<<<<<<<<<
  *                   'mse', 'terms', 'gcv', 'rsq', 'grsq']
  *         data = []
  */
-  __pyx_t_1 = PyList_New(9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 167, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 184, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__pyx_n_s_iter);
   __Pyx_GIVEREF(__pyx_n_s_iter);
@@ -6158,36 +6285,36 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_12partial_str(st
   __pyx_v_header = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_record.pyx":169
+  /* "pyearth/_record.pyx":186
  *         header = ['iter', 'parent', 'var', 'knot',
  *                   'mse', 'terms', 'gcv', 'rsq', 'grsq']
  *         data = []             # <<<<<<<<<<<<<<
  *         map_back = list(range(*rows.indices(len(self.iterations))))
  *         for i, iteration in enumerate(self.iterations[rows]):
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 169, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 186, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_data = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_record.pyx":170
+  /* "pyearth/_record.pyx":187
  *                   'mse', 'terms', 'gcv', 'rsq', 'grsq']
  *         data = []
  *         map_back = list(range(*rows.indices(len(self.iterations))))             # <<<<<<<<<<<<<<
  *         for i, iteration in enumerate(self.iterations[rows]):
  *             data.append([str(map_back[i])] + str(iteration).split('\t') +
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_rows, __pyx_n_s_indices); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 170, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_rows, __pyx_n_s_indices); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 187, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = __pyx_v_self->__pyx_base.iterations;
   __Pyx_INCREF(__pyx_t_3);
   if (unlikely(__pyx_t_3 == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 170, __pyx_L1_error)
+    __PYX_ERR(0, 187, __pyx_L1_error)
   }
-  __pyx_t_4 = PyList_GET_SIZE(__pyx_t_3); if (unlikely(__pyx_t_4 == -1)) __PYX_ERR(0, 170, __pyx_L1_error)
+  __pyx_t_4 = PyList_GET_SIZE(__pyx_t_3); if (unlikely(__pyx_t_4 == -1)) __PYX_ERR(0, 187, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = PyInt_FromSsize_t(__pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 170, __pyx_L1_error)
+  __pyx_t_3 = PyInt_FromSsize_t(__pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 187, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_5 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
@@ -6200,34 +6327,34 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_12partial_str(st
     }
   }
   if (!__pyx_t_5) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 170, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 187, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
-    __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 170, __pyx_L1_error)
+    __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 187, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_5); __pyx_t_5 = NULL;
     __Pyx_GIVEREF(__pyx_t_3);
     PyTuple_SET_ITEM(__pyx_t_6, 0+1, __pyx_t_3);
     __pyx_t_3 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_6, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 170, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_6, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 187, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PySequence_Tuple(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 170, __pyx_L1_error)
+  __pyx_t_2 = PySequence_Tuple(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 187, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 170, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 187, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PySequence_List(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 170, __pyx_L1_error)
+  __pyx_t_2 = PySequence_List(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 187, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_map_back = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":171
+  /* "pyearth/_record.pyx":188
  *         data = []
  *         map_back = list(range(*rows.indices(len(self.iterations))))
  *         for i, iteration in enumerate(self.iterations[rows]):             # <<<<<<<<<<<<<<
@@ -6238,17 +6365,17 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_12partial_str(st
   __pyx_t_2 = __pyx_int_0;
   if (unlikely(__pyx_v_self->__pyx_base.iterations == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 171, __pyx_L1_error)
+    __PYX_ERR(0, 188, __pyx_L1_error)
   }
-  __pyx_t_1 = PyObject_GetItem(__pyx_v_self->__pyx_base.iterations, __pyx_v_rows); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 171, __pyx_L1_error)
+  __pyx_t_1 = PyObject_GetItem(__pyx_v_self->__pyx_base.iterations, __pyx_v_rows); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 188, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (likely(PyList_CheckExact(__pyx_t_1)) || PyTuple_CheckExact(__pyx_t_1)) {
     __pyx_t_6 = __pyx_t_1; __Pyx_INCREF(__pyx_t_6); __pyx_t_4 = 0;
     __pyx_t_7 = NULL;
   } else {
-    __pyx_t_4 = -1; __pyx_t_6 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 171, __pyx_L1_error)
+    __pyx_t_4 = -1; __pyx_t_6 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 188, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_7 = Py_TYPE(__pyx_t_6)->tp_iternext; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 171, __pyx_L1_error)
+    __pyx_t_7 = Py_TYPE(__pyx_t_6)->tp_iternext; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 188, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   for (;;) {
@@ -6256,17 +6383,17 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_12partial_str(st
       if (likely(PyList_CheckExact(__pyx_t_6))) {
         if (__pyx_t_4 >= PyList_GET_SIZE(__pyx_t_6)) break;
         #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_6, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 171, __pyx_L1_error)
+        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_6, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 188, __pyx_L1_error)
         #else
-        __pyx_t_1 = PySequence_ITEM(__pyx_t_6, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 171, __pyx_L1_error)
+        __pyx_t_1 = PySequence_ITEM(__pyx_t_6, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 188, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         #endif
       } else {
         if (__pyx_t_4 >= PyTuple_GET_SIZE(__pyx_t_6)) break;
         #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_6, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 171, __pyx_L1_error)
+        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_6, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 188, __pyx_L1_error)
         #else
-        __pyx_t_1 = PySequence_ITEM(__pyx_t_6, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 171, __pyx_L1_error)
+        __pyx_t_1 = PySequence_ITEM(__pyx_t_6, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 188, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         #endif
       }
@@ -6276,7 +6403,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_12partial_str(st
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 171, __pyx_L1_error)
+          else __PYX_ERR(0, 188, __pyx_L1_error)
         }
         break;
       }
@@ -6286,95 +6413,95 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_12partial_str(st
     __pyx_t_1 = 0;
     __Pyx_INCREF(__pyx_t_2);
     __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_2);
-    __pyx_t_1 = __Pyx_PyInt_AddObjC(__pyx_t_2, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 171, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyInt_AddObjC(__pyx_t_2, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 188, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2);
     __pyx_t_2 = __pyx_t_1;
     __pyx_t_1 = 0;
 
-    /* "pyearth/_record.pyx":172
+    /* "pyearth/_record.pyx":189
  *         map_back = list(range(*rows.indices(len(self.iterations))))
  *         for i, iteration in enumerate(self.iterations[rows]):
  *             data.append([str(map_back[i])] + str(iteration).split('\t') +             # <<<<<<<<<<<<<<
  *                         ('%.3f\t%.3f\t%.3f' % (self.gcv(map_back[i]), self.rsq(map_back[i]),
  *                                                self.grsq(map_back[i]))).split('\t'))
  */
-    __pyx_t_1 = PyObject_GetItem(__pyx_v_map_back, __pyx_v_i); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __pyx_t_1 = PyObject_GetItem(__pyx_v_map_back, __pyx_v_i); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 189, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_1);
     __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)(&PyString_Type)), __pyx_t_3, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)(&PyString_Type)), __pyx_t_3, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = PyList_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __pyx_t_3 = PyList_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 189, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_GIVEREF(__pyx_t_1);
     PyList_SET_ITEM(__pyx_t_3, 0, __pyx_t_1);
     __pyx_t_1 = 0;
-    __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_INCREF(__pyx_v_iteration);
     __Pyx_GIVEREF(__pyx_v_iteration);
     PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_iteration);
-    __pyx_t_5 = __Pyx_PyObject_Call(((PyObject *)(&PyString_Type)), __pyx_t_1, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(((PyObject *)(&PyString_Type)), __pyx_t_1, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 189, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_split); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_split); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 189, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyNumber_Add(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __pyx_t_1 = PyNumber_Add(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-    /* "pyearth/_record.pyx":173
+    /* "pyearth/_record.pyx":190
  *         for i, iteration in enumerate(self.iterations[rows]):
  *             data.append([str(map_back[i])] + str(iteration).split('\t') +
  *                         ('%.3f\t%.3f\t%.3f' % (self.gcv(map_back[i]), self.rsq(map_back[i]),             # <<<<<<<<<<<<<<
  *                                                self.grsq(map_back[i]))).split('\t'))
  *         result = ''
  */
-    __pyx_t_5 = PyObject_GetItem(__pyx_v_map_back, __pyx_v_i); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 173, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetItem(__pyx_v_map_back, __pyx_v_i); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 190, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_8 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_5); if (unlikely((__pyx_t_8 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 173, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_5); if (unlikely((__pyx_t_8 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 190, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.gcv(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self), __pyx_t_8, 0)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 173, __pyx_L1_error)
+    __pyx_t_5 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.gcv(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self), __pyx_t_8, 0)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 190, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_3 = PyObject_GetItem(__pyx_v_map_back, __pyx_v_i); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 173, __pyx_L1_error)
+    __pyx_t_3 = PyObject_GetItem(__pyx_v_map_back, __pyx_v_i); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 190, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_8 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_3); if (unlikely((__pyx_t_8 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 173, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_3); if (unlikely((__pyx_t_8 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 190, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.rsq(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self), __pyx_t_8, 0)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 173, __pyx_L1_error)
+    __pyx_t_3 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.rsq(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self), __pyx_t_8, 0)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 190, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
 
-    /* "pyearth/_record.pyx":174
+    /* "pyearth/_record.pyx":191
  *             data.append([str(map_back[i])] + str(iteration).split('\t') +
  *                         ('%.3f\t%.3f\t%.3f' % (self.gcv(map_back[i]), self.rsq(map_back[i]),
  *                                                self.grsq(map_back[i]))).split('\t'))             # <<<<<<<<<<<<<<
  *         result = ''
  * #         result += 'Forward Pass\n'
  */
-    __pyx_t_9 = PyObject_GetItem(__pyx_v_map_back, __pyx_v_i); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 174, __pyx_L1_error)
+    __pyx_t_9 = PyObject_GetItem(__pyx_v_map_back, __pyx_v_i); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 191, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
-    __pyx_t_8 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_9); if (unlikely((__pyx_t_8 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 174, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_9); if (unlikely((__pyx_t_8 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 191, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __pyx_t_9 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.grsq(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self), __pyx_t_8, 0)); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 174, __pyx_L1_error)
+    __pyx_t_9 = PyFloat_FromDouble(((struct __pyx_vtabstruct_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.grsq(((struct __pyx_obj_7pyearth_7_record_Record *)__pyx_v_self), __pyx_t_8, 0)); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 191, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
 
-    /* "pyearth/_record.pyx":173
+    /* "pyearth/_record.pyx":190
  *         for i, iteration in enumerate(self.iterations[rows]):
  *             data.append([str(map_back[i])] + str(iteration).split('\t') +
  *                         ('%.3f\t%.3f\t%.3f' % (self.gcv(map_back[i]), self.rsq(map_back[i]),             # <<<<<<<<<<<<<<
  *                                                self.grsq(map_back[i]))).split('\t'))
  *         result = ''
  */
-    __pyx_t_10 = PyTuple_New(3); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 173, __pyx_L1_error)
+    __pyx_t_10 = PyTuple_New(3); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 190, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     __Pyx_GIVEREF(__pyx_t_5);
     PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_5);
@@ -6385,39 +6512,39 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_12partial_str(st
     __pyx_t_5 = 0;
     __pyx_t_3 = 0;
     __pyx_t_9 = 0;
-    __pyx_t_9 = __Pyx_PyString_Format(__pyx_kp_s_3f_3f_3f_2, __pyx_t_10); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 173, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyString_Format(__pyx_kp_s_3f_3f_3f_2, __pyx_t_10); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 190, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-    /* "pyearth/_record.pyx":174
+    /* "pyearth/_record.pyx":191
  *             data.append([str(map_back[i])] + str(iteration).split('\t') +
  *                         ('%.3f\t%.3f\t%.3f' % (self.gcv(map_back[i]), self.rsq(map_back[i]),
  *                                                self.grsq(map_back[i]))).split('\t'))             # <<<<<<<<<<<<<<
  *         result = ''
  * #         result += 'Forward Pass\n'
  */
-    __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_split); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 174, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_split); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 191, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_tuple__11, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 174, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_tuple__11, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 191, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-    /* "pyearth/_record.pyx":172
+    /* "pyearth/_record.pyx":189
  *         map_back = list(range(*rows.indices(len(self.iterations))))
  *         for i, iteration in enumerate(self.iterations[rows]):
  *             data.append([str(map_back[i])] + str(iteration).split('\t') +             # <<<<<<<<<<<<<<
  *                         ('%.3f\t%.3f\t%.3f' % (self.gcv(map_back[i]), self.rsq(map_back[i]),
  *                                                self.grsq(map_back[i]))).split('\t'))
  */
-    __pyx_t_10 = PyNumber_Add(__pyx_t_1, __pyx_t_9); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __pyx_t_10 = PyNumber_Add(__pyx_t_1, __pyx_t_9); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 189, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_data, __pyx_t_10); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_data, __pyx_t_10); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 189, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-    /* "pyearth/_record.pyx":171
+    /* "pyearth/_record.pyx":188
  *         data = []
  *         map_back = list(range(*rows.indices(len(self.iterations))))
  *         for i, iteration in enumerate(self.iterations[rows]):             # <<<<<<<<<<<<<<
@@ -6428,7 +6555,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_12partial_str(st
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":175
+  /* "pyearth/_record.pyx":192
  *                         ('%.3f\t%.3f\t%.3f' % (self.gcv(map_back[i]), self.rsq(map_back[i]),
  *                                                self.grsq(map_back[i]))).split('\t'))
  *         result = ''             # <<<<<<<<<<<<<<
@@ -6438,7 +6565,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_12partial_str(st
   __Pyx_INCREF(__pyx_kp_s__4);
   __pyx_v_result = __pyx_kp_s__4;
 
-  /* "pyearth/_record.pyx":177
+  /* "pyearth/_record.pyx":194
  *         result = ''
  * #         result += 'Forward Pass\n'
  *         result += ascii_table(header, data, print_header, print_footer)             # <<<<<<<<<<<<<<
@@ -6448,27 +6575,27 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_12partial_str(st
   __pyx_t_12.__pyx_n = 2;
   __pyx_t_12.print_header = __pyx_v_print_header;
   __pyx_t_12.print_footer = __pyx_v_print_footer;
-  __pyx_t_2 = __pyx_f_7pyearth_5_util_ascii_table(__pyx_v_header, __pyx_v_data, 0, &__pyx_t_12); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 177, __pyx_L1_error)
+  __pyx_t_2 = __pyx_f_7pyearth_5_util_ascii_table(__pyx_v_header, __pyx_v_data, 0, &__pyx_t_12); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 194, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_6 = PyNumber_InPlaceAdd(__pyx_v_result, __pyx_t_2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 177, __pyx_L1_error)
+  __pyx_t_6 = PyNumber_InPlaceAdd(__pyx_v_result, __pyx_t_2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 194, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF_SET(__pyx_v_result, __pyx_t_6);
   __pyx_t_6 = 0;
 
-  /* "pyearth/_record.pyx":181
+  /* "pyearth/_record.pyx":198
  * #             self.stopping_condition,
  * #             stopping_conditions[self.stopping_condition])
  *         return result             # <<<<<<<<<<<<<<
  * 
- * cdef class Iteration:
+ *     def final_str(ForwardPassRecord self):
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v_result);
   __pyx_r = __pyx_v_result;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":166
+  /* "pyearth/_record.pyx":183
  * #         return result
  * 
  *     def partial_str(ForwardPassRecord self, rows, print_header=True, print_footer=True):             # <<<<<<<<<<<<<<
@@ -6494,6 +6621,118 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_12partial_str(st
   __Pyx_XDECREF(__pyx_v_i);
   __Pyx_XDECREF(__pyx_v_iteration);
   __Pyx_XDECREF(__pyx_v_result);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "pyearth/_record.pyx":200
+ *         return result
+ * 
+ *     def final_str(ForwardPassRecord self):             # <<<<<<<<<<<<<<
+ *         return 'Stopping Condition %d: %s' % (
+ *             self.stopping_condition,
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_7pyearth_7_record_17ForwardPassRecord_15final_str(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_7pyearth_7_record_17ForwardPassRecord_15final_str(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("final_str (wrapper)", 0);
+  __pyx_r = __pyx_pf_7pyearth_7_record_17ForwardPassRecord_14final_str(((struct __pyx_obj_7pyearth_7_record_ForwardPassRecord *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_14final_str(struct __pyx_obj_7pyearth_7_record_ForwardPassRecord *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  __Pyx_RefNannySetupContext("final_str", 0);
+
+  /* "pyearth/_record.pyx":201
+ * 
+ *     def final_str(ForwardPassRecord self):
+ *         return 'Stopping Condition %d: %s' % (             # <<<<<<<<<<<<<<
+ *             self.stopping_condition,
+ *             stopping_conditions[self.stopping_condition])
+ */
+  __Pyx_XDECREF(__pyx_r);
+
+  /* "pyearth/_record.pyx":202
+ *     def final_str(ForwardPassRecord self):
+ *         return 'Stopping Condition %d: %s' % (
+ *             self.stopping_condition,             # <<<<<<<<<<<<<<
+ *             stopping_conditions[self.stopping_condition])
+ * 
+ */
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->stopping_condition); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 202, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+
+  /* "pyearth/_record.pyx":203
+ *         return 'Stopping Condition %d: %s' % (
+ *             self.stopping_condition,
+ *             stopping_conditions[self.stopping_condition])             # <<<<<<<<<<<<<<
+ * 
+ * cdef class Iteration:
+ */
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_stopping_conditions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_GetItemInt(__pyx_t_2, __pyx_v_self->stopping_condition, int, 1, __Pyx_PyInt_From_int, 0, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 203, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "pyearth/_record.pyx":202
+ *     def final_str(ForwardPassRecord self):
+ *         return 'Stopping Condition %d: %s' % (
+ *             self.stopping_condition,             # <<<<<<<<<<<<<<
+ *             stopping_conditions[self.stopping_condition])
+ * 
+ */
+  __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 202, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
+  __Pyx_GIVEREF(__pyx_t_3);
+  PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_3);
+  __pyx_t_1 = 0;
+  __pyx_t_3 = 0;
+
+  /* "pyearth/_record.pyx":201
+ * 
+ *     def final_str(ForwardPassRecord self):
+ *         return 'Stopping Condition %d: %s' % (             # <<<<<<<<<<<<<<
+ *             self.stopping_condition,
+ *             stopping_conditions[self.stopping_condition])
+ */
+  __pyx_t_3 = __Pyx_PyString_Format(__pyx_kp_s_Stopping_Condition_d_s, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 201, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_r = __pyx_t_3;
+  __pyx_t_3 = 0;
+  goto __pyx_L0;
+
+  /* "pyearth/_record.pyx":200
+ *         return result
+ * 
+ *     def final_str(ForwardPassRecord self):             # <<<<<<<<<<<<<<
+ *         return 'Stopping Condition %d: %s' % (
+ *             self.stopping_condition,
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_AddTraceback("pyearth._record.ForwardPassRecord.final_str", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
@@ -6543,7 +6782,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_17ForwardPassRecord_18stopping_condi
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":185
+/* "pyearth/_record.pyx":207
  * cdef class Iteration:
  * 
  *     def __richcmp__(self, other, method):             # <<<<<<<<<<<<<<
@@ -6558,7 +6797,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_9Iteration_1__richcmp__(PyObject *__
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__richcmp__ (wrapper)", 0);
-  __pyx_v_method = __Pyx_PyInt_From_int(__pyx_arg_method); if (unlikely(!__pyx_v_method)) __PYX_ERR(0, 185, __pyx_L3_error)
+  __pyx_v_method = __Pyx_PyInt_From_int(__pyx_arg_method); if (unlikely(!__pyx_v_method)) __PYX_ERR(0, 207, __pyx_L3_error)
   __Pyx_GOTREF(__pyx_v_method);
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -6584,20 +6823,20 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration___richcmp__(PyObject *__p
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("__richcmp__", 0);
 
-  /* "pyearth/_record.pyx":186
+  /* "pyearth/_record.pyx":208
  * 
  *     def __richcmp__(self, other, method):
  *         if method == 2:             # <<<<<<<<<<<<<<
  *             return self._eq(other)
  *         elif method == 3:
  */
-  __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_v_method, __pyx_int_2, 2, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 186, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_v_method, __pyx_int_2, 2, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 208, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 186, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 208, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_2) {
 
-    /* "pyearth/_record.pyx":187
+    /* "pyearth/_record.pyx":209
  *     def __richcmp__(self, other, method):
  *         if method == 2:
  *             return self._eq(other)             # <<<<<<<<<<<<<<
@@ -6605,7 +6844,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration___richcmp__(PyObject *__p
  *             return not self._eq(other)
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_eq); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 187, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_eq); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 209, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_4 = NULL;
     if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_3))) {
@@ -6618,16 +6857,16 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration___richcmp__(PyObject *__p
       }
     }
     if (!__pyx_t_4) {
-      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_other); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 187, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_other); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 209, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
     } else {
-      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 187, __pyx_L1_error)
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 209, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
       __Pyx_INCREF(__pyx_v_other);
       __Pyx_GIVEREF(__pyx_v_other);
       PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_v_other);
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 187, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 209, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
@@ -6636,7 +6875,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration___richcmp__(PyObject *__p
     __pyx_t_1 = 0;
     goto __pyx_L0;
 
-    /* "pyearth/_record.pyx":186
+    /* "pyearth/_record.pyx":208
  * 
  *     def __richcmp__(self, other, method):
  *         if method == 2:             # <<<<<<<<<<<<<<
@@ -6645,20 +6884,20 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration___richcmp__(PyObject *__p
  */
   }
 
-  /* "pyearth/_record.pyx":188
+  /* "pyearth/_record.pyx":210
  *         if method == 2:
  *             return self._eq(other)
  *         elif method == 3:             # <<<<<<<<<<<<<<
  *             return not self._eq(other)
  *         else:
  */
-  __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_v_method, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 188, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_v_method, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 210, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 188, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 210, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_2) {
 
-    /* "pyearth/_record.pyx":189
+    /* "pyearth/_record.pyx":211
  *             return self._eq(other)
  *         elif method == 3:
  *             return not self._eq(other)             # <<<<<<<<<<<<<<
@@ -6666,7 +6905,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration___richcmp__(PyObject *__p
  *             return NotImplemented
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_eq); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 189, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_eq); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 211, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_5 = NULL;
     if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_3))) {
@@ -6679,29 +6918,29 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration___richcmp__(PyObject *__p
       }
     }
     if (!__pyx_t_5) {
-      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_other); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_other); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 211, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
     } else {
-      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 189, __pyx_L1_error)
+      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 211, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_5); __pyx_t_5 = NULL;
       __Pyx_INCREF(__pyx_v_other);
       __Pyx_GIVEREF(__pyx_v_other);
       PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_v_other);
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 211, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 189, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 211, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyBool_FromLong((!__pyx_t_2)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyBool_FromLong((!__pyx_t_2)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 211, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_r = __pyx_t_1;
     __pyx_t_1 = 0;
     goto __pyx_L0;
 
-    /* "pyearth/_record.pyx":188
+    /* "pyearth/_record.pyx":210
  *         if method == 2:
  *             return self._eq(other)
  *         elif method == 3:             # <<<<<<<<<<<<<<
@@ -6710,7 +6949,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration___richcmp__(PyObject *__p
  */
   }
 
-  /* "pyearth/_record.pyx":191
+  /* "pyearth/_record.pyx":213
  *             return not self._eq(other)
  *         else:
  *             return NotImplemented             # <<<<<<<<<<<<<<
@@ -6724,7 +6963,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration___richcmp__(PyObject *__p
     goto __pyx_L0;
   }
 
-  /* "pyearth/_record.pyx":185
+  /* "pyearth/_record.pyx":207
  * cdef class Iteration:
  * 
  *     def __richcmp__(self, other, method):             # <<<<<<<<<<<<<<
@@ -6746,7 +6985,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration___richcmp__(PyObject *__p
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":193
+/* "pyearth/_record.pyx":215
  *             return NotImplemented
  * 
  *     def _eq(self, other):             # <<<<<<<<<<<<<<
@@ -6778,7 +7017,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration_2_eq(struct __pyx_obj_7py
   PyObject *__pyx_t_6 = NULL;
   __Pyx_RefNannySetupContext("_eq", 0);
 
-  /* "pyearth/_record.pyx":194
+  /* "pyearth/_record.pyx":216
  * 
  *     def _eq(self, other):
  *         return (self.__class__ is other.__class__ and             # <<<<<<<<<<<<<<
@@ -6786,30 +7025,30 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration_2_eq(struct __pyx_obj_7py
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_class); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 194, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_class); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 216, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_other, __pyx_n_s_class); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 194, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_other, __pyx_n_s_class); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 216, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = (__pyx_t_2 == __pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   if (__pyx_t_4) {
   } else {
-    __pyx_t_3 = __Pyx_PyBool_FromLong(__pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 194, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyBool_FromLong(__pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 216, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_1 = __pyx_t_3;
     __pyx_t_3 = 0;
     goto __pyx_L3_bool_binop_done;
   }
 
-  /* "pyearth/_record.pyx":195
+  /* "pyearth/_record.pyx":217
  *     def _eq(self, other):
  *         return (self.__class__ is other.__class__ and
  *                 self._getstate() == other._getstate())             # <<<<<<<<<<<<<<
  * 
  *     cpdef FLOAT_t get_mse(Iteration self):
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getstate); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 195, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getstate); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 217, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_5 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
@@ -6822,14 +7061,14 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration_2_eq(struct __pyx_obj_7py
     }
   }
   if (__pyx_t_5) {
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 195, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 217, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   } else {
-    __pyx_t_3 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 195, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 217, __pyx_L1_error)
   }
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_other, __pyx_n_s_getstate); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 195, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_other, __pyx_n_s_getstate); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 217, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_6 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_5))) {
@@ -6842,14 +7081,14 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration_2_eq(struct __pyx_obj_7py
     }
   }
   if (__pyx_t_6) {
-    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 195, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 217, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   } else {
-    __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 195, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 217, __pyx_L1_error)
   }
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = PyObject_RichCompare(__pyx_t_3, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 195, __pyx_L1_error)
+  __pyx_t_5 = PyObject_RichCompare(__pyx_t_3, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 217, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_INCREF(__pyx_t_5);
@@ -6860,7 +7099,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration_2_eq(struct __pyx_obj_7py
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":193
+  /* "pyearth/_record.pyx":215
  *             return NotImplemented
  * 
  *     def _eq(self, other):             # <<<<<<<<<<<<<<
@@ -6883,7 +7122,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration_2_eq(struct __pyx_obj_7py
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":197
+/* "pyearth/_record.pyx":219
  *                 self._getstate() == other._getstate())
  * 
  *     cpdef FLOAT_t get_mse(Iteration self):             # <<<<<<<<<<<<<<
@@ -6905,7 +7144,7 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_9Iteration_get
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_mse); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 197, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_mse); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 219, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_7_record_9Iteration_5get_mse)) {
       __Pyx_INCREF(__pyx_t_1);
@@ -6920,14 +7159,14 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_9Iteration_get
         }
       }
       if (__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 197, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 219, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 197, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 219, __pyx_L1_error)
       }
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_5 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_5 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 197, __pyx_L1_error)
+      __pyx_t_5 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_5 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 219, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_5;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -6936,7 +7175,7 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_9Iteration_get
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_record.pyx":198
+  /* "pyearth/_record.pyx":220
  * 
  *     cpdef FLOAT_t get_mse(Iteration self):
  *         return self.mse             # <<<<<<<<<<<<<<
@@ -6946,7 +7185,7 @@ static __pyx_t_7pyearth_6_types_FLOAT_t __pyx_f_7pyearth_7_record_9Iteration_get
   __pyx_r = __pyx_v_self->mse;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":197
+  /* "pyearth/_record.pyx":219
  *                 self._getstate() == other._getstate())
  * 
  *     cpdef FLOAT_t get_mse(Iteration self):             # <<<<<<<<<<<<<<
@@ -6986,7 +7225,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration_4get_mse(struct __pyx_obj
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_mse", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7pyearth_7_record_9Iteration_get_mse(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 197, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7pyearth_7_record_9Iteration_get_mse(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 219, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -7003,7 +7242,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration_4get_mse(struct __pyx_obj
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":200
+/* "pyearth/_record.pyx":222
  *         return self.mse
  * 
  *     cpdef INDEX_t get_size(Iteration self):             # <<<<<<<<<<<<<<
@@ -7025,7 +7264,7 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_7_record_9Iteration_get
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 200, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 222, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_7_record_9Iteration_7get_size)) {
       __Pyx_INCREF(__pyx_t_1);
@@ -7040,14 +7279,14 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_7_record_9Iteration_get
         }
       }
       if (__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 200, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 222, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 200, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 222, __pyx_L1_error)
       }
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_2); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 200, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_2); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 222, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_5;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7056,7 +7295,7 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_7_record_9Iteration_get
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_record.pyx":201
+  /* "pyearth/_record.pyx":223
  * 
  *     cpdef INDEX_t get_size(Iteration self):
  *         return self.size             # <<<<<<<<<<<<<<
@@ -7066,7 +7305,7 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_7_record_9Iteration_get
   __pyx_r = __pyx_v_self->size;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":200
+  /* "pyearth/_record.pyx":222
  *         return self.mse
  * 
  *     cpdef INDEX_t get_size(Iteration self):             # <<<<<<<<<<<<<<
@@ -7106,7 +7345,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration_6get_size(struct __pyx_ob
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_size", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_f_7pyearth_7_record_9Iteration_get_size(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 200, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_f_7pyearth_7_record_9Iteration_get_size(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 222, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -7123,7 +7362,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_9Iteration_6get_size(struct __pyx_ob
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":204
+/* "pyearth/_record.pyx":226
  * 
  * cdef class PruningPassIteration(Iteration):
  *     def __init__(PruningPassIteration self,             # <<<<<<<<<<<<<<
@@ -7161,16 +7400,16 @@ static int __pyx_pw_7pyearth_7_record_20PruningPassIteration_1__init__(PyObject 
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_size)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 3, 3, 1); __PYX_ERR(0, 204, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 3, 3, 1); __PYX_ERR(0, 226, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_mse)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 3, 3, 2); __PYX_ERR(0, 204, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 3, 3, 2); __PYX_ERR(0, 226, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 204, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 226, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -7179,13 +7418,13 @@ static int __pyx_pw_7pyearth_7_record_20PruningPassIteration_1__init__(PyObject 
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
     }
-    __pyx_v_pruned = __Pyx_PyInt_As_npy_ulonglong(values[0]); if (unlikely((__pyx_v_pruned == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 205, __pyx_L3_error)
-    __pyx_v_size = __Pyx_PyInt_As_npy_ulonglong(values[1]); if (unlikely((__pyx_v_size == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 205, __pyx_L3_error)
-    __pyx_v_mse = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_mse == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 206, __pyx_L3_error)
+    __pyx_v_pruned = __Pyx_PyInt_As_npy_ulonglong(values[0]); if (unlikely((__pyx_v_pruned == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 227, __pyx_L3_error)
+    __pyx_v_size = __Pyx_PyInt_As_npy_ulonglong(values[1]); if (unlikely((__pyx_v_size == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 227, __pyx_L3_error)
+    __pyx_v_mse = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_mse == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 228, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 204, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 226, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._record.PruningPassIteration.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -7203,7 +7442,7 @@ static int __pyx_pf_7pyearth_7_record_20PruningPassIteration___init__(struct __p
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "pyearth/_record.pyx":207
+  /* "pyearth/_record.pyx":229
  *                  INDEX_t pruned, INDEX_t size,
  *                  FLOAT_t mse):
  *         self.pruned = pruned             # <<<<<<<<<<<<<<
@@ -7212,7 +7451,7 @@ static int __pyx_pf_7pyearth_7_record_20PruningPassIteration___init__(struct __p
  */
   __pyx_v_self->pruned = __pyx_v_pruned;
 
-  /* "pyearth/_record.pyx":208
+  /* "pyearth/_record.pyx":230
  *                  FLOAT_t mse):
  *         self.pruned = pruned
  *         self.size = size             # <<<<<<<<<<<<<<
@@ -7221,7 +7460,7 @@ static int __pyx_pf_7pyearth_7_record_20PruningPassIteration___init__(struct __p
  */
   __pyx_v_self->__pyx_base.size = __pyx_v_size;
 
-  /* "pyearth/_record.pyx":209
+  /* "pyearth/_record.pyx":231
  *         self.pruned = pruned
  *         self.size = size
  *         self.mse = mse             # <<<<<<<<<<<<<<
@@ -7230,7 +7469,7 @@ static int __pyx_pf_7pyearth_7_record_20PruningPassIteration___init__(struct __p
  */
   __pyx_v_self->__pyx_base.mse = __pyx_v_mse;
 
-  /* "pyearth/_record.pyx":204
+  /* "pyearth/_record.pyx":226
  * 
  * cdef class PruningPassIteration(Iteration):
  *     def __init__(PruningPassIteration self,             # <<<<<<<<<<<<<<
@@ -7244,7 +7483,7 @@ static int __pyx_pf_7pyearth_7_record_20PruningPassIteration___init__(struct __p
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":211
+/* "pyearth/_record.pyx":233
  *         self.mse = mse
  * 
  *     def __reduce__(PruningPassIteration self):             # <<<<<<<<<<<<<<
@@ -7273,7 +7512,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_2__reduce__(s
   PyObject *__pyx_t_3 = NULL;
   __Pyx_RefNannySetupContext("__reduce__", 0);
 
-  /* "pyearth/_record.pyx":212
+  /* "pyearth/_record.pyx":234
  * 
  *     def __reduce__(PruningPassIteration self):
  *         return (PruningPassIteration, (1, 1, 1.0), self._getstate())             # <<<<<<<<<<<<<<
@@ -7281,7 +7520,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_2__reduce__(s
  *     def _getstate(PruningPassIteration self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getstate); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 212, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getstate); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 234, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
@@ -7294,14 +7533,14 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_2__reduce__(s
     }
   }
   if (__pyx_t_3) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 212, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 234, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   } else {
-    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 212, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 234, __pyx_L1_error)
   }
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyTuple_New(3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 212, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 234, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_INCREF(((PyObject *)__pyx_ptype_7pyearth_7_record_PruningPassIteration));
   __Pyx_GIVEREF(((PyObject *)__pyx_ptype_7pyearth_7_record_PruningPassIteration));
@@ -7316,7 +7555,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_2__reduce__(s
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":211
+  /* "pyearth/_record.pyx":233
  *         self.mse = mse
  * 
  *     def __reduce__(PruningPassIteration self):             # <<<<<<<<<<<<<<
@@ -7337,7 +7576,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_2__reduce__(s
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":214
+/* "pyearth/_record.pyx":236
  *         return (PruningPassIteration, (1, 1, 1.0), self._getstate())
  * 
  *     def _getstate(PruningPassIteration self):             # <<<<<<<<<<<<<<
@@ -7365,7 +7604,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_4_getstate(st
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("_getstate", 0);
 
-  /* "pyearth/_record.pyx":215
+  /* "pyearth/_record.pyx":237
  * 
  *     def _getstate(PruningPassIteration self):
  *         return {'pruned': self.pruned,             # <<<<<<<<<<<<<<
@@ -7373,41 +7612,41 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_4_getstate(st
  *                 'mse': self.mse}
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 215, __pyx_L1_error)
+  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 237, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->pruned); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 215, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->pruned); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 237, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_pruned, __pyx_t_2) < 0) __PYX_ERR(0, 215, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_pruned, __pyx_t_2) < 0) __PYX_ERR(0, 237, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":216
+  /* "pyearth/_record.pyx":238
  *     def _getstate(PruningPassIteration self):
  *         return {'pruned': self.pruned,
  *                 'size': self.size,             # <<<<<<<<<<<<<<
  *                 'mse': self.mse}
  * 
  */
-  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->__pyx_base.size); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 216, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->__pyx_base.size); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 238, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_size, __pyx_t_2) < 0) __PYX_ERR(0, 215, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_size, __pyx_t_2) < 0) __PYX_ERR(0, 237, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":217
+  /* "pyearth/_record.pyx":239
  *         return {'pruned': self.pruned,
  *                 'size': self.size,
  *                 'mse': self.mse}             # <<<<<<<<<<<<<<
  * 
  *     def __setstate__(PruningPassIteration self, dict state):
  */
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.mse); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 217, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.mse); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 239, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_mse, __pyx_t_2) < 0) __PYX_ERR(0, 215, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_mse, __pyx_t_2) < 0) __PYX_ERR(0, 237, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":214
+  /* "pyearth/_record.pyx":236
  *         return (PruningPassIteration, (1, 1, 1.0), self._getstate())
  * 
  *     def _getstate(PruningPassIteration self):             # <<<<<<<<<<<<<<
@@ -7427,7 +7666,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_4_getstate(st
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":219
+/* "pyearth/_record.pyx":241
  *                 'mse': self.mse}
  * 
  *     def __setstate__(PruningPassIteration self, dict state):             # <<<<<<<<<<<<<<
@@ -7441,7 +7680,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_20PruningPassIteration_7__setstate__
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__setstate__ (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_state), (&PyDict_Type), 1, "state", 1))) __PYX_ERR(0, 219, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_state), (&PyDict_Type), 1, "state", 1))) __PYX_ERR(0, 241, __pyx_L1_error)
   __pyx_r = __pyx_pf_7pyearth_7_record_20PruningPassIteration_6__setstate__(((struct __pyx_obj_7pyearth_7_record_PruningPassIteration *)__pyx_v_self), ((PyObject*)__pyx_v_state));
 
   /* function exit code */
@@ -7461,7 +7700,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_6__setstate__
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_3;
   __Pyx_RefNannySetupContext("__setstate__", 0);
 
-  /* "pyearth/_record.pyx":220
+  /* "pyearth/_record.pyx":242
  * 
  *     def __setstate__(PruningPassIteration self, dict state):
  *         self.pruned = state['pruned']             # <<<<<<<<<<<<<<
@@ -7470,15 +7709,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_6__setstate__
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 220, __pyx_L1_error)
+    __PYX_ERR(0, 242, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_pruned); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 220, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_pruned); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 242, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_2 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 220, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_2 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 242, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->pruned = __pyx_t_2;
 
-  /* "pyearth/_record.pyx":221
+  /* "pyearth/_record.pyx":243
  *     def __setstate__(PruningPassIteration self, dict state):
  *         self.pruned = state['pruned']
  *         self.size = state['size']             # <<<<<<<<<<<<<<
@@ -7487,15 +7726,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_6__setstate__
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 221, __pyx_L1_error)
+    __PYX_ERR(0, 243, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 221, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 243, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_2 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 221, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_2 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 243, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->__pyx_base.size = __pyx_t_2;
 
-  /* "pyearth/_record.pyx":222
+  /* "pyearth/_record.pyx":244
  *         self.pruned = state['pruned']
  *         self.size = state['size']
  *         self.mse = state['mse']             # <<<<<<<<<<<<<<
@@ -7504,15 +7743,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_6__setstate__
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 222, __pyx_L1_error)
+    __PYX_ERR(0, 244, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_mse); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 222, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_mse); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 244, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 222, __pyx_L1_error)
+  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 244, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->__pyx_base.mse = __pyx_t_3;
 
-  /* "pyearth/_record.pyx":219
+  /* "pyearth/_record.pyx":241
  *                 'mse': self.mse}
  * 
  *     def __setstate__(PruningPassIteration self, dict state):             # <<<<<<<<<<<<<<
@@ -7533,7 +7772,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_6__setstate__
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":224
+/* "pyearth/_record.pyx":246
  *         self.mse = state['mse']
  * 
  *     cpdef INDEX_t get_pruned(PruningPassIteration self):             # <<<<<<<<<<<<<<
@@ -7555,7 +7794,7 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_7_record_20PruningPassI
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_pruned); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 224, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_pruned); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 246, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_7_record_20PruningPassIteration_9get_pruned)) {
       __Pyx_INCREF(__pyx_t_1);
@@ -7570,14 +7809,14 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_7_record_20PruningPassI
         }
       }
       if (__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 224, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 246, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 224, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 246, __pyx_L1_error)
       }
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_2); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 224, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_2); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 246, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_5;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7586,7 +7825,7 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_7_record_20PruningPassI
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_record.pyx":225
+  /* "pyearth/_record.pyx":247
  * 
  *     cpdef INDEX_t get_pruned(PruningPassIteration self):
  *         return self.pruned             # <<<<<<<<<<<<<<
@@ -7596,7 +7835,7 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_7_record_20PruningPassI
   __pyx_r = __pyx_v_self->pruned;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":224
+  /* "pyearth/_record.pyx":246
  *         self.mse = state['mse']
  * 
  *     cpdef INDEX_t get_pruned(PruningPassIteration self):             # <<<<<<<<<<<<<<
@@ -7636,7 +7875,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_8get_pruned(s
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_pruned", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_f_7pyearth_7_record_20PruningPassIteration_get_pruned(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 224, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_f_7pyearth_7_record_20PruningPassIteration_get_pruned(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 246, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -7653,7 +7892,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_8get_pruned(s
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":227
+/* "pyearth/_record.pyx":249
  *         return self.pruned
  * 
  *     def __str__(PruningPassIteration self):             # <<<<<<<<<<<<<<
@@ -7686,56 +7925,56 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_10__str__(str
   PyObject *__pyx_t_6 = NULL;
   __Pyx_RefNannySetupContext("__str__", 0);
 
-  /* "pyearth/_record.pyx":228
+  /* "pyearth/_record.pyx":250
  * 
  *     def __str__(PruningPassIteration self):
  *         result = '%s\t%s\t%s' % (str(self.pruned), self.size, '%.2f' %             # <<<<<<<<<<<<<<
  *                                  self.mse if self.mse is not None else None)
  *         return result
  */
-  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->pruned); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 228, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->pruned); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 250, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 228, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 250, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
   __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)(&PyString_Type)), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 228, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)(&PyString_Type)), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 250, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->__pyx_base.size); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 228, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->__pyx_base.size); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 250, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
 
-  /* "pyearth/_record.pyx":229
+  /* "pyearth/_record.pyx":251
  *     def __str__(PruningPassIteration self):
  *         result = '%s\t%s\t%s' % (str(self.pruned), self.size, '%.2f' %
  *                                  self.mse if self.mse is not None else None)             # <<<<<<<<<<<<<<
  *         return result
  * 
  */
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.mse); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 229, __pyx_L1_error)
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.mse); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 251, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_5 = (__pyx_t_4 != Py_None);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   if ((__pyx_t_5 != 0)) {
-    __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.mse); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 229, __pyx_L1_error)
+    __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.mse); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 251, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
 
-    /* "pyearth/_record.pyx":228
+    /* "pyearth/_record.pyx":250
  * 
  *     def __str__(PruningPassIteration self):
  *         result = '%s\t%s\t%s' % (str(self.pruned), self.size, '%.2f' %             # <<<<<<<<<<<<<<
  *                                  self.mse if self.mse is not None else None)
  *         return result
  */
-    __pyx_t_6 = __Pyx_PyString_Format(__pyx_kp_s_2f, __pyx_t_4); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 228, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyString_Format(__pyx_kp_s_2f, __pyx_t_4); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 250, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_t_3 = __pyx_t_6;
     __pyx_t_6 = 0;
   } else {
 
-    /* "pyearth/_record.pyx":229
+    /* "pyearth/_record.pyx":251
  *     def __str__(PruningPassIteration self):
  *         result = '%s\t%s\t%s' % (str(self.pruned), self.size, '%.2f' %
  *                                  self.mse if self.mse is not None else None)             # <<<<<<<<<<<<<<
@@ -7746,14 +7985,14 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_10__str__(str
     __pyx_t_3 = Py_None;
   }
 
-  /* "pyearth/_record.pyx":228
+  /* "pyearth/_record.pyx":250
  * 
  *     def __str__(PruningPassIteration self):
  *         result = '%s\t%s\t%s' % (str(self.pruned), self.size, '%.2f' %             # <<<<<<<<<<<<<<
  *                                  self.mse if self.mse is not None else None)
  *         return result
  */
-  __pyx_t_6 = PyTuple_New(3); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 228, __pyx_L1_error)
+  __pyx_t_6 = PyTuple_New(3); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 250, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_1);
@@ -7764,13 +8003,13 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_10__str__(str
   __pyx_t_1 = 0;
   __pyx_t_2 = 0;
   __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s, __pyx_t_6); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 228, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s, __pyx_t_6); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 250, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __pyx_v_result = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "pyearth/_record.pyx":230
+  /* "pyearth/_record.pyx":252
  *         result = '%s\t%s\t%s' % (str(self.pruned), self.size, '%.2f' %
  *                                  self.mse if self.mse is not None else None)
  *         return result             # <<<<<<<<<<<<<<
@@ -7782,7 +8021,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_10__str__(str
   __pyx_r = __pyx_v_result;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":227
+  /* "pyearth/_record.pyx":249
  *         return self.pruned
  * 
  *     def __str__(PruningPassIteration self):             # <<<<<<<<<<<<<<
@@ -7806,7 +8045,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20PruningPassIteration_10__str__(str
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":233
+/* "pyearth/_record.pyx":255
  * 
  * cdef class FirstPruningPassIteration(PruningPassIteration):
  *     def __init__(PruningPassIteration self, INDEX_t size, FLOAT_t mse):             # <<<<<<<<<<<<<<
@@ -7842,11 +8081,11 @@ static int __pyx_pw_7pyearth_7_record_25FirstPruningPassIteration_1__init__(PyOb
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_mse)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, 1); __PYX_ERR(0, 233, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, 1); __PYX_ERR(0, 255, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 233, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 255, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -7854,12 +8093,12 @@ static int __pyx_pw_7pyearth_7_record_25FirstPruningPassIteration_1__init__(PyOb
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_size = __Pyx_PyInt_As_npy_ulonglong(values[0]); if (unlikely((__pyx_v_size == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 233, __pyx_L3_error)
-    __pyx_v_mse = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_mse == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 233, __pyx_L3_error)
+    __pyx_v_size = __Pyx_PyInt_As_npy_ulonglong(values[0]); if (unlikely((__pyx_v_size == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 255, __pyx_L3_error)
+    __pyx_v_mse = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_mse == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 255, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 233, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 255, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._record.FirstPruningPassIteration.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -7877,7 +8116,7 @@ static int __pyx_pf_7pyearth_7_record_25FirstPruningPassIteration___init__(struc
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "pyearth/_record.pyx":234
+  /* "pyearth/_record.pyx":256
  * cdef class FirstPruningPassIteration(PruningPassIteration):
  *     def __init__(PruningPassIteration self, INDEX_t size, FLOAT_t mse):
  *         self.size = size             # <<<<<<<<<<<<<<
@@ -7886,7 +8125,7 @@ static int __pyx_pf_7pyearth_7_record_25FirstPruningPassIteration___init__(struc
  */
   __pyx_v_self->__pyx_base.__pyx_base.size = __pyx_v_size;
 
-  /* "pyearth/_record.pyx":235
+  /* "pyearth/_record.pyx":257
  *     def __init__(PruningPassIteration self, INDEX_t size, FLOAT_t mse):
  *         self.size = size
  *         self.mse = mse             # <<<<<<<<<<<<<<
@@ -7895,7 +8134,7 @@ static int __pyx_pf_7pyearth_7_record_25FirstPruningPassIteration___init__(struc
  */
   __pyx_v_self->__pyx_base.__pyx_base.mse = __pyx_v_mse;
 
-  /* "pyearth/_record.pyx":233
+  /* "pyearth/_record.pyx":255
  * 
  * cdef class FirstPruningPassIteration(PruningPassIteration):
  *     def __init__(PruningPassIteration self, INDEX_t size, FLOAT_t mse):             # <<<<<<<<<<<<<<
@@ -7909,7 +8148,7 @@ static int __pyx_pf_7pyearth_7_record_25FirstPruningPassIteration___init__(struc
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":237
+/* "pyearth/_record.pyx":259
  *         self.mse = mse
  * 
  *     def __reduce__(FirstPruningPassIteration self):             # <<<<<<<<<<<<<<
@@ -7938,7 +8177,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstPruningPassIteration_2__reduc
   PyObject *__pyx_t_3 = NULL;
   __Pyx_RefNannySetupContext("__reduce__", 0);
 
-  /* "pyearth/_record.pyx":238
+  /* "pyearth/_record.pyx":260
  * 
  *     def __reduce__(FirstPruningPassIteration self):
  *         return (FirstPruningPassIteration, (1, 1.0), self._getstate())             # <<<<<<<<<<<<<<
@@ -7946,7 +8185,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstPruningPassIteration_2__reduc
  *     def _getstate(FirstPruningPassIteration self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getstate); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 238, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getstate); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 260, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
@@ -7959,14 +8198,14 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstPruningPassIteration_2__reduc
     }
   }
   if (__pyx_t_3) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 238, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 260, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   } else {
-    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 238, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 260, __pyx_L1_error)
   }
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyTuple_New(3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 238, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 260, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_INCREF(((PyObject *)__pyx_ptype_7pyearth_7_record_FirstPruningPassIteration));
   __Pyx_GIVEREF(((PyObject *)__pyx_ptype_7pyearth_7_record_FirstPruningPassIteration));
@@ -7981,7 +8220,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstPruningPassIteration_2__reduc
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":237
+  /* "pyearth/_record.pyx":259
  *         self.mse = mse
  * 
  *     def __reduce__(FirstPruningPassIteration self):             # <<<<<<<<<<<<<<
@@ -8002,7 +8241,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstPruningPassIteration_2__reduc
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":240
+/* "pyearth/_record.pyx":262
  *         return (FirstPruningPassIteration, (1, 1.0), self._getstate())
  * 
  *     def _getstate(FirstPruningPassIteration self):             # <<<<<<<<<<<<<<
@@ -8030,7 +8269,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstPruningPassIteration_4_getsta
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("_getstate", 0);
 
-  /* "pyearth/_record.pyx":241
+  /* "pyearth/_record.pyx":263
  * 
  *     def _getstate(FirstPruningPassIteration self):
  *         return {'size': self.size,             # <<<<<<<<<<<<<<
@@ -8038,29 +8277,29 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstPruningPassIteration_4_getsta
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 241, __pyx_L1_error)
+  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->__pyx_base.__pyx_base.size); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 241, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->__pyx_base.__pyx_base.size); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_size, __pyx_t_2) < 0) __PYX_ERR(0, 241, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_size, __pyx_t_2) < 0) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":242
+  /* "pyearth/_record.pyx":264
  *     def _getstate(FirstPruningPassIteration self):
  *         return {'size': self.size,
  *                 'mse': self.mse}             # <<<<<<<<<<<<<<
  * 
  *     def __setstate__(FirstPruningPassIteration self, dict state):
  */
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.__pyx_base.mse); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 242, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.__pyx_base.mse); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 264, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_mse, __pyx_t_2) < 0) __PYX_ERR(0, 241, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_mse, __pyx_t_2) < 0) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":240
+  /* "pyearth/_record.pyx":262
  *         return (FirstPruningPassIteration, (1, 1.0), self._getstate())
  * 
  *     def _getstate(FirstPruningPassIteration self):             # <<<<<<<<<<<<<<
@@ -8080,7 +8319,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstPruningPassIteration_4_getsta
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":244
+/* "pyearth/_record.pyx":266
  *                 'mse': self.mse}
  * 
  *     def __setstate__(FirstPruningPassIteration self, dict state):             # <<<<<<<<<<<<<<
@@ -8094,7 +8333,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_25FirstPruningPassIteration_7__setst
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__setstate__ (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_state), (&PyDict_Type), 1, "state", 1))) __PYX_ERR(0, 244, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_state), (&PyDict_Type), 1, "state", 1))) __PYX_ERR(0, 266, __pyx_L1_error)
   __pyx_r = __pyx_pf_7pyearth_7_record_25FirstPruningPassIteration_6__setstate__(((struct __pyx_obj_7pyearth_7_record_FirstPruningPassIteration *)__pyx_v_self), ((PyObject*)__pyx_v_state));
 
   /* function exit code */
@@ -8114,7 +8353,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstPruningPassIteration_6__setst
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_3;
   __Pyx_RefNannySetupContext("__setstate__", 0);
 
-  /* "pyearth/_record.pyx":245
+  /* "pyearth/_record.pyx":267
  * 
  *     def __setstate__(FirstPruningPassIteration self, dict state):
  *         self.size = state['size']             # <<<<<<<<<<<<<<
@@ -8123,15 +8362,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstPruningPassIteration_6__setst
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 245, __pyx_L1_error)
+    __PYX_ERR(0, 267, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 245, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 267, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_2 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 245, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_2 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 267, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->__pyx_base.__pyx_base.size = __pyx_t_2;
 
-  /* "pyearth/_record.pyx":246
+  /* "pyearth/_record.pyx":268
  *     def __setstate__(FirstPruningPassIteration self, dict state):
  *         self.size = state['size']
  *         self.mse = state['mse']             # <<<<<<<<<<<<<<
@@ -8140,15 +8379,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstPruningPassIteration_6__setst
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 246, __pyx_L1_error)
+    __PYX_ERR(0, 268, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_mse); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 246, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_mse); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 268, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 246, __pyx_L1_error)
+  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 268, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->__pyx_base.__pyx_base.mse = __pyx_t_3;
 
-  /* "pyearth/_record.pyx":244
+  /* "pyearth/_record.pyx":266
  *                 'mse': self.mse}
  * 
  *     def __setstate__(FirstPruningPassIteration self, dict state):             # <<<<<<<<<<<<<<
@@ -8169,7 +8408,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstPruningPassIteration_6__setst
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":248
+/* "pyearth/_record.pyx":270
  *         self.mse = state['mse']
  * 
  *     def __str__(PruningPassIteration self):             # <<<<<<<<<<<<<<
@@ -8201,46 +8440,46 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstPruningPassIteration_8__str__
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("__str__", 0);
 
-  /* "pyearth/_record.pyx":249
+  /* "pyearth/_record.pyx":271
  * 
  *     def __str__(PruningPassIteration self):
  *         result = '%s\t%s\t%s' % ('-', self.size, '%.2f' %             # <<<<<<<<<<<<<<
  *                                  self.mse if self.mse is not None else None)
  *         return result
  */
-  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->__pyx_base.__pyx_base.size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 249, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->__pyx_base.__pyx_base.size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 271, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
 
-  /* "pyearth/_record.pyx":250
+  /* "pyearth/_record.pyx":272
  *     def __str__(PruningPassIteration self):
  *         result = '%s\t%s\t%s' % ('-', self.size, '%.2f' %
  *                                  self.mse if self.mse is not None else None)             # <<<<<<<<<<<<<<
  *         return result
  * 
  */
-  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.__pyx_base.mse); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 250, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.__pyx_base.mse); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 272, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = (__pyx_t_3 != Py_None);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   if ((__pyx_t_4 != 0)) {
-    __pyx_t_3 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.__pyx_base.mse); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 250, __pyx_L1_error)
+    __pyx_t_3 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.__pyx_base.mse); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 272, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
 
-    /* "pyearth/_record.pyx":249
+    /* "pyearth/_record.pyx":271
  * 
  *     def __str__(PruningPassIteration self):
  *         result = '%s\t%s\t%s' % ('-', self.size, '%.2f' %             # <<<<<<<<<<<<<<
  *                                  self.mse if self.mse is not None else None)
  *         return result
  */
-    __pyx_t_5 = __Pyx_PyString_Format(__pyx_kp_s_2f, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 249, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyString_Format(__pyx_kp_s_2f, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 271, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_t_2 = __pyx_t_5;
     __pyx_t_5 = 0;
   } else {
 
-    /* "pyearth/_record.pyx":250
+    /* "pyearth/_record.pyx":272
  *     def __str__(PruningPassIteration self):
  *         result = '%s\t%s\t%s' % ('-', self.size, '%.2f' %
  *                                  self.mse if self.mse is not None else None)             # <<<<<<<<<<<<<<
@@ -8251,14 +8490,14 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstPruningPassIteration_8__str__
     __pyx_t_2 = Py_None;
   }
 
-  /* "pyearth/_record.pyx":249
+  /* "pyearth/_record.pyx":271
  * 
  *     def __str__(PruningPassIteration self):
  *         result = '%s\t%s\t%s' % ('-', self.size, '%.2f' %             # <<<<<<<<<<<<<<
  *                                  self.mse if self.mse is not None else None)
  *         return result
  */
-  __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 249, __pyx_L1_error)
+  __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 271, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_INCREF(__pyx_kp_s__14);
   __Pyx_GIVEREF(__pyx_kp_s__14);
@@ -8269,13 +8508,13 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstPruningPassIteration_8__str__
   PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_2);
   __pyx_t_1 = 0;
   __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 249, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 271, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_v_result = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":251
+  /* "pyearth/_record.pyx":273
  *         result = '%s\t%s\t%s' % ('-', self.size, '%.2f' %
  *                                  self.mse if self.mse is not None else None)
  *         return result             # <<<<<<<<<<<<<<
@@ -8287,7 +8526,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstPruningPassIteration_8__str__
   __pyx_r = __pyx_v_result;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":248
+  /* "pyearth/_record.pyx":270
  *         self.mse = state['mse']
  * 
  *     def __str__(PruningPassIteration self):             # <<<<<<<<<<<<<<
@@ -8310,7 +8549,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstPruningPassIteration_8__str__
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":254
+/* "pyearth/_record.pyx":276
  * 
  * cdef class ForwardPassIteration(Iteration):
  *     def __init__(ForwardPassIteration self,             # <<<<<<<<<<<<<<
@@ -8352,26 +8591,26 @@ static int __pyx_pw_7pyearth_7_record_20ForwardPassIteration_1__init__(PyObject 
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_variable)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 1); __PYX_ERR(0, 254, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 1); __PYX_ERR(0, 276, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_knot)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 2); __PYX_ERR(0, 254, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 2); __PYX_ERR(0, 276, __pyx_L3_error)
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_mse)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 3); __PYX_ERR(0, 254, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 3); __PYX_ERR(0, 276, __pyx_L3_error)
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_size)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 4); __PYX_ERR(0, 254, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 4); __PYX_ERR(0, 276, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 254, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 276, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 5) {
       goto __pyx_L5_argtuple_error;
@@ -8382,15 +8621,15 @@ static int __pyx_pw_7pyearth_7_record_20ForwardPassIteration_1__init__(PyObject 
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
       values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
     }
-    __pyx_v_parent = __Pyx_PyInt_As_npy_ulonglong(values[0]); if (unlikely((__pyx_v_parent == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 255, __pyx_L3_error)
-    __pyx_v_variable = __Pyx_PyInt_As_npy_ulonglong(values[1]); if (unlikely((__pyx_v_variable == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 255, __pyx_L3_error)
-    __pyx_v_knot = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_knot == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 256, __pyx_L3_error)
-    __pyx_v_mse = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_mse == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 256, __pyx_L3_error)
-    __pyx_v_size = __Pyx_PyInt_As_npy_ulonglong(values[4]); if (unlikely((__pyx_v_size == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 257, __pyx_L3_error)
+    __pyx_v_parent = __Pyx_PyInt_As_npy_ulonglong(values[0]); if (unlikely((__pyx_v_parent == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 277, __pyx_L3_error)
+    __pyx_v_variable = __Pyx_PyInt_As_npy_ulonglong(values[1]); if (unlikely((__pyx_v_variable == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 277, __pyx_L3_error)
+    __pyx_v_knot = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_knot == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 278, __pyx_L3_error)
+    __pyx_v_mse = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_mse == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 278, __pyx_L3_error)
+    __pyx_v_size = __Pyx_PyInt_As_npy_ulonglong(values[4]); if (unlikely((__pyx_v_size == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 279, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 254, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 276, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._record.ForwardPassIteration.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -8408,7 +8647,7 @@ static int __pyx_pf_7pyearth_7_record_20ForwardPassIteration___init__(struct __p
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "pyearth/_record.pyx":258
+  /* "pyearth/_record.pyx":280
  *                  int knot, FLOAT_t mse,
  *                  INDEX_t size):
  *         self.parent = parent             # <<<<<<<<<<<<<<
@@ -8417,7 +8656,7 @@ static int __pyx_pf_7pyearth_7_record_20ForwardPassIteration___init__(struct __p
  */
   __pyx_v_self->parent = __pyx_v_parent;
 
-  /* "pyearth/_record.pyx":259
+  /* "pyearth/_record.pyx":281
  *                  INDEX_t size):
  *         self.parent = parent
  *         self.variable = variable             # <<<<<<<<<<<<<<
@@ -8426,7 +8665,7 @@ static int __pyx_pf_7pyearth_7_record_20ForwardPassIteration___init__(struct __p
  */
   __pyx_v_self->variable = __pyx_v_variable;
 
-  /* "pyearth/_record.pyx":260
+  /* "pyearth/_record.pyx":282
  *         self.parent = parent
  *         self.variable = variable
  *         self.knot = knot             # <<<<<<<<<<<<<<
@@ -8435,7 +8674,7 @@ static int __pyx_pf_7pyearth_7_record_20ForwardPassIteration___init__(struct __p
  */
   __pyx_v_self->knot = __pyx_v_knot;
 
-  /* "pyearth/_record.pyx":261
+  /* "pyearth/_record.pyx":283
  *         self.variable = variable
  *         self.knot = knot
  *         self.mse = mse             # <<<<<<<<<<<<<<
@@ -8444,7 +8683,7 @@ static int __pyx_pf_7pyearth_7_record_20ForwardPassIteration___init__(struct __p
  */
   __pyx_v_self->__pyx_base.mse = __pyx_v_mse;
 
-  /* "pyearth/_record.pyx":262
+  /* "pyearth/_record.pyx":284
  *         self.knot = knot
  *         self.mse = mse
  *         self.size = size             # <<<<<<<<<<<<<<
@@ -8453,7 +8692,7 @@ static int __pyx_pf_7pyearth_7_record_20ForwardPassIteration___init__(struct __p
  */
   __pyx_v_self->__pyx_base.size = __pyx_v_size;
 
-  /* "pyearth/_record.pyx":254
+  /* "pyearth/_record.pyx":276
  * 
  * cdef class ForwardPassIteration(Iteration):
  *     def __init__(ForwardPassIteration self,             # <<<<<<<<<<<<<<
@@ -8467,7 +8706,7 @@ static int __pyx_pf_7pyearth_7_record_20ForwardPassIteration___init__(struct __p
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":264
+/* "pyearth/_record.pyx":286
  *         self.size = size
  * 
  *     def __reduce__(ForwardPassIteration self):             # <<<<<<<<<<<<<<
@@ -8496,7 +8735,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_2__reduce__(s
   PyObject *__pyx_t_3 = NULL;
   __Pyx_RefNannySetupContext("__reduce__", 0);
 
-  /* "pyearth/_record.pyx":265
+  /* "pyearth/_record.pyx":287
  * 
  *     def __reduce__(ForwardPassIteration self):
  *         return (ForwardPassIteration, (1, 1, 1, 1.0, 1), self._getstate())             # <<<<<<<<<<<<<<
@@ -8504,7 +8743,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_2__reduce__(s
  *     def _getstate(ForwardPassIteration self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getstate); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 265, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getstate); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 287, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
@@ -8517,14 +8756,14 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_2__reduce__(s
     }
   }
   if (__pyx_t_3) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 265, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 287, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   } else {
-    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 265, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 287, __pyx_L1_error)
   }
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyTuple_New(3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 265, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 287, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_INCREF(((PyObject *)__pyx_ptype_7pyearth_7_record_ForwardPassIteration));
   __Pyx_GIVEREF(((PyObject *)__pyx_ptype_7pyearth_7_record_ForwardPassIteration));
@@ -8539,7 +8778,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_2__reduce__(s
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":264
+  /* "pyearth/_record.pyx":286
  *         self.size = size
  * 
  *     def __reduce__(ForwardPassIteration self):             # <<<<<<<<<<<<<<
@@ -8560,7 +8799,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_2__reduce__(s
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":267
+/* "pyearth/_record.pyx":289
  *         return (ForwardPassIteration, (1, 1, 1, 1.0, 1), self._getstate())
  * 
  *     def _getstate(ForwardPassIteration self):             # <<<<<<<<<<<<<<
@@ -8588,7 +8827,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_4_getstate(st
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("_getstate", 0);
 
-  /* "pyearth/_record.pyx":268
+  /* "pyearth/_record.pyx":290
  * 
  *     def _getstate(ForwardPassIteration self):
  *         return {'parent': self.parent,             # <<<<<<<<<<<<<<
@@ -8596,65 +8835,65 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_4_getstate(st
  *                 'knot': self.knot,
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 268, __pyx_L1_error)
+  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 290, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->parent); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 268, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->parent); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 290, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_parent, __pyx_t_2) < 0) __PYX_ERR(0, 268, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_parent, __pyx_t_2) < 0) __PYX_ERR(0, 290, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":269
+  /* "pyearth/_record.pyx":291
  *     def _getstate(ForwardPassIteration self):
  *         return {'parent': self.parent,
  *                 'variable': self.variable,             # <<<<<<<<<<<<<<
  *                 'knot': self.knot,
  *                 'mse': self.mse,
  */
-  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->variable); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 269, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->variable); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 291, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_variable, __pyx_t_2) < 0) __PYX_ERR(0, 268, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_variable, __pyx_t_2) < 0) __PYX_ERR(0, 290, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":270
+  /* "pyearth/_record.pyx":292
  *         return {'parent': self.parent,
  *                 'variable': self.variable,
  *                 'knot': self.knot,             # <<<<<<<<<<<<<<
  *                 'mse': self.mse,
  *                 'size': self.size}
  */
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->knot); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 270, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->knot); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 292, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_knot, __pyx_t_2) < 0) __PYX_ERR(0, 268, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_knot, __pyx_t_2) < 0) __PYX_ERR(0, 290, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":271
+  /* "pyearth/_record.pyx":293
  *                 'variable': self.variable,
  *                 'knot': self.knot,
  *                 'mse': self.mse,             # <<<<<<<<<<<<<<
  *                 'size': self.size}
  * 
  */
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.mse); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 271, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.mse); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 293, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_mse, __pyx_t_2) < 0) __PYX_ERR(0, 268, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_mse, __pyx_t_2) < 0) __PYX_ERR(0, 290, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "pyearth/_record.pyx":272
+  /* "pyearth/_record.pyx":294
  *                 'knot': self.knot,
  *                 'mse': self.mse,
  *                 'size': self.size}             # <<<<<<<<<<<<<<
  * 
  *     def __setstate__(ForwardPassIteration self, dict state):
  */
-  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->__pyx_base.size); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 272, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->__pyx_base.size); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 294, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_size, __pyx_t_2) < 0) __PYX_ERR(0, 268, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_size, __pyx_t_2) < 0) __PYX_ERR(0, 290, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":267
+  /* "pyearth/_record.pyx":289
  *         return (ForwardPassIteration, (1, 1, 1, 1.0, 1), self._getstate())
  * 
  *     def _getstate(ForwardPassIteration self):             # <<<<<<<<<<<<<<
@@ -8674,7 +8913,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_4_getstate(st
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":274
+/* "pyearth/_record.pyx":296
  *                 'size': self.size}
  * 
  *     def __setstate__(ForwardPassIteration self, dict state):             # <<<<<<<<<<<<<<
@@ -8688,7 +8927,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_20ForwardPassIteration_7__setstate__
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__setstate__ (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_state), (&PyDict_Type), 1, "state", 1))) __PYX_ERR(0, 274, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_state), (&PyDict_Type), 1, "state", 1))) __PYX_ERR(0, 296, __pyx_L1_error)
   __pyx_r = __pyx_pf_7pyearth_7_record_20ForwardPassIteration_6__setstate__(((struct __pyx_obj_7pyearth_7_record_ForwardPassIteration *)__pyx_v_self), ((PyObject*)__pyx_v_state));
 
   /* function exit code */
@@ -8708,7 +8947,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_6__setstate__
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_3;
   __Pyx_RefNannySetupContext("__setstate__", 0);
 
-  /* "pyearth/_record.pyx":275
+  /* "pyearth/_record.pyx":297
  * 
  *     def __setstate__(ForwardPassIteration self, dict state):
  *         self.parent = state['parent']             # <<<<<<<<<<<<<<
@@ -8717,15 +8956,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_6__setstate__
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 275, __pyx_L1_error)
+    __PYX_ERR(0, 297, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_parent); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 275, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_parent); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 297, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_2 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 275, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_2 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 297, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->parent = __pyx_t_2;
 
-  /* "pyearth/_record.pyx":276
+  /* "pyearth/_record.pyx":298
  *     def __setstate__(ForwardPassIteration self, dict state):
  *         self.parent = state['parent']
  *         self.variable = state['variable']             # <<<<<<<<<<<<<<
@@ -8734,15 +8973,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_6__setstate__
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 276, __pyx_L1_error)
+    __PYX_ERR(0, 298, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_variable); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 276, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_variable); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 298, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_2 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 276, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_2 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 298, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->variable = __pyx_t_2;
 
-  /* "pyearth/_record.pyx":277
+  /* "pyearth/_record.pyx":299
  *         self.parent = state['parent']
  *         self.variable = state['variable']
  *         self.knot = state['knot']             # <<<<<<<<<<<<<<
@@ -8751,15 +8990,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_6__setstate__
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 277, __pyx_L1_error)
+    __PYX_ERR(0, 299, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_knot); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 277, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_knot); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 299, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 277, __pyx_L1_error)
+  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 299, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->knot = __pyx_t_3;
 
-  /* "pyearth/_record.pyx":278
+  /* "pyearth/_record.pyx":300
  *         self.variable = state['variable']
  *         self.knot = state['knot']
  *         self.mse = state['mse']             # <<<<<<<<<<<<<<
@@ -8768,15 +9007,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_6__setstate__
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 278, __pyx_L1_error)
+    __PYX_ERR(0, 300, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_mse); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 278, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_mse); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 300, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 278, __pyx_L1_error)
+  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 300, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->__pyx_base.mse = __pyx_t_3;
 
-  /* "pyearth/_record.pyx":279
+  /* "pyearth/_record.pyx":301
  *         self.knot = state['knot']
  *         self.mse = state['mse']
  *         self.size = state['size']             # <<<<<<<<<<<<<<
@@ -8785,15 +9024,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_6__setstate__
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 279, __pyx_L1_error)
+    __PYX_ERR(0, 301, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 279, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 301, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_2 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 279, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_1); if (unlikely((__pyx_t_2 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 301, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->__pyx_base.size = __pyx_t_2;
 
-  /* "pyearth/_record.pyx":274
+  /* "pyearth/_record.pyx":296
  *                 'size': self.size}
  * 
  *     def __setstate__(ForwardPassIteration self, dict state):             # <<<<<<<<<<<<<<
@@ -8814,7 +9053,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_6__setstate__
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":281
+/* "pyearth/_record.pyx":303
  *         self.size = state['size']
  * 
  *     def __str__(self):             # <<<<<<<<<<<<<<
@@ -8847,24 +9086,24 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_8__str__(stru
   PyObject *__pyx_t_6 = NULL;
   __Pyx_RefNannySetupContext("__str__", 0);
 
-  /* "pyearth/_record.pyx":283
+  /* "pyearth/_record.pyx":305
  *     def __str__(self):
  *         result = '%d\t%d\t%d\t%4f\t%d' % (
  *             self.parent, self.variable, self.knot, self.mse, self.size)             # <<<<<<<<<<<<<<
  *         return result
  * 
  */
-  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->parent); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 283, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->parent); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 305, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->variable); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 283, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->variable); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 305, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_self->knot); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 283, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_self->knot); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 305, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.mse); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 283, __pyx_L1_error)
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.mse); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 305, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->__pyx_base.size); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 283, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyInt_From_npy_ulonglong(__pyx_v_self->__pyx_base.size); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 305, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_6 = PyTuple_New(5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 283, __pyx_L1_error)
+  __pyx_t_6 = PyTuple_New(5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 305, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_1);
@@ -8882,20 +9121,20 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_8__str__(stru
   __pyx_t_4 = 0;
   __pyx_t_5 = 0;
 
-  /* "pyearth/_record.pyx":282
+  /* "pyearth/_record.pyx":304
  * 
  *     def __str__(self):
  *         result = '%d\t%d\t%d\t%4f\t%d' % (             # <<<<<<<<<<<<<<
  *             self.parent, self.variable, self.knot, self.mse, self.size)
  *         return result
  */
-  __pyx_t_5 = __Pyx_PyString_Format(__pyx_kp_s_d_d_d_4f_d, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 282, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyString_Format(__pyx_kp_s_d_d_d_4f_d, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 304, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __pyx_v_result = ((PyObject*)__pyx_t_5);
   __pyx_t_5 = 0;
 
-  /* "pyearth/_record.pyx":284
+  /* "pyearth/_record.pyx":306
  *         result = '%d\t%d\t%d\t%4f\t%d' % (
  *             self.parent, self.variable, self.knot, self.mse, self.size)
  *         return result             # <<<<<<<<<<<<<<
@@ -8907,7 +9146,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_8__str__(stru
   __pyx_r = __pyx_v_result;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":281
+  /* "pyearth/_record.pyx":303
  *         self.size = state['size']
  * 
  *     def __str__(self):             # <<<<<<<<<<<<<<
@@ -8932,7 +9171,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_8__str__(stru
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":286
+/* "pyearth/_record.pyx":308
  *         return result
  * 
  *     cpdef set_no_candidates(ForwardPassIteration self, bint value):             # <<<<<<<<<<<<<<
@@ -8955,11 +9194,11 @@ static PyObject *__pyx_f_7pyearth_7_record_20ForwardPassIteration_set_no_candida
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_set_no_candidates); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 286, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_set_no_candidates); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 308, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_7_record_20ForwardPassIteration_11set_no_candidates)) {
       __Pyx_XDECREF(__pyx_r);
-      __pyx_t_3 = __Pyx_PyBool_FromLong(__pyx_v_value); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 286, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyBool_FromLong(__pyx_v_value); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 308, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_4 = __pyx_t_1; __pyx_t_5 = NULL;
@@ -8973,17 +9212,17 @@ static PyObject *__pyx_f_7pyearth_7_record_20ForwardPassIteration_set_no_candida
         }
       }
       if (!__pyx_t_5) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 286, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 308, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_GOTREF(__pyx_t_2);
       } else {
-        __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 286, __pyx_L1_error)
+        __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 308, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
         __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_5); __pyx_t_5 = NULL;
         __Pyx_GIVEREF(__pyx_t_3);
         PyTuple_SET_ITEM(__pyx_t_6, 0+1, __pyx_t_3);
         __pyx_t_3 = 0;
-        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 286, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 308, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       }
@@ -8996,7 +9235,7 @@ static PyObject *__pyx_f_7pyearth_7_record_20ForwardPassIteration_set_no_candida
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_record.pyx":287
+  /* "pyearth/_record.pyx":309
  * 
  *     cpdef set_no_candidates(ForwardPassIteration self, bint value):
  *         self.no_candidates = value             # <<<<<<<<<<<<<<
@@ -9005,7 +9244,7 @@ static PyObject *__pyx_f_7pyearth_7_record_20ForwardPassIteration_set_no_candida
  */
   __pyx_v_self->no_candidates = __pyx_v_value;
 
-  /* "pyearth/_record.pyx":286
+  /* "pyearth/_record.pyx":308
  *         return result
  * 
  *     cpdef set_no_candidates(ForwardPassIteration self, bint value):             # <<<<<<<<<<<<<<
@@ -9039,7 +9278,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_20ForwardPassIteration_11set_no_cand
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_no_candidates (wrapper)", 0);
   assert(__pyx_arg_value); {
-    __pyx_v_value = __Pyx_PyObject_IsTrue(__pyx_arg_value); if (unlikely((__pyx_v_value == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 286, __pyx_L3_error)
+    __pyx_v_value = __Pyx_PyObject_IsTrue(__pyx_arg_value); if (unlikely((__pyx_v_value == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 308, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -9060,7 +9299,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_10set_no_cand
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("set_no_candidates", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_7pyearth_7_record_20ForwardPassIteration_set_no_candidates(__pyx_v_self, __pyx_v_value, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 286, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_7pyearth_7_record_20ForwardPassIteration_set_no_candidates(__pyx_v_self, __pyx_v_value, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 308, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -9077,7 +9316,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_10set_no_cand
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":289
+/* "pyearth/_record.pyx":311
  *         self.no_candidates = value
  * 
  *     cpdef no_further_candidates(ForwardPassIteration self):             # <<<<<<<<<<<<<<
@@ -9098,7 +9337,7 @@ static PyObject *__pyx_f_7pyearth_7_record_20ForwardPassIteration_no_further_can
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_no_further_candidates); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 289, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_no_further_candidates); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 311, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_7_record_20ForwardPassIteration_13no_further_candidates)) {
       __Pyx_XDECREF(__pyx_r);
@@ -9114,10 +9353,10 @@ static PyObject *__pyx_f_7pyearth_7_record_20ForwardPassIteration_no_further_can
         }
       }
       if (__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 289, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 311, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 289, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 311, __pyx_L1_error)
       }
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -9129,7 +9368,7 @@ static PyObject *__pyx_f_7pyearth_7_record_20ForwardPassIteration_no_further_can
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_record.pyx":290
+  /* "pyearth/_record.pyx":312
  * 
  *     cpdef no_further_candidates(ForwardPassIteration self):
  *         return self.no_candidates             # <<<<<<<<<<<<<<
@@ -9137,13 +9376,13 @@ static PyObject *__pyx_f_7pyearth_7_record_20ForwardPassIteration_no_further_can
  * cdef class FirstForwardPassIteration(ForwardPassIteration):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_v_self->no_candidates); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 290, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_v_self->no_candidates); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 312, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":289
+  /* "pyearth/_record.pyx":311
  *         self.no_candidates = value
  * 
  *     cpdef no_further_candidates(ForwardPassIteration self):             # <<<<<<<<<<<<<<
@@ -9184,7 +9423,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_12no_further_
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("no_further_candidates", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_7pyearth_7_record_20ForwardPassIteration_no_further_candidates(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 289, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_7pyearth_7_record_20ForwardPassIteration_no_further_candidates(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 311, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -9201,7 +9440,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_20ForwardPassIteration_12no_further_
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":293
+/* "pyearth/_record.pyx":315
  * 
  * cdef class FirstForwardPassIteration(ForwardPassIteration):
  *     def __init__(FirstForwardPassIteration self, FLOAT_t mse):             # <<<<<<<<<<<<<<
@@ -9234,18 +9473,18 @@ static int __pyx_pw_7pyearth_7_record_25FirstForwardPassIteration_1__init__(PyOb
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 293, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 315, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 1) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
     }
-    __pyx_v_mse = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_mse == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 293, __pyx_L3_error)
+    __pyx_v_mse = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_mse == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 315, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 293, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 315, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyearth._record.FirstForwardPassIteration.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -9263,7 +9502,7 @@ static int __pyx_pf_7pyearth_7_record_25FirstForwardPassIteration___init__(struc
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "pyearth/_record.pyx":294
+  /* "pyearth/_record.pyx":316
  * cdef class FirstForwardPassIteration(ForwardPassIteration):
  *     def __init__(FirstForwardPassIteration self, FLOAT_t mse):
  *         self.mse = mse             # <<<<<<<<<<<<<<
@@ -9272,7 +9511,7 @@ static int __pyx_pf_7pyearth_7_record_25FirstForwardPassIteration___init__(struc
  */
   __pyx_v_self->__pyx_base.__pyx_base.mse = __pyx_v_mse;
 
-  /* "pyearth/_record.pyx":293
+  /* "pyearth/_record.pyx":315
  * 
  * cdef class FirstForwardPassIteration(ForwardPassIteration):
  *     def __init__(FirstForwardPassIteration self, FLOAT_t mse):             # <<<<<<<<<<<<<<
@@ -9286,7 +9525,7 @@ static int __pyx_pf_7pyearth_7_record_25FirstForwardPassIteration___init__(struc
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":296
+/* "pyearth/_record.pyx":318
  *         self.mse = mse
  * 
  *     def __reduce__(FirstForwardPassIteration self):             # <<<<<<<<<<<<<<
@@ -9315,7 +9554,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstForwardPassIteration_2__reduc
   PyObject *__pyx_t_3 = NULL;
   __Pyx_RefNannySetupContext("__reduce__", 0);
 
-  /* "pyearth/_record.pyx":297
+  /* "pyearth/_record.pyx":319
  * 
  *     def __reduce__(FirstForwardPassIteration self):
  *         return (FirstForwardPassIteration, (1.0,), self._getstate())             # <<<<<<<<<<<<<<
@@ -9323,7 +9562,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstForwardPassIteration_2__reduc
  *     def _getstate(FirstForwardPassIteration self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getstate); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 297, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getstate); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 319, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
@@ -9336,14 +9575,14 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstForwardPassIteration_2__reduc
     }
   }
   if (__pyx_t_3) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 297, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 319, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   } else {
-    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 297, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 319, __pyx_L1_error)
   }
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyTuple_New(3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 297, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 319, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_INCREF(((PyObject *)__pyx_ptype_7pyearth_7_record_FirstForwardPassIteration));
   __Pyx_GIVEREF(((PyObject *)__pyx_ptype_7pyearth_7_record_FirstForwardPassIteration));
@@ -9358,7 +9597,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstForwardPassIteration_2__reduc
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":296
+  /* "pyearth/_record.pyx":318
  *         self.mse = mse
  * 
  *     def __reduce__(FirstForwardPassIteration self):             # <<<<<<<<<<<<<<
@@ -9379,7 +9618,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstForwardPassIteration_2__reduc
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":299
+/* "pyearth/_record.pyx":321
  *         return (FirstForwardPassIteration, (1.0,), self._getstate())
  * 
  *     def _getstate(FirstForwardPassIteration self):             # <<<<<<<<<<<<<<
@@ -9407,7 +9646,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstForwardPassIteration_4_getsta
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("_getstate", 0);
 
-  /* "pyearth/_record.pyx":300
+  /* "pyearth/_record.pyx":322
  * 
  *     def _getstate(FirstForwardPassIteration self):
  *         return {'mse': self.mse}             # <<<<<<<<<<<<<<
@@ -9415,17 +9654,17 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstForwardPassIteration_4_getsta
  *     def __setstate__(FirstForwardPassIteration self, dict state):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 300, __pyx_L1_error)
+  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 322, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.__pyx_base.mse); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 300, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.__pyx_base.mse); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 322, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_mse, __pyx_t_2) < 0) __PYX_ERR(0, 300, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_mse, __pyx_t_2) < 0) __PYX_ERR(0, 322, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":299
+  /* "pyearth/_record.pyx":321
  *         return (FirstForwardPassIteration, (1.0,), self._getstate())
  * 
  *     def _getstate(FirstForwardPassIteration self):             # <<<<<<<<<<<<<<
@@ -9445,7 +9684,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstForwardPassIteration_4_getsta
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":302
+/* "pyearth/_record.pyx":324
  *         return {'mse': self.mse}
  * 
  *     def __setstate__(FirstForwardPassIteration self, dict state):             # <<<<<<<<<<<<<<
@@ -9459,7 +9698,7 @@ static PyObject *__pyx_pw_7pyearth_7_record_25FirstForwardPassIteration_7__setst
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__setstate__ (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_state), (&PyDict_Type), 1, "state", 1))) __PYX_ERR(0, 302, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_state), (&PyDict_Type), 1, "state", 1))) __PYX_ERR(0, 324, __pyx_L1_error)
   __pyx_r = __pyx_pf_7pyearth_7_record_25FirstForwardPassIteration_6__setstate__(((struct __pyx_obj_7pyearth_7_record_FirstForwardPassIteration *)__pyx_v_self), ((PyObject*)__pyx_v_state));
 
   /* function exit code */
@@ -9478,7 +9717,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstForwardPassIteration_6__setst
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_t_2;
   __Pyx_RefNannySetupContext("__setstate__", 0);
 
-  /* "pyearth/_record.pyx":303
+  /* "pyearth/_record.pyx":325
  * 
  *     def __setstate__(FirstForwardPassIteration self, dict state):
  *         self.mse = state['mse']             # <<<<<<<<<<<<<<
@@ -9487,15 +9726,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstForwardPassIteration_6__setst
  */
   if (unlikely(__pyx_v_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 303, __pyx_L1_error)
+    __PYX_ERR(0, 325, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_mse); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 303, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_state, __pyx_n_s_mse); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 325, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_2 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 303, __pyx_L1_error)
+  __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_2 == (npy_float64)-1) && PyErr_Occurred())) __PYX_ERR(0, 325, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_self->__pyx_base.__pyx_base.mse = __pyx_t_2;
 
-  /* "pyearth/_record.pyx":302
+  /* "pyearth/_record.pyx":324
  *         return {'mse': self.mse}
  * 
  *     def __setstate__(FirstForwardPassIteration self, dict state):             # <<<<<<<<<<<<<<
@@ -9516,7 +9755,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstForwardPassIteration_6__setst
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":305
+/* "pyearth/_record.pyx":327
  *         self.mse = state['mse']
  * 
  *     cpdef INDEX_t get_size(FirstForwardPassIteration self):             # <<<<<<<<<<<<<<
@@ -9538,7 +9777,7 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_7_record_25FirstForward
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 305, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 327, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_7pyearth_7_record_25FirstForwardPassIteration_9get_size)) {
       __Pyx_INCREF(__pyx_t_1);
@@ -9553,14 +9792,14 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_7_record_25FirstForward
         }
       }
       if (__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 305, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 327, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 305, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 327, __pyx_L1_error)
       }
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_2); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 305, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_As_npy_ulonglong(__pyx_t_2); if (unlikely((__pyx_t_5 == (npy_ulonglong)-1) && PyErr_Occurred())) __PYX_ERR(0, 327, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_5;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -9569,7 +9808,7 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_7_record_25FirstForward
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "pyearth/_record.pyx":306
+  /* "pyearth/_record.pyx":328
  * 
  *     cpdef INDEX_t get_size(FirstForwardPassIteration self):
  *         return 1             # <<<<<<<<<<<<<<
@@ -9579,7 +9818,7 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_7_record_25FirstForward
   __pyx_r = 1;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":305
+  /* "pyearth/_record.pyx":327
  *         self.mse = state['mse']
  * 
  *     cpdef INDEX_t get_size(FirstForwardPassIteration self):             # <<<<<<<<<<<<<<
@@ -9619,7 +9858,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstForwardPassIteration_8get_siz
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("get_size", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_f_7pyearth_7_record_25FirstForwardPassIteration_get_size(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 305, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_npy_ulonglong(__pyx_f_7pyearth_7_record_25FirstForwardPassIteration_get_size(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 327, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -9636,7 +9875,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstForwardPassIteration_8get_siz
   return __pyx_r;
 }
 
-/* "pyearth/_record.pyx":308
+/* "pyearth/_record.pyx":330
  *         return 1
  * 
  *     def __str__(self):             # <<<<<<<<<<<<<<
@@ -9665,15 +9904,15 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstForwardPassIteration_10__str_
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("__str__", 0);
 
-  /* "pyearth/_record.pyx":309
+  /* "pyearth/_record.pyx":331
  * 
  *     def __str__(self):
  *         result = '%s\t%s\t%s\t%4f\t%s' % ('-', '-', '-', self.mse, 1)             # <<<<<<<<<<<<<<
  *         return result
  */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.__pyx_base.mse); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 309, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.__pyx_base.mse); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 331, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyTuple_New(5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 309, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 331, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_INCREF(__pyx_kp_s__14);
   __Pyx_GIVEREF(__pyx_kp_s__14);
@@ -9690,13 +9929,13 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstForwardPassIteration_10__str_
   __Pyx_GIVEREF(__pyx_int_1);
   PyTuple_SET_ITEM(__pyx_t_2, 4, __pyx_int_1);
   __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s_4f_s, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 309, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s_4f_s, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 331, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_result = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "pyearth/_record.pyx":310
+  /* "pyearth/_record.pyx":332
  *     def __str__(self):
  *         result = '%s\t%s\t%s\t%4f\t%s' % ('-', '-', '-', self.mse, 1)
  *         return result             # <<<<<<<<<<<<<<
@@ -9706,7 +9945,7 @@ static PyObject *__pyx_pf_7pyearth_7_record_25FirstForwardPassIteration_10__str_
   __pyx_r = __pyx_v_result;
   goto __pyx_L0;
 
-  /* "pyearth/_record.pyx":308
+  /* "pyearth/_record.pyx":330
  *         return 1
  * 
  *     def __str__(self):             # <<<<<<<<<<<<<<
@@ -12011,6 +12250,7 @@ static PyMethodDef __pyx_methods_7pyearth_7_record_PruningPassRecord[] = {
   {"get_selected", (PyCFunction)__pyx_pw_7pyearth_7_record_17PruningPassRecord_11get_selected, METH_NOARGS, 0},
   {"roll_back", (PyCFunction)__pyx_pw_7pyearth_7_record_17PruningPassRecord_13roll_back, METH_O, 0},
   {"partial_str", (PyCFunction)__pyx_pw_7pyearth_7_record_17PruningPassRecord_17partial_str, METH_VARARGS|METH_KEYWORDS, 0},
+  {"final_str", (PyCFunction)__pyx_pw_7pyearth_7_record_17PruningPassRecord_19final_str, METH_NOARGS, 0},
   {0, 0, 0, 0}
 };
 
@@ -12131,6 +12371,7 @@ static PyMethodDef __pyx_methods_7pyearth_7_record_ForwardPassRecord[] = {
   {"__setstate__", (PyCFunction)__pyx_pw_7pyearth_7_record_17ForwardPassRecord_7__setstate__, METH_O, 0},
   {"set_stopping_condition", (PyCFunction)__pyx_pw_7pyearth_7_record_17ForwardPassRecord_9set_stopping_condition, METH_O, 0},
   {"partial_str", (PyCFunction)__pyx_pw_7pyearth_7_record_17ForwardPassRecord_13partial_str, METH_VARARGS|METH_KEYWORDS, 0},
+  {"final_str", (PyCFunction)__pyx_pw_7pyearth_7_record_17ForwardPassRecord_15final_str, METH_NOARGS, 0},
   {0, 0, 0, 0}
 };
 
@@ -12616,11 +12857,23 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_2f, __pyx_k_2f, sizeof(__pyx_k_2f), 0, 0, 1, 0},
   {&__pyx_kp_s_3f_3f_3f, __pyx_k_3f_3f_3f, sizeof(__pyx_k_3f_3f_3f), 0, 0, 1, 0},
   {&__pyx_kp_s_3f_3f_3f_2, __pyx_k_3f_3f_3f_2, sizeof(__pyx_k_3f_3f_3f_2), 0, 0, 1, 0},
+  {&__pyx_kp_s_Achieved_RSQ_value_within_thresh, __pyx_k_Achieved_RSQ_value_within_thresh, sizeof(__pyx_k_Achieved_RSQ_value_within_thresh), 0, 0, 1, 0},
   {&__pyx_kp_u_Format_string_allocated_too_shor, __pyx_k_Format_string_allocated_too_shor, sizeof(__pyx_k_Format_string_allocated_too_shor), 0, 1, 0, 0},
   {&__pyx_kp_u_Format_string_allocated_too_shor_2, __pyx_k_Format_string_allocated_too_shor_2, sizeof(__pyx_k_Format_string_allocated_too_shor_2), 0, 1, 0, 0},
+  {&__pyx_kp_s_GRSQ_too_low, __pyx_k_GRSQ_too_low, sizeof(__pyx_k_GRSQ_too_low), 0, 0, 1, 0},
+  {&__pyx_kp_s_Improvement_below_threshold, __pyx_k_Improvement_below_threshold, sizeof(__pyx_k_Improvement_below_threshold), 0, 0, 1, 0},
+  {&__pyx_n_s_LOWGRSQ, __pyx_k_LOWGRSQ, sizeof(__pyx_k_LOWGRSQ), 0, 0, 1, 1},
+  {&__pyx_n_s_MAXRSQ, __pyx_k_MAXRSQ, sizeof(__pyx_k_MAXRSQ), 0, 0, 1, 1},
+  {&__pyx_n_s_MAXTERMS, __pyx_k_MAXTERMS, sizeof(__pyx_k_MAXTERMS), 0, 0, 1, 1},
+  {&__pyx_n_s_NOCAND, __pyx_k_NOCAND, sizeof(__pyx_k_NOCAND), 0, 0, 1, 1},
+  {&__pyx_n_s_NOIMPRV, __pyx_k_NOIMPRV, sizeof(__pyx_k_NOIMPRV), 0, 0, 1, 1},
+  {&__pyx_kp_s_No_remaining_candidate_knot_loca, __pyx_k_No_remaining_candidate_knot_loca, sizeof(__pyx_k_No_remaining_candidate_knot_loca), 0, 0, 1, 0},
   {&__pyx_kp_u_Non_native_byte_order_not_suppor, __pyx_k_Non_native_byte_order_not_suppor, sizeof(__pyx_k_Non_native_byte_order_not_suppor), 0, 1, 0, 0},
   {&__pyx_n_s_NotImplemented, __pyx_k_NotImplemented, sizeof(__pyx_k_NotImplemented), 0, 0, 1, 1},
+  {&__pyx_kp_s_Reached_maximum_number_of_terms, __pyx_k_Reached_maximum_number_of_terms, sizeof(__pyx_k_Reached_maximum_number_of_terms), 0, 0, 1, 0},
   {&__pyx_n_s_RuntimeError, __pyx_k_RuntimeError, sizeof(__pyx_k_RuntimeError), 0, 0, 1, 1},
+  {&__pyx_kp_s_Selected_iteration, __pyx_k_Selected_iteration, sizeof(__pyx_k_Selected_iteration), 0, 0, 1, 0},
+  {&__pyx_kp_s_Stopping_Condition_d_s, __pyx_k_Stopping_Condition_d_s, sizeof(__pyx_k_Stopping_Condition_d_s), 0, 0, 1, 0},
   {&__pyx_n_s_ValueError, __pyx_k_ValueError, sizeof(__pyx_k_ValueError), 0, 0, 1, 1},
   {&__pyx_kp_s__14, __pyx_k__14, sizeof(__pyx_k__14), 0, 0, 1, 0},
   {&__pyx_kp_s__4, __pyx_k__4, sizeof(__pyx_k__4), 0, 0, 1, 0},
@@ -12669,6 +12922,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_size, __pyx_k_size, sizeof(__pyx_k_size), 0, 0, 1, 1},
   {&__pyx_n_s_split, __pyx_k_split, sizeof(__pyx_k_split), 0, 0, 1, 1},
   {&__pyx_n_s_sst, __pyx_k_sst, sizeof(__pyx_k_sst), 0, 0, 1, 1},
+  {&__pyx_n_s_stopping_conditions, __pyx_k_stopping_conditions, sizeof(__pyx_k_stopping_conditions), 0, 0, 1, 1},
   {&__pyx_n_s_terms, __pyx_k_terms, sizeof(__pyx_k_terms), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_kp_u_unknown_dtype_code_in_numpy_pxd, __pyx_k_unknown_dtype_code_in_numpy_pxd, sizeof(__pyx_k_unknown_dtype_code_in_numpy_pxd), 0, 1, 0, 0},
@@ -12679,9 +12933,9 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_NotImplemented = __Pyx_GetBuiltinName(__pyx_n_s_NotImplemented); if (!__pyx_builtin_NotImplemented) __PYX_ERR(0, 17, __pyx_L1_error)
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 92, __pyx_L1_error)
-  __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(0, 104, __pyx_L1_error)
+  __pyx_builtin_NotImplemented = __Pyx_GetBuiltinName(__pyx_n_s_NotImplemented); if (!__pyx_builtin_NotImplemented) __PYX_ERR(0, 31, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 106, __pyx_L1_error)
+  __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(0, 118, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(2, 218, __pyx_L1_error)
   __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) __PYX_ERR(2, 799, __pyx_L1_error)
   return 0;
@@ -12693,130 +12947,130 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "pyearth/_record.pyx":64
+  /* "pyearth/_record.pyx":78
  * 
  *     def __reduce__(PruningPassRecord self):
  *         return (PruningPassRecord, (1, 1, 1.0, 1.0, 1, 1.0), self._getstate())             # <<<<<<<<<<<<<<
  * 
  *     def _getstate(PruningPassRecord self):
  */
-  __pyx_tuple_ = PyTuple_Pack(6, __pyx_int_1, __pyx_int_1, __pyx_float_1_0, __pyx_float_1_0, __pyx_int_1, __pyx_float_1_0); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 64, __pyx_L1_error)
+  __pyx_tuple_ = PyTuple_Pack(6, __pyx_int_1, __pyx_int_1, __pyx_float_1_0, __pyx_float_1_0, __pyx_int_1, __pyx_float_1_0); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 78, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
 
-  /* "pyearth/_record.pyx":96
+  /* "pyearth/_record.pyx":110
  * 
  *     def __str__(PruningPassRecord self):
  *         return self.partial_str(slice(None))             # <<<<<<<<<<<<<<
  * 
  *     def partial_str(PruningPassRecord self, rows, print_header=True, print_footer=True):
  */
-  __pyx_slice__2 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__2)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __pyx_slice__2 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__2)) __PYX_ERR(0, 110, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__2);
   __Pyx_GIVEREF(__pyx_slice__2);
-  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_slice__2); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_slice__2); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 110, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__3);
   __Pyx_GIVEREF(__pyx_tuple__3);
 
-  /* "pyearth/_record.pyx":101
+  /* "pyearth/_record.pyx":115
  *         result = ''
  * #         result += 'Pruning Pass\n'
  *         header = 'iter\tbf\tterms\tmse\tgcv\trsq\tgrsq'.split('\t')             # <<<<<<<<<<<<<<
  *         data = []
  *         map_back = list(range(*rows.indices(len(self.iterations))))
  */
-  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_s__5); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 101, __pyx_L1_error)
+  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_s__5); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__6);
   __Pyx_GIVEREF(__pyx_tuple__6);
 
-  /* "pyearth/_record.pyx":107
+  /* "pyearth/_record.pyx":121
  *             row = str(map_back[i]) + '\t' + str(iteration) + '\t%.3f\t%.3f\t%.3f' % (
  *                 self.gcv(map_back[i]), self.rsq(map_back[i]), self.grsq(map_back[i]))
  *             data.append(row.split('\t'))             # <<<<<<<<<<<<<<
  *         result += ascii_table(header, data, print_header, print_footer)
  * #         result += '\nSelected iteration: ' + str(self.selected) + '\n'
  */
-  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_s__5); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 107, __pyx_L1_error)
+  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_s__5); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 121, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__7);
   __Pyx_GIVEREF(__pyx_tuple__7);
 
-  /* "pyearth/_record.pyx":150
+  /* "pyearth/_record.pyx":167
  * 
  *     def __str__(ForwardPassRecord self):
  *         return self.partial_str(slice(None))             # <<<<<<<<<<<<<<
  * #         header = ['iter', 'parent', 'var', 'knot',
  * #                   'mse', 'terms', 'gcv', 'rsq', 'grsq']
  */
-  __pyx_slice__8 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__8)) __PYX_ERR(0, 150, __pyx_L1_error)
+  __pyx_slice__8 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__8)) __PYX_ERR(0, 167, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__8);
   __Pyx_GIVEREF(__pyx_slice__8);
-  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_slice__8); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 150, __pyx_L1_error)
+  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_slice__8); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 167, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__9);
   __Pyx_GIVEREF(__pyx_tuple__9);
 
-  /* "pyearth/_record.pyx":172
+  /* "pyearth/_record.pyx":189
  *         map_back = list(range(*rows.indices(len(self.iterations))))
  *         for i, iteration in enumerate(self.iterations[rows]):
  *             data.append([str(map_back[i])] + str(iteration).split('\t') +             # <<<<<<<<<<<<<<
  *                         ('%.3f\t%.3f\t%.3f' % (self.gcv(map_back[i]), self.rsq(map_back[i]),
  *                                                self.grsq(map_back[i]))).split('\t'))
  */
-  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_s__5); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 172, __pyx_L1_error)
+  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_s__5); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 189, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__10);
   __Pyx_GIVEREF(__pyx_tuple__10);
 
-  /* "pyearth/_record.pyx":174
+  /* "pyearth/_record.pyx":191
  *             data.append([str(map_back[i])] + str(iteration).split('\t') +
  *                         ('%.3f\t%.3f\t%.3f' % (self.gcv(map_back[i]), self.rsq(map_back[i]),
  *                                                self.grsq(map_back[i]))).split('\t'))             # <<<<<<<<<<<<<<
  *         result = ''
  * #         result += 'Forward Pass\n'
  */
-  __pyx_tuple__11 = PyTuple_Pack(1, __pyx_kp_s__5); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 174, __pyx_L1_error)
+  __pyx_tuple__11 = PyTuple_Pack(1, __pyx_kp_s__5); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 191, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__11);
   __Pyx_GIVEREF(__pyx_tuple__11);
 
-  /* "pyearth/_record.pyx":212
+  /* "pyearth/_record.pyx":234
  * 
  *     def __reduce__(PruningPassIteration self):
  *         return (PruningPassIteration, (1, 1, 1.0), self._getstate())             # <<<<<<<<<<<<<<
  * 
  *     def _getstate(PruningPassIteration self):
  */
-  __pyx_tuple__12 = PyTuple_Pack(3, __pyx_int_1, __pyx_int_1, __pyx_float_1_0); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 212, __pyx_L1_error)
+  __pyx_tuple__12 = PyTuple_Pack(3, __pyx_int_1, __pyx_int_1, __pyx_float_1_0); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 234, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__12);
   __Pyx_GIVEREF(__pyx_tuple__12);
 
-  /* "pyearth/_record.pyx":238
+  /* "pyearth/_record.pyx":260
  * 
  *     def __reduce__(FirstPruningPassIteration self):
  *         return (FirstPruningPassIteration, (1, 1.0), self._getstate())             # <<<<<<<<<<<<<<
  * 
  *     def _getstate(FirstPruningPassIteration self):
  */
-  __pyx_tuple__13 = PyTuple_Pack(2, __pyx_int_1, __pyx_float_1_0); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(0, 238, __pyx_L1_error)
+  __pyx_tuple__13 = PyTuple_Pack(2, __pyx_int_1, __pyx_float_1_0); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(0, 260, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__13);
   __Pyx_GIVEREF(__pyx_tuple__13);
 
-  /* "pyearth/_record.pyx":265
+  /* "pyearth/_record.pyx":287
  * 
  *     def __reduce__(ForwardPassIteration self):
  *         return (ForwardPassIteration, (1, 1, 1, 1.0, 1), self._getstate())             # <<<<<<<<<<<<<<
  * 
  *     def _getstate(ForwardPassIteration self):
  */
-  __pyx_tuple__15 = PyTuple_Pack(5, __pyx_int_1, __pyx_int_1, __pyx_int_1, __pyx_float_1_0, __pyx_int_1); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 265, __pyx_L1_error)
+  __pyx_tuple__15 = PyTuple_Pack(5, __pyx_int_1, __pyx_int_1, __pyx_int_1, __pyx_float_1_0, __pyx_int_1); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 287, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__15);
   __Pyx_GIVEREF(__pyx_tuple__15);
 
-  /* "pyearth/_record.pyx":297
+  /* "pyearth/_record.pyx":319
  * 
  *     def __reduce__(FirstForwardPassIteration self):
  *         return (FirstForwardPassIteration, (1.0,), self._getstate())             # <<<<<<<<<<<<<<
  * 
  *     def _getstate(FirstForwardPassIteration self):
  */
-  __pyx_tuple__16 = PyTuple_Pack(1, __pyx_float_1_0); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(0, 297, __pyx_L1_error)
+  __pyx_tuple__16 = PyTuple_Pack(1, __pyx_float_1_0); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(0, 319, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__16);
   __Pyx_GIVEREF(__pyx_tuple__16);
 
@@ -12899,6 +13153,7 @@ static int __Pyx_InitGlobals(void) {
   __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_2 = PyInt_FromLong(2); if (unlikely(!__pyx_int_2)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_3 = PyInt_FromLong(3); if (unlikely(!__pyx_int_3)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_4 = PyInt_FromLong(4); if (unlikely(!__pyx_int_4)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -12914,6 +13169,7 @@ PyMODINIT_FUNC PyInit__record(void)
 {
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
   __Pyx_RefNannyDeclarations
   #if CYTHON_REFNANNY
   __Pyx_RefNanny = __Pyx_RefNannyImportAPI("refnanny");
@@ -12995,10 +13251,10 @@ PyMODINIT_FUNC PyInit__record(void)
   __pyx_vtable_7pyearth_7_record_Record.rsq = (__pyx_t_7pyearth_6_types_FLOAT_t (*)(struct __pyx_obj_7pyearth_7_record_Record *, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch))__pyx_f_7pyearth_7_record_6Record_rsq;
   __pyx_vtable_7pyearth_7_record_Record.gcv = (__pyx_t_7pyearth_6_types_FLOAT_t (*)(struct __pyx_obj_7pyearth_7_record_Record *, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch))__pyx_f_7pyearth_7_record_6Record_gcv;
   __pyx_vtable_7pyearth_7_record_Record.grsq = (__pyx_t_7pyearth_6_types_FLOAT_t (*)(struct __pyx_obj_7pyearth_7_record_Record *, __pyx_t_7pyearth_6_types_INDEX_t, int __pyx_skip_dispatch))__pyx_f_7pyearth_7_record_6Record_grsq;
-  if (PyType_Ready(&__pyx_type_7pyearth_7_record_Record) < 0) __PYX_ERR(0, 9, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_7pyearth_7_record_Record) < 0) __PYX_ERR(0, 23, __pyx_L1_error)
   __pyx_type_7pyearth_7_record_Record.tp_print = 0;
-  if (__Pyx_SetVtable(__pyx_type_7pyearth_7_record_Record.tp_dict, __pyx_vtabptr_7pyearth_7_record_Record) < 0) __PYX_ERR(0, 9, __pyx_L1_error)
-  if (PyObject_SetAttrString(__pyx_m, "Record", (PyObject *)&__pyx_type_7pyearth_7_record_Record) < 0) __PYX_ERR(0, 9, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_7pyearth_7_record_Record.tp_dict, __pyx_vtabptr_7pyearth_7_record_Record) < 0) __PYX_ERR(0, 23, __pyx_L1_error)
+  if (PyObject_SetAttrString(__pyx_m, "Record", (PyObject *)&__pyx_type_7pyearth_7_record_Record) < 0) __PYX_ERR(0, 23, __pyx_L1_error)
   __pyx_ptype_7pyearth_7_record_Record = &__pyx_type_7pyearth_7_record_Record;
   __pyx_vtabptr_7pyearth_7_record_PruningPassRecord = &__pyx_vtable_7pyearth_7_record_PruningPassRecord;
   __pyx_vtable_7pyearth_7_record_PruningPassRecord.__pyx_base = *__pyx_vtabptr_7pyearth_7_record_Record;
@@ -13006,63 +13262,63 @@ PyMODINIT_FUNC PyInit__record(void)
   __pyx_vtable_7pyearth_7_record_PruningPassRecord.get_selected = (__pyx_t_7pyearth_6_types_INDEX_t (*)(struct __pyx_obj_7pyearth_7_record_PruningPassRecord *, int __pyx_skip_dispatch))__pyx_f_7pyearth_7_record_17PruningPassRecord_get_selected;
   __pyx_vtable_7pyearth_7_record_PruningPassRecord.roll_back = (PyObject *(*)(struct __pyx_obj_7pyearth_7_record_PruningPassRecord *, struct __pyx_obj_7pyearth_6_basis_Basis *, int __pyx_skip_dispatch))__pyx_f_7pyearth_7_record_17PruningPassRecord_roll_back;
   __pyx_type_7pyearth_7_record_PruningPassRecord.tp_base = __pyx_ptype_7pyearth_7_record_Record;
-  if (PyType_Ready(&__pyx_type_7pyearth_7_record_PruningPassRecord) < 0) __PYX_ERR(0, 53, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_7pyearth_7_record_PruningPassRecord) < 0) __PYX_ERR(0, 67, __pyx_L1_error)
   __pyx_type_7pyearth_7_record_PruningPassRecord.tp_print = 0;
-  if (__Pyx_SetVtable(__pyx_type_7pyearth_7_record_PruningPassRecord.tp_dict, __pyx_vtabptr_7pyearth_7_record_PruningPassRecord) < 0) __PYX_ERR(0, 53, __pyx_L1_error)
-  if (PyObject_SetAttrString(__pyx_m, "PruningPassRecord", (PyObject *)&__pyx_type_7pyearth_7_record_PruningPassRecord) < 0) __PYX_ERR(0, 53, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_7pyearth_7_record_PruningPassRecord.tp_dict, __pyx_vtabptr_7pyearth_7_record_PruningPassRecord) < 0) __PYX_ERR(0, 67, __pyx_L1_error)
+  if (PyObject_SetAttrString(__pyx_m, "PruningPassRecord", (PyObject *)&__pyx_type_7pyearth_7_record_PruningPassRecord) < 0) __PYX_ERR(0, 67, __pyx_L1_error)
   __pyx_ptype_7pyearth_7_record_PruningPassRecord = &__pyx_type_7pyearth_7_record_PruningPassRecord;
   __pyx_vtabptr_7pyearth_7_record_ForwardPassRecord = &__pyx_vtable_7pyearth_7_record_ForwardPassRecord;
   __pyx_vtable_7pyearth_7_record_ForwardPassRecord.__pyx_base = *__pyx_vtabptr_7pyearth_7_record_Record;
   __pyx_vtable_7pyearth_7_record_ForwardPassRecord.set_stopping_condition = (PyObject *(*)(struct __pyx_obj_7pyearth_7_record_ForwardPassRecord *, int, int __pyx_skip_dispatch))__pyx_f_7pyearth_7_record_17ForwardPassRecord_set_stopping_condition;
   __pyx_type_7pyearth_7_record_ForwardPassRecord.tp_base = __pyx_ptype_7pyearth_7_record_Record;
-  if (PyType_Ready(&__pyx_type_7pyearth_7_record_ForwardPassRecord) < 0) __PYX_ERR(0, 112, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_7pyearth_7_record_ForwardPassRecord) < 0) __PYX_ERR(0, 129, __pyx_L1_error)
   __pyx_type_7pyearth_7_record_ForwardPassRecord.tp_print = 0;
-  if (__Pyx_SetVtable(__pyx_type_7pyearth_7_record_ForwardPassRecord.tp_dict, __pyx_vtabptr_7pyearth_7_record_ForwardPassRecord) < 0) __PYX_ERR(0, 112, __pyx_L1_error)
-  if (PyObject_SetAttrString(__pyx_m, "ForwardPassRecord", (PyObject *)&__pyx_type_7pyearth_7_record_ForwardPassRecord) < 0) __PYX_ERR(0, 112, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_7pyearth_7_record_ForwardPassRecord.tp_dict, __pyx_vtabptr_7pyearth_7_record_ForwardPassRecord) < 0) __PYX_ERR(0, 129, __pyx_L1_error)
+  if (PyObject_SetAttrString(__pyx_m, "ForwardPassRecord", (PyObject *)&__pyx_type_7pyearth_7_record_ForwardPassRecord) < 0) __PYX_ERR(0, 129, __pyx_L1_error)
   __pyx_ptype_7pyearth_7_record_ForwardPassRecord = &__pyx_type_7pyearth_7_record_ForwardPassRecord;
   __pyx_vtabptr_7pyearth_7_record_Iteration = &__pyx_vtable_7pyearth_7_record_Iteration;
   __pyx_vtable_7pyearth_7_record_Iteration.get_mse = (__pyx_t_7pyearth_6_types_FLOAT_t (*)(struct __pyx_obj_7pyearth_7_record_Iteration *, int __pyx_skip_dispatch))__pyx_f_7pyearth_7_record_9Iteration_get_mse;
   __pyx_vtable_7pyearth_7_record_Iteration.get_size = (__pyx_t_7pyearth_6_types_INDEX_t (*)(struct __pyx_obj_7pyearth_7_record_Iteration *, int __pyx_skip_dispatch))__pyx_f_7pyearth_7_record_9Iteration_get_size;
-  if (PyType_Ready(&__pyx_type_7pyearth_7_record_Iteration) < 0) __PYX_ERR(0, 183, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_7pyearth_7_record_Iteration) < 0) __PYX_ERR(0, 205, __pyx_L1_error)
   __pyx_type_7pyearth_7_record_Iteration.tp_print = 0;
-  if (__Pyx_SetVtable(__pyx_type_7pyearth_7_record_Iteration.tp_dict, __pyx_vtabptr_7pyearth_7_record_Iteration) < 0) __PYX_ERR(0, 183, __pyx_L1_error)
-  if (PyObject_SetAttrString(__pyx_m, "Iteration", (PyObject *)&__pyx_type_7pyearth_7_record_Iteration) < 0) __PYX_ERR(0, 183, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_7pyearth_7_record_Iteration.tp_dict, __pyx_vtabptr_7pyearth_7_record_Iteration) < 0) __PYX_ERR(0, 205, __pyx_L1_error)
+  if (PyObject_SetAttrString(__pyx_m, "Iteration", (PyObject *)&__pyx_type_7pyearth_7_record_Iteration) < 0) __PYX_ERR(0, 205, __pyx_L1_error)
   __pyx_ptype_7pyearth_7_record_Iteration = &__pyx_type_7pyearth_7_record_Iteration;
   __pyx_vtabptr_7pyearth_7_record_PruningPassIteration = &__pyx_vtable_7pyearth_7_record_PruningPassIteration;
   __pyx_vtable_7pyearth_7_record_PruningPassIteration.__pyx_base = *__pyx_vtabptr_7pyearth_7_record_Iteration;
   __pyx_vtable_7pyearth_7_record_PruningPassIteration.get_pruned = (__pyx_t_7pyearth_6_types_INDEX_t (*)(struct __pyx_obj_7pyearth_7_record_PruningPassIteration *, int __pyx_skip_dispatch))__pyx_f_7pyearth_7_record_20PruningPassIteration_get_pruned;
   __pyx_type_7pyearth_7_record_PruningPassIteration.tp_base = __pyx_ptype_7pyearth_7_record_Iteration;
-  if (PyType_Ready(&__pyx_type_7pyearth_7_record_PruningPassIteration) < 0) __PYX_ERR(0, 203, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_7pyearth_7_record_PruningPassIteration) < 0) __PYX_ERR(0, 225, __pyx_L1_error)
   __pyx_type_7pyearth_7_record_PruningPassIteration.tp_print = 0;
-  if (__Pyx_SetVtable(__pyx_type_7pyearth_7_record_PruningPassIteration.tp_dict, __pyx_vtabptr_7pyearth_7_record_PruningPassIteration) < 0) __PYX_ERR(0, 203, __pyx_L1_error)
-  if (PyObject_SetAttrString(__pyx_m, "PruningPassIteration", (PyObject *)&__pyx_type_7pyearth_7_record_PruningPassIteration) < 0) __PYX_ERR(0, 203, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_7pyearth_7_record_PruningPassIteration.tp_dict, __pyx_vtabptr_7pyearth_7_record_PruningPassIteration) < 0) __PYX_ERR(0, 225, __pyx_L1_error)
+  if (PyObject_SetAttrString(__pyx_m, "PruningPassIteration", (PyObject *)&__pyx_type_7pyearth_7_record_PruningPassIteration) < 0) __PYX_ERR(0, 225, __pyx_L1_error)
   __pyx_ptype_7pyearth_7_record_PruningPassIteration = &__pyx_type_7pyearth_7_record_PruningPassIteration;
   __pyx_vtabptr_7pyearth_7_record_FirstPruningPassIteration = &__pyx_vtable_7pyearth_7_record_FirstPruningPassIteration;
   __pyx_vtable_7pyearth_7_record_FirstPruningPassIteration.__pyx_base = *__pyx_vtabptr_7pyearth_7_record_PruningPassIteration;
   __pyx_type_7pyearth_7_record_FirstPruningPassIteration.tp_base = __pyx_ptype_7pyearth_7_record_PruningPassIteration;
-  if (PyType_Ready(&__pyx_type_7pyearth_7_record_FirstPruningPassIteration) < 0) __PYX_ERR(0, 232, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_7pyearth_7_record_FirstPruningPassIteration) < 0) __PYX_ERR(0, 254, __pyx_L1_error)
   __pyx_type_7pyearth_7_record_FirstPruningPassIteration.tp_print = 0;
-  if (__Pyx_SetVtable(__pyx_type_7pyearth_7_record_FirstPruningPassIteration.tp_dict, __pyx_vtabptr_7pyearth_7_record_FirstPruningPassIteration) < 0) __PYX_ERR(0, 232, __pyx_L1_error)
-  if (PyObject_SetAttrString(__pyx_m, "FirstPruningPassIteration", (PyObject *)&__pyx_type_7pyearth_7_record_FirstPruningPassIteration) < 0) __PYX_ERR(0, 232, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_7pyearth_7_record_FirstPruningPassIteration.tp_dict, __pyx_vtabptr_7pyearth_7_record_FirstPruningPassIteration) < 0) __PYX_ERR(0, 254, __pyx_L1_error)
+  if (PyObject_SetAttrString(__pyx_m, "FirstPruningPassIteration", (PyObject *)&__pyx_type_7pyearth_7_record_FirstPruningPassIteration) < 0) __PYX_ERR(0, 254, __pyx_L1_error)
   __pyx_ptype_7pyearth_7_record_FirstPruningPassIteration = &__pyx_type_7pyearth_7_record_FirstPruningPassIteration;
   __pyx_vtabptr_7pyearth_7_record_ForwardPassIteration = &__pyx_vtable_7pyearth_7_record_ForwardPassIteration;
   __pyx_vtable_7pyearth_7_record_ForwardPassIteration.__pyx_base = *__pyx_vtabptr_7pyearth_7_record_Iteration;
   __pyx_vtable_7pyearth_7_record_ForwardPassIteration.set_no_candidates = (PyObject *(*)(struct __pyx_obj_7pyearth_7_record_ForwardPassIteration *, int, int __pyx_skip_dispatch))__pyx_f_7pyearth_7_record_20ForwardPassIteration_set_no_candidates;
   __pyx_vtable_7pyearth_7_record_ForwardPassIteration.no_further_candidates = (PyObject *(*)(struct __pyx_obj_7pyearth_7_record_ForwardPassIteration *, int __pyx_skip_dispatch))__pyx_f_7pyearth_7_record_20ForwardPassIteration_no_further_candidates;
   __pyx_type_7pyearth_7_record_ForwardPassIteration.tp_base = __pyx_ptype_7pyearth_7_record_Iteration;
-  if (PyType_Ready(&__pyx_type_7pyearth_7_record_ForwardPassIteration) < 0) __PYX_ERR(0, 253, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_7pyearth_7_record_ForwardPassIteration) < 0) __PYX_ERR(0, 275, __pyx_L1_error)
   __pyx_type_7pyearth_7_record_ForwardPassIteration.tp_print = 0;
-  if (__Pyx_SetVtable(__pyx_type_7pyearth_7_record_ForwardPassIteration.tp_dict, __pyx_vtabptr_7pyearth_7_record_ForwardPassIteration) < 0) __PYX_ERR(0, 253, __pyx_L1_error)
-  if (PyObject_SetAttrString(__pyx_m, "ForwardPassIteration", (PyObject *)&__pyx_type_7pyearth_7_record_ForwardPassIteration) < 0) __PYX_ERR(0, 253, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_7pyearth_7_record_ForwardPassIteration.tp_dict, __pyx_vtabptr_7pyearth_7_record_ForwardPassIteration) < 0) __PYX_ERR(0, 275, __pyx_L1_error)
+  if (PyObject_SetAttrString(__pyx_m, "ForwardPassIteration", (PyObject *)&__pyx_type_7pyearth_7_record_ForwardPassIteration) < 0) __PYX_ERR(0, 275, __pyx_L1_error)
   __pyx_ptype_7pyearth_7_record_ForwardPassIteration = &__pyx_type_7pyearth_7_record_ForwardPassIteration;
   __pyx_vtabptr_7pyearth_7_record_FirstForwardPassIteration = &__pyx_vtable_7pyearth_7_record_FirstForwardPassIteration;
   __pyx_vtable_7pyearth_7_record_FirstForwardPassIteration.__pyx_base = *__pyx_vtabptr_7pyearth_7_record_ForwardPassIteration;
   __pyx_vtable_7pyearth_7_record_FirstForwardPassIteration.__pyx_base.__pyx_base.get_size = (__pyx_t_7pyearth_6_types_INDEX_t (*)(struct __pyx_obj_7pyearth_7_record_Iteration *, int __pyx_skip_dispatch))__pyx_f_7pyearth_7_record_25FirstForwardPassIteration_get_size;
   __pyx_type_7pyearth_7_record_FirstForwardPassIteration.tp_base = __pyx_ptype_7pyearth_7_record_ForwardPassIteration;
-  if (PyType_Ready(&__pyx_type_7pyearth_7_record_FirstForwardPassIteration) < 0) __PYX_ERR(0, 292, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_7pyearth_7_record_FirstForwardPassIteration) < 0) __PYX_ERR(0, 314, __pyx_L1_error)
   __pyx_type_7pyearth_7_record_FirstForwardPassIteration.tp_print = 0;
-  if (__Pyx_SetVtable(__pyx_type_7pyearth_7_record_FirstForwardPassIteration.tp_dict, __pyx_vtabptr_7pyearth_7_record_FirstForwardPassIteration) < 0) __PYX_ERR(0, 292, __pyx_L1_error)
-  if (PyObject_SetAttrString(__pyx_m, "FirstForwardPassIteration", (PyObject *)&__pyx_type_7pyearth_7_record_FirstForwardPassIteration) < 0) __PYX_ERR(0, 292, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_7pyearth_7_record_FirstForwardPassIteration.tp_dict, __pyx_vtabptr_7pyearth_7_record_FirstForwardPassIteration) < 0) __PYX_ERR(0, 314, __pyx_L1_error)
+  if (PyObject_SetAttrString(__pyx_m, "FirstForwardPassIteration", (PyObject *)&__pyx_type_7pyearth_7_record_FirstForwardPassIteration) < 0) __PYX_ERR(0, 314, __pyx_L1_error)
   __pyx_ptype_7pyearth_7_record_FirstForwardPassIteration = &__pyx_type_7pyearth_7_record_FirstForwardPassIteration;
   /*--- Type import code ---*/
   __pyx_ptype_7cpython_4type_type = __Pyx_ImportType(__Pyx_BUILTIN_MODULE_NAME, "type", 
@@ -13112,6 +13368,115 @@ PyMODINIT_FUNC PyInit__record(void)
   if (__Pyx_patch_abc() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
 
+  /* "pyearth/_record.pyx":10
+ * 
+ * 
+ * MAXTERMS = 0             # <<<<<<<<<<<<<<
+ * MAXRSQ = 1
+ * NOIMPRV = 2
+ */
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_MAXTERMS, __pyx_int_0) < 0) __PYX_ERR(0, 10, __pyx_L1_error)
+
+  /* "pyearth/_record.pyx":11
+ * 
+ * MAXTERMS = 0
+ * MAXRSQ = 1             # <<<<<<<<<<<<<<
+ * NOIMPRV = 2
+ * LOWGRSQ = 3
+ */
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_MAXRSQ, __pyx_int_1) < 0) __PYX_ERR(0, 11, __pyx_L1_error)
+
+  /* "pyearth/_record.pyx":12
+ * MAXTERMS = 0
+ * MAXRSQ = 1
+ * NOIMPRV = 2             # <<<<<<<<<<<<<<
+ * LOWGRSQ = 3
+ * NOCAND = 4
+ */
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_NOIMPRV, __pyx_int_2) < 0) __PYX_ERR(0, 12, __pyx_L1_error)
+
+  /* "pyearth/_record.pyx":13
+ * MAXRSQ = 1
+ * NOIMPRV = 2
+ * LOWGRSQ = 3             # <<<<<<<<<<<<<<
+ * NOCAND = 4
+ * stopping_conditions = {
+ */
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_LOWGRSQ, __pyx_int_3) < 0) __PYX_ERR(0, 13, __pyx_L1_error)
+
+  /* "pyearth/_record.pyx":14
+ * NOIMPRV = 2
+ * LOWGRSQ = 3
+ * NOCAND = 4             # <<<<<<<<<<<<<<
+ * stopping_conditions = {
+ *     MAXTERMS: "Reached maximum number of terms",
+ */
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_NOCAND, __pyx_int_4) < 0) __PYX_ERR(0, 14, __pyx_L1_error)
+
+  /* "pyearth/_record.pyx":16
+ * NOCAND = 4
+ * stopping_conditions = {
+ *     MAXTERMS: "Reached maximum number of terms",             # <<<<<<<<<<<<<<
+ *     MAXRSQ: "Achieved RSQ value within threshold of 1",
+ *     NOIMPRV: "Improvement below threshold",
+ */
+  __pyx_t_2 = PyDict_New(); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 16, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_MAXTERMS); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 16, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  if (PyDict_SetItem(__pyx_t_2, __pyx_t_3, __pyx_kp_s_Reached_maximum_number_of_terms) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+  /* "pyearth/_record.pyx":17
+ * stopping_conditions = {
+ *     MAXTERMS: "Reached maximum number of terms",
+ *     MAXRSQ: "Achieved RSQ value within threshold of 1",             # <<<<<<<<<<<<<<
+ *     NOIMPRV: "Improvement below threshold",
+ *     LOWGRSQ: "GRSQ too low",
+ */
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_MAXRSQ); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 17, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  if (PyDict_SetItem(__pyx_t_2, __pyx_t_3, __pyx_kp_s_Achieved_RSQ_value_within_thresh) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+  /* "pyearth/_record.pyx":18
+ *     MAXTERMS: "Reached maximum number of terms",
+ *     MAXRSQ: "Achieved RSQ value within threshold of 1",
+ *     NOIMPRV: "Improvement below threshold",             # <<<<<<<<<<<<<<
+ *     LOWGRSQ: "GRSQ too low",
+ *     NOCAND: "No remaining candidate knot locations"
+ */
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_NOIMPRV); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 18, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  if (PyDict_SetItem(__pyx_t_2, __pyx_t_3, __pyx_kp_s_Improvement_below_threshold) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+  /* "pyearth/_record.pyx":19
+ *     MAXRSQ: "Achieved RSQ value within threshold of 1",
+ *     NOIMPRV: "Improvement below threshold",
+ *     LOWGRSQ: "GRSQ too low",             # <<<<<<<<<<<<<<
+ *     NOCAND: "No remaining candidate knot locations"
+ * }
+ */
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_LOWGRSQ); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 19, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  if (PyDict_SetItem(__pyx_t_2, __pyx_t_3, __pyx_kp_s_GRSQ_too_low) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+  /* "pyearth/_record.pyx":20
+ *     NOIMPRV: "Improvement below threshold",
+ *     LOWGRSQ: "GRSQ too low",
+ *     NOCAND: "No remaining candidate knot locations"             # <<<<<<<<<<<<<<
+ * }
+ * 
+ */
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_NOCAND); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 20, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  if (PyDict_SetItem(__pyx_t_2, __pyx_t_3, __pyx_kp_s_No_remaining_candidate_knot_loca) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_stopping_conditions, __pyx_t_2) < 0) __PYX_ERR(0, 15, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
   /* "pyearth/_record.pyx":1
  * # distutils: language = c             # <<<<<<<<<<<<<<
  * # cython: cdivision = True
@@ -13136,6 +13501,7 @@ PyMODINIT_FUNC PyInit__record(void)
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
   if (__pyx_m) {
     if (__pyx_d) {
       __Pyx_AddTraceback("init pyearth._record", __pyx_clineno, __pyx_lineno, __pyx_filename);
@@ -13707,8 +14073,107 @@ static PyObject* __Pyx_PyInt_AddObjC(PyObject *op1, PyObject *op2, CYTHON_UNUSED
 }
 #endif
 
+/* GetModuleGlobalName */
+    static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name) {
+    PyObject *result;
+#if CYTHON_COMPILING_IN_CPYTHON
+    result = PyDict_GetItem(__pyx_d, name);
+    if (likely(result)) {
+        Py_INCREF(result);
+    } else {
+#else
+    result = PyObject_GetItem(__pyx_d, name);
+    if (!result) {
+        PyErr_Clear();
+#endif
+        result = __Pyx_GetBuiltinName(name);
+    }
+    return result;
+}
+
+/* GetItemInt */
+      static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j) {
+    PyObject *r;
+    if (!j) return NULL;
+    r = PyObject_GetItem(o, j);
+    Py_DECREF(j);
+    return r;
+}
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_List_Fast(PyObject *o, Py_ssize_t i,
+                                                              CYTHON_NCP_UNUSED int wraparound,
+                                                              CYTHON_NCP_UNUSED int boundscheck) {
+#if CYTHON_COMPILING_IN_CPYTHON
+    if (wraparound & unlikely(i < 0)) i += PyList_GET_SIZE(o);
+    if ((!boundscheck) || likely((0 <= i) & (i < PyList_GET_SIZE(o)))) {
+        PyObject *r = PyList_GET_ITEM(o, i);
+        Py_INCREF(r);
+        return r;
+    }
+    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
+#else
+    return PySequence_GetItem(o, i);
+#endif
+}
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Tuple_Fast(PyObject *o, Py_ssize_t i,
+                                                              CYTHON_NCP_UNUSED int wraparound,
+                                                              CYTHON_NCP_UNUSED int boundscheck) {
+#if CYTHON_COMPILING_IN_CPYTHON
+    if (wraparound & unlikely(i < 0)) i += PyTuple_GET_SIZE(o);
+    if ((!boundscheck) || likely((0 <= i) & (i < PyTuple_GET_SIZE(o)))) {
+        PyObject *r = PyTuple_GET_ITEM(o, i);
+        Py_INCREF(r);
+        return r;
+    }
+    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
+#else
+    return PySequence_GetItem(o, i);
+#endif
+}
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i, int is_list,
+                                                     CYTHON_NCP_UNUSED int wraparound,
+                                                     CYTHON_NCP_UNUSED int boundscheck) {
+#if CYTHON_COMPILING_IN_CPYTHON
+    if (is_list || PyList_CheckExact(o)) {
+        Py_ssize_t n = ((!wraparound) | likely(i >= 0)) ? i : i + PyList_GET_SIZE(o);
+        if ((!boundscheck) || (likely((n >= 0) & (n < PyList_GET_SIZE(o))))) {
+            PyObject *r = PyList_GET_ITEM(o, n);
+            Py_INCREF(r);
+            return r;
+        }
+    }
+    else if (PyTuple_CheckExact(o)) {
+        Py_ssize_t n = ((!wraparound) | likely(i >= 0)) ? i : i + PyTuple_GET_SIZE(o);
+        if ((!boundscheck) || likely((n >= 0) & (n < PyTuple_GET_SIZE(o)))) {
+            PyObject *r = PyTuple_GET_ITEM(o, n);
+            Py_INCREF(r);
+            return r;
+        }
+    } else {
+        PySequenceMethods *m = Py_TYPE(o)->tp_as_sequence;
+        if (likely(m && m->sq_item)) {
+            if (wraparound && unlikely(i < 0) && likely(m->sq_length)) {
+                Py_ssize_t l = m->sq_length(o);
+                if (likely(l >= 0)) {
+                    i += l;
+                } else {
+                    if (!PyErr_ExceptionMatches(PyExc_OverflowError))
+                        return NULL;
+                    PyErr_Clear();
+                }
+            }
+            return m->sq_item(o, i);
+        }
+    }
+#else
+    if (is_list || PySequence_Check(o)) {
+        return PySequence_GetItem(o, i);
+    }
+#endif
+    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
+}
+
 /* RaiseException */
-    #if PY_MAJOR_VERSION < 3
+      #if PY_MAJOR_VERSION < 3
 static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb,
                         CYTHON_UNUSED PyObject *cause) {
     __Pyx_PyThreadState_declare
@@ -13871,25 +14336,25 @@ bad:
 #endif
 
 /* RaiseTooManyValuesToUnpack */
-      static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected) {
+        static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected) {
     PyErr_Format(PyExc_ValueError,
                  "too many values to unpack (expected %" CYTHON_FORMAT_SSIZE_T "d)", expected);
 }
 
 /* RaiseNeedMoreValuesToUnpack */
-      static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index) {
+        static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index) {
     PyErr_Format(PyExc_ValueError,
                  "need more than %" CYTHON_FORMAT_SSIZE_T "d value%.1s to unpack",
                  index, (index == 1) ? "" : "s");
 }
 
 /* RaiseNoneIterError */
-      static CYTHON_INLINE void __Pyx_RaiseNoneNotIterableError(void) {
+        static CYTHON_INLINE void __Pyx_RaiseNoneNotIterableError(void) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
 }
 
 /* SetVTable */
-      static int __Pyx_SetVtable(PyObject *dict, void *vtable) {
+        static int __Pyx_SetVtable(PyObject *dict, void *vtable) {
 #if PY_VERSION_HEX >= 0x02070000
     PyObject *ob = PyCapsule_New(vtable, 0, 0);
 #else
@@ -13907,7 +14372,7 @@ bad:
 }
 
 /* GetVTable */
-      static void* __Pyx_GetVtable(PyObject *dict) {
+        static void* __Pyx_GetVtable(PyObject *dict) {
     void* ptr;
     PyObject *ob = PyObject_GetItem(dict, __pyx_n_s_pyx_vtable);
     if (!ob)
@@ -13927,7 +14392,7 @@ bad:
 }
 
 /* CodeObjectCache */
-      static int __pyx_bisect_code_objects(__Pyx_CodeObjectCacheEntry* entries, int count, int code_line) {
+        static int __pyx_bisect_code_objects(__Pyx_CodeObjectCacheEntry* entries, int count, int code_line) {
     int start = 0, mid = 0, end = count - 1;
     if (end >= 0 && code_line > entries[end].code_line) {
         return count;
@@ -14007,7 +14472,7 @@ static void __pyx_insert_code_object(int code_line, PyCodeObject* code_object) {
 }
 
 /* AddTraceback */
-      #include "compile.h"
+        #include "compile.h"
 #include "frameobject.h"
 #include "traceback.h"
 static PyCodeObject* __Pyx_CreateCodeObjectForTraceback(
@@ -14088,7 +14553,7 @@ bad:
 }
 
 /* CIntToPy */
-      static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
+        static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
     const int neg_one = (int) -1, const_zero = (int) 0;
     const int is_unsigned = neg_one > const_zero;
     if (is_unsigned) {
@@ -14115,7 +14580,7 @@ bad:
 }
 
 /* CIntFromPyVerify */
-      #define __PYX_VERIFY_RETURN_INT(target_type, func_type, func_value)\
+        #define __PYX_VERIFY_RETURN_INT(target_type, func_type, func_value)\
     __PYX__VERIFY_RETURN_INT(target_type, func_type, func_value, 0)
 #define __PYX_VERIFY_RETURN_INT_EXC(target_type, func_type, func_value)\
     __PYX__VERIFY_RETURN_INT(target_type, func_type, func_value, 1)
@@ -14137,7 +14602,7 @@ bad:
     }
 
 /* CIntToPy */
-      static CYTHON_INLINE PyObject* __Pyx_PyInt_From_npy_ulonglong(npy_ulonglong value) {
+        static CYTHON_INLINE PyObject* __Pyx_PyInt_From_npy_ulonglong(npy_ulonglong value) {
     const npy_ulonglong neg_one = (npy_ulonglong) -1, const_zero = (npy_ulonglong) 0;
     const int is_unsigned = neg_one > const_zero;
     if (is_unsigned) {
@@ -14164,7 +14629,7 @@ bad:
 }
 
 /* None */
-      #if CYTHON_CCOMPLEX
+        #if CYTHON_CCOMPLEX
   #ifdef __cplusplus
     static CYTHON_INLINE __pyx_t_float_complex __pyx_t_float_complex_from_parts(float x, float y) {
       return ::std::complex< float >(x, y);
@@ -14184,7 +14649,7 @@ bad:
 #endif
 
 /* None */
-      #if CYTHON_CCOMPLEX
+        #if CYTHON_CCOMPLEX
 #else
     static CYTHON_INLINE int __Pyx_c_eqf(__pyx_t_float_complex a, __pyx_t_float_complex b) {
        return (a.real == b.real) && (a.imag == b.imag);
@@ -14286,7 +14751,7 @@ bad:
 #endif
 
 /* None */
-      #if CYTHON_CCOMPLEX
+        #if CYTHON_CCOMPLEX
   #ifdef __cplusplus
     static CYTHON_INLINE __pyx_t_double_complex __pyx_t_double_complex_from_parts(double x, double y) {
       return ::std::complex< double >(x, y);
@@ -14306,7 +14771,7 @@ bad:
 #endif
 
 /* None */
-      #if CYTHON_CCOMPLEX
+        #if CYTHON_CCOMPLEX
 #else
     static CYTHON_INLINE int __Pyx_c_eq(__pyx_t_double_complex a, __pyx_t_double_complex b) {
        return (a.real == b.real) && (a.imag == b.imag);
@@ -14408,7 +14873,7 @@ bad:
 #endif
 
 /* CIntToPy */
-      static CYTHON_INLINE PyObject* __Pyx_PyInt_From_enum__NPY_TYPES(enum NPY_TYPES value) {
+        static CYTHON_INLINE PyObject* __Pyx_PyInt_From_enum__NPY_TYPES(enum NPY_TYPES value) {
     const enum NPY_TYPES neg_one = (enum NPY_TYPES) -1, const_zero = (enum NPY_TYPES) 0;
     const int is_unsigned = neg_one > const_zero;
     if (is_unsigned) {
@@ -14435,7 +14900,7 @@ bad:
 }
 
 /* CIntFromPy */
-      static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *x) {
+        static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *x) {
     const int neg_one = (int) -1, const_zero = (int) 0;
     const int is_unsigned = neg_one > const_zero;
 #if PY_MAJOR_VERSION < 3
@@ -14620,7 +15085,7 @@ raise_neg_overflow:
 }
 
 /* CIntFromPy */
-      static CYTHON_INLINE npy_ulonglong __Pyx_PyInt_As_npy_ulonglong(PyObject *x) {
+        static CYTHON_INLINE npy_ulonglong __Pyx_PyInt_As_npy_ulonglong(PyObject *x) {
     const npy_ulonglong neg_one = (npy_ulonglong) -1, const_zero = (npy_ulonglong) 0;
     const int is_unsigned = neg_one > const_zero;
 #if PY_MAJOR_VERSION < 3
@@ -14805,7 +15270,7 @@ raise_neg_overflow:
 }
 
 /* CIntToPy */
-      static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
+        static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
     const long neg_one = (long) -1, const_zero = (long) 0;
     const int is_unsigned = neg_one > const_zero;
     if (is_unsigned) {
@@ -14832,7 +15297,7 @@ raise_neg_overflow:
 }
 
 /* CIntFromPy */
-      static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *x) {
+        static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *x) {
     const long neg_one = (long) -1, const_zero = (long) 0;
     const int is_unsigned = neg_one > const_zero;
 #if PY_MAJOR_VERSION < 3
@@ -15017,7 +15482,7 @@ raise_neg_overflow:
 }
 
 /* CheckBinaryVersion */
-      static int __Pyx_check_binary_version(void) {
+        static int __Pyx_check_binary_version(void) {
     char ctversion[4], rtversion[4];
     PyOS_snprintf(ctversion, 4, "%d.%d", PY_MAJOR_VERSION, PY_MINOR_VERSION);
     PyOS_snprintf(rtversion, 4, "%s", Py_GetVersion());
@@ -15033,7 +15498,7 @@ raise_neg_overflow:
 }
 
 /* ModuleImport */
-      #ifndef __PYX_HAVE_RT_ImportModule
+        #ifndef __PYX_HAVE_RT_ImportModule
 #define __PYX_HAVE_RT_ImportModule
 static PyObject *__Pyx_ImportModule(const char *name) {
     PyObject *py_name = 0;
@@ -15051,7 +15516,7 @@ bad:
 #endif
 
 /* TypeImport */
-      #ifndef __PYX_HAVE_RT_ImportType
+        #ifndef __PYX_HAVE_RT_ImportType
 #define __PYX_HAVE_RT_ImportType
 static PyTypeObject *__Pyx_ImportType(const char *module_name, const char *class_name,
     size_t size, int strict)
@@ -15116,7 +15581,7 @@ bad:
 #endif
 
 /* FunctionImport */
-      #ifndef __PYX_HAVE_RT_ImportFunction
+        #ifndef __PYX_HAVE_RT_ImportFunction
 #define __PYX_HAVE_RT_ImportFunction
 static int __Pyx_ImportFunction(PyObject *module, const char *funcname, void (**f)(void), const char *sig) {
     PyObject *d = 0;
@@ -15170,7 +15635,7 @@ bad:
 #endif
 
 /* InitStrings */
-      static int __Pyx_InitStrings(__Pyx_StringTabEntry *t) {
+        static int __Pyx_InitStrings(__Pyx_StringTabEntry *t) {
     while (t->p) {
         #if PY_MAJOR_VERSION < 3
         if (t->is_unicode) {

@@ -14,7 +14,7 @@ cdef class PruningPasser:
                  cnp.ndarray[FLOAT_t, ndim=2] X, 
                  cnp.ndarray[BOOL_t, ndim=2] missing, 
                  cnp.ndarray[FLOAT_t, ndim=2] y,
-                 cnp.ndarray[FLOAT_t, ndim=2] sample_weight, bint verbose,
+                 cnp.ndarray[FLOAT_t, ndim=2] sample_weight, int verbose,
                  **kwargs):
         self.X = X
         self.missing = missing
@@ -60,7 +60,7 @@ cdef class PruningPasser:
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.sample_weight)
         cdef cnp.ndarray[FLOAT_t, ndim = 1] weighted_y
 
-        if self.verbose:
+        if self.verbose >= 1:
             print('Beginning pruning pass')
 
         # Initial solution
@@ -97,7 +97,7 @@ cdef class PruningPasser:
         best_gcv = gcv_
         best_iteration = 0
         
-        if self.verbose:
+        if self.verbose >= 1:
             print(self.record.partial_str(slice(-1, None, None), print_footer=False))
 
         # Prune basis functions sequentially
@@ -153,12 +153,14 @@ cdef class PruningPasser:
                 best_bf_to_prune, pruned_basis_size, best_iteration_mse / total_weight))
             self.basis[best_bf_to_prune].prune()
             
-            if self.verbose:
-                print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=False))
+            if self.verbose >= 1:
+                print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=(pruned_basis_size == 1)))
 
         # Unprune the basis functions pruned after the best iteration
         self.record.set_selected(best_iteration)
         self.record.roll_back(self.basis)
+        if self.verbose >= 1:
+            print(self.record.final_str())
 
     cpdef PruningPassRecord trace(PruningPasser self):
         return self.record

@@ -28,7 +28,7 @@ cdef class ForwardPasser:
     cdef long fast_K
     cdef long fast_h
     cdef bint allow_missing
-    cdef bint verbose
+    cdef int verbose
 
     # Input data
     cdef cnp.ndarray X
