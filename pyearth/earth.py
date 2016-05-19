@@ -1036,6 +1036,15 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             specified, all variables are used (even if some are not relevant
             to the final model and have derivatives that are identically zero).
 
+       Returns
+       -------
+       
+       X_deriv : array of shape = [m, n, p] where m is the number of samples, n
+            is the number of features if 'variables' is not specified otherwise it 
+            is len(variables) and p is the number of outputs.
+            For each sample, X_deriv represents the first derivative of each response 
+            with respect to each variable.
+
         '''
 
         check_is_fitted(self, "basis_")
@@ -1108,6 +1117,13 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             argument is a pandas DataFrame, missing will be inferred from X if 
             allow_missing is True.
 
+        Returns
+        -------
+
+        score : float with a maximum value of 1 (it can be negative). 
+                The score is the generalized r^2 of the model on data X and y, the higher
+                the score the better the fit is.
+
         '''
         check_is_fitted(self, "basis_")
         if not skip_scrub:
@@ -1127,13 +1143,50 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         mse0 = np.sum(sample_weight * ((y - y_avg) ** 2))
 #         mse0 = np.sum(y_sqr * output_weight) / m
         return 1 - (mse / mse0)
-# 
-#     def score_samples(self, X, y=None, missing=None):
-#         X, y, sample_weight, missing = self._scrub(
-#             X, y, None, None, missing)
-#         y_hat = self.predict(X, missing=missing)
-#         residual = 1 - (y - y_hat) ** 2 / y**2
-#         return residual
+
+    def score_samples(self, X, y=None, missing=None):
+        '''
+        
+        Calculate sample-wise fit scores.
+
+        Parameters
+        ----------
+        
+        X : array-like, shape = [m, n] where m is the number of samples
+            and n is the number of features The training predictors.
+            The X parameter can be a numpy array, a pandas DataFrame, a patsy
+            DesignMatrix, or a tuple of patsy DesignMatrix objects as output
+            by patsy.dmatrices.
+
+        y : array-like, optional (default=None), shape = [m, p] where m is the
+            number of samples, p the number of outputs.
+            The y parameter can be a numpy array, a pandas DataFrame,
+            a Patsy DesignMatrix, or can be left as None (default) if X was
+            the output of a call to patsy.dmatrices (in which case, X contains
+            the response).
+             
+        missing : array-like, shape = [m, n] where m is the number of samples
+            and n is the number of features.
+            The missing parameter can be a numpy array, a pandas DataFrame, or a 
+            patsy DesignMatrix.  All entries will be interpreted as boolean 
+            values, with True indicating the corresponding entry in X should be
+            interpreted as missing.  If the missing argument not used but the X
+            argument is a pandas DataFrame, missing will be inferred from X if 
+            allow_missing is True.
+
+        Returns
+        -------
+
+        scores : array of shape=[m, p] of floats with maximum value of 1 (it can be negative). 
+                 The scores represent how good each output of each example is predicted,
+                 a perfect score would be 1 (the score can be negative).
+
+        '''
+        X, y, sample_weight, output_weight, missing = self._scrub(
+            X, y, None, None, missing)
+        y_hat = self.predict(X, missing=missing)
+        residual = 1 - (y - y_hat) ** 2 / y**2
+        return residual
 
     def transform(self, X, missing=None):
         '''
@@ -1161,6 +1214,14 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             interpreted as missing.  If the missing argument not used but the X
             argument is a pandas DataFrame, missing will be inferred from X if 
             allow_missing is True.
+
+        Returns
+        -------
+
+        B: array of shape [m, nb_terms] where m is the number of samples and nb_terms
+           is the number of terms (or basis functions) obtained after fitting (which is the 
+           number of elements of the attribute `basis_`). B represents the values of
+           the basis functions evaluated at each sample.
         '''
 
         check_is_fitted(self, "basis_")
