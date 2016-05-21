@@ -117,7 +117,7 @@ cdef class ForwardPasser:
         if self.endspan < 0:
             self.endspan = round(3 - log2(self.endspan_alpha / self.n))
         
-        self.linear_variables = np.zeros(shape=self.n, dtype=np.int)
+        self.linear_variables = np.zeros(shape=self.n, dtype=np.intp)
         self.init_linear_variables()
         
         # Removed in favor of new knot search code
