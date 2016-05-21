@@ -9,7 +9,7 @@ from ._basis cimport (Basis, BasisFunction, ConstantBasisFunction,
                       HingeBasisFunction, LinearBasisFunction, 
                       MissingnessBasisFunction)
 from ._record cimport ForwardPassIteration
-from ._types import BOOL
+from ._types import BOOL, INT
 from ._knot_search cimport knot_search, MultipleOutcomeDependentData, PredictorDependentData, \
     KnotSearchReadOnlyData, KnotSearchState, KnotSearchWorkingData, KnotSearchData
 import sys
@@ -117,7 +117,7 @@ cdef class ForwardPasser:
         if self.endspan < 0:
             self.endspan = round(3 - log2(self.endspan_alpha / self.n))
         
-        self.linear_variables = np.zeros(shape=self.n, dtype=np.intp)
+        self.linear_variables = np.zeros(shape=self.n, dtype=INT)
         self.init_linear_variables()
         
         # Removed in favor of new knot search code

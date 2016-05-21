@@ -50,7 +50,7 @@ cdef class PredictorDependentData:
     cdef readonly FLOAT_t[:] p
     cdef readonly FLOAT_t[:] x
     cdef readonly FLOAT_t[:] candidates
-    cdef readonly INT_t[:] order
+    cdef readonly INDEX_t[:] order
 
 @cython.final
 cdef class KnotSearchReadOnlyData:

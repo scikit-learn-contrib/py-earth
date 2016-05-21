@@ -217,7 +217,7 @@ cdef class SingleOutcomeDependentData:
 @cython.final
 cdef class PredictorDependentData:
     def __init__(PredictorDependentData self, FLOAT_t[:] x,
-                INT_t[:] order):
+                INDEX_t[:] order):
         self.x = x
         self.order = order
     
@@ -275,7 +275,7 @@ cdef class PredictorDependentData:
     
     @classmethod
     def alloc(cls, FLOAT_t[:] x):
-        cdef INT_t[:] order
+        cdef INDEX_t[:] order
         order = np.argsort(x)[::-1]
         return cls(x, order)
 
