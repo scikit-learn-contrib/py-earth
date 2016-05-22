@@ -246,10 +246,10 @@ cdef class ForwardPasser:
         cdef INDEX_t parent_degree
         cdef INDEX_t nonzero_count
         cdef BasisFunction parent
-        cdef cnp.ndarray[INT_t, ndim = 1] candidates_idx
+        cdef cnp.ndarray[INDEX_t, ndim = 1] candidates_idx
         cdef FLOAT_t knot
         cdef FLOAT_t mse
-        cdef int knot_idx
+        cdef INDEX_t knot_idx
         cdef FLOAT_t knot_choice
         cdef FLOAT_t mse_choice
         cdef FLOAT_t mse_choice_cur_parent

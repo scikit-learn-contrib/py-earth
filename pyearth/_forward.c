@@ -2902,6 +2902,7 @@ static void __pyx_memoryview__slice_assign_scalar(char *, Py_ssize_t *, Py_ssize
 static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t = { "FLOAT_t", NULL, sizeof(__pyx_t_7pyearth_6_types_FLOAT_t), { 0 }, 0, 'R', 0, 0 };
 static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_BOOL_t = { "BOOL_t", NULL, sizeof(__pyx_t_7pyearth_6_types_BOOL_t), { 0 }, 0, IS_UNSIGNED(__pyx_t_7pyearth_6_types_BOOL_t) ? 'U' : 'I', IS_UNSIGNED(__pyx_t_7pyearth_6_types_BOOL_t), 0 };
 static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_INT_t = { "INT_t", NULL, sizeof(__pyx_t_7pyearth_6_types_INT_t), { 0 }, 0, IS_UNSIGNED(__pyx_t_7pyearth_6_types_INT_t) ? 'U' : 'I', IS_UNSIGNED(__pyx_t_7pyearth_6_types_INT_t), 0 };
+static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_INDEX_t = { "INDEX_t", NULL, sizeof(__pyx_t_7pyearth_6_types_INDEX_t), { 0 }, 0, IS_UNSIGNED(__pyx_t_7pyearth_6_types_INDEX_t) ? 'U' : 'I', IS_UNSIGNED(__pyx_t_7pyearth_6_types_INDEX_t), 0 };
 #define __Pyx_MODULE_NAME "pyearth._forward"
 int __pyx_module_is_main_pyearth___forward = 0;
 
@@ -7355,7 +7356,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
   PyArrayObject *__pyx_v_candidates_idx = 0;
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_knot;
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_mse;
-  int __pyx_v_knot_idx;
+  __pyx_t_7pyearth_6_types_INDEX_t __pyx_v_knot_idx;
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_knot_choice;
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_mse_choice;
   __pyx_t_7pyearth_6_types_FLOAT_t __pyx_v_mse_choice_cur_parent;
@@ -8987,10 +8988,10 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
         {
           __Pyx_BufFmt_StackElem __pyx_stack[1];
           __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer);
-          __pyx_t_19 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer, (PyObject*)__pyx_t_31, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
+          __pyx_t_19 = __Pyx_GetBufferAndValidate(&__pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer, (PyObject*)__pyx_t_31, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_INDEX_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack);
           if (unlikely(__pyx_t_19 < 0)) {
             PyErr_Fetch(&__pyx_t_22, &__pyx_t_21, &__pyx_t_20);
-            if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer, (PyObject*)__pyx_v_candidates_idx, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
+            if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer, (PyObject*)__pyx_v_candidates_idx, &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_INDEX_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
               Py_XDECREF(__pyx_t_22); Py_XDECREF(__pyx_t_21); Py_XDECREF(__pyx_t_20);
               __Pyx_RaiseBufferFallbackError();
             } else {
@@ -9127,12 +9128,12 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
           }
           __pyx_t_34 = __pyx_PyFloat_AsDouble(__pyx_t_10); if (unlikely((__pyx_t_34 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 419; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-          __pyx_t_19 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_19 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 419; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_4 = __Pyx_PyInt_As_Py_intptr_t(__pyx_t_1); if (unlikely((__pyx_t_4 == (npy_intp)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 419; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           __pyx_t_35 = __pyx_PyFloat_AsDouble(__pyx_t_27); if (unlikely((__pyx_t_35 == (npy_float64)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 419; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           __Pyx_DECREF(__pyx_t_27); __pyx_t_27 = 0;
           __pyx_v_knot = __pyx_t_34;
-          __pyx_v_knot_idx = __pyx_t_19;
+          __pyx_v_knot_idx = __pyx_t_4;
           __pyx_v_mse = __pyx_t_35;
 
           /* "pyearth/_forward.pyx":422
@@ -9152,7 +9153,7 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
  *                         # If the hinge function does not decrease the gcv then
  */
           __pyx_t_36 = __pyx_v_knot_idx;
-          __pyx_v_knot_idx = (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INT_t *, __pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer.buf, __pyx_t_36, __pyx_pybuffernd_candidates_idx.diminfo[0].strides));
+          __pyx_v_knot_idx = (*__Pyx_BufPtrStrided1d(__pyx_t_7pyearth_6_types_INDEX_t *, __pyx_pybuffernd_candidates_idx.rcbuffer->pybuffer.buf, __pyx_t_36, __pyx_pybuffernd_candidates_idx.diminfo[0].strides));
 
           /* "pyearth/_forward.pyx":427
  *                         # If the hinge function does not decrease the gcv then
