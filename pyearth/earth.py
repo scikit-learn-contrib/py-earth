@@ -8,7 +8,6 @@ from sklearn.utils.validation import (assert_all_finite, check_is_fitted,
 import numpy as np
 from scipy import sparse
 
-
 class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
     """
@@ -171,6 +170,12 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
     enable_pruning : bool, optional(default=True)
         If False, the pruning pass will be skipped.
+        
+    verbose : int, optional(default=0)
+        If verbose >= 1, print out progress information during fitting.  If 
+        verbose >= 2, also print out information on numerical difficulties
+        if encountered during fitting. If verbose >= 3, print even more information
+        that is probably only useful to the developers of py-earth.
 
     Attributes
     ----------
@@ -248,10 +253,10 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         'minspan_alpha', 'minspan',
         'thresh', 'zero_tol', 'min_search_points', 
         'check_every', 'allow_linear',
-        'use_fast', 'fast_K', 'fast_h'
+        'use_fast', 'fast_K', 'fast_h', 'verbose'
     ])
     pruning_pass_arg_names = set([
-        'penalty'
+        'penalty', 'verbose'
     ])
 
     def __init__(self, max_terms=None, max_degree=None, allow_missing=False, 
@@ -260,7 +265,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                  thresh=None, zero_tol=None, min_search_points=None, 
                  check_every=None,
                  allow_linear=None, use_fast=None, fast_K=None,
-                 fast_h=None, smooth=None, enable_pruning=True):
+                 fast_h=None, smooth=None, enable_pruning=True, verbose=0):
         kwargs = {}
         call = locals()
         for name in self._get_param_names():
@@ -399,14 +404,14 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
         # Deal with sample_weight
         if sample_weight is None:
-            sample_weight = np.ones(y.shape[0], dtype=y.dtype)
+            sample_weight = np.ones((y.shape[0], 1), dtype=y.dtype)
         else:
             sample_weight = np.asarray(sample_weight)
             assert_all_finite(sample_weight)
+            if len(sample_weight.shape) == 1:
+                sample_weight = sample_weight[:, np.newaxis]
         # Deal with output_weight
-        if output_weight is None:
-            output_weight = np.ones(y.shape[1], dtype=y.dtype)
-        else:
+        if output_weight is not None:
             output_weight = np.asarray(output_weight)
             assert_all_finite(output_weight)
 
@@ -416,9 +421,14 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         if y.shape[0] != sample_weight.shape[0]:
             raise ValueError(
                 'y and sample_weight do not have compatible dimensions.')
-        if y.shape[1] != output_weight.shape[0]:
+        if output_weight is not None and y.shape[1] != output_weight.shape[0]:
             raise ValueError(
                 'y and output_weight do not have compatible dimensions.')
+        if y.shape[1] > 1:
+            if sample_weight.shape[1] == 1 and output_weight is not None:
+                sample_weight = np.repeat(sample_weight,y.shape[1],axis=1)
+        if output_weight is not None:
+            sample_weight *= output_weight
 
         # Make sure everything is finite (except X, which is allowed to have
         # missing values)
@@ -431,7 +441,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         check_X_y(X, y, accept_sparse=None, multi_output=True,
                   force_all_finite=False)
 
-        return X, y, sample_weight, output_weight, missing
+        return X, y, sample_weight, None, missing
 
     def fit(self, X, y=None,
             sample_weight=None,
@@ -514,21 +524,46 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             X, y, sample_weight, output_weight, missing)
 
         # Do the actual work
-        self.__forward_pass(X, y, 
+        self.forward_pass(X, y, 
                             sample_weight, output_weight, missing,
-                            self.xlabels_, linvars)
+                            self.xlabels_, linvars, skip_scrub=True)
         if self.enable_pruning is True:
-            self.__pruning_pass(X, y,
-                            sample_weight, output_weight, missing)
+            self.pruning_pass(X, y,
+                            sample_weight, output_weight, missing, 
+                            skip_scrub=True)
         if hasattr(self, 'smooth') and self.smooth:
             self.basis_ = self.basis_.smooth(X)
-        self.__linear_fit(X, y, sample_weight, output_weight, missing)
+        self.linear_fit(X, y, sample_weight, output_weight, missing, 
+                          skip_scrub=True)
         return self
-
-    def __forward_pass(self, X, y=None,
+    
+#     def forward_pass2(self, X, y=None,
+#                        sample_weight=None, output_weight=None,
+#                        missing=None,
+#                        xlabels=None, linvars=[]):
+#         # Label and format data
+#         if xlabels is None:
+#             self.xlabels_ = self._scrape_labels(X)
+#         else:
+#             self.xlabels_ = xlabels
+#         X, y, sample_weight, output_weight, missing = self._scrub(
+#             X, y, sample_weight, output_weight, missing)
+#         
+#         # Do the actual work
+#         args = self._pull_forward_args(**self.__dict__)
+#         forward_passer = ForwardPasser(
+#             X, missing, y, sample_weight, output_weight,
+#             xlabels=self.xlabels_, linvars=linvars, **args)
+# #         forward_passer.run()
+#         linvars_ = []
+#         self.forward_pass_record_, self.basis_ = forward_pass(X, missing, y, 
+#             sample_weight, output_weight, xlabels=self.xlabels_, linvars=linvars)
+# #         self.basis_ = forward_passer.get_basis()
+#     
+    def forward_pass(self, X, y=None,
                        sample_weight=None, output_weight=None,
                        missing=None,
-                       xlabels=None, linvars=[]):
+                       xlabels=None, linvars=[], skip_scrub=False):
         '''
         Perform the forward pass of the multivariate adaptive regression
         splines algorithm.  Users will normally want to call the fit method
@@ -578,7 +613,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         
         linvars : iterable of strings or ints, optional (empty by default)
             Used to specify features that may only enter terms as linear basis
-            functions (without knots).  Can include both column numbers an
+            functions (without knots).  Can include both column numbers and
             column names (see xlabels, below).
 
 
@@ -597,20 +632,21 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             self.xlabels_ = self._scrape_labels(X)
         else:
             self.xlabels_ = xlabels
-        X, y, sample_weight, output_weight, missing = self._scrub(
-            X, y, sample_weight, output_weight, missing)
+        if not skip_scrub:
+            X, y, sample_weight, output_weight, missing = self._scrub(
+                X, y, sample_weight, output_weight, missing)
 
         # Do the actual work
         args = self._pull_forward_args(**self.__dict__)
         forward_passer = ForwardPasser(
-            X, missing, y, sample_weight, output_weight,
+            X, missing, y, sample_weight,
             xlabels=self.xlabels_, linvars=linvars, **args)
         forward_passer.run()
         self.forward_pass_record_ = forward_passer.trace()
         self.basis_ = forward_passer.get_basis()
 
-    def __pruning_pass(self, X, y=None, sample_weight=None, output_weight=None, 
-                       missing=None):
+    def pruning_pass(self, X, y=None, sample_weight=None, output_weight=None, 
+                       missing=None, skip_scrub=False):
         '''
         Perform the pruning pass of the multivariate adaptive regression
         splines algorithm.  Users will normally want to call the fit
@@ -661,17 +697,90 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
         '''
         # Format data
-        X, y, sample_weight, output_weight, missing = self._scrub(
-            X, y, sample_weight, output_weight, missing)
-
+        if not skip_scrub:
+            X, y, sample_weight, output_weight, missing = self._scrub(
+                X, y, sample_weight, output_weight, missing)
+            
+#         if sample_weight.shape[1] == 1 and y.shape[1] != 1:
+#             sample_weight = np.repeat(sample_weight,y.shape[1],axis=1)
+        
         # Pull arguments from self
         args = self._pull_pruning_args(**self.__dict__)
+        
         # Do the actual work
         pruning_passer = PruningPasser(
-            self.basis_, X, missing, y, sample_weight, output_weight,
+            self.basis_, X, missing, y, sample_weight,
             **args)
         pruning_passer.run()
         self.pruning_pass_record_ = pruning_passer.trace()
+        
+        
+#         # Format data
+#         X, y, sample_weight, output_weight, missing = self._scrub(
+#             X, y, sample_weight, output_weight, missing)
+#          
+#         # Dimensions
+#         m, n = X.shape
+#         basis_size = len(self.basis_)
+#         pruned_basis_size = self.basis_.plen()
+#          
+#         self.pruning_pass_record_ = PruningPassRecord(m, n, args['penalty'], sst, pruned_basis_size)
+#         
+#         
+#         
+#         # Pull arguments from self
+#         args = self._pull_pruning_args(**self.__dict__)
+#         penalty = args.get('penalty', 3.0)
+#         
+#         # Compute prune sets
+#         prune_sets = [[basis_size - i for i in range(n)] for n in range(basis_size)]
+#         
+#         # Create the record object
+#         record = PruningPassRecord('gcv', basis_size)
+#         
+#         # Score each prune set to find the best
+#         best_prune_set = []
+#         best_score = float('inf')
+#         for prune_set in prune_sets:
+#             print 1
+#             print prune_set
+#             sys.stdout.flush()
+#             # Prune this prune set
+#             for idx in prune_set:
+#                 self.basis_[idx].prune()
+#             
+#             print 2
+#             sys.stdout.flush()
+#             # Score this prune set
+#             self.linear_fit(X, y, sample_weight, output_weight, missing, skip_scrub=True)
+#             y_pred = self.predict(X, missing, skip_scrub=True)
+#             score = gcv(np.mean(((y - y_pred) * np.sqrt(sample_weight)) ** 2),
+#                         basis_size - len(prune_set), m, penalty)
+#             r2 = self.score(X, y, sample_weight, output_weight, missing, skip_scrub=True)
+#             
+#             print 3
+#             sys.stdout.flush()
+#             # Minimizer
+#             if score < best_score:
+#                 best_score = score
+#                 best_prune_set = prune_set
+#             
+#             print 4
+#             sys.stdout.flush()
+#             # Unprune for next iteration
+#             for idx in prune_set:
+#                 self.basis_[idx].unprune()
+#             
+#             print 5
+#             sys.stdout.flush()
+#             # Add to the record
+#             record.add(prune_set, score, r2)
+#         
+#         # Apply the best prune set
+#         for idx in best_prune_set:
+#             self.basis_[idx].prune()
+#         
+#         self.pruning_pass_record_ = record
 
     def forward_trace(self):
         '''Return information about the forward pass.'''
@@ -701,31 +810,36 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             result += 'Unpruned Earth Model\n'
         else:
             result += 'Earth Model\n'
-        header = ['Basis Function', 'Pruned', 'Coefficient']
+        header = ['Basis Function', 'Pruned'] 
+        if self.coef_.shape[0] > 1:
+            header += ['Coefficient %d' % i for i in range(self.coef_.shape[0])]
+        else:
+            header += ['Coefficient']
         data = []
-        for c in range(self.coef_.shape[0]):
-            i = 0
-            for bf in self.basis_:
-                data.append([str(bf), 'Yes'
-                             if bf.is_pruned()
-                             else 'No', '%g' % self.coef_[c, i]
-                             if not bf.is_pruned() else 'None'])
-                if not bf.is_pruned():
-                    i += 1
-            result += ascii_table(header, data)
-            if self.pruning_trace() is not None:
-                record = self.pruning_trace()
-                selection = record.get_selected()
-            else:
-                record = self.forward_trace()
-                selection = len(record) - 1
-            result += '\n'
+        
+        i = 0
+        for bf in self.basis_:
+            data.append([str(bf), 'Yes'
+                         if bf.is_pruned()
+                         else 'No'] + ['%g' % self.coef_[c, i] if not bf.is_pruned() else 
+                                       'None' for c in range(self.coef_.shape[0])]
+                         )
+            if not bf.is_pruned():
+                i += 1
+        result += ascii_table(header, data)
+        if self.pruning_trace() is not None:
+            record = self.pruning_trace()
+            selection = record.get_selected()
+        else:
+            record = self.forward_trace()
+            selection = len(record) - 1
+        result += '\n'
         result += 'MSE: %.4f, GCV: %.4f, RSQ: %.4f, GRSQ: %.4f' % (
             self.mse_, self.gcv_, self.rsq_, self.grsq_)
         return result
 
-    def __linear_fit(self, X, y=None, sample_weight=None, output_weight=None,
-                     missing=None):
+    def linear_fit(self, X, y=None, sample_weight=None, output_weight=None,
+                     missing=None, skip_scrub=False):
         '''
         Solve the linear least squares problem to determine the coefficients
         of the unpruned basis functions.
@@ -774,22 +888,40 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
         '''
         # Format data
-        X, y, sample_weight, output_weight, missing = self._scrub(
-            X, y, sample_weight, output_weight, missing)
-
-        # Transform into basis space
-        B = self.transform(X, missing)
+        if not skip_scrub:
+            X, y, sample_weight, output_weight, missing = self._scrub(
+                X, y, sample_weight, output_weight, missing)
         
-        # Apply weights to B
-        apply_weights_2d(B, sample_weight)
-
-        # Apply weights to y
-        weighted_y = y.copy()
-        weighted_y *= np.sqrt(sample_weight[:, np.newaxis])
+#         if sample_weight.shape[1]:
+#             sample_weight = np.repeat(sample_weight,y.shape[1],axis=1)
+        
         # Solve the linear least squares problem
         self.coef_ = []
         resid_ = []
+        total_weight = 0.
+        mse0 = 0.
         for i in range(y.shape[1]):
+            
+            # Figure out the weight column
+            if sample_weight.shape[1] > 1:
+                w = sample_weight[:, i]
+            else:
+                w = sample_weight[:, 0]
+            
+            # Transform into basis space
+            B = self.transform(X, missing) #* w[:, None]
+            apply_weights_2d(B, w)
+            
+            # Compute total weight
+            total_weight += np.sum(w)
+    
+            # Apply weights to y
+            weighted_y = y.copy()
+            weighted_y *= np.sqrt(w[:, np.newaxis])
+            
+            # Compute the mse0
+            mse0 += np.sum((weighted_y[:,i] - np.average(weighted_y[:,i])) ** 2)
+            
             coef, resid = np.linalg.lstsq(B, weighted_y[:, i])[0:2]
             self.coef_.append(coef)
             if not resid:
@@ -799,28 +931,39 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         self.coef_ = np.array(self.coef_)
         # Compute the final mse, gcv, rsq, and grsq (may be different from the
         # pruning scores if the model has been smoothed)
-        self.mse_ = np.sum(resid_ * output_weight) / float(X.shape[0])
+        self.mse_ = np.sum(resid_) / total_weight
+        mse0 = mse0 / total_weight
+        self.gcv_ = gcv(self.mse_,
+                        coef.shape[0], X.shape[0],
+                        self.get_penalty())
+        gcv0 = gcv(mse0,
+                   1, X.shape[0],
+                   self.get_penalty())
+        self.rsq_ = 1.0 - (self.mse_ / mse0)
+        self.grsq_ = 1.0 - (self.gcv_ / gcv0)
+        
+#         
+#         
+#         
+#         for p, coef in enumerate(self.coef_):
+#             mse_p = resid_[p].sum() / float(X.shape[0])
+#             gcv_[p] = gcv(mse_p,
+#                           coef.shape[0], X.shape[0],
+#                           self.get_penalty())
+#             self.gcv_ += gcv_[p] * output_weight[p]
+#         y_avg = np.average(y, weights=sample_weight if 
+#                            sample_weight.shape == y.shape else sample_weight.flatten(), axis=0)
+#         y_sqr = (y - y_avg[np.newaxis, :]) ** 2
+# 
+#         rsq_ = ((1 - resid_.sum(axis=1) / y_sqr.sum(axis=0)) * output_weight)
+#         self.rsq_ = rsq_.sum()
+#         gcv0 = np.empty(y.shape[1])
+#         for p in range(y.shape[1]):
+#             mse0_p = (y_sqr[:, p].sum()) / float(X.shape[0])
+#             gcv0[p] = gcv(mse0_p, 1, X.shape[0], self.get_penalty())
+#         self.grsq_ = ((1 - (gcv_ / gcv0)) * output_weight).sum()
 
-        gcv_ = np.empty(y.shape[1])
-        self.gcv_ = 0
-        for p, coef in enumerate(self.coef_):
-            mse_p = resid_[p].sum() / float(X.shape[0])
-            gcv_[p] = gcv(mse_p,
-                          coef.shape[0], X.shape[0],
-                          self.get_penalty())
-            self.gcv_ += gcv_[p] * output_weight[p]
-        y_avg = np.average(y, weights=sample_weight, axis=0)
-        y_sqr = (y - y_avg[np.newaxis, :]) ** 2
-
-        rsq_ = ((1 - resid_.sum(axis=1) / y_sqr.sum(axis=0)) * output_weight)
-        self.rsq_ = rsq_.sum()
-        gcv0 = np.empty(y.shape[1])
-        for p in range(y.shape[1]):
-            mse0_p = (y_sqr[:, p].sum()) / float(X.shape[0])
-            gcv0[p] = gcv(mse0_p, 1, X.shape[0], self.get_penalty())
-        self.grsq_ = ((1 - (gcv_ / gcv0)) * output_weight).sum()
-
-    def predict(self, X, missing=None):
+    def predict(self, X, missing=None, skip_scrub=False):
         '''
         Predict the response based on the input data X.
 
@@ -847,7 +990,8 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                 and p is the number of outputs
                 The predicted values.
         '''
-        X, missing = self._scrub_x(X, missing)
+        if not skip_scrub:
+            X, missing = self._scrub_x(X, missing)
         B = self.transform(X, missing)
         y = np.dot(B, self.coef_.T)
         if y.shape[1] == 1:
@@ -916,7 +1060,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         return J
 
     def score(self, X, y=None, sample_weight=None, output_weight=None, 
-              missing=None):
+              missing=None, skip_scrub=False):
         '''
         Calculate the generalized r^2 of the model on data X and y.
 
@@ -971,15 +1115,22 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
         '''
         check_is_fitted(self, "basis_")
-        X, y, sample_weight, output_weight, missing = self._scrub(
-            X, y, sample_weight, output_weight, missing)
+        if not skip_scrub:
+            X, y, sample_weight, output_weight, missing = self._scrub(
+                X, y, sample_weight, output_weight, missing)
+        if sample_weight.shape[1] == 1 and y.shape[1] > 1:
+            sample_weight = np.repeat(sample_weight,y.shape[1],axis=1)
         y_hat = self.predict(X)
-        m, _ = X.shape
-        residual = y - y_hat[:, np.newaxis]
-        mse = np.sum(sample_weight[:, np.newaxis] * (residual ** 2)) / m
+        if len(y_hat.shape) == 1:
+            y_hat = y_hat[:, None]
+
+        residual = y - y_hat
+#         total_weight = np.sum(sample_weight)
+        mse = np.sum(sample_weight * (residual ** 2))
         y_avg = np.average(y, weights=sample_weight, axis=0)
-        y_sqr = sample_weight[:, np.newaxis] * (y - y_avg[np.newaxis, :]) ** 2
-        mse0 = np.sum(y_sqr * output_weight) / m
+        
+        mse0 = np.sum(sample_weight * ((y - y_avg) ** 2))
+#         mse0 = np.sum(y_sqr * output_weight) / m
         return 1 - (mse / mse0)
 
     def score_samples(self, X, y=None, missing=None):
@@ -1088,4 +1239,15 @@ class EarthTrace(object):
                 self.pruning_trace == other.pruning_trace)
 
     def __str__(self):
-        return str(self.forward_trace) + '\n' + str(self.pruning_trace)
+        result = ''
+        result += 'Forward Pass\n'
+        result += str(self.forward_trace)
+        result += '\n'
+        result += self.forward_trace.final_str()
+        result += '\n\n'
+        result += 'Pruning Pass\n'
+        result += str(self.pruning_trace)
+        result += '\n'
+        result += self.pruning_trace.final_str()
+        result += '\n'
+        return result

@@ -12,7 +12,6 @@ if '--cythonize' in sys.argv:
 else:
     cythonize_switch = False
 
-
 def get_ext_modules():
     import numpy
     # Find all includes
@@ -44,6 +43,16 @@ def get_ext_modules():
                  include_dirs=[local_inc,
                                numpy_inc]),
              Extension(
+                 "pyearth._knot_search",
+                 ["pyearth/_knot_search.pyx"],
+                 include_dirs=[local_inc,
+                               numpy_inc]),
+             Extension(
+                 "pyearth._qr",
+                 ["pyearth/_qr.pyx"],
+                 include_dirs=[local_inc,
+                               numpy_inc]),
+             Extension(
                  "pyearth._types",
                  ["pyearth/_types.pyx"],
                  include_dirs=[local_inc,
@@ -68,6 +77,16 @@ def get_ext_modules():
             Extension(
                 "pyearth._forward",
                 ["pyearth/_forward.c"],
+                include_dirs=[local_inc,
+                              numpy_inc]),
+            Extension(
+                "pyearth._knot_search",
+                ["pyearth/_knot_search.c"],
+                include_dirs=[local_inc,
+                              numpy_inc]),
+            Extension(
+                "pyearth._qr",
+                ["pyearth/_qr.c"],
                 include_dirs=[local_inc,
                               numpy_inc]),
             Extension(
@@ -104,7 +123,6 @@ def setup_package():
     if cythonize_switch:
         from Cython.Distutils import build_ext
         setup_args['cmdclass'] = {'build_ext': build_ext}
-
     
     def is_special_command():
         special_list = ('--help-commands', 

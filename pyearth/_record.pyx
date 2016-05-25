@@ -5,7 +5,20 @@
 # cython: profile = False
 
 from ._util cimport gcv, ascii_table
-from ._forward cimport stopping_conditions
+
+
+MAXTERMS = 0
+MAXRSQ = 1
+NOIMPRV = 2
+LOWGRSQ = 3
+NOCAND = 4
+stopping_conditions = {
+    MAXTERMS: "Reached maximum number of terms",
+    MAXRSQ: "Achieved RSQ value within threshold of 1",
+    NOIMPRV: "Improvement below threshold",
+    LOWGRSQ: "GRSQ too low",
+    NOCAND: "No remaining candidate knot locations"
+}
 
 cdef class Record:
 
@@ -60,7 +73,7 @@ cdef class PruningPassRecord(Record):
         self.penalty = penalty
         self.sst = sst
         self.iterations = [FirstPruningPassIteration(size, mse)]
-
+    
     def __reduce__(PruningPassRecord self):
         return (PruningPassRecord, (1, 1, 1.0, 1.0, 1, 1.0), self._getstate())
 
@@ -94,17 +107,24 @@ cdef class PruningPassRecord(Record):
             basis[self.iterations[n - i - 1].get_pruned()].unprune()
 
     def __str__(PruningPassRecord self):
+        return self.partial_str(slice(None))
+    
+    def partial_str(PruningPassRecord self, rows, print_header=True, print_footer=True):
         result = ''
-        result += 'Pruning Pass\n'
+#         result += 'Pruning Pass\n'
         header = 'iter\tbf\tterms\tmse\tgcv\trsq\tgrsq'.split('\t')
         data = []
-        for i, iteration in enumerate(self.iterations):
-            row = str(i) + '\t' + str(iteration) + '\t%.3f\t%.3f\t%.3f' % (
-                self.gcv(i), self.rsq(i), self.grsq(i))
+        map_back = list(range(*rows.indices(len(self.iterations))))
+        for i, iteration in enumerate(self.iterations[rows]):
+            row = str(map_back[i]) + '\t' + str(iteration) + '\t%.3f\t%.3f\t%.3f' % (
+                self.gcv(map_back[i]), self.rsq(map_back[i]), self.grsq(map_back[i]))
             data.append(row.split('\t'))
-        result += ascii_table(header, data)
-        result += '\nSelected iteration: ' + str(self.selected) + '\n'
+        result += ascii_table(header, data, print_header, print_footer)
+#         result += '\nSelected iteration: ' + str(self.selected) + '\n'
         return result
+    
+    def final_str(PruningPassRecord self):
+        return 'Selected iteration: ' + str(self.selected)
 
 cdef class ForwardPassRecord(Record):
     def __init__(ForwardPassRecord self,
@@ -117,7 +137,7 @@ cdef class ForwardPassRecord(Record):
         self.sst = sst
         self.iterations = [FirstForwardPassIteration(self.sst)]
         self.xlabels = xlabels
-
+    
     def __reduce__(ForwardPassRecord self):
         return (ForwardPassRecord, (self.num_samples, self.num_variables,
                                     self.penalty, self.sst, self.xlabels),
@@ -144,21 +164,44 @@ cdef class ForwardPassRecord(Record):
         self.stopping_condition = stopping_condition
 
     def __str__(ForwardPassRecord self):
+        return self.partial_str(slice(None))
+#         header = ['iter', 'parent', 'var', 'knot',
+#                   'mse', 'terms', 'gcv', 'rsq', 'grsq']
+#         data = []
+#         for i, iteration in enumerate(self.iterations):
+#             data.append([str(i)] + str(iteration).split('\t') +
+#                         ('%.3f\t%.3f\t%.3f' % (self.gcv(i), self.rsq(i),
+#                                                self.grsq(i))).split('\t'))
+#         result = ''
+#         result += 'Forward Pass\n'
+#         result += ascii_table(header, data)
+#         result += '\nStopping Condition %d: %s\n' % (
+#             self.stopping_condition,
+#             stopping_conditions[self.stopping_condition])
+#         return result
+    
+    def partial_str(ForwardPassRecord self, rows, print_header=True, print_footer=True):
         header = ['iter', 'parent', 'var', 'knot',
                   'mse', 'terms', 'gcv', 'rsq', 'grsq']
         data = []
-        for i, iteration in enumerate(self.iterations):
-            data.append([str(i)] + str(iteration).split('\t') +
-                        ('%.3f\t%.3f\t%.3f' % (self.gcv(i), self.rsq(i),
-                                               self.grsq(i))).split('\t'))
+        map_back = list(range(*rows.indices(len(self.iterations))))
+        for i, iteration in enumerate(self.iterations[rows]):
+            data.append([str(map_back[i])] + str(iteration).split('\t') +
+                        ('%.3f\t%.3f\t%.3f' % (self.gcv(map_back[i]), self.rsq(map_back[i]),
+                                               self.grsq(map_back[i]))).split('\t'))
         result = ''
-        result += 'Forward Pass\n'
-        result += ascii_table(header, data)
-        result += '\nStopping Condition %d: %s\n' % (
-            self.stopping_condition,
-            stopping_conditions[self.stopping_condition])
+#         result += 'Forward Pass\n'
+        result += ascii_table(header, data, print_header, print_footer)
+#         result += '\nStopping Condition %d: %s\n' % (
+#             self.stopping_condition,
+#             stopping_conditions[self.stopping_condition])
         return result
 
+    def final_str(ForwardPassRecord self):
+        return 'Stopping Condition %d: %s' % (
+            self.stopping_condition,
+            stopping_conditions[self.stopping_condition])
+        
 cdef class Iteration:
 
     def __richcmp__(self, other, method):

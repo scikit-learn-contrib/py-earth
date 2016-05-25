@@ -3,15 +3,9 @@ import numpy as np
 from _types cimport FLOAT_t, INT_t, INDEX_t, BOOL_t
 from _basis cimport Basis
 from _record cimport ForwardPassRecord
+from _knot_search cimport MultipleOutcomeDependentData
 
-ctypedef enum StoppingCondition:
-    MAXTERMS = 0,
-    MAXRSQ = 1,
-    NOIMPRV = 2,
-    LOWGRSQ = 3,
-    NOCAND = 4
-
-cdef dict stopping_conditions
+# cdef dict stopping_conditions
 
 cdef class ForwardPasser:
 
@@ -34,6 +28,7 @@ cdef class ForwardPasser:
     cdef long fast_K
     cdef long fast_h
     cdef bint allow_missing
+    cdef int verbose
 
     # Input data
     cdef cnp.ndarray X
@@ -47,7 +42,14 @@ cdef class ForwardPasser:
     cdef INDEX_t n
     cdef FLOAT_t sst
     cdef FLOAT_t y_squared
-
+    cdef FLOAT_t total_weight
+    
+    # Knot search data
+    cdef MultipleOutcomeDependentData outcome
+    cdef list predictors
+    cdef list workings
+    cdef INDEX_t n_outcomes
+    
     # Working floating point data
     cdef cnp.ndarray B  # Data matrix in basis space
     cdef cnp.ndarray B_orth  # Orthogonalized version of B
@@ -57,7 +59,7 @@ cdef class ForwardPasser:
     cdef cnp.ndarray u
     cdef cnp.ndarray B_orth_times_parent_cum
     cdef FLOAT_t c_squared
-
+    
     # Working integer data
     cdef cnp.ndarray sort_tracker
     cdef cnp.ndarray sorting
@@ -65,7 +67,7 @@ cdef class ForwardPasser:
     cdef cnp.ndarray linear_variables
     cdef int iteration_number
     cdef cnp.ndarray has_missing
-
+    
     # Object construction
     cdef ForwardPassRecord record
     cdef Basis basis
@@ -78,14 +80,14 @@ cdef class ForwardPasser:
 
     cdef stop_check(ForwardPasser self)
 
-    cpdef int orthonormal_update(ForwardPasser self, INDEX_t k)
+    cpdef orthonormal_update(ForwardPasser self, b)
 
-    cpdef orthonormal_downdate(ForwardPasser self, INDEX_t k)
+    cpdef orthonormal_downdate(ForwardPasser self)
 
     cdef next_pair(ForwardPasser self)
 
-    cdef best_knot(ForwardPasser self, INDEX_t parent, cnp.ndarray[FLOAT_t, ndim=1] x,
-                   INDEX_t k, cnp.ndarray[INT_t, ndim=1] candidates,
-                   cnp.ndarray[INT_t, ndim=1] order,
-                   FLOAT_t * mse, FLOAT_t * knot,
-                   INDEX_t * knot_idx)
+#     cdef best_knot(ForwardPasser self, INDEX_t parent, cnp.ndarray[FLOAT_t, ndim=1] x,
+#                    INDEX_t k, cnp.ndarray[INT_t, ndim=1] candidates,
+#                    cnp.ndarray[INT_t, ndim=1] order,
+#                    FLOAT_t * mse, FLOAT_t * knot,
+#                    INDEX_t * knot_idx)

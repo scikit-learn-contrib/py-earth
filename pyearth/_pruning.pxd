@@ -9,6 +9,7 @@ cdef class PruningPasser:
     cdef cnp.ndarray B
     cdef cnp.ndarray y
     cdef cnp.ndarray sample_weight
+    cdef int verbose
     cdef cnp.ndarray output_weight
     cdef INDEX_t m
     cdef INDEX_t n

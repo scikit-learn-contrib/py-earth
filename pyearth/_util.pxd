@@ -13,11 +13,11 @@ cpdef apply_weights_1d(cnp.ndarray[FLOAT_t, ndim=1] y,
                        cnp.ndarray[FLOAT_t, ndim=1] weights)
 
 cpdef FLOAT_t gcv(FLOAT_t mse,
-                  INDEX_t basis_size, INDEX_t data_size,
+                  FLOAT_t basis_size, FLOAT_t data_size,
                   FLOAT_t penalty)
 
-cpdef FLOAT_t gcv_adjust(INDEX_t basis_size, INDEX_t data_size, FLOAT_t penalty)
+cpdef FLOAT_t gcv_adjust(FLOAT_t basis_size, FLOAT_t data_size, FLOAT_t penalty)
 
 cpdef str_pad(string, length)
 
-cpdef ascii_table(header, data)
+cpdef ascii_table(header, data, print_header=?, print_footer=?)

@@ -106,8 +106,15 @@ cdef class BasisFunction:
     cpdef bint make_unsplittable(BasisFunction self):
         self.splittable = False
 
-    cdef list get_children(BasisFunction self):
+    cpdef list get_children(BasisFunction self):
         return self.children
+    
+    cpdef BasisFunction get_coverage(BasisFunction self, INDEX_t variable):
+        cdef BasisFunction child
+        for child in self.get_children():
+            if child.covered(variable):
+                return child
+        return None
 
     cpdef _set_parent(BasisFunction self, BasisFunction parent):
         '''Calls _add_child.'''
@@ -152,9 +159,18 @@ cdef class BasisFunction:
                 result.append(child.get_knot_idx())
         return result
 
-    cpdef INDEX_t degree(BasisFunction self):
-        return self.parent.degree() + 1
-
+    cpdef INDEX_t effective_degree(BasisFunction self):
+        cdef dict data_dict = {}
+        cdef dict missing_dict = {}
+        self._effective_degree(data_dict, missing_dict)
+        cdef INDEX_t k, v
+        for k, v in missing_dict.items():
+            if k in data_dict:
+                data_dict[k] += missing_dict[k] - 1
+            else:
+                data_dict[k] = missing_dict[k]
+        return sum(data_dict.values())
+    
     cpdef apply(BasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
                 cnp.ndarray[BOOL_t, ndim=2] missing,
                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=True):
@@ -360,7 +376,10 @@ cdef class RootBasisFunction(BasisFunction):
 
     cpdef INDEX_t degree(RootBasisFunction self):
         return 0
-
+    
+    cpdef _effective_degree(RootBasisFunction self, dict data_dict, dict missing_dict):
+        pass
+    
     cpdef _set_parent(RootBasisFunction self, BasisFunction parent):
         raise NotImplementedError
 
@@ -412,6 +431,9 @@ cdef class ConstantBasisFunction(RootBasisFunction):
             return ''
         
 cdef class VariableBasisFunction(BasisFunction):
+    cpdef INDEX_t degree(VariableBasisFunction self):
+        return self.parent.degree() + 1
+
     cpdef set variables(VariableBasisFunction self):
         cdef set result = self.parent.variables()
         result.add(self.get_variable())
@@ -421,6 +443,13 @@ cdef class VariableBasisFunction(BasisFunction):
         return self.variable
 
 cdef class DataVariableBasisFunction(VariableBasisFunction):
+    cpdef _effective_degree(DataVariableBasisFunction self, dict data_dict, dict missing_dict):
+        try:
+            data_dict[self.variable] += 1
+        except:
+            data_dict[self.variable] = 1
+        self.parent._effective_degree(data_dict, missing_dict)
+    
     cpdef bint covered(DataVariableBasisFunction self, INDEX_t variable):
         '''
         Is this an covered parent for variable? (If not, a covering 
@@ -495,6 +524,13 @@ cdef class MissingnessBasisFunction(VariableBasisFunction):
         self.label = label if label is not None else 'x' + str(variable)
         self._set_parent(parent)
     
+    cpdef _effective_degree(MissingnessBasisFunction self, dict data_dict, dict missing_dict):
+        try:
+            missing_dict[self.variable] += 1
+        except:
+            missing_dict[self.variable] = 1
+        self.parent._effective_degree(data_dict, missing_dict)
+    
     cpdef bint covered(MissingnessBasisFunction self, INDEX_t variable):
         '''
         Is this an covered parent for variable? (If not, a covering 
@@ -504,7 +540,7 @@ cdef class MissingnessBasisFunction(VariableBasisFunction):
         if self.complement and (variable == self.variable):
             return True
         else:
-            return False or self.parent.covered(variable)
+            return self.parent.covered(variable) or False
     
     cpdef bint eligible(MissingnessBasisFunction self, INDEX_t variable):
         '''
@@ -513,7 +549,7 @@ cdef class MissingnessBasisFunction(VariableBasisFunction):
         if (not self.complement) and (variable == self.variable):
             return False
         else:
-            return True and self.parent.eligible(variable)
+            return self.parent.eligible(variable) and True
     
     cpdef apply(MissingnessBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
                 cnp.ndarray[BOOL_t, ndim=2] missing,
@@ -858,33 +894,31 @@ cdef class Basis:
     def __init__(Basis self, num_variables):  # @DuplicatedSignature
         self.order = []
         self.num_variables = num_variables
-        self.coverage = dict()
+#         self.coverage = dict()
         
-    cpdef add_coverage(Basis self, int variable, MissingnessBasisFunction b1, \
-                       MissingnessBasisFunction b2):
-        cdef int index = len(self.order)
-        self.coverage[variable] = (index, index + 1)
-        self.append(b1)
-        self.append(b2)
-        
-    cpdef get_coverage(Basis self, int variable):
-        cdef int idx1, idx2
-        idx1, idx2 = self.coverage[variable]
-        return self.order[idx1], self.order[idx2]
-    
-    cpdef bint has_coverage(Basis self, int variable):
-        return variable in self.coverage
+#     cpdef add_coverage(Basis self, int variable, MissingnessBasisFunction b1, \
+#                        MissingnessBasisFunction b2):
+#         cdef int index = len(self.order)
+#         self.coverage[variable] = (index, index + 1)
+#         self.append(b1)
+#         self.append(b2)
+#         
+#     cpdef get_coverage(Basis self, int variable):
+#         cdef int idx1, idx2
+#         idx1, idx2 = self.coverage[variable]
+#         return self.order[idx1], self.order[idx2]
+#     
+#     cpdef bint has_coverage(Basis self, int variable):
+#         return variable in self.coverage
 
     def __reduce__(Basis self):
         return (self.__class__, (self.num_variables,), self._getstate())
 
     def _getstate(Basis self):
-        return {'order': self.order,
-                'coverage': self.coverage}
+        return {'order': self.order}
 
     def __setstate__(Basis self, state):
         self.order = state['order']
-        self.coverage = state['coverage']
 
     def __richcmp__(Basis self, other, method):
         if method == 2:
