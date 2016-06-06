@@ -91,7 +91,7 @@ cdef class ConstantBasisFunction(RootBasisFunction):
 
 cdef class VariableBasisFunction(BasisFunction):
     cdef INDEX_t variable
-    cdef str label
+    cdef label
     
     cpdef INDEX_t degree(VariableBasisFunction self)
     
