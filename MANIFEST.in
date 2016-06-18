@@ -3,3 +3,6 @@ include pyearth/*.pxd
 include pyearth/test/*.txt
 include pyearth/test/*.csv
 include pyearth/test/pathological_data
+include README.md
+include LICENSE.txt
+include CHANGES.txt
