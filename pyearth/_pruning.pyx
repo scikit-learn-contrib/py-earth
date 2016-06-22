@@ -8,6 +8,11 @@ from ._record cimport PruningPassIteration
 from ._util cimport gcv, apply_weights_2d
 import numpy as np
 
+from collections import defaultdict
+
+GCV, RSS, NB_SUBSETS = "gcv", "rss", "nb_subsets"
+FEAT_IMP_CRITERIA = (GCV, RSS, NB_SUBSETS)
+
 cdef class PruningPasser:
     '''Implements the generic pruning pass as described by Friedman, 1991.'''
     def __init__(PruningPasser self, Basis basis,
@@ -31,6 +36,14 @@ cdef class PruningPasser:
         else:
             y_avg = np.average(self.y, weights=sample_weight, axis=0)
 
+        # feature importance
+        feature_importance_criteria = kwargs.get("feature_importance_type", [])
+        if isinstance(feature_importance_criteria, basestring):
+            feature_importance_criteria = [feature_importance_criteria]
+        self.feature_importance = dict()
+        for criterion in feature_importance_criteria:
+            self.feature_importance[criterion] = np.zeros((self.n,))
+
     cpdef run(PruningPasser self):
         # This is a totally naive implementation and could potentially be made
         # faster through the use of updating algorithms.  It is not clear that
@@ -38,6 +51,7 @@ cdef class PruningPasser:
         # slowest part of the algorithm.
         cdef INDEX_t i
         cdef INDEX_t j
+        cdef long v
         cdef INDEX_t basis_size = len(self.basis)
         cdef INDEX_t pruned_basis_size = self.basis.plen()
         cdef FLOAT_t gcv_
@@ -100,6 +114,10 @@ cdef class PruningPasser:
         if self.verbose >= 1:
             print(self.record.partial_str(slice(-1, None, None), print_footer=False))
 
+        # init feature importance
+        prev_best_iteration_gcv = None
+        prev_best_iteration_mse = None
+
         # Prune basis functions sequentially
         for i in range(1, pruned_basis_size):
             first = True
@@ -141,13 +159,33 @@ cdef class PruningPasser:
                     first = False
                 bf.unprune()
 
+            # Feature importance
+            if i > 1:
+                # having selected the best basis to prune, we compute how much
+                # that basis decreased the mse and gcv relative to the previous mse and gcv
+                # respectively.
+                mse_decrease = (best_iteration_mse - prev_best_iteration_mse) 
+                gcv_decrease = (best_iteration_gcv - prev_best_iteration_gcv)
+                variables = set()
+                bf = self.basis[best_bf_to_prune]
+                for v in bf.variables():
+                    variables.add(v)
+                for v in variables:
+                    if RSS in self.feature_importance:
+                        self.feature_importance[RSS][v] += mse_decrease 
+                    if GCV in self.feature_importance:
+                        self.feature_importance[GCV][v] += gcv_decrease
+                    if NB_SUBSETS in self.feature_importance:
+                        self.feature_importance[NB_SUBSETS][v] += 1
             # The inner loop found the best basis function to remove for this
             # iteration. Now check whether this iteration is better than all
             # the previous ones.
             if best_iteration_gcv <= best_gcv:
                 best_gcv = best_iteration_gcv
                 best_iteration = i
-
+            
+            prev_best_iteration_gcv = best_iteration_gcv
+            prev_best_iteration_mse = best_iteration_mse
             # Update the record and prune the selected basis function
             self.record.append(PruningPassIteration(
                 best_bf_to_prune, pruned_basis_size, best_iteration_mse / total_weight))
@@ -162,5 +200,14 @@ cdef class PruningPasser:
         if self.verbose >= 1:
             print(self.record.final_str())
 
+        # normalize feature importance values
+        for name, val in self.feature_importance.items():
+            if name == 'gcv':
+                val[val < 0] = 0 # gcv can have negative feature importance correponding to an increase of gcv, set them to zero
+            if val.sum() > 0:
+                val /= val.sum()
+            self.feature_importance[name] = val 
+
     cpdef PruningPassRecord trace(PruningPasser self):
         return self.record
+

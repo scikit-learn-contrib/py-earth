@@ -11,6 +11,8 @@ cdef class PruningPasser:
     cdef cnp.ndarray sample_weight
     cdef int verbose
     cdef cnp.ndarray output_weight
+    cdef public dict feature_importance
+    
     cdef INDEX_t m
     cdef INDEX_t n
     cdef Basis basis
