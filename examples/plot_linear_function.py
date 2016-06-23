@@ -26,7 +26,7 @@ y = 2 * X[:,0] + 3 * X[:,1] + np.random.normal(size=m)
 model = Earth().fit(X, y)
 
 # Print the model summary, showing linear terms
-print model.summary()
+print(model.summary())
 
 # Plot for both values of X[:,1]
 y_hat = model.predict(X)
