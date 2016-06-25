@@ -266,12 +266,25 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                  check_every=None,
                  allow_linear=None, use_fast=None, fast_K=None,
                  fast_h=None, smooth=None, enable_pruning=True, verbose=0):
-        kwargs = {}
-        call = locals()
-        for name in self._get_param_names():
-            if call[name] is not None:
-                kwargs[name] = call[name]
-        self.set_params(**kwargs)
+        self.max_terms = max_terms
+        self.max_degree = max_degree
+        self.allow_missing = allow_missing
+        self.penalty = penalty
+        self.endspan_alpha = endspan_alpha
+        self.endspan = endspan
+        self.minspan_alpha = minspan_alpha
+        self.minspan = minspan
+        self.thresh = thresh
+        self.zero_tol = zero_tol
+        self.min_search_points = min_search_points
+        self.check_every = check_every
+        self.allow_linear = allow_linear
+        self.use_fast = use_fast
+        self.fast_K = fast_K
+        self.fast_h = fast_h
+        self.smooth = smooth
+        self.enable_pruning = enable_pruning
+        self.verbose = verbose
 
     def __eq__(self, other):
         if self.__class__ is not other.__class__:
@@ -300,7 +313,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         '''
         result = {}
         for name in self.forward_pass_arg_names:
-            if name in kwargs:
+            if name in kwargs and kwargs[name] is not None:
                 result[name] = kwargs[name]
         return result
 
@@ -310,7 +323,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         '''
         result = {}
         for name in self.pruning_pass_arg_names:
-            if name in kwargs:
+            if name in kwargs and kwargs[name] is not None:
                 result[name] = kwargs[name]
         return result
 
@@ -706,7 +719,6 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         
         # Pull arguments from self
         args = self._pull_pruning_args(**self.__dict__)
-        
         # Do the actual work
         pruning_passer = PruningPasser(
             self.basis_, X, missing, y, sample_weight,
