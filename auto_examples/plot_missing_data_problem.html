@@ -34,7 +34,7 @@
   
     <link rel="top" title="py-earth 0.1.0 documentation" href="../index.html"/>
         <link rel="up" title="Gallery" href="index.html"/>
-        <link rel="next" title="Plotting sckit-learn classifiers comparison with Earth" href="plot_classifier_comp.html"/>
+        <link rel="next" title="Plotting a multicolumn regression problem that includes missingness" href="plot_multicolumn.html"/>
         <link rel="prev" title="Demonstrating a use of weights in outputs with two sine functions" href="plot_output_weight.html"/> 
 
   
@@ -93,10 +93,12 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Gallery</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="plot_v_function.html">Plotting the absolute value function</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_sine_wave.html">Plotting simple sine function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_linear_function.html">Plotting a linear function with a categorical variable</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_sine_wave_2d.html">Plotting two simple sine functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_derivatives.html">Plotting derivatives of simple sine function</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_output_weight.html">Demonstrating a use of weights in outputs with two sine functions</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">Plotting sine function with redundant predictors an missing data</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Plotting sine function with redundant predictors an missing data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_multicolumn.html">Plotting a multicolumn regression problem that includes missingness</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_classifier_comp.html">Plotting sckit-learn classifiers comparison with Earth</a></li>
 </ul>
 </li>
@@ -122,7 +124,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -153,95 +155,78 @@ redundant predictors, each of which has independent and random
 missingness.</p>
 <img alt="../_images/sphx_glr_plot_missing_data_problem_001.png" class="align-center" src="../_images/sphx_glr_plot_missing_data_problem_001.png" />
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-python"><div class="highlight"><pre><span></span>  Forward Pass
----------------------------------------------------------------------
-iter  parent  var  knot  mse          terms  gcv       rsq    grsq
----------------------------------------------------------------------
-0     -       -    -     4399.475105  1      4400.355  0.000  0.000
-1     0       6    8411  3218.545560  5      3229.517  0.268  0.266
-2     1       6    3011  1000.863126  7      1005.886  0.773  0.771
-3     4       5    8403  775.817661   11     782.219   0.824  0.822
-4     7       5    3044  315.047518   13     318.158   0.928  0.928
-5     0       6    7211  291.456356   15     294.808   0.934  0.933
-6     5       6    911   275.915763   17     279.538   0.937  0.936
-7     13      6    3811  270.854296   19     274.852   0.938  0.938
-8     9       5    7233  266.414253   21     270.783   0.939  0.938
-9     10      7    2401  262.589150   25     267.758   0.940  0.939
-10    24      3    6263  257.376406   29     263.293   0.941  0.940
----------------------------------------------------------------------
-Stopping Condition 0: Reached maximum number of terms
-
-Pruning Pass
-----------------------------------------------------
-iter  bf  terms  mse      gcv       rsq     grsq
-----------------------------------------------------
-0     -   29     257.38   263.293   0.941   0.940
-1     2   28     257.38   263.080   0.941   0.940
-2     10  27     257.38   262.868   0.941   0.940
-3     28  26     257.38   262.655   0.941   0.940
-4     24  25     257.38   262.443   0.941   0.940
-5     8   24     257.38   262.231   0.941   0.940
-6     3   23     257.38   262.020   0.941   0.940
-7     19  22     257.43   261.858   0.941   0.940
-8     22  21     257.85   262.074   0.941   0.940
-9     18  20     258.36   262.387   0.941   0.940
-10    5   19     258.66   262.481   0.941   0.940
-11    26  18     260.20   263.833   0.941   0.940
-12    23  17     261.86   265.296   0.940   0.940
-13    27  16     262.18   265.412   0.940   0.940
-14    15  15     263.93   266.965   0.940   0.939
-15    21  14     266.66   269.511   0.939   0.939
-16    25  13     269.03   271.682   0.939   0.938
-17    12  12     272.85   275.325   0.938   0.937
-18    13  11     280.73   283.044   0.936   0.936
-19    16  10     298.55   300.768   0.932   0.932
-20    6   9      392.19   394.792   0.911   0.910
-21    9   8      812.25   816.984   0.815   0.814
-22    20  7      876.11   880.506   0.801   0.800
-23    11  6      1009.68  1013.938  0.770   0.770
-24    7   5      1078.57  1082.247  0.755   0.754
-25    14  4      3275.88  3284.414  0.255   0.254
-26    4   3      3587.50  3593.961  0.185   0.183
-27    17  2      4034.07  4038.107  0.083   0.082
-28    1   1      4399.48  4400.355  -0.000  -0.000
-----------------------------------------------------
-Selected iteration: 7
-
-Earth Model
-------------------------------------------------------------------------------------------------------------------------------------
-Basis Function                                                                                                Pruned  Coefficient
-------------------------------------------------------------------------------------------------------------------------------------
-(Intercept)                                                                                                   No      -215.536
-C(x6|s=+1,NAN,-24.506,-18.5194)*present(x6)                                                                   No      -21.4704
-C(x6|s=-1,NAN,-24.506,-18.5194)*present(x6)                                                                   Yes     None
-present(x6)                                                                                                   Yes     None
-missing(x6)                                                                                                   No      -209.533
-C(x6|s=+1,5.4053,9.48699,20.0742)*C(x6|s=+1,NAN,-24.506,-18.5194)*present(x6)                                 No      -0.108466
-C(x6|s=-1,5.4053,9.48699,20.0742)*C(x6|s=+1,NAN,-24.506,-18.5194)*present(x6)                                 No      -0.169322
-C(x5|s=+1,NAN,-24.5341,-18.6855)*present(x5)*missing(x6)                                                      No      11.963
-C(x5|s=-1,NAN,-24.5341,-18.6855)*present(x5)*missing(x6)                                                      Yes     None
-present(x5)*missing(x6)                                                                                       No      -302.191
-missing(x5)*missing(x6)                                                                                       Yes     None
-C(x5|s=+1,-1.78052,9.27579,NAN)*C(x5|s=+1,NAN,-24.5341,-18.6855)*present(x5)*missing(x6)                      No      -0.267958
-C(x5|s=-1,-1.78052,9.27579,NAN)*C(x5|s=+1,NAN,-24.5341,-18.6855)*present(x5)*missing(x6)                      No      0.13054
-C(x6|s=+1,-18.5194,-12.5327,-5.60455)*present(x6)                                                             No      30.0289
-C(x6|s=-1,-18.5194,-12.5327,-5.60455)*present(x6)                                                             No      -20.3807
-C(x6|s=+1,20.0742,30.6613,NAN)*C(x6|s=+1,5.4053,9.48699,20.0742)*C(x6|s=+1,NAN,-24.506,-18.5194)*present(x6)  No      -0.000177273
-C(x6|s=-1,20.0742,30.6613,NAN)*C(x6|s=+1,5.4053,9.48699,20.0742)*C(x6|s=+1,NAN,-24.506,-18.5194)*present(x6)  No      0.00184362
-C(x6|s=+1,-5.60455,1.32361,5.4053)*C(x6|s=+1,-18.5194,-12.5327,-5.60455)*present(x6)                          No      -0.123562
-C(x6|s=-1,-5.60455,1.32361,5.4053)*C(x6|s=+1,-18.5194,-12.5327,-5.60455)*present(x6)                          No      0.205846
-C(x5|s=+1,-18.6855,-12.8368,-1.78052)*present(x5)*missing(x6)                                                 Yes     None
-C(x5|s=-1,-18.6855,-12.8368,-1.78052)*present(x5)*missing(x6)                                                 No      24.4133
-C(x7|s=+1,NAN,15.6535,NAN)*present(x7)*missing(x5)*missing(x6)                                                No      -0.20499
-C(x7|s=-1,NAN,15.6535,NAN)*present(x7)*missing(x5)*missing(x6)                                                No      1.42109e-14
-present(x7)*missing(x5)*missing(x6)                                                                           No      18.9562
-missing(x7)*missing(x5)*missing(x6)                                                                           Yes     None
-C(x3|s=+1,NAN,-1.38678,NAN)*present(x3)*missing(x7)*missing(x5)*missing(x6)                                   No      -0.596508
-C(x3|s=-1,NAN,-1.38678,NAN)*present(x3)*missing(x7)*missing(x5)*missing(x6)                                   No      0
-present(x3)*missing(x7)*missing(x5)*missing(x6)                                                               No      16.9676
-missing(x3)*missing(x7)*missing(x5)*missing(x6)                                                               Yes     None
-------------------------------------------------------------------------------------------------------------------------------------
-MSE: 297.4538, GCV: 302.5757, RSQ: 0.9324, GRSQ: 0.9312
+<div class="sphx-glr-script-out highlight-default"><div class="highlight"><pre><span></span>  <span class="n">Beginning</span> <span class="n">forward</span> <span class="k">pass</span>
+<span class="o">---------------------------------------------------------------------</span>
+<span class="nb">iter</span>  <span class="n">parent</span>  <span class="n">var</span>  <span class="n">knot</span>  <span class="n">mse</span>          <span class="n">terms</span>  <span class="n">gcv</span>       <span class="n">rsq</span>    <span class="n">grsq</span>
+<span class="o">---------------------------------------------------------------------</span>
+<span class="mi">0</span>     <span class="o">-</span>       <span class="o">-</span>    <span class="o">-</span>     <span class="mf">4399.475105</span>  <span class="mi">1</span>      <span class="mf">4400.355</span>  <span class="mf">0.000</span>  <span class="mf">0.000</span>
+<span class="mi">1</span>     <span class="mi">0</span>       <span class="mi">6</span>    <span class="mi">484</span>   <span class="mf">3218.482202</span>  <span class="mi">5</span>      <span class="mf">3225.575</span>  <span class="mf">0.268</span>  <span class="mf">0.267</span>
+<span class="mi">2</span>     <span class="mi">3</span>       <span class="mi">6</span>    <span class="mi">7115</span>  <span class="mf">1000.371913</span>  <span class="mi">7</span>      <span class="mf">1003.581</span>  <span class="mf">0.773</span>  <span class="mf">0.772</span>
+<span class="mi">3</span>     <span class="mi">0</span>       <span class="mi">5</span>    <span class="mi">1997</span>  <span class="mf">864.281682</span>  <span class="mi">11</span>     <span class="mf">868.794</span>  <span class="mf">0.804</span>  <span class="mf">0.803</span>
+<span class="mi">4</span>     <span class="mi">10</span>      <span class="mi">5</span>    <span class="mi">584</span>   <span class="mf">587.091344</span>  <span class="mi">13</span>     <span class="mf">590.748</span>  <span class="mf">0.867</span>  <span class="mf">0.866</span>
+<span class="mi">5</span>     <span class="mi">3</span>       <span class="mi">5</span>    <span class="mi">2524</span>  <span class="mf">366.234325</span>  <span class="mi">17</span>     <span class="mf">369.256</span>  <span class="mf">0.917</span>  <span class="mf">0.916</span>
+<span class="mi">6</span>     <span class="mi">10</span>      <span class="mi">6</span>    <span class="mi">7684</span>  <span class="mf">282.087284</span>  <span class="mi">21</span>     <span class="mf">284.987</span>  <span class="mf">0.936</span>  <span class="mf">0.935</span>
+<span class="mi">7</span>     <span class="mi">5</span>       <span class="mi">6</span>    <span class="mi">4061</span>  <span class="mf">278.832597</span>  <span class="mi">23</span>     <span class="mf">281.982</span>  <span class="mf">0.937</span>  <span class="mf">0.936</span>
+<span class="o">-------------------------------------------------------------------</span>
+<span class="n">Stopping</span> <span class="n">Condition</span> <span class="mi">2</span><span class="p">:</span> <span class="n">Improvement</span> <span class="n">below</span> <span class="n">threshold</span>
+<span class="n">Beginning</span> <span class="n">pruning</span> <span class="k">pass</span>
+<span class="o">------------------------------------------------</span>
+<span class="nb">iter</span>  <span class="n">bf</span>  <span class="n">terms</span>  <span class="n">mse</span>     <span class="n">gcv</span>      <span class="n">rsq</span>    <span class="n">grsq</span>
+<span class="o">------------------------------------------------</span>
+<span class="mi">0</span>     <span class="o">-</span>   <span class="mi">23</span>     <span class="mf">278.84</span>  <span class="mf">281.989</span>  <span class="mf">0.937</span>  <span class="mf">0.936</span>
+<span class="mi">1</span>     <span class="mi">14</span>  <span class="mi">22</span>     <span class="mf">278.84</span>  <span class="mf">281.848</span>  <span class="mf">0.937</span>  <span class="mf">0.936</span>
+<span class="mi">2</span>     <span class="mi">18</span>  <span class="mi">21</span>     <span class="mf">278.84</span>  <span class="mf">281.706</span>  <span class="mf">0.937</span>  <span class="mf">0.936</span>
+<span class="mi">3</span>     <span class="mi">1</span>   <span class="mi">20</span>     <span class="mf">278.84</span>  <span class="mf">281.565</span>  <span class="mf">0.937</span>  <span class="mf">0.936</span>
+<span class="mi">4</span>     <span class="mi">8</span>   <span class="mi">19</span>     <span class="mf">278.84</span>  <span class="mf">281.423</span>  <span class="mf">0.937</span>  <span class="mf">0.936</span>
+<span class="mi">5</span>     <span class="mi">19</span>  <span class="mi">18</span>     <span class="mf">278.85</span>  <span class="mf">281.292</span>  <span class="mf">0.937</span>  <span class="mf">0.936</span>
+<span class="mi">6</span>     <span class="mi">21</span>  <span class="mi">17</span>     <span class="mf">278.92</span>  <span class="mf">281.220</span>  <span class="mf">0.937</span>  <span class="mf">0.936</span>
+<span class="mi">7</span>     <span class="mi">16</span>  <span class="mi">16</span>     <span class="mf">279.59</span>  <span class="mf">281.753</span>  <span class="mf">0.936</span>  <span class="mf">0.936</span>
+<span class="mi">8</span>     <span class="mi">22</span>  <span class="mi">15</span>     <span class="mf">284.83</span>  <span class="mf">286.895</span>  <span class="mf">0.935</span>  <span class="mf">0.935</span>
+<span class="mi">9</span>     <span class="mi">2</span>   <span class="mi">14</span>     <span class="mf">397.28</span>  <span class="mf">399.951</span>  <span class="mf">0.910</span>  <span class="mf">0.909</span>
+<span class="mi">10</span>    <span class="mi">17</span>  <span class="mi">13</span>     <span class="mf">502.60</span>  <span class="mf">505.730</span>  <span class="mf">0.886</span>  <span class="mf">0.885</span>
+<span class="mi">11</span>    <span class="mi">20</span>  <span class="mi">12</span>     <span class="mf">541.66</span>  <span class="mf">544.762</span>  <span class="mf">0.877</span>  <span class="mf">0.876</span>
+<span class="mi">12</span>    <span class="mi">15</span>  <span class="mi">11</span>     <span class="mf">598.46</span>  <span class="mf">601.584</span>  <span class="mf">0.864</span>  <span class="mf">0.863</span>
+<span class="mi">13</span>    <span class="mi">13</span>  <span class="mi">10</span>     <span class="mf">649.68</span>  <span class="mf">652.740</span>  <span class="mf">0.852</span>  <span class="mf">0.852</span>
+<span class="mi">14</span>    <span class="mi">4</span>   <span class="mi">9</span>      <span class="mf">685.12</span>  <span class="mf">688.010</span>  <span class="mf">0.844</span>  <span class="mf">0.844</span>
+<span class="mi">15</span>    <span class="mi">11</span>  <span class="mi">8</span>      <span class="mf">806.27</span>  <span class="mf">809.259</span>  <span class="mf">0.817</span>  <span class="mf">0.816</span>
+<span class="mi">16</span>    <span class="mi">9</span>   <span class="mi">7</span>      <span class="mf">1004.03</span>  <span class="mf">1007.255</span>  <span class="mf">0.772</span>  <span class="mf">0.771</span>
+<span class="mi">17</span>    <span class="mi">7</span>   <span class="mi">6</span>      <span class="mf">1155.43</span>  <span class="mf">1158.556</span>  <span class="mf">0.737</span>  <span class="mf">0.737</span>
+<span class="mi">18</span>    <span class="mi">10</span>  <span class="mi">5</span>      <span class="mf">1463.02</span>  <span class="mf">1466.241</span>  <span class="mf">0.667</span>  <span class="mf">0.667</span>
+<span class="mi">19</span>    <span class="mi">12</span>  <span class="mi">4</span>      <span class="mf">1524.86</span>  <span class="mf">1527.455</span>  <span class="mf">0.653</span>  <span class="mf">0.653</span>
+<span class="mi">20</span>    <span class="mi">5</span>   <span class="mi">3</span>      <span class="mf">3186.18</span>  <span class="mf">3190.004</span>  <span class="mf">0.276</span>  <span class="mf">0.275</span>
+<span class="mi">21</span>    <span class="mi">3</span>   <span class="mi">2</span>      <span class="mf">3441.68</span>  <span class="mf">3444.095</span>  <span class="mf">0.218</span>  <span class="mf">0.217</span>
+<span class="mi">22</span>    <span class="mi">6</span>   <span class="mi">1</span>      <span class="mf">4399.48</span>  <span class="mf">4400.355</span>  <span class="o">-</span><span class="mf">0.000</span>  <span class="o">-</span><span class="mf">0.000</span>
+<span class="o">----------------------------------------------------</span>
+<span class="n">Selected</span> <span class="n">iteration</span><span class="p">:</span> <span class="mi">6</span>
+<span class="n">Earth</span> <span class="n">Model</span>
+<span class="o">-----------------------------------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">Basis</span> <span class="n">Function</span>                                                                                                            <span class="n">Pruned</span>  <span class="n">Coefficient</span>
+<span class="o">-----------------------------------------------------------------------------------------------------------------------------------------------</span>
+<span class="p">(</span><span class="n">Intercept</span><span class="p">)</span>                                                                                                               <span class="n">No</span>      <span class="o">-</span><span class="mf">477.431</span>
+<span class="n">present</span><span class="p">(</span><span class="n">x6</span><span class="p">)</span>                                                                                                               <span class="n">Yes</span>     <span class="kc">None</span>
+<span class="n">missing</span><span class="p">(</span><span class="n">x6</span><span class="p">)</span>                                                                                                               <span class="n">No</span>      <span class="mf">72.659</span>
+<span class="n">C</span><span class="p">(</span><span class="n">x6</span><span class="o">|</span><span class="n">s</span><span class="o">=+</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">32.2065</span><span class="p">,</span><span class="o">-</span><span class="mf">24.4145</span><span class="p">,</span><span class="o">-</span><span class="mf">7.42951</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x6</span><span class="p">)</span>                                                                         <span class="n">No</span>      <span class="mf">6.73037</span>
+<span class="n">C</span><span class="p">(</span><span class="n">x6</span><span class="o">|</span><span class="n">s</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">32.2065</span><span class="p">,</span><span class="o">-</span><span class="mf">24.4145</span><span class="p">,</span><span class="o">-</span><span class="mf">7.42951</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x6</span><span class="p">)</span>                                                                         <span class="n">No</span>      <span class="mf">10.543</span>
+<span class="n">C</span><span class="p">(</span><span class="n">x6</span><span class="o">|</span><span class="n">s</span><span class="o">=+</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">7.42951</span><span class="p">,</span><span class="mf">9.55548</span><span class="p">,</span><span class="mf">21.7265</span><span class="p">)</span><span class="o">*</span><span class="n">C</span><span class="p">(</span><span class="n">x6</span><span class="o">|</span><span class="n">s</span><span class="o">=+</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">32.2065</span><span class="p">,</span><span class="o">-</span><span class="mf">24.4145</span><span class="p">,</span><span class="o">-</span><span class="mf">7.42951</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x6</span><span class="p">)</span>                                     <span class="n">No</span>      <span class="o">-</span><span class="mf">0.232449</span>
+<span class="n">C</span><span class="p">(</span><span class="n">x6</span><span class="o">|</span><span class="n">s</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">7.42951</span><span class="p">,</span><span class="mf">9.55548</span><span class="p">,</span><span class="mf">21.7265</span><span class="p">)</span><span class="o">*</span><span class="n">C</span><span class="p">(</span><span class="n">x6</span><span class="o">|</span><span class="n">s</span><span class="o">=+</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">32.2065</span><span class="p">,</span><span class="o">-</span><span class="mf">24.4145</span><span class="p">,</span><span class="o">-</span><span class="mf">7.42951</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x6</span><span class="p">)</span>                                     <span class="n">No</span>      <span class="o">-</span><span class="mf">0.35568</span>
+<span class="n">present</span><span class="p">(</span><span class="n">x5</span><span class="p">)</span>                                                                                                               <span class="n">No</span>      <span class="mf">113.492</span>
+<span class="n">missing</span><span class="p">(</span><span class="n">x5</span><span class="p">)</span>                                                                                                               <span class="n">Yes</span>     <span class="kc">None</span>
+<span class="n">C</span><span class="p">(</span><span class="n">x5</span><span class="o">|</span><span class="n">s</span><span class="o">=+</span><span class="mi">1</span><span class="p">,</span><span class="mf">5.38057</span><span class="p">,</span><span class="mf">22.2377</span><span class="p">,</span><span class="mf">31.1865</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x5</span><span class="p">)</span>                                                                            <span class="n">No</span>      <span class="o">-</span><span class="mf">11.1024</span>
+<span class="n">C</span><span class="p">(</span><span class="n">x5</span><span class="o">|</span><span class="n">s</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="mf">5.38057</span><span class="p">,</span><span class="mf">22.2377</span><span class="p">,</span><span class="mf">31.1865</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x5</span><span class="p">)</span>                                                                            <span class="n">No</span>      <span class="o">-</span><span class="mf">7.42392</span>
+<span class="n">C</span><span class="p">(</span><span class="n">x5</span><span class="o">|</span><span class="n">s</span><span class="o">=+</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">25.8212</span><span class="p">,</span><span class="o">-</span><span class="mf">11.4766</span><span class="p">,</span><span class="mf">5.38057</span><span class="p">)</span><span class="o">*</span><span class="n">C</span><span class="p">(</span><span class="n">x5</span><span class="o">|</span><span class="n">s</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="mf">5.38057</span><span class="p">,</span><span class="mf">22.2377</span><span class="p">,</span><span class="mf">31.1865</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x5</span><span class="p">)</span>                                       <span class="n">No</span>      <span class="mf">0.222427</span>
+<span class="n">C</span><span class="p">(</span><span class="n">x5</span><span class="o">|</span><span class="n">s</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">25.8212</span><span class="p">,</span><span class="o">-</span><span class="mf">11.4766</span><span class="p">,</span><span class="mf">5.38057</span><span class="p">)</span><span class="o">*</span><span class="n">C</span><span class="p">(</span><span class="n">x5</span><span class="o">|</span><span class="n">s</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="mf">5.38057</span><span class="p">,</span><span class="mf">22.2377</span><span class="p">,</span><span class="mf">31.1865</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x5</span><span class="p">)</span>                                       <span class="n">No</span>      <span class="mf">0.260225</span>
+<span class="n">present</span><span class="p">(</span><span class="n">x5</span><span class="p">)</span><span class="o">*</span><span class="n">C</span><span class="p">(</span><span class="n">x6</span><span class="o">|</span><span class="n">s</span><span class="o">=+</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">32.2065</span><span class="p">,</span><span class="o">-</span><span class="mf">24.4145</span><span class="p">,</span><span class="o">-</span><span class="mf">7.42951</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x6</span><span class="p">)</span>                                                             <span class="n">No</span>      <span class="o">-</span><span class="mf">4.96007</span>
+<span class="n">missing</span><span class="p">(</span><span class="n">x5</span><span class="p">)</span><span class="o">*</span><span class="n">C</span><span class="p">(</span><span class="n">x6</span><span class="o">|</span><span class="n">s</span><span class="o">=+</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">32.2065</span><span class="p">,</span><span class="o">-</span><span class="mf">24.4145</span><span class="p">,</span><span class="o">-</span><span class="mf">7.42951</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x6</span><span class="p">)</span>                                                             <span class="n">Yes</span>     <span class="kc">None</span>
+<span class="n">C</span><span class="p">(</span><span class="n">x5</span><span class="o">|</span><span class="n">s</span><span class="o">=+</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">15.4729</span><span class="p">,</span><span class="mf">9.21999</span><span class="p">,</span><span class="mf">24.6777</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x5</span><span class="p">)</span><span class="o">*</span><span class="n">C</span><span class="p">(</span><span class="n">x6</span><span class="o">|</span><span class="n">s</span><span class="o">=+</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">32.2065</span><span class="p">,</span><span class="o">-</span><span class="mf">24.4145</span><span class="p">,</span><span class="o">-</span><span class="mf">7.42951</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x6</span><span class="p">)</span>                         <span class="n">No</span>      <span class="mf">0.210823</span>
+<span class="n">C</span><span class="p">(</span><span class="n">x5</span><span class="o">|</span><span class="n">s</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">15.4729</span><span class="p">,</span><span class="mf">9.21999</span><span class="p">,</span><span class="mf">24.6777</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x5</span><span class="p">)</span><span class="o">*</span><span class="n">C</span><span class="p">(</span><span class="n">x6</span><span class="o">|</span><span class="n">s</span><span class="o">=+</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">32.2065</span><span class="p">,</span><span class="o">-</span><span class="mf">24.4145</span><span class="p">,</span><span class="o">-</span><span class="mf">7.42951</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x6</span><span class="p">)</span>                         <span class="n">No</span>      <span class="mf">0.00366201</span>
+<span class="n">present</span><span class="p">(</span><span class="n">x6</span><span class="p">)</span><span class="o">*</span><span class="n">C</span><span class="p">(</span><span class="n">x5</span><span class="o">|</span><span class="n">s</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="mf">5.38057</span><span class="p">,</span><span class="mf">22.2377</span><span class="p">,</span><span class="mf">31.1865</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x5</span><span class="p">)</span>                                                                <span class="n">No</span>      <span class="mf">5.024</span>
+<span class="n">missing</span><span class="p">(</span><span class="n">x6</span><span class="p">)</span><span class="o">*</span><span class="n">C</span><span class="p">(</span><span class="n">x5</span><span class="o">|</span><span class="n">s</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="mf">5.38057</span><span class="p">,</span><span class="mf">22.2377</span><span class="p">,</span><span class="mf">31.1865</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x5</span><span class="p">)</span>                                                                <span class="n">Yes</span>     <span class="kc">None</span>
+<span class="n">C</span><span class="p">(</span><span class="n">x6</span><span class="o">|</span><span class="n">s</span><span class="o">=+</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">25.7228</span><span class="p">,</span><span class="o">-</span><span class="mf">11.4472</span><span class="p">,</span><span class="mf">14.2662</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x6</span><span class="p">)</span><span class="o">*</span><span class="n">C</span><span class="p">(</span><span class="n">x5</span><span class="o">|</span><span class="n">s</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="mf">5.38057</span><span class="p">,</span><span class="mf">22.2377</span><span class="p">,</span><span class="mf">31.1865</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x5</span><span class="p">)</span>                           <span class="n">Yes</span>     <span class="kc">None</span>
+<span class="n">C</span><span class="p">(</span><span class="n">x6</span><span class="o">|</span><span class="n">s</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">25.7228</span><span class="p">,</span><span class="o">-</span><span class="mf">11.4472</span><span class="p">,</span><span class="mf">14.2662</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x6</span><span class="p">)</span><span class="o">*</span><span class="n">C</span><span class="p">(</span><span class="n">x5</span><span class="o">|</span><span class="n">s</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="mf">5.38057</span><span class="p">,</span><span class="mf">22.2377</span><span class="p">,</span><span class="mf">31.1865</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x5</span><span class="p">)</span>                           <span class="n">No</span>      <span class="o">-</span><span class="mf">0.24299</span>
+<span class="n">C</span><span class="p">(</span><span class="n">x6</span><span class="o">|</span><span class="n">s</span><span class="o">=+</span><span class="mi">1</span><span class="p">,</span><span class="mf">21.7265</span><span class="p">,</span><span class="mf">33.8976</span><span class="p">,</span><span class="mf">36.9386</span><span class="p">)</span><span class="o">*</span><span class="n">C</span><span class="p">(</span><span class="n">x6</span><span class="o">|</span><span class="n">s</span><span class="o">=+</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">7.42951</span><span class="p">,</span><span class="mf">9.55548</span><span class="p">,</span><span class="mf">21.7265</span><span class="p">)</span><span class="o">*</span><span class="n">C</span><span class="p">(</span><span class="n">x6</span><span class="o">|</span><span class="n">s</span><span class="o">=+</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">32.2065</span><span class="p">,</span><span class="o">-</span><span class="mf">24.4145</span><span class="p">,</span><span class="o">-</span><span class="mf">7.42951</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x6</span><span class="p">)</span>  <span class="n">Yes</span>     <span class="kc">None</span>
+<span class="n">C</span><span class="p">(</span><span class="n">x6</span><span class="o">|</span><span class="n">s</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="mf">21.7265</span><span class="p">,</span><span class="mf">33.8976</span><span class="p">,</span><span class="mf">36.9386</span><span class="p">)</span><span class="o">*</span><span class="n">C</span><span class="p">(</span><span class="n">x6</span><span class="o">|</span><span class="n">s</span><span class="o">=+</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">7.42951</span><span class="p">,</span><span class="mf">9.55548</span><span class="p">,</span><span class="mf">21.7265</span><span class="p">)</span><span class="o">*</span><span class="n">C</span><span class="p">(</span><span class="n">x6</span><span class="o">|</span><span class="n">s</span><span class="o">=+</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">32.2065</span><span class="p">,</span><span class="o">-</span><span class="mf">24.4145</span><span class="p">,</span><span class="o">-</span><span class="mf">7.42951</span><span class="p">)</span><span class="o">*</span><span class="n">present</span><span class="p">(</span><span class="n">x6</span><span class="p">)</span>  <span class="n">No</span>      <span class="o">-</span><span class="mf">0.00262933</span>
+<span class="o">-----------------------------------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">MSE</span><span class="p">:</span> <span class="mf">279.9548</span><span class="p">,</span> <span class="n">GCV</span><span class="p">:</span> <span class="mf">282.2646</span><span class="p">,</span> <span class="n">RSQ</span><span class="p">:</span> <span class="mf">0.9364</span><span class="p">,</span> <span class="n">GRSQ</span><span class="p">:</span> <span class="mf">0.9359</span>
 </pre></div>
 </div>
 <div class="line-block">
@@ -269,11 +254,10 @@ MSE: 297.4538, GCV: 302.5757, RSQ: 0.9324, GRSQ: 0.9312
 
 <span class="c1"># Fit an Earth model</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">Earth</span><span class="p">(</span><span class="n">max_degree</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">minspan_alpha</span><span class="o">=.</span><span class="mi">5</span><span class="p">,</span> <span class="n">allow_missing</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-              <span class="n">enable_pruning</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">1e-15</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+              <span class="n">enable_pruning</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=.</span><span class="mo">001</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
 <span class="c1"># Print the model</span>
-<span class="k">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">trace</span><span class="p">())</span>
 <span class="k">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 
 <span class="c1"># Plot the model</span>
@@ -323,11 +307,11 @@ MSE: 297.4538, GCV: 302.5757, RSQ: 0.9324, GRSQ: 0.9312
 </pre></div>
 </div>
 <p><strong>Total running time of the script:</strong>
-(0 minutes 14.888 seconds)</p>
+(0 minutes 12.861 seconds)</p>
 <div class="sphx-glr-download container">
-<strong>Download Python source code:</strong> <a class="reference download internal" href="../_downloads/plot_missing_data_problem.py"><code class="xref download docutils literal"><span class="pre">plot_missing_data_problem.py</span></code></a></div>
+<strong>Download Python source code:</strong> <a class="reference download internal" href="../_downloads/plot_missing_data_problem.py" download=""><code class="xref download docutils literal"><span class="pre">plot_missing_data_problem.py</span></code></a></div>
 <div class="sphx-glr-download container">
-<strong>Download IPython notebook:</strong> <a class="reference download internal" href="../_downloads/plot_missing_data_problem.ipynb"><code class="xref download docutils literal"><span class="pre">plot_missing_data_problem.ipynb</span></code></a></div>
+<strong>Download IPython notebook:</strong> <a class="reference download internal" href="../_downloads/plot_missing_data_problem.ipynb" download=""><code class="xref download docutils literal"><span class="pre">plot_missing_data_problem.ipynb</span></code></a></div>
 </div>
 
 
@@ -337,7 +321,7 @@ MSE: 297.4538, GCV: 302.5757, RSQ: 0.9324, GRSQ: 0.9312
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="plot_classifier_comp.html" class="btn btn-neutral float-right" title="Plotting sckit-learn classifiers comparison with Earth" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="plot_multicolumn.html" class="btn btn-neutral float-right" title="Plotting a multicolumn regression problem that includes missingness" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="plot_output_weight.html" class="btn btn-neutral" title="Demonstrating a use of weights in outputs with two sine functions" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>

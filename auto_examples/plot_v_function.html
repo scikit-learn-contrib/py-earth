@@ -91,12 +91,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../content.html#bibliography">Bibliography</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../content.html#api">API</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Gallery</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="">Plotting the absolute value function</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Plotting the absolute value function</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_sine_wave.html">Plotting simple sine function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_linear_function.html">Plotting a linear function with a categorical variable</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_sine_wave_2d.html">Plotting two simple sine functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_derivatives.html">Plotting derivatives of simple sine function</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_output_weight.html">Demonstrating a use of weights in outputs with two sine functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_missing_data_problem.html">Plotting sine function with redundant predictors an missing data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_multicolumn.html">Plotting a multicolumn regression problem that includes missingness</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_classifier_comp.html">Plotting sckit-learn classifiers comparison with Earth</a></li>
 </ul>
 </li>
@@ -122,7 +124,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -151,39 +153,59 @@
 <p>A simple example plotting a fit of the absolute value function.</p>
 <img alt="../_images/sphx_glr_plot_v_function_001.png" class="align-center" src="../_images/sphx_glr_plot_v_function_001.png" />
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-python"><div class="highlight"><pre><span></span>  Forward Pass
--------------------------------------------------------------------
-iter  parent  var  knot  mse         terms  gcv      rsq    grsq
--------------------------------------------------------------------
-0     -       -    -     135.278633  1      135.550  0.000  0.000
-1     0       6    441   0.936859    3      0.954    0.993  0.993
-2     0       6    569   0.920706    5      0.953    0.993  0.993
--------------------------------------------------------------------
-Stopping Condition 2: Improvement below threshold
+<div class="sphx-glr-script-out highlight-default"><div class="highlight"><pre><span></span>  <span class="n">Beginning</span> <span class="n">forward</span> <span class="k">pass</span>
+<span class="o">-------------------------------------------------------------------</span>
+<span class="nb">iter</span>  <span class="n">parent</span>  <span class="n">var</span>  <span class="n">knot</span>  <span class="n">mse</span>         <span class="n">terms</span>  <span class="n">gcv</span>      <span class="n">rsq</span>    <span class="n">grsq</span>
+<span class="o">-------------------------------------------------------------------</span>
+<span class="mi">0</span>     <span class="o">-</span>       <span class="o">-</span>    <span class="o">-</span>     <span class="mf">135.278633</span>  <span class="mi">1</span>      <span class="mf">135.550</span>  <span class="mf">0.000</span>  <span class="mf">0.000</span>
+<span class="mi">1</span>     <span class="mi">0</span>       <span class="mi">6</span>    <span class="mi">537</span>   <span class="mf">0.928785</span>  <span class="mi">3</span>      <span class="mf">0.940</span>  <span class="mf">0.993</span>  <span class="mf">0.993</span>
+<span class="mi">2</span>     <span class="mi">0</span>       <span class="mi">0</span>    <span class="mi">377</span>   <span class="mf">0.918642</span>  <span class="mi">5</span>      <span class="mf">0.939</span>  <span class="mf">0.993</span>  <span class="mf">0.993</span>
+<span class="o">---------------------------------------------------------------</span>
+<span class="n">Stopping</span> <span class="n">Condition</span> <span class="mi">2</span><span class="p">:</span> <span class="n">Improvement</span> <span class="n">below</span> <span class="n">threshold</span>
+<span class="n">Beginning</span> <span class="n">pruning</span> <span class="k">pass</span>
+<span class="o">--------------------------------------------</span>
+<span class="nb">iter</span>  <span class="n">bf</span>  <span class="n">terms</span>  <span class="n">mse</span>   <span class="n">gcv</span>    <span class="n">rsq</span>    <span class="n">grsq</span>
+<span class="o">--------------------------------------------</span>
+<span class="mi">0</span>     <span class="o">-</span>   <span class="mi">5</span>      <span class="mf">0.92</span>  <span class="mf">0.939</span>  <span class="mf">0.993</span>  <span class="mf">0.993</span>
+<span class="mi">1</span>     <span class="mi">4</span>   <span class="mi">4</span>      <span class="mf">0.92</span>  <span class="mf">0.939</span>  <span class="mf">0.993</span>  <span class="mf">0.993</span>
+<span class="mi">2</span>     <span class="mi">3</span>   <span class="mi">3</span>      <span class="mf">0.93</span>  <span class="mf">0.940</span>  <span class="mf">0.993</span>  <span class="mf">0.993</span>
+<span class="mi">3</span>     <span class="mi">1</span>   <span class="mi">2</span>      <span class="mf">83.82</span>  <span class="mf">84.410</span>  <span class="mf">0.380</span>  <span class="mf">0.377</span>
+<span class="mi">4</span>     <span class="mi">2</span>   <span class="mi">1</span>      <span class="mf">135.28</span>  <span class="mf">135.550</span>  <span class="mf">0.000</span>  <span class="mf">0.000</span>
+<span class="o">------------------------------------------------</span>
+<span class="n">Selected</span> <span class="n">iteration</span><span class="p">:</span> <span class="mi">1</span>
+<span class="n">Forward</span> <span class="n">Pass</span>
+<span class="o">-------------------------------------------------------------------</span>
+<span class="nb">iter</span>  <span class="n">parent</span>  <span class="n">var</span>  <span class="n">knot</span>  <span class="n">mse</span>         <span class="n">terms</span>  <span class="n">gcv</span>      <span class="n">rsq</span>    <span class="n">grsq</span>
+<span class="o">-------------------------------------------------------------------</span>
+<span class="mi">0</span>     <span class="o">-</span>       <span class="o">-</span>    <span class="o">-</span>     <span class="mf">135.278633</span>  <span class="mi">1</span>      <span class="mf">135.550</span>  <span class="mf">0.000</span>  <span class="mf">0.000</span>
+<span class="mi">1</span>     <span class="mi">0</span>       <span class="mi">6</span>    <span class="mi">537</span>   <span class="mf">0.928785</span>    <span class="mi">3</span>      <span class="mf">0.940</span>    <span class="mf">0.993</span>  <span class="mf">0.993</span>
+<span class="mi">2</span>     <span class="mi">0</span>       <span class="mi">0</span>    <span class="mi">377</span>   <span class="mf">0.918642</span>    <span class="mi">5</span>      <span class="mf">0.939</span>    <span class="mf">0.993</span>  <span class="mf">0.993</span>
+<span class="o">-------------------------------------------------------------------</span>
+<span class="n">Stopping</span> <span class="n">Condition</span> <span class="mi">2</span><span class="p">:</span> <span class="n">Improvement</span> <span class="n">below</span> <span class="n">threshold</span>
 
-Pruning Pass
-------------------------------------------------
-iter  bf  terms  mse     gcv      rsq    grsq
-------------------------------------------------
-0     -   5      0.92    0.953    0.993  0.993
-1     2   4      0.92    0.945    0.993  0.993
-2     3   3      6.26    6.373    0.954  0.953
-3     1   2      68.62   69.307   0.493  0.489
-4     4   1      135.28  135.550  0.000  0.000
-------------------------------------------------
-Selected iteration: 1
+<span class="n">Pruning</span> <span class="n">Pass</span>
+<span class="o">------------------------------------------------</span>
+<span class="nb">iter</span>  <span class="n">bf</span>  <span class="n">terms</span>  <span class="n">mse</span>     <span class="n">gcv</span>      <span class="n">rsq</span>    <span class="n">grsq</span>
+<span class="o">------------------------------------------------</span>
+<span class="mi">0</span>     <span class="o">-</span>   <span class="mi">5</span>      <span class="mf">0.92</span>    <span class="mf">0.939</span>    <span class="mf">0.993</span>  <span class="mf">0.993</span>
+<span class="mi">1</span>     <span class="mi">4</span>   <span class="mi">4</span>      <span class="mf">0.92</span>    <span class="mf">0.939</span>    <span class="mf">0.993</span>  <span class="mf">0.993</span>
+<span class="mi">2</span>     <span class="mi">3</span>   <span class="mi">3</span>      <span class="mf">0.93</span>    <span class="mf">0.940</span>    <span class="mf">0.993</span>  <span class="mf">0.993</span>
+<span class="mi">3</span>     <span class="mi">1</span>   <span class="mi">2</span>      <span class="mf">83.82</span>   <span class="mf">84.410</span>   <span class="mf">0.380</span>  <span class="mf">0.377</span>
+<span class="mi">4</span>     <span class="mi">2</span>   <span class="mi">1</span>      <span class="mf">135.28</span>  <span class="mf">135.550</span>  <span class="mf">0.000</span>  <span class="mf">0.000</span>
+<span class="o">------------------------------------------------</span>
+<span class="n">Selected</span> <span class="n">iteration</span><span class="p">:</span> <span class="mi">1</span>
 
-Earth Model
--------------------------------------
-Basis Function  Pruned  Coefficient
--------------------------------------
-(Intercept)     No      9.57227
-h(x6-4.071)     No      1.94124
-h(4.071-x6)     Yes     None
-h(x6+5.756)     No      -0.949437
-h(-5.756-x6)    No      1.01365
--------------------------------------
-MSE: 0.9207, GCV: 0.9451, RSQ: 0.9932, GRSQ: 0.9930
+<span class="n">Earth</span> <span class="n">Model</span>
+<span class="o">-------------------------------------</span>
+<span class="n">Basis</span> <span class="n">Function</span>  <span class="n">Pruned</span>  <span class="n">Coefficient</span>
+<span class="o">-------------------------------------</span>
+<span class="p">(</span><span class="n">Intercept</span><span class="p">)</span>     <span class="n">No</span>      <span class="mf">0.0693416</span>
+<span class="n">h</span><span class="p">(</span><span class="n">x6</span><span class="o">-</span><span class="mf">3.93775</span><span class="p">)</span>   <span class="n">No</span>      <span class="mf">0.995325</span>
+<span class="n">h</span><span class="p">(</span><span class="mf">3.93775</span><span class="o">-</span><span class="n">x6</span><span class="p">)</span>   <span class="n">No</span>      <span class="mf">1.00427</span>
+<span class="n">h</span><span class="p">(</span><span class="n">x0</span><span class="o">-</span><span class="mf">13.1076</span><span class="p">)</span>   <span class="n">No</span>      <span class="o">-</span><span class="mf">0.00984883</span>
+<span class="n">h</span><span class="p">(</span><span class="mf">13.1076</span><span class="o">-</span><span class="n">x0</span><span class="p">)</span>   <span class="n">Yes</span>     <span class="kc">None</span>
+<span class="o">-------------------------------------</span>
+<span class="n">MSE</span><span class="p">:</span> <span class="mf">0.9230</span><span class="p">,</span> <span class="n">GCV</span><span class="p">:</span> <span class="mf">0.9389</span><span class="p">,</span> <span class="n">RSQ</span><span class="p">:</span> <span class="mf">0.9932</span><span class="p">,</span> <span class="n">GRSQ</span><span class="p">:</span> <span class="mf">0.9931</span>
 </pre></div>
 </div>
 <div class="line-block">
@@ -191,7 +213,6 @@ MSE: 0.9207, GCV: 0.9451, RSQ: 0.9932, GRSQ: 0.9930
 </div>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-
 <span class="kn">from</span> <span class="nn">pyearth</span> <span class="kn">import</span> <span class="n">Earth</span>
 
 <span class="c1"># Create some fake data</span>
@@ -202,7 +223,7 @@ MSE: 0.9207, GCV: 0.9451, RSQ: 0.9932, GRSQ: 0.9930
 <span class="n">y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">-</span> <span class="mf">4.0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
 
 <span class="c1"># Fit an Earth model</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">Earth</span><span class="p">(</span><span class="n">max_degree</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Earth</span><span class="p">(</span><span class="n">max_degree</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
 <span class="c1"># Print the model</span>
@@ -218,11 +239,11 @@ MSE: 0.9207, GCV: 0.9451, RSQ: 0.9932, GRSQ: 0.9930
 </pre></div>
 </div>
 <p><strong>Total running time of the script:</strong>
-(0 minutes 0.055 seconds)</p>
+(0 minutes 0.165 seconds)</p>
 <div class="sphx-glr-download container">
-<strong>Download Python source code:</strong> <a class="reference download internal" href="../_downloads/plot_v_function.py"><code class="xref download docutils literal"><span class="pre">plot_v_function.py</span></code></a></div>
+<strong>Download Python source code:</strong> <a class="reference download internal" href="../_downloads/plot_v_function.py" download=""><code class="xref download docutils literal"><span class="pre">plot_v_function.py</span></code></a></div>
 <div class="sphx-glr-download container">
-<strong>Download IPython notebook:</strong> <a class="reference download internal" href="../_downloads/plot_v_function.ipynb"><code class="xref download docutils literal"><span class="pre">plot_v_function.ipynb</span></code></a></div>
+<strong>Download IPython notebook:</strong> <a class="reference download internal" href="../_downloads/plot_v_function.ipynb" download=""><code class="xref download docutils literal"><span class="pre">plot_v_function.ipynb</span></code></a></div>
 </div>
 
 

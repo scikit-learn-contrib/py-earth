@@ -144,7 +144,6 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">sparse</span>
 
-
 <div class="viewcode-block" id="Earth"><a class="viewcode-back" href="../../content.html#pyearth.Earth">[docs]</a><span class="k">class</span> <span class="nc">Earth</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">RegressorMixin</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
@@ -307,6 +306,12 @@
 
 <span class="sd">    enable_pruning : bool, optional(default=True)</span>
 <span class="sd">        If False, the pruning pass will be skipped.</span>
+<span class="sd">        </span>
+<span class="sd">    verbose : int, optional(default=0)</span>
+<span class="sd">        If verbose &gt;= 1, print out progress information during fitting.  If </span>
+<span class="sd">        verbose &gt;= 2, also print out information on numerical difficulties</span>
+<span class="sd">        if encountered during fitting. If verbose &gt;= 3, print even more information</span>
+<span class="sd">        that is probably only useful to the developers of py-earth.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -384,10 +389,10 @@
         <span class="s1">&#39;minspan_alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;minspan&#39;</span><span class="p">,</span>
         <span class="s1">&#39;thresh&#39;</span><span class="p">,</span> <span class="s1">&#39;zero_tol&#39;</span><span class="p">,</span> <span class="s1">&#39;min_search_points&#39;</span><span class="p">,</span> 
         <span class="s1">&#39;check_every&#39;</span><span class="p">,</span> <span class="s1">&#39;allow_linear&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;use_fast&#39;</span><span class="p">,</span> <span class="s1">&#39;fast_K&#39;</span><span class="p">,</span> <span class="s1">&#39;fast_h&#39;</span>
+        <span class="s1">&#39;use_fast&#39;</span><span class="p">,</span> <span class="s1">&#39;fast_K&#39;</span><span class="p">,</span> <span class="s1">&#39;fast_h&#39;</span><span class="p">,</span> <span class="s1">&#39;verbose&#39;</span>
     <span class="p">])</span>
     <span class="n">pruning_pass_arg_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span>
-        <span class="s1">&#39;penalty&#39;</span>
+        <span class="s1">&#39;penalty&#39;</span><span class="p">,</span> <span class="s1">&#39;verbose&#39;</span>
     <span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_terms</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">max_degree</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">allow_missing</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> 
@@ -396,7 +401,7 @@
                  <span class="n">thresh</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">zero_tol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">min_search_points</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
                  <span class="n">check_every</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">allow_linear</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">use_fast</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fast_K</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                 <span class="n">fast_h</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">enable_pruning</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+                 <span class="n">fast_h</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">enable_pruning</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">call</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_param_names</span><span class="p">():</span>
@@ -535,14 +540,14 @@
 
         <span class="c1"># Deal with sample_weight</span>
         <span class="k">if</span> <span class="n">sample_weight</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">sample_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">sample_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">sample_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">)</span>
             <span class="n">assert_all_finite</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_weight</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">sample_weight</span> <span class="o">=</span> <span class="n">sample_weight</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
         <span class="c1"># Deal with output_weight</span>
-        <span class="k">if</span> <span class="n">output_weight</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">output_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">output_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">output_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">output_weight</span><span class="p">)</span>
             <span class="n">assert_all_finite</span><span class="p">(</span><span class="n">output_weight</span><span class="p">)</span>
 
@@ -552,9 +557,14 @@
         <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">sample_weight</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s1">&#39;y and sample_weight do not have compatible dimensions.&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">output_weight</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">output_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">output_weight</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s1">&#39;y and output_weight do not have compatible dimensions.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sample_weight</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">output_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">sample_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">,</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">output_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">sample_weight</span> <span class="o">*=</span> <span class="n">output_weight</span>
 
         <span class="c1"># Make sure everything is finite (except X, which is allowed to have</span>
         <span class="c1"># missing values)</span>
@@ -567,7 +577,7 @@
         <span class="n">check_X_y</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">accept_sparse</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">multi_output</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                   <span class="n">force_all_finite</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span>
+        <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">missing</span>
 
 <div class="viewcode-block" id="Earth.fit"><a class="viewcode-back" href="../../content.html#pyearth.Earth.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
             <span class="n">sample_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
@@ -650,21 +660,46 @@
             <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
 
         <span class="c1"># Do the actual work</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__forward_pass</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">forward_pass</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> 
                             <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">xlabels_</span><span class="p">,</span> <span class="n">linvars</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">xlabels_</span><span class="p">,</span> <span class="n">linvars</span><span class="p">,</span> <span class="n">skip_scrub</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_pruning</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__pruning_pass</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
-                            <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pruning_pass</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+                            <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> 
+                            <span class="n">skip_scrub</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;smooth&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">smooth</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">basis_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis_</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__linear_fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear_fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> 
+                          <span class="n">skip_scrub</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
-
-    <span class="k">def</span> <span class="nf">__forward_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+    
+<span class="c1">#     def forward_pass2(self, X, y=None,</span>
+<span class="c1">#                        sample_weight=None, output_weight=None,</span>
+<span class="c1">#                        missing=None,</span>
+<span class="c1">#                        xlabels=None, linvars=[]):</span>
+<span class="c1">#         # Label and format data</span>
+<span class="c1">#         if xlabels is None:</span>
+<span class="c1">#             self.xlabels_ = self._scrape_labels(X)</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             self.xlabels_ = xlabels</span>
+<span class="c1">#         X, y, sample_weight, output_weight, missing = self._scrub(</span>
+<span class="c1">#             X, y, sample_weight, output_weight, missing)</span>
+<span class="c1">#         </span>
+<span class="c1">#         # Do the actual work</span>
+<span class="c1">#         args = self._pull_forward_args(**self.__dict__)</span>
+<span class="c1">#         forward_passer = ForwardPasser(</span>
+<span class="c1">#             X, missing, y, sample_weight, output_weight,</span>
+<span class="c1">#             xlabels=self.xlabels_, linvars=linvars, **args)</span>
+<span class="c1"># #         forward_passer.run()</span>
+<span class="c1">#         linvars_ = []</span>
+<span class="c1">#         self.forward_pass_record_, self.basis_ = forward_pass(X, missing, y, </span>
+<span class="c1">#             sample_weight, output_weight, xlabels=self.xlabels_, linvars=linvars)</span>
+<span class="c1"># #         self.basis_ = forward_passer.get_basis()</span>
+<span class="c1">#     </span>
+<div class="viewcode-block" id="Earth.forward_pass"><a class="viewcode-back" href="../../content.html#pyearth.Earth.forward_pass">[docs]</a>    <span class="k">def</span> <span class="nf">forward_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                        <span class="n">sample_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">output_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                        <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                       <span class="n">xlabels</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">linvars</span><span class="o">=</span><span class="p">[]):</span>
+                       <span class="n">xlabels</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">linvars</span><span class="o">=</span><span class="p">[],</span> <span class="n">skip_scrub</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Perform the forward pass of the multivariate adaptive regression</span>
 <span class="sd">        splines algorithm.  Users will normally want to call the fit method</span>
@@ -714,7 +749,7 @@
 <span class="sd">        </span>
 <span class="sd">        linvars : iterable of strings or ints, optional (empty by default)</span>
 <span class="sd">            Used to specify features that may only enter terms as linear basis</span>
-<span class="sd">            functions (without knots).  Can include both column numbers an</span>
+<span class="sd">            functions (without knots).  Can include both column numbers and</span>
 <span class="sd">            column names (see xlabels, below).</span>
 
 
@@ -733,20 +768,21 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">xlabels_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrape_labels</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">xlabels_</span> <span class="o">=</span> <span class="n">xlabels</span>
-        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub</span><span class="p">(</span>
-            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_scrub</span><span class="p">:</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub</span><span class="p">(</span>
+                <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
 
         <span class="c1"># Do the actual work</span>
         <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pull_forward_args</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
         <span class="n">forward_passer</span> <span class="o">=</span> <span class="n">ForwardPasser</span><span class="p">(</span>
-            <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span>
             <span class="n">xlabels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xlabels_</span><span class="p">,</span> <span class="n">linvars</span><span class="o">=</span><span class="n">linvars</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
         <span class="n">forward_passer</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">forward_pass_record_</span> <span class="o">=</span> <span class="n">forward_passer</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">basis_</span> <span class="o">=</span> <span class="n">forward_passer</span><span class="o">.</span><span class="n">get_basis</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">basis_</span> <span class="o">=</span> <span class="n">forward_passer</span><span class="o">.</span><span class="n">get_basis</span><span class="p">()</span></div>
 
-    <span class="k">def</span> <span class="nf">__pruning_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">output_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
-                       <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Earth.pruning_pass"><a class="viewcode-back" href="../../content.html#pyearth.Earth.pruning_pass">[docs]</a>    <span class="k">def</span> <span class="nf">pruning_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">output_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
+                       <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">skip_scrub</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Perform the pruning pass of the multivariate adaptive regression</span>
 <span class="sd">        splines algorithm.  Users will normally want to call the fit</span>
@@ -797,17 +833,90 @@
 
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="c1"># Format data</span>
-        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub</span><span class="p">(</span>
-            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
-
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_scrub</span><span class="p">:</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub</span><span class="p">(</span>
+                <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+            
+<span class="c1">#         if sample_weight.shape[1] == 1 and y.shape[1] != 1:</span>
+<span class="c1">#             sample_weight = np.repeat(sample_weight,y.shape[1],axis=1)</span>
+        
         <span class="c1"># Pull arguments from self</span>
         <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pull_pruning_args</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+        
         <span class="c1"># Do the actual work</span>
         <span class="n">pruning_passer</span> <span class="o">=</span> <span class="n">PruningPasser</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">basis_</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">basis_</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span>
             <span class="o">**</span><span class="n">args</span><span class="p">)</span>
         <span class="n">pruning_passer</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pruning_pass_record_</span> <span class="o">=</span> <span class="n">pruning_passer</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pruning_pass_record_</span> <span class="o">=</span> <span class="n">pruning_passer</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span></div>
+        
+        
+<span class="c1">#         # Format data</span>
+<span class="c1">#         X, y, sample_weight, output_weight, missing = self._scrub(</span>
+<span class="c1">#             X, y, sample_weight, output_weight, missing)</span>
+<span class="c1">#          </span>
+<span class="c1">#         # Dimensions</span>
+<span class="c1">#         m, n = X.shape</span>
+<span class="c1">#         basis_size = len(self.basis_)</span>
+<span class="c1">#         pruned_basis_size = self.basis_.plen()</span>
+<span class="c1">#          </span>
+<span class="c1">#         self.pruning_pass_record_ = PruningPassRecord(m, n, args[&#39;penalty&#39;], sst, pruned_basis_size)</span>
+<span class="c1">#         </span>
+<span class="c1">#         </span>
+<span class="c1">#         </span>
+<span class="c1">#         # Pull arguments from self</span>
+<span class="c1">#         args = self._pull_pruning_args(**self.__dict__)</span>
+<span class="c1">#         penalty = args.get(&#39;penalty&#39;, 3.0)</span>
+<span class="c1">#         </span>
+<span class="c1">#         # Compute prune sets</span>
+<span class="c1">#         prune_sets = [[basis_size - i for i in range(n)] for n in range(basis_size)]</span>
+<span class="c1">#         </span>
+<span class="c1">#         # Create the record object</span>
+<span class="c1">#         record = PruningPassRecord(&#39;gcv&#39;, basis_size)</span>
+<span class="c1">#         </span>
+<span class="c1">#         # Score each prune set to find the best</span>
+<span class="c1">#         best_prune_set = []</span>
+<span class="c1">#         best_score = float(&#39;inf&#39;)</span>
+<span class="c1">#         for prune_set in prune_sets:</span>
+<span class="c1">#             print 1</span>
+<span class="c1">#             print prune_set</span>
+<span class="c1">#             sys.stdout.flush()</span>
+<span class="c1">#             # Prune this prune set</span>
+<span class="c1">#             for idx in prune_set:</span>
+<span class="c1">#                 self.basis_[idx].prune()</span>
+<span class="c1">#             </span>
+<span class="c1">#             print 2</span>
+<span class="c1">#             sys.stdout.flush()</span>
+<span class="c1">#             # Score this prune set</span>
+<span class="c1">#             self.linear_fit(X, y, sample_weight, output_weight, missing, skip_scrub=True)</span>
+<span class="c1">#             y_pred = self.predict(X, missing, skip_scrub=True)</span>
+<span class="c1">#             score = gcv(np.mean(((y - y_pred) * np.sqrt(sample_weight)) ** 2),</span>
+<span class="c1">#                         basis_size - len(prune_set), m, penalty)</span>
+<span class="c1">#             r2 = self.score(X, y, sample_weight, output_weight, missing, skip_scrub=True)</span>
+<span class="c1">#             </span>
+<span class="c1">#             print 3</span>
+<span class="c1">#             sys.stdout.flush()</span>
+<span class="c1">#             # Minimizer</span>
+<span class="c1">#             if score &lt; best_score:</span>
+<span class="c1">#                 best_score = score</span>
+<span class="c1">#                 best_prune_set = prune_set</span>
+<span class="c1">#             </span>
+<span class="c1">#             print 4</span>
+<span class="c1">#             sys.stdout.flush()</span>
+<span class="c1">#             # Unprune for next iteration</span>
+<span class="c1">#             for idx in prune_set:</span>
+<span class="c1">#                 self.basis_[idx].unprune()</span>
+<span class="c1">#             </span>
+<span class="c1">#             print 5</span>
+<span class="c1">#             sys.stdout.flush()</span>
+<span class="c1">#             # Add to the record</span>
+<span class="c1">#             record.add(prune_set, score, r2)</span>
+<span class="c1">#         </span>
+<span class="c1">#         # Apply the best prune set</span>
+<span class="c1">#         for idx in best_prune_set:</span>
+<span class="c1">#             self.basis_[idx].prune()</span>
+<span class="c1">#         </span>
+<span class="c1">#         self.pruning_pass_record_ = record</span>
 
 <div class="viewcode-block" id="Earth.forward_trace"><a class="viewcode-back" href="../../content.html#pyearth.Earth.forward_trace">[docs]</a>    <span class="k">def</span> <span class="nf">forward_trace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Return information about the forward pass.&#39;&#39;&#39;</span>
@@ -837,31 +946,36 @@
             <span class="n">result</span> <span class="o">+=</span> <span class="s1">&#39;Unpruned Earth Model</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">+=</span> <span class="s1">&#39;Earth Model</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Basis Function&#39;</span><span class="p">,</span> <span class="s1">&#39;Pruned&#39;</span><span class="p">,</span> <span class="s1">&#39;Coefficient&#39;</span><span class="p">]</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Basis Function&#39;</span><span class="p">,</span> <span class="s1">&#39;Pruned&#39;</span><span class="p">]</span> 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;Coefficient </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;Coefficient&#39;</span><span class="p">]</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">for</span> <span class="n">bf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis_</span><span class="p">:</span>
-                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">bf</span><span class="p">),</span> <span class="s1">&#39;Yes&#39;</span>
-                             <span class="k">if</span> <span class="n">bf</span><span class="o">.</span><span class="n">is_pruned</span><span class="p">()</span>
-                             <span class="k">else</span> <span class="s1">&#39;No&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%g</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="n">c</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
-                             <span class="k">if</span> <span class="ow">not</span> <span class="n">bf</span><span class="o">.</span><span class="n">is_pruned</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;None&#39;</span><span class="p">])</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">bf</span><span class="o">.</span><span class="n">is_pruned</span><span class="p">():</span>
-                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="n">result</span> <span class="o">+=</span> <span class="n">ascii_table</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pruning_trace</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pruning_trace</span><span class="p">()</span>
-                <span class="n">selection</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">get_selected</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_trace</span><span class="p">()</span>
-                <span class="n">selection</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">record</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
-            <span class="n">result</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">bf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis_</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">bf</span><span class="p">),</span> <span class="s1">&#39;Yes&#39;</span>
+                         <span class="k">if</span> <span class="n">bf</span><span class="o">.</span><span class="n">is_pruned</span><span class="p">()</span>
+                         <span class="k">else</span> <span class="s1">&#39;No&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%g</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="n">c</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">bf</span><span class="o">.</span><span class="n">is_pruned</span><span class="p">()</span> <span class="k">else</span> 
+                                       <span class="s1">&#39;None&#39;</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+                         <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">bf</span><span class="o">.</span><span class="n">is_pruned</span><span class="p">():</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="n">ascii_table</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pruning_trace</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pruning_trace</span><span class="p">()</span>
+            <span class="n">selection</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">get_selected</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_trace</span><span class="p">()</span>
+            <span class="n">selection</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">record</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="n">result</span> <span class="o">+=</span> <span class="s1">&#39;MSE: </span><span class="si">%.4f</span><span class="s1">, GCV: </span><span class="si">%.4f</span><span class="s1">, RSQ: </span><span class="si">%.4f</span><span class="s1">, GRSQ: </span><span class="si">%.4f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mse_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gcv_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rsq_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">grsq_</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
-    <span class="k">def</span> <span class="nf">__linear_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">output_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                     <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Earth.linear_fit"><a class="viewcode-back" href="../../content.html#pyearth.Earth.linear_fit">[docs]</a>    <span class="k">def</span> <span class="nf">linear_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">output_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                     <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">skip_scrub</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Solve the linear least squares problem to determine the coefficients</span>
 <span class="sd">        of the unpruned basis functions.</span>
@@ -910,22 +1024,40 @@
 
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="c1"># Format data</span>
-        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub</span><span class="p">(</span>
-            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
-
-        <span class="c1"># Transform into basis space</span>
-        <span class="n">B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_scrub</span><span class="p">:</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub</span><span class="p">(</span>
+                <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
         
-        <span class="c1"># Apply weights to B</span>
-        <span class="n">apply_weights_2d</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">)</span>
-
-        <span class="c1"># Apply weights to y</span>
-        <span class="n">weighted_y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">weighted_y</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span>
+<span class="c1">#         if sample_weight.shape[1]:</span>
+<span class="c1">#             sample_weight = np.repeat(sample_weight,y.shape[1],axis=1)</span>
+        
         <span class="c1"># Solve the linear least squares problem</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">resid_</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">total_weight</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">mse0</span> <span class="o">=</span> <span class="mf">0.</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            
+            <span class="c1"># Figure out the weight column</span>
+            <span class="k">if</span> <span class="n">sample_weight</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">w</span> <span class="o">=</span> <span class="n">sample_weight</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">w</span> <span class="o">=</span> <span class="n">sample_weight</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+            
+            <span class="c1"># Transform into basis space</span>
+            <span class="n">B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span> <span class="c1">#* w[:, None]</span>
+            <span class="n">apply_weights_2d</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+            
+            <span class="c1"># Compute total weight</span>
+            <span class="n">total_weight</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    
+            <span class="c1"># Apply weights to y</span>
+            <span class="n">weighted_y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">weighted_y</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">w</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span>
+            
+            <span class="c1"># Compute the mse0</span>
+            <span class="n">mse0</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">weighted_y</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">weighted_y</span><span class="p">[:,</span><span class="n">i</span><span class="p">]))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+            
             <span class="n">coef</span><span class="p">,</span> <span class="n">resid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">weighted_y</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coef</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">resid</span><span class="p">:</span>
@@ -935,28 +1067,39 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span>
         <span class="c1"># Compute the final mse, gcv, rsq, and grsq (may be different from the</span>
         <span class="c1"># pruning scores if the model has been smoothed)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mse_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">resid_</span> <span class="o">*</span> <span class="n">output_weight</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mse_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">resid_</span><span class="p">)</span> <span class="o">/</span> <span class="n">total_weight</span>
+        <span class="n">mse0</span> <span class="o">=</span> <span class="n">mse0</span> <span class="o">/</span> <span class="n">total_weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gcv_</span> <span class="o">=</span> <span class="n">gcv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mse_</span><span class="p">,</span>
+                        <span class="n">coef</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">get_penalty</span><span class="p">())</span>
+        <span class="n">gcv0</span> <span class="o">=</span> <span class="n">gcv</span><span class="p">(</span><span class="n">mse0</span><span class="p">,</span>
+                   <span class="mi">1</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                   <span class="bp">self</span><span class="o">.</span><span class="n">get_penalty</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rsq_</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mse_</span> <span class="o">/</span> <span class="n">mse0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grsq_</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gcv_</span> <span class="o">/</span> <span class="n">gcv0</span><span class="p">)</span></div>
+        
+<span class="c1">#         </span>
+<span class="c1">#         </span>
+<span class="c1">#         </span>
+<span class="c1">#         for p, coef in enumerate(self.coef_):</span>
+<span class="c1">#             mse_p = resid_[p].sum() / float(X.shape[0])</span>
+<span class="c1">#             gcv_[p] = gcv(mse_p,</span>
+<span class="c1">#                           coef.shape[0], X.shape[0],</span>
+<span class="c1">#                           self.get_penalty())</span>
+<span class="c1">#             self.gcv_ += gcv_[p] * output_weight[p]</span>
+<span class="c1">#         y_avg = np.average(y, weights=sample_weight if </span>
+<span class="c1">#                            sample_weight.shape == y.shape else sample_weight.flatten(), axis=0)</span>
+<span class="c1">#         y_sqr = (y - y_avg[np.newaxis, :]) ** 2</span>
+<span class="c1"># </span>
+<span class="c1">#         rsq_ = ((1 - resid_.sum(axis=1) / y_sqr.sum(axis=0)) * output_weight)</span>
+<span class="c1">#         self.rsq_ = rsq_.sum()</span>
+<span class="c1">#         gcv0 = np.empty(y.shape[1])</span>
+<span class="c1">#         for p in range(y.shape[1]):</span>
+<span class="c1">#             mse0_p = (y_sqr[:, p].sum()) / float(X.shape[0])</span>
+<span class="c1">#             gcv0[p] = gcv(mse0_p, 1, X.shape[0], self.get_penalty())</span>
+<span class="c1">#         self.grsq_ = ((1 - (gcv_ / gcv0)) * output_weight).sum()</span>
 
-        <span class="n">gcv_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gcv_</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">coef</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">):</span>
-            <span class="n">mse_p</span> <span class="o">=</span> <span class="n">resid_</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="n">gcv_</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">gcv</span><span class="p">(</span><span class="n">mse_p</span><span class="p">,</span>
-                          <span class="n">coef</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                          <span class="bp">self</span><span class="o">.</span><span class="n">get_penalty</span><span class="p">())</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">gcv_</span> <span class="o">+=</span> <span class="n">gcv_</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">*</span> <span class="n">output_weight</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
-        <span class="n">y_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">y_sqr</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_avg</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:])</span> <span class="o">**</span> <span class="mi">2</span>
-
-        <span class="n">rsq_</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">resid_</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">y_sqr</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span> <span class="o">*</span> <span class="n">output_weight</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rsq_</span> <span class="o">=</span> <span class="n">rsq_</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-        <span class="n">gcv0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
-            <span class="n">mse0_p</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_sqr</span><span class="p">[:,</span> <span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="n">gcv0</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">gcv</span><span class="p">(</span><span class="n">mse0_p</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_penalty</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">grsq_</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">gcv_</span> <span class="o">/</span> <span class="n">gcv0</span><span class="p">))</span> <span class="o">*</span> <span class="n">output_weight</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-
-<div class="viewcode-block" id="Earth.predict"><a class="viewcode-back" href="../../content.html#pyearth.Earth.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Earth.predict"><a class="viewcode-back" href="../../content.html#pyearth.Earth.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">skip_scrub</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Predict the response based on the input data X.</span>
 
@@ -983,7 +1126,8 @@
 <span class="sd">                and p is the number of outputs</span>
 <span class="sd">                The predicted values.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">X</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub_x</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_scrub</span><span class="p">:</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub_x</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
         <span class="n">B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -1017,6 +1161,15 @@
 <span class="sd">            specified, all variables are used (even if some are not relevant</span>
 <span class="sd">            to the final model and have derivatives that are identically zero).</span>
 
+<span class="sd">       Returns</span>
+<span class="sd">       -------</span>
+<span class="sd">       </span>
+<span class="sd">       X_deriv : array of shape = [m, n, p] where m is the number of samples, n</span>
+<span class="sd">            is the number of features if &#39;variables&#39; is not specified otherwise it </span>
+<span class="sd">            is len(variables) and p is the number of outputs.</span>
+<span class="sd">            For each sample, X_deriv represents the first derivative of each response </span>
+<span class="sd">            with respect to each variable.</span>
+
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="n">check_is_fitted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;basis_&quot;</span><span class="p">)</span>
@@ -1043,7 +1196,7 @@
         <span class="k">return</span> <span class="n">J</span></div>
 
 <div class="viewcode-block" id="Earth.score"><a class="viewcode-back" href="../../content.html#pyearth.Earth.score">[docs]</a>    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">output_weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
-              <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+              <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">skip_scrub</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Calculate the generalized r^2 of the model on data X and y.</span>
 
@@ -1089,25 +1242,76 @@
 <span class="sd">            argument is a pandas DataFrame, missing will be inferred from X if </span>
 <span class="sd">            allow_missing is True.</span>
 
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        score : float with a maximum value of 1 (it can be negative). </span>
+<span class="sd">                The score is the generalized r^2 of the model on data X and y, the higher</span>
+<span class="sd">                the score the better the fit is.</span>
+
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">check_is_fitted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;basis_&quot;</span><span class="p">)</span>
-        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub</span><span class="p">(</span>
-            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_scrub</span><span class="p">:</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub</span><span class="p">(</span>
+                <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sample_weight</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">sample_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">,</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">y_hat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-        <span class="n">m</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
-        <span class="n">residual</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">y_hat</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
-        <span class="n">mse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">residual</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="n">m</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_hat</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">y_hat</span> <span class="o">=</span> <span class="n">y_hat</span><span class="p">[:,</span> <span class="bp">None</span><span class="p">]</span>
+
+        <span class="n">residual</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">y_hat</span>
+<span class="c1">#         total_weight = np.sum(sample_weight)</span>
+        <span class="n">mse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sample_weight</span> <span class="o">*</span> <span class="p">(</span><span class="n">residual</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
         <span class="n">y_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">y_sqr</span> <span class="o">=</span> <span class="n">sample_weight</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_avg</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:])</span> <span class="o">**</span> <span class="mi">2</span>
-        <span class="n">mse0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y_sqr</span> <span class="o">*</span> <span class="n">output_weight</span><span class="p">)</span> <span class="o">/</span> <span class="n">m</span>
+        
+        <span class="n">mse0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sample_weight</span> <span class="o">*</span> <span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_avg</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+<span class="c1">#         mse0 = np.sum(y_sqr * output_weight) / m</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">mse</span> <span class="o">/</span> <span class="n">mse0</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">score_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Earth.score_samples"><a class="viewcode-back" href="../../content.html#pyearth.Earth.score_samples">[docs]</a>    <span class="k">def</span> <span class="nf">score_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        </span>
+<span class="sd">        Calculate sample-wise fit scores.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        </span>
+<span class="sd">        X : array-like, shape = [m, n] where m is the number of samples</span>
+<span class="sd">            and n is the number of features The training predictors.</span>
+<span class="sd">            The X parameter can be a numpy array, a pandas DataFrame, a patsy</span>
+<span class="sd">            DesignMatrix, or a tuple of patsy DesignMatrix objects as output</span>
+<span class="sd">            by patsy.dmatrices.</span>
+
+<span class="sd">        y : array-like, optional (default=None), shape = [m, p] where m is the</span>
+<span class="sd">            number of samples, p the number of outputs.</span>
+<span class="sd">            The y parameter can be a numpy array, a pandas DataFrame,</span>
+<span class="sd">            a Patsy DesignMatrix, or can be left as None (default) if X was</span>
+<span class="sd">            the output of a call to patsy.dmatrices (in which case, X contains</span>
+<span class="sd">            the response).</span>
+<span class="sd">             </span>
+<span class="sd">        missing : array-like, shape = [m, n] where m is the number of samples</span>
+<span class="sd">            and n is the number of features.</span>
+<span class="sd">            The missing parameter can be a numpy array, a pandas DataFrame, or a </span>
+<span class="sd">            patsy DesignMatrix.  All entries will be interpreted as boolean </span>
+<span class="sd">            values, with True indicating the corresponding entry in X should be</span>
+<span class="sd">            interpreted as missing.  If the missing argument not used but the X</span>
+<span class="sd">            argument is a pandas DataFrame, missing will be inferred from X if </span>
+<span class="sd">            allow_missing is True.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        scores : array of shape=[m, p] of floats with maximum value of 1 (it can be negative). </span>
+<span class="sd">                 The scores represent how good each output of each example is predicted,</span>
+<span class="sd">                 a perfect score would be 1 (the score can be negative).</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">output_weight</span><span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrub</span><span class="p">(</span>
             <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
         <span class="n">y_hat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="n">missing</span><span class="p">)</span>
         <span class="n">residual</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_hat</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span>
-        <span class="k">return</span> <span class="n">residual</span>
+        <span class="k">return</span> <span class="n">residual</span></div>
 
 <div class="viewcode-block" id="Earth.transform"><a class="viewcode-back" href="../../content.html#pyearth.Earth.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -1135,6 +1339,14 @@
 <span class="sd">            interpreted as missing.  If the missing argument not used but the X</span>
 <span class="sd">            argument is a pandas DataFrame, missing will be inferred from X if </span>
 <span class="sd">            allow_missing is True.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        B: array of shape [m, nb_terms] where m is the number of samples and nb_terms</span>
+<span class="sd">           is the number of terms (or basis functions) obtained after fitting (which is the </span>
+<span class="sd">           number of elements of the attribute `basis_`). B represents the values of</span>
+<span class="sd">           the basis functions evaluated at each sample.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
         <span class="n">check_is_fitted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;basis_&quot;</span><span class="p">)</span>
@@ -1163,7 +1375,18 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">pruning_trace</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">pruning_trace</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forward_trace</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pruning_trace</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="s1">&#39;Forward Pass</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forward_trace</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_trace</span><span class="o">.</span><span class="n">final_str</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="s1">&#39;Pruning Pass</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pruning_trace</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pruning_trace</span><span class="o">.</span><span class="n">final_str</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="n">result</span>
 </pre></div>
 
            </div>

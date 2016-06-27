@@ -20,13 +20,33 @@ A simple example plotting a fit of the absolute value function.
 
  Out::
 
-      Forward Pass
+      Beginning forward pass
     -------------------------------------------------------------------
     iter  parent  var  knot  mse         terms  gcv      rsq    grsq   
     -------------------------------------------------------------------
     0     -       -    -     135.278633  1      135.550  0.000  0.000  
-    1     0       6    441   0.936859    3      0.954    0.993  0.993  
-    2     0       6    569   0.920706    5      0.953    0.993  0.993  
+    1     0       6    537   0.928785  3      0.940  0.993  0.993  
+    2     0       0    377   0.918642  5      0.939  0.993  0.993  
+    ---------------------------------------------------------------
+    Stopping Condition 2: Improvement below threshold
+    Beginning pruning pass
+    --------------------------------------------
+    iter  bf  terms  mse   gcv    rsq    grsq   
+    --------------------------------------------
+    0     -   5      0.92  0.939  0.993  0.993  
+    1     4   4      0.92  0.939  0.993  0.993  
+    2     3   3      0.93  0.940  0.993  0.993  
+    3     1   2      83.82  84.410  0.380  0.377  
+    4     2   1      135.28  135.550  0.000  0.000  
+    ------------------------------------------------
+    Selected iteration: 1
+    Forward Pass
+    -------------------------------------------------------------------
+    iter  parent  var  knot  mse         terms  gcv      rsq    grsq   
+    -------------------------------------------------------------------
+    0     -       -    -     135.278633  1      135.550  0.000  0.000  
+    1     0       6    537   0.928785    3      0.940    0.993  0.993  
+    2     0       0    377   0.918642    5      0.939    0.993  0.993  
     -------------------------------------------------------------------
     Stopping Condition 2: Improvement below threshold
 
@@ -34,11 +54,11 @@ A simple example plotting a fit of the absolute value function.
     ------------------------------------------------
     iter  bf  terms  mse     gcv      rsq    grsq   
     ------------------------------------------------
-    0     -   5      0.92    0.953    0.993  0.993  
-    1     2   4      0.92    0.945    0.993  0.993  
-    2     3   3      6.26    6.373    0.954  0.953  
-    3     1   2      68.62   69.307   0.493  0.489  
-    4     4   1      135.28  135.550  0.000  0.000  
+    0     -   5      0.92    0.939    0.993  0.993  
+    1     4   4      0.92    0.939    0.993  0.993  
+    2     3   3      0.93    0.940    0.993  0.993  
+    3     1   2      83.82   84.410   0.380  0.377  
+    4     2   1      135.28  135.550  0.000  0.000  
     ------------------------------------------------
     Selected iteration: 1
 
@@ -46,13 +66,13 @@ A simple example plotting a fit of the absolute value function.
     -------------------------------------
     Basis Function  Pruned  Coefficient  
     -------------------------------------
-    (Intercept)     No      9.57227      
-    h(x6-4.071)     No      1.94124      
-    h(4.071-x6)     Yes     None         
-    h(x6+5.756)     No      -0.949437    
-    h(-5.756-x6)    No      1.01365      
+    (Intercept)     No      0.0693416    
+    h(x6-3.93775)   No      0.995325     
+    h(3.93775-x6)   No      1.00427      
+    h(x0-13.1076)   No      -0.00984883  
+    h(13.1076-x0)   Yes     None         
     -------------------------------------
-    MSE: 0.9207, GCV: 0.9451, RSQ: 0.9932, GRSQ: 0.9930
+    MSE: 0.9230, GCV: 0.9389, RSQ: 0.9932, GRSQ: 0.9931
 
 
 
@@ -65,7 +85,6 @@ A simple example plotting a fit of the absolute value function.
 
     import numpy
     import matplotlib.pyplot as plt
-
     from pyearth import Earth
 
     # Create some fake data
@@ -76,7 +95,7 @@ A simple example plotting a fit of the absolute value function.
     y = numpy.abs(X[:, 6] - 4.0) + 1 * numpy.random.normal(size=m)
 
     # Fit an Earth model
-    model = Earth(max_degree=1)
+    model = Earth(max_degree=1, verbose=True)
     model.fit(X, y)
 
     # Print the model
@@ -91,7 +110,7 @@ A simple example plotting a fit of the absolute value function.
     plt.show()
 
 **Total running time of the script:**
-(0 minutes 0.055 seconds)
+(0 minutes 0.165 seconds)
 
 
 

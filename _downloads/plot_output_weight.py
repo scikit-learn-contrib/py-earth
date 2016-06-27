@@ -25,7 +25,7 @@ y1 = (y1 - y1.mean()) / y1.std()
 y2 = (y2 - y2.mean()) / y2.std()
 y_mix = np.concatenate((y1[:, np.newaxis], y2[:, np.newaxis]), axis=1)
 
-alphas = [1., 0.8, 0.6, 0.4, 0.2, 0.]
+alphas = [0.9, 0.8, 0.6, 0.4, 0.2, 0.1]
 n_plots = len(alphas)
 k = 1
 fig = plt.figure(figsize=(10, 15))

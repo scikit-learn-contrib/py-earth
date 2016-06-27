@@ -45,6 +45,26 @@ This is the gallery of examples.
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Fitting a pyearth model to a linear function shows that pyearth will automatically  choose a li...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_linear_function_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_linear_function.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_linear_function
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="A simple example plotting a fit of two sine functions. ">
 
 .. only:: html
@@ -122,6 +142,26 @@ This is the gallery of examples.
    :hidden:
 
    /auto_examples/plot_missing_data_problem
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="An example plotting a simultaneous fit of the sine and cosine functions.   There are two redund...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_multicolumn_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_multicolumn.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_multicolumn
 
 .. raw:: html
 
