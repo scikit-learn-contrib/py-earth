@@ -5,8 +5,9 @@ from nose.tools import assert_equal, assert_true
 
 from .base import BaseContainer
 from pyearth._types import BOOL
-from pyearth._basis import (HingeBasisFunction, SmoothedHingeBasisFunction,
-                            ConstantBasisFunction, MissingnessBasisFunction)
+from pyearth._basis import (
+    HingeBasisFunction, ConstantBasisFunction, MissingnessBasisFunction)
+
 
 class Container(BaseContainer):
 
@@ -16,7 +17,7 @@ class Container(BaseContainer):
         self.bf = MissingnessBasisFunction(self.parent, 1, True)
         self.child = HingeBasisFunction(self.bf, 1.0, 10, 1, False)
 
-# 
+#
 # def test_getters():
 #     cnt = Container()
 #     assert not cnt.bf.get_reverse()
@@ -30,14 +31,14 @@ def test_apply():
     cnt = Container()
     m, _ = cnt.X.shape
     missing = numpy.zeros_like(cnt.X, dtype=BOOL)
-    missing[1,1] = True
+    missing[1, 1] = True
     B = numpy.ones(shape=(m, 10))
     X = cnt.X.copy()
-    X[1,1] = None
+    X[1, 1] = None
     cnt.bf.apply(cnt.X, missing, B[:, 0])
     numpy.testing.assert_almost_equal(
         B[:, 0],
-        1 - missing[:,1]
+        1 - missing[:, 1]
     )
     cnt.child.apply(cnt.X, missing, B[:, 0])
     expected = (cnt.X[:, 1] - 1.0) * (cnt.X[:, 1] > 1.0)
@@ -72,14 +73,14 @@ def test_pickle_compatibility():
     bf_copy = pickle.loads(pickle.dumps(cnt.bf))
     assert_true(cnt.bf == bf_copy)
 
-# 
+#
 # def test_smoothed_version():
 #     cnt = Container()
 #     knot_dict = {cnt.bf: (.5, 1.5)}
 #     translation = {cnt.parent: cnt.parent._smoothed_version(None, {}, {})}
 #     smoothed = cnt.bf._smoothed_version(cnt.parent, knot_dict,
 #                                         translation)
-# 
+#
 #     assert_true(type(smoothed) is SmoothedHingeBasisFunction)
 #     assert_true(translation[cnt.parent] is smoothed.get_parent())
 #     assert_equal(smoothed.get_knot_minus(), 0.5)

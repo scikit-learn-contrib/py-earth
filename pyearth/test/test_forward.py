@@ -7,7 +7,7 @@ Created on Feb 16, 2013
 import os
 import numpy
 
-from nose.tools import assert_true, assert_equal
+from nose.tools import assert_equal
 
 from pyearth._forward import ForwardPasser
 from pyearth._basis import (Basis, ConstantBasisFunction,
@@ -31,7 +31,8 @@ basis.transform(X, missing, B)
 beta = numpy.random.normal(size=4)
 y = numpy.empty(shape=100, dtype=numpy.float64)
 y[:] = numpy.dot(B, beta) + numpy.random.normal(size=100)
-sample_weight = numpy.ones((X.shape[0],1))
+sample_weight = numpy.ones((X.shape[0], 1))
+
 
 def test_run():
 

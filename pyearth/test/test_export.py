@@ -1,4 +1,5 @@
-from pyearth._basis import Basis, ConstantBasisFunction, HingeBasisFunction, LinearBasisFunction
+from pyearth._basis import (Basis, ConstantBasisFunction, HingeBasisFunction,
+                            LinearBasisFunction)
 from pyearth.export import export_python_function, export_python_string
 from nose.tools import assert_almost_equal
 import numpy

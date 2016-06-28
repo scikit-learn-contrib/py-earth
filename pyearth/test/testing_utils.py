@@ -4,17 +4,17 @@ from nose import SkipTest
 from nose.tools import assert_almost_equal
 from distutils.version import LooseVersion
 
-def if_environ_has(var_name):
-    """Test decorator that skips test if environment variable is not defined."""
 
+def if_environ_has(var_name):
+    # Test decorator that skips test if environment variable is not defined
     def if_environ(func):
         @wraps(func)
         def run_test(*args, **kwargs):
             if var_name in os.environ:
                 return func(*args, **kwargs)
             else:
-                raise SkipTest('Only run if %s environment variable is defined.'
-                               % var_name)
+                raise SkipTest('Only run if %s environment variable is '
+                               'defined.' % var_name)
         return run_test
     return if_environ
 
@@ -29,7 +29,8 @@ def if_sklearn_version_greater_than_or_equal_to(min_version):
         def run_test(*args, **kwargs):
             import sklearn
             if LooseVersion(sklearn.__version__) < LooseVersion(min_version):
-                raise SkipTest('sklearn version less than %s' % str(min_version))
+                raise SkipTest('sklearn version less than %s' %
+                               str(min_version))
             else:
                 return func(*args, **kwargs)
         return run_test
@@ -81,6 +82,7 @@ def if_patsy(func):
 def assert_list_almost_equal(list1, list2):
     for el1, el2 in zip(list1, list2):
         assert_almost_equal(el1, el2)
+
 
 def assert_list_almost_equal_value(list, value):
     for el in list:

@@ -7,7 +7,7 @@ This script recreates the scikit-learn classifier comparison example found at
 http://scikit-learn.org/stable/auto_examples/classification/plot_classifier_comparison.html.
 It has been modified to include an Earth based classifier.
 """
-print(__doc__)
+
 # Code source: Gael Varoqueux
 #              Andreas Mueller
 # Modified for Documentation merge by Jaques Grobler
@@ -28,11 +28,13 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.lda import LDA
 from sklearn.qda import QDA
 
-h = .02  # step size in the mesh
-
 from sklearn.linear_model.logistic import LogisticRegression
 from sklearn.pipeline import Pipeline
 from pyearth.earth import Earth
+
+print(__doc__)
+
+h = .02  # step size in the mesh
 
 np.random.seed(1)
 
