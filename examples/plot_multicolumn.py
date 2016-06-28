@@ -3,7 +3,7 @@
 Plotting a multicolumn regression problem that includes missingness
 ===================================================================
 
-An example plotting a simultaneous fit of the sine and cosine functions.  
+An example plotting a simultaneous fit of the sine and cosine functions.
 There are two redundant predictors, each of which has independent and random
 missingness.
 '''
@@ -33,8 +33,8 @@ idx5 = (1 - missing[:, 5]).astype(bool)
 idx6 = (1 - missing[:, 6]).astype(bool)
 
 # Fit an Earth model
-model = Earth(max_degree=5, minspan_alpha=.5, allow_missing=True, 
-              enable_pruning=True, thresh=.001, smooth=True, 
+model = Earth(max_degree=5, minspan_alpha=.5, allow_missing=True,
+              enable_pruning=True, thresh=.001, smooth=True,
               verbose=True)
 model.fit(X, y)
 
@@ -46,44 +46,44 @@ print(model.summary())
 y_hat = model.predict(X)
 fig = plt.figure()
 
-for j in [0,1]:
+for j in [0, 1]:
     ax1 = fig.add_subplot(3, 4, 1 + 2*j)
     ax1.plot(X_full[idx5, 5], y[idx5, j], 'b.')
     ax1.plot(X_full[idx5, 5], y_hat[idx5, j], 'r.')
-    ax1.set_xlim(-40,40)
+    ax1.set_xlim(-40, 40)
     ax1.set_title('x5 present')
     ax1.set_xlabel('x5')
     ax1.set_ylabel('sin' if j == 0 else 'cos')
-    
+
     ax2 = fig.add_subplot(3, 4, 2 + 2*j)
     ax2.plot(X_full[idx6, 6], y[idx6, j], 'b.')
     ax2.plot(X_full[idx6, 6], y_hat[idx6, j], 'r.')
-    ax2.set_xlim(-40,40)
+    ax2.set_xlim(-40, 40)
     ax2.set_title('x6 present')
     ax2.set_xlabel('x6')
     ax2.set_ylabel('sin' if j == 0 else 'cos')
-    
+
     ax3 = fig.add_subplot(3, 4, 5 + 2*j, sharex=ax1)
     ax3.plot(X_full[~idx6, 5], y[~idx6, j], 'b.')
     ax3.plot(X_full[~idx6, 5], y_hat[~idx6, j], 'r.')
     ax3.set_title('x6 missing')
     ax3.set_xlabel('x5')
     ax3.set_ylabel('sin' if j == 0 else 'cos')
-    
+
     ax4 = fig.add_subplot(3, 4, 6 + 2*j, sharex=ax2)
     ax4.plot(X_full[~idx5, 6], y[~idx5, j], 'b.')
     ax4.plot(X_full[~idx5, 6], y_hat[~idx5, j], 'r.')
     ax4.set_title('x5 missing')
     ax4.set_xlabel('x6')
     ax4.set_ylabel('sin' if j == 0 else 'cos')
-    
-    ax5 = fig.add_subplot(3, 4, 9 + 2*j,sharex=ax1)
+
+    ax5 = fig.add_subplot(3, 4, 9 + 2*j, sharex=ax1)
     ax5.plot(X_full[(~idx6) & (~idx5), 5], y[(~idx6) & (~idx5), j], 'b.')
     ax5.plot(X_full[(~idx6) & (~idx5), 5], y_hat[(~idx6) & (~idx5), j], 'r.')
     ax5.set_title('both missing')
     ax5.set_xlabel('x5')
     ax5.set_ylabel('sin' if j == 0 else 'cos')
-    
+
     ax6 = fig.add_subplot(3, 4, 10 + 2*j, sharex=ax2)
     ax6.plot(X_full[(~idx6) & (~idx5), 6], y[(~idx6) & (~idx5), j], 'b.')
     ax6.plot(X_full[(~idx6) & (~idx5), 6], y_hat[(~idx6) & (~idx5), j], 'r.')
@@ -93,4 +93,3 @@ for j in [0,1]:
 
 fig.tight_layout()
 plt.show()
-

@@ -1,8 +1,9 @@
 '''
-This script randomly generates earth-style models, then randomly generates data from those models and
-fits earth models to those data using both the python and R implementations.  It records the sample size,
-m, the number of input dimensions, n, the number of forward pass iterations, the runtime, and the r^2
-statistic for each fit and writes the result to a CSV file.
+This script randomly generates earth-style models, then randomly generates data
+from those models and fits earth models to those data using both the python and
+R implementations.  It records the sample size, m, the number of input
+dimensions, n, the number of forward pass iterations, the runtime, and the
+r^2 statistic for each fit and writes the result to a CSV file.
 '''
 
 import numpy
@@ -78,7 +79,7 @@ class RandomComplexityGenerator(DataGenerator):
 
     def generate(self, m):
         X = numpy.random.normal(size=(m, self.n))
-        #Including the intercept
+        # Including the intercept
         num_terms = numpy.random.randint(2, self.max_terms)
         coef = 10 * numpy.random.normal(size=num_terms)
         B = numpy.ones(shape=(m, num_terms))
@@ -96,7 +97,11 @@ class RandomComplexityGenerator(DataGenerator):
 
 
 def run_earth(X, y, **kwargs):
-    '''Run with the R package earth.  Return prediction value, training time, and number of forward pass iterations.'''
+    '''
+    Run with the R package earth.
+    Return prediction value, training time, and number
+    of forward pass iterations.
+    '''
     r = robjects.r
     m, n = X.shape
     data = pandas.DataFrame(X)
@@ -104,13 +109,13 @@ def run_earth(X, y, **kwargs):
     r_data = com.convert_to_r_dataframe(data)
     r('library(earth)')
     r_func = '''
-        run <-  function(data, degree=1, fast.k=0, penalty=3.0){
-                    time = system.time(model <- earth(y~.,data=data,degree=degree,penalty=penalty))[3]
-                    forward_terms = dim(summary(model)$prune.terms)[1]
-                    y_pred = predict(model,data)
-                    return(list(y_pred, time, forward_terms, model))
-                }
-        '''
+    run <-  function(data, degree=1, fast.k=0, penalty=3.0){
+       time = system.time(model <- earth(y~.,data=data,degree=degree,penalty=penalty))[3]
+       forward_terms = dim(summary(model)$prune.terms)[1]
+       y_pred = predict(model,data)
+       return(list(y_pred, time, forward_terms, model))
+     }
+     '''
     r(r_func)
     run = r('run')
     r_list = run(
@@ -125,7 +130,11 @@ def run_earth(X, y, **kwargs):
 
 
 def run_pyearth(X, y, **kwargs):
-    '''Run with pyearth.  Return prediction value, training time, and number of forward pass iterations.'''
+    '''
+    Run with pyearth.
+    Return prediction value, training time, and number of
+    forward pass iterations.
+    '''
     model = Earth(**kwargs)
     t0 = time.time()
     model.fit(X, y)
@@ -136,7 +145,10 @@ def run_pyearth(X, y, **kwargs):
 
 
 def compare(generator_class, sample_sizes, dimensions, repetitions, **kwargs):
-    '''Return a data table that includes m, n, pyearth or earth, training time, and number of forward pass iterations.'''
+    '''
+    Return a data table that includes m, n, pyearth or earth, training time,
+    and number of forward pass iterations.
+    '''
     header = [
         'm',
         'n',

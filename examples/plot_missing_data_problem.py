@@ -3,7 +3,7 @@
 Plotting sine function with redundant predictors an missing data
 ================================================================
 
-An example plotting a fit of the sine function.  There are two 
+An example plotting a fit of the sine function.  There are two
 redundant predictors, each of which has independent and random
 missingness.
 """
@@ -28,7 +28,7 @@ idx5 = (1 - missing[:, 5]).astype(bool)
 idx6 = (1 - missing[:, 6]).astype(bool)
 
 # Fit an Earth model
-model = Earth(max_degree=5, minspan_alpha=.5, allow_missing=True, 
+model = Earth(max_degree=5, minspan_alpha=.5, allow_missing=True,
               enable_pruning=True, thresh=.001, smooth=True, verbose=2)
 model.fit(X, y)
 
@@ -42,14 +42,14 @@ fig = plt.figure()
 ax1 = fig.add_subplot(3, 2, 1)
 ax1.plot(X_full[idx5, 5], y[idx5], 'b.')
 ax1.plot(X_full[idx5, 5], y_hat[idx5], 'r.')
-ax1.set_xlim(-40,40)
+ax1.set_xlim(-40, 40)
 ax1.set_title('x5 present')
 ax1.set_xlabel('x5')
 
 ax2 = fig.add_subplot(3, 2, 2)
 ax2.plot(X_full[idx6, 6], y[idx6], 'b.')
 ax2.plot(X_full[idx6, 6], y_hat[idx6], 'r.')
-ax2.set_xlim(-40,40)
+ax2.set_xlim(-40, 40)
 ax2.set_title('x6 present')
 ax2.set_xlabel('x6')
 
@@ -65,7 +65,7 @@ ax4.plot(X_full[~idx5, 6], y_hat[~idx5], 'r.')
 ax4.set_title('x5 missing')
 ax4.set_xlabel('x6')
 
-ax5 = fig.add_subplot(3, 2, 5,sharex=ax1)
+ax5 = fig.add_subplot(3, 2, 5, sharex=ax1)
 ax5.plot(X_full[(~idx6) & (~idx5), 5], y[(~idx6) & (~idx5)], 'b.')
 ax5.plot(X_full[(~idx6) & (~idx5), 5], y_hat[(~idx6) & (~idx5)], 'r.')
 ax5.set_title('both missing')
