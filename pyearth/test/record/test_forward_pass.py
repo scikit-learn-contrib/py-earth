@@ -32,3 +32,4 @@ def test_statistics():
     assert_list_almost_equal(mses, mses_)
     assert_list_almost_equal(gcvs, gcvs_)
     assert_list_almost_equal(rsqs, rsqs_)
+    assert_list_almost_equal(grsqs, grsqs_)

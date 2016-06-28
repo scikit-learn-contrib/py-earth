@@ -6,11 +6,12 @@ Created on Feb 24, 2013
 import pickle
 import copy
 import os
-from .testing_utils import if_statsmodels, if_pandas, if_patsy, if_environ_has, \
-    assert_list_almost_equal_value, assert_list_almost_equal, \
-    if_sklearn_version_greater_than_or_equal_to
-from nose.tools import assert_equal, assert_true, \
-    assert_almost_equal, assert_list_equal, assert_raises, assert_not_equal
+from .testing_utils import (if_statsmodels, if_pandas, if_patsy,
+                            if_environ_has, assert_list_almost_equal_value,
+                            assert_list_almost_equal,
+                            if_sklearn_version_greater_than_or_equal_to)
+from nose.tools import (assert_equal, assert_true, assert_almost_equal,
+                        assert_list_equal, assert_raises, assert_not_equal)
 import numpy
 from scipy.sparse import csr_matrix
 from pyearth._types import BOOL
@@ -38,11 +39,13 @@ y = numpy.empty(shape=100, dtype=numpy.float64)
 y[:] = numpy.dot(B, beta) + numpy.random.normal(size=100)
 default_params = {"penalty": 1}
 
+
 @if_sklearn_version_greater_than_or_equal_to('0.17.2')
 def test_check_estimator():
     import sklearn.utils.estimator_checks
     sklearn.utils.estimator_checks.MULTI_OUTPUT.append('Earth')
     sklearn.utils.estimator_checks.check_estimator(Earth)
+
 
 def test_get_params():
     assert_equal(
@@ -50,10 +53,10 @@ def test_get_params():
                                'endspan_alpha': None, 'check_every': None,
                                'max_terms': None, 'max_degree': None,
                                'minspan_alpha': None, 'thresh': None,
-                               'zero_tol':None,
+                               'zero_tol': None,
                                'minspan': None, 'endspan': None,
-                               'allow_linear': None, 
-                               'use_fast': None, 'fast_K': None, 
+                               'allow_linear': None,
+                               'use_fast': None, 'fast_K': None,
                                'fast_h': None, 'smooth': None,
                                'enable_pruning': True,
                                'allow_missing': False, 'verbose': False})
@@ -65,13 +68,16 @@ def test_get_params():
                                          'check_every': None,
                                          'max_terms': None, 'max_degree': 3,
                                          'minspan_alpha': None,
-                                         'thresh': None, 'zero_tol':None, 
+                                         'thresh': None, 'zero_tol': None,
                                          'minspan': None,
                                          'endspan': None,
-                                         'allow_linear': None, 'use_fast': None,
+                                         'allow_linear': None,
+                                         'use_fast': None,
                                          'fast_K': None, 'fast_h': None,
-                                         'smooth': None, 'enable_pruning': True,
-                                         'allow_missing': False, 'verbose': False})
+                                         'smooth': None,
+                                         'enable_pruning': True,
+                                         'allow_missing': False,
+                                         'verbose': False})
 
 
 @if_statsmodels
@@ -100,17 +106,17 @@ def test_sample_weight():
     y[group] = numpy.abs(x[group] - 5)
     y += numpy.random.normal(0, 1, size=1000)
     model = Earth().fit(x[:, numpy.newaxis], y, sample_weight=sample_weight)
-    
+
     # Check that the model fits better for the more heavily weighted group
     assert_true(model.score(x[group], y[group]) < model.score(
         x[numpy.logical_not(group)], y[numpy.logical_not(group)]))
-    
+
     # Make sure that the score function gives the same answer as the trace
     pruning_trace = model.pruning_trace()
     rsq_trace = pruning_trace.rsq(model.pruning_trace().get_selected())
     assert_almost_equal(model.score(x, y, sample_weight=sample_weight),
                         rsq_trace)
-    
+
     # Uncomment below to see what this test situation looks like
 #     from matplotlib import pyplot
 #     print model.summary()
@@ -137,6 +143,7 @@ def test_output_weight():
     assert_true(group1_mean > group2_mean or
                 round(abs(group1_mean - group2_mean), 7) == 0)
 
+
 def test_missing_data():
     earth = Earth(allow_missing=True, **default_params)
     missing_ = numpy.random.binomial(1, .05, X.shape).astype(bool)
@@ -151,6 +158,7 @@ def test_missing_data():
     with open(filename, 'r') as fl:
         prev = fl.read()
     assert_true(abs(float(res) - float(prev)) < .03)
+
 
 def test_fit():
     earth = Earth(**default_params)
@@ -409,10 +417,12 @@ def test_deriv():
     model.fit(X, y)
     assert_equal(X.shape + (1,), model.predict_deriv(X).shape)
     assert_equal((X.shape[0], 1, 1), model.predict_deriv(X, variables=0).shape)
-    assert_equal((X.shape[0], 1, 1), model.predict_deriv(X, variables='x0').shape)
+    assert_equal((X.shape[0], 1, 1), model.predict_deriv(
+        X, variables='x0').shape)
     assert_equal((X.shape[0], 3, 1),
                  model.predict_deriv(X, variables=[1, 5, 7]).shape)
-    assert_equal((X.shape[0], 0, 1), model.predict_deriv(X, variables=[]).shape)
+    assert_equal((X.shape[0], 0, 1),
+                 model.predict_deriv(X, variables=[]).shape)
 
     res_deriv = model.predict_deriv(X, variables=['x2', 'x7', 'x0', 'x1'])
     assert_equal((X.shape[0], 4, 1), res_deriv.shape)
@@ -420,13 +430,15 @@ def test_deriv():
     res_deriv = model.predict_deriv(X, variables=['x0'])
     assert_equal((X.shape[0], 1, 1), res_deriv.shape)
 
-    assert_equal((X.shape[0], 1, 1), model.predict_deriv(X, variables=[0]).shape)
+    assert_equal((X.shape[0], 1, 1),
+                 model.predict_deriv(X, variables=[0]).shape)
 
 
 def test_xlabels():
 
     model = Earth(**default_params)
-    assert_raises(ValueError, model.fit, X[:, 0:5], y, xlabels=['var1', 'var2'])
+    assert_raises(ValueError, model.fit, X[
+                  :, 0:5], y, xlabels=['var1', 'var2'])
 
     model = Earth(**default_params)
     model.fit(X[:, 0:3], y, xlabels=['var1', 'var2', 'var3'])
@@ -442,9 +454,9 @@ def test_untrained():
         from sklearn.exceptions import NotFittedError
     except ImportError:
         from sklearn.utils.validation import NotFittedError
-    
+
     # Make sure calling methods that require a fitted Earth object
-    # raises the appropriate exception when using a not yet fitted 
+    # raises the appropriate exception when using a not yet fitted
     # Earth object
     model = Earth(**default_params)
     assert_raises(NotFittedError, model.predict, X)
@@ -456,6 +468,7 @@ def test_untrained():
     assert_equal(model.forward_trace(), None)
     assert_equal(model.pruning_trace(), None)
     assert_equal(model.summary(), "Untrained Earth Model")
+
 
 def test_fast():
     earth = Earth(max_terms=10,
