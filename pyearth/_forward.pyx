@@ -322,13 +322,15 @@ cdef class ForwardPasser:
 
             if self.use_fast:
                 # each "fast_h" iteration, force to pass through all the variables,
-                if self.iteration_number - parent_basis_content.m > self.fast_h:
+                if self.iteration_number - parent_basis_content.m >= self.fast_h:
                     variables = range(self.n)
                     parent_basis_content.m = self.iteration_number
                 # in the opposite case, just use the last chosen variable
                 else:
-                    variables = [parent_basis_content.v]
-                variables = range(self.n)
+                    if parent_basis_content.v is not None:
+                        variables = [parent_basis_content.v]
+                    else:
+                        variables = range(self.n)
             else:
                 variables = range(self.n)
             
