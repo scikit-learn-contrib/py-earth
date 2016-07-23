@@ -59,7 +59,9 @@ def test_get_params():
                                'use_fast': None, 'fast_K': None,
                                'fast_h': None, 'smooth': None,
                                'enable_pruning': True,
-                               'allow_missing': False, 'verbose': False})
+                               'allow_missing': False,
+                               'feature_importance_type': None,
+                               'verbose': False})
     assert_equal(
         Earth(
             max_degree=3).get_params(), {'penalty': None,
@@ -77,6 +79,7 @@ def test_get_params():
                                          'smooth': None,
                                          'enable_pruning': True,
                                          'allow_missing': False,
+                                         'feature_importance_type': None,
                                          'verbose': False})
 
 
@@ -485,3 +488,31 @@ def test_fast():
     earth.fit(X, y)
     fast_summary = earth.summary()
     assert_equal(normal_summary, fast_summary)
+
+
+def test_feature_importance():
+    criteria = ('rss', 'gcv', 'nb_subsets')
+    for imp in criteria:
+        earth = Earth(feature_importance_type=imp, **default_params)
+        earth.fit(X, y)
+        assert len(earth.feature_importances_) == X.shape[1]
+    earth = Earth(feature_importance_type=criteria, **default_params)
+    earth.fit(X, y)
+    assert type(earth.feature_importances_) == dict
+    assert set(earth.feature_importances_.keys()) == set(criteria)
+    for crit, val in earth .feature_importances_.items():
+        assert len(val) == X.shape[1]
+
+    assert_raises(
+            ValueError,
+            Earth(feature_importance_type='bad_name', **default_params).fit,
+            X, y)
+
+    earth = Earth(feature_importance_type=('rss',), **default_params)
+    earth.fit(X, y)
+    assert len(earth.feature_importances_) == X.shape[1]
+
+    assert_raises(
+            ValueError,
+            Earth(feature_importance_type='rss', enable_pruning=False, **default_params).fit,
+            X, y)
