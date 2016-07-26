@@ -1,3 +1,6 @@
+from sympy import Symbol, Add, Mul, Max, RealNumber, Piecewise
+from sympy.utilities.codegen import codegen
+
 def export_python_function(earth_model):
     """
     Exports model as a pure python function, with no numpy/scipy/sklearn dependencies.
