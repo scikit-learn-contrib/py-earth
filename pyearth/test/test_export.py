@@ -1,11 +1,14 @@
 from pyearth._basis import (Basis, ConstantBasisFunction, HingeBasisFunction,
                             LinearBasisFunction)
-from pyearth.export import export_python_function, export_python_string
+from pyearth.export import export_python_function, export_python_string,\
+    export_sympy
 from nose.tools import assert_almost_equal
 import numpy
 import six
 from pyearth import Earth
 from pyearth._types import BOOL
+from pyearth.test.testing_utils import if_sympa, if_pandas,\
+    assert_list_almost_equal_value
 
 numpy.random.seed(0)
 
@@ -43,3 +46,16 @@ def test_export_python_string():
         six.exec_(export_model, globals())
         for exp_pred, model_pred in zip(model.predict(X), my_test_model(X)):
             assert_almost_equal(exp_pred, model_pred)
+
+@if_pandas
+@if_sympa
+def test_export_sympy():
+    import sympa as sy
+    import pandas as pd
+    for smooth in (True, False):
+        X_df = pd.DataFrame(X, columns=['x_%d' % i for i in range(X.shape[1])])
+        model = Earth(penalty=1, smooth=smooth, max_degree=2).fit(X_df, y)
+        expression = export_sympy(model)
+        y_pred_sympy = sy.domath(X_df, expression)
+        y_pred = model.predict(X_df)
+        assert_list_almost_equal_value(y_pred, y_pred_sympy)
