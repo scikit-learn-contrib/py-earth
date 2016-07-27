@@ -8,7 +8,7 @@ import six
 from pyearth import Earth
 from pyearth._types import BOOL
 from pyearth.test.testing_utils import if_sympa, if_pandas,\
-    assert_list_almost_equal_value
+    assert_list_almost_equal
 
 numpy.random.seed(0)
 
@@ -58,4 +58,4 @@ def test_export_sympy():
         expression = export_sympy(model)
         y_pred_sympy = sy.domath(X_df, expression)
         y_pred = model.predict(X_df)
-        assert_list_almost_equal_value(y_pred, y_pred_sympy)
+        assert_list_almost_equal(y_pred, y_pred_sympy)
