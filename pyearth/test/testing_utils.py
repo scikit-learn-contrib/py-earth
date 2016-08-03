@@ -37,20 +37,6 @@ def if_sklearn_version_greater_than_or_equal_to(min_version):
     return _if_sklearn_version
 
 
-def if_sympa(func):
-    """Test decorator that skips test if sympa not installed. """
-
-    @wraps(func)
-    def run_test(*args, **kwargs):
-        try:
-            import sympa
-        except ImportError:
-            raise SkipTest('sympa not available.')
-        else:
-            return func(*args, **kwargs)
-    return run_test
-
-
 def if_statsmodels(func):
     """Test decorator that skips test if statsmodels not installed. """
 

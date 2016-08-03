@@ -1,5 +1,6 @@
-from sympy import Symbol, Add, Mul, Max, RealNumber, Piecewise
+from sympy import Symbol, Add, Mul, Max, RealNumber, Piecewise, sympify, Pow, And, lambdify
 from sympy.utilities.codegen import codegen
+import itertools
 
 def export_python_function(earth_model):
     """
@@ -53,56 +54,86 @@ def export_sympy(earth_model):
         parent = bf
         parent_name = parent.__str__()
         bf_dict[parent_name] = i
-        bf_class = str(type(parent))
         terms = []
 
-        try:
-            variable_index =  bf.get_variable()
-            variable = earth_model.xlabels_[variable_index]
-            bf_var = sympify(variable) # sets as Sympy Symbol
+
 
         # # deals with ConstantBasisFunction errors that are thrown in first cases
 
-        except AttributeError:
-            bf_index = bf_dict[parent_name]
-            coef = earth_model.coef_[0][bf_index]
-            terms.append(coef)
-
+#         except AttributeError:
+#             pass
+        bf_index = bf_dict[parent_name]
+        
         # creates term by attaching coefs to bfs to create term
+        coef = RealNumber(earth_model.coef_[0][bf_index])
+        terms.append(coef)
 
-        for x in range(max_degree):
-            bf_index = bf_dict[parent_name]
-            coef = earth_model.coef_[0][bf_index]
+        for _ in range(max_degree):
+            variable_index =  parent.get_variable()
+            variable = earth_model.xlabels_[variable_index]
+            bf_var = Symbol(variable) # sets as Sympy Symbol
+            bf_class = str(type(parent))
 
             if 'LinearBasisFunction' in bf_class:
-                term = (Mul(RealNumber(coef), bf_var))
+                
+#                 return bf_var # testing
+                
+                term =  bf_var
                 terms.append(term)
 
             elif 'SmoothedHingeBasisFunction' in bf_class:
-
+                
+#                 return bf_var # obviously testing
+             
                 knot = RealNumber(parent.get_knot())
                 knot_minus = RealNumber(parent.get_knot_minus())
                 knot_plus = RealNumber(parent.get_knot_plus())
                 r = RealNumber(parent.get_r())
                 p = RealNumber(parent.get_p())
-
+  
                 if parent.get_reverse() == False:
-                    term = Mul(coef, Piecewise((0, bf_var <= knot_minus),((bf_var - knot), bf_var >= knot_plus)), (Add((Mul(p, Pow((bf_var - knot_minus), 2))),(Mul(r, Pow((bf_var - knot_minus), 3)))), (And((knot_minus < bf_var), (bf_var < knot_plus)))))
-
+#                     term = Mul(coef, Piecewise((0, bf_var <= knot_minus),((bf_var - knot), bf_var >= knot_plus), (Add((Mul(p, Pow((bf_var - knot_minus), 2))),(Mul(r, Pow((bf_var - knot_minus), 3)))), (And((knot_minus < bf_var), (bf_var < knot_plus))))))
+                
+                    lower_p = (0, bf_var <= knot_minus)
+                    upper_p = (bf_var - knot, bf_var >= knot_plus)
+                    left_exp = Mul(p, Pow((bf_var - knot_minus), 2))
+                    right_exp = Mul(r, Pow((bf_var - knot_minus), 3))
+                    middle_b = And(knot_minus < bf_var, bf_var < knot_plus)
+                    middle_exp = (Add(left_exp, right_exp), middle_b)
+                    piecewise = Piecewise(lower_p, upper_p, middle_exp)
+                    term = piecewise
+                    
                     terms.append(term)
-
+  
                 elif parent.get_reverse() == True:
-                    term = Mul(coef, Piecewise(((-(bf_var - knot)), bf_var <= knot_minus), (0, bf_var >= knot_plus)), (Add((Mul(p, Pow((bf_var - knot_plus), 2))),(Mul(r, Pow((bf_var - knot_plus), 3)))), (And((knot_minus < bf_var), (bf_var < knot_plus)))))
+#                     term = Mul(coef, Piecewise(((-(bf_var - knot)), (bf_var <= knot_minus), (0, bf_var >= knot_plus)), (Add((Mul(p, Pow((bf_var - knot_plus), 2))),(Mul(r, Pow((bf_var - knot_plus), 3)))), (And((knot_minus < bf_var), (bf_var < knot_plus))))))
 
+                    lower_p = (-(bf_var - knot)), (bf_var <= knot_minus)
+                    upper_p = (0, bf_var >= knot_plus)
+                    left_exp = Mul(p, Pow((bf_var - knot_plus), 2))
+                    right_exp = Mul(r, Pow((bf_var - knot_plus), 3))
+                    middle_b = And(knot_minus < bf_var, bf_var < knot_plus)
+                    middle_exp = (Add(left_exp, right_exp), middle_b)                     
+                    piecewise = Piecewise(lower_p, upper_p, middle_exp)
+                    term = piecewise
+                       
                     terms.append(term)
 
-            elif 'HingeBasisFunction' in bf_class:
+            elif 'HingeBasisFunction' in bf_class: # unclear if these come out sympified 
+                
+#                 return bf_var # testing
+                
                 knot = parent.get_knot()
                 if parent.get_reverse() == False:
-                    term = (coef * Max(0, bf_var - RealNumber(knot)))
+#                     term = (coef * Max(0, bf_var - RealNumber(knot))) # needs a Mul
+#                     term = Mul(coef, Max(0, bf_var - RealNumber(knot))) 
+                    term = Max(0, bf_var - RealNumber(knot))
                     terms.append(term)
+ 
                 elif parent.get_reverse() == True:
-                    term = (coef * Max(0, RealNumber(knot) - bf_var))
+#                     term = (coef * Max(0, RealNumber(knot) - bf_var))
+#                     term = Mul(coef, Max(0, RealNumber(knot) - bf_var))
+                    term = Max(0, RealNumber(knot) - bf_var)
                     terms.append(term)
 
             elif 'MissingnessBasisFunction' in bf_class:
@@ -123,4 +154,13 @@ def export_sympy(earth_model):
         if not bf.is_pruned():
             termify(bf, i)
             i += 1
-    return term_list
+
+    flatten_return = [reduce(lambda a,b: a * b, item) for item in term_list]
+    expression = reduce(lambda a,b: a + b, flatten_return) # this is new for testing
+    
+
+    return expression
+
+#     reduced_term_list = reduce(Add, term_list)
+#     return reduced_term_list
+#     return term_list
