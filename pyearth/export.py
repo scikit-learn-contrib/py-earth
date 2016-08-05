@@ -1,6 +1,5 @@
 from sympy import Symbol, Add, Mul, Max, RealNumber, Piecewise, sympify, Pow, And, lambdify
-from sympy.utilities.codegen import codegen
-import itertools
+from sympy.utilities.codegen import codegen # maybe gone
 
 def export_python_function(earth_model):
     """
