@@ -1,6 +1,3 @@
-from sympy import Symbol, Add, Mul, Max, RealNumber, Piecewise, sympify, Pow, And, lambdify
-from sympy.utilities.codegen import codegen # maybe gone
-
 def export_python_function(earth_model):
     """
     Exports model as a pure python function, with no numpy/scipy/sklearn dependencies.
@@ -41,7 +38,7 @@ def export_python_string(earth_model, function_name="model"):
     """.format(function_name, ",\n\t\t".join(accessors))
 
 def export_sympy(earth_model):
-
+    from sympy import Symbol, Add, Mul, Max, RealNumber, Piecewise, Pow, And
     """
     Exports model in Sympy specific syntax for use with Sympy (and conversion with Sympy Codegen)
     : param earth_model: Trained pyearth model
@@ -54,7 +51,6 @@ def export_sympy(earth_model):
         parent_name = parent.__str__()
         bf_dict[parent_name] = i
         terms = []
-
 
         bf_index = bf_dict[parent_name]
         
@@ -139,6 +135,5 @@ def export_sympy(earth_model):
     flatten_return = [reduce(lambda a,b: a * b, item) for item in term_list]
     expression = reduce(lambda a,b: a + b, flatten_return)
     
-
     return expression
 

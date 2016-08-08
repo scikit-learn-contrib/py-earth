@@ -50,7 +50,6 @@ def test_export_python_string():
 @if_pandas
 @if_sympy  
 def test_export_sympy():
-    import sympa as sy
     import pandas as pd
     for smooth in (True, False):
         X_df = pd.DataFrame(X, columns=['x_%d' % i for i in range(X.shape[1])])
@@ -73,6 +72,4 @@ def test_export_sympy():
         y_pred = model.predict(X_df)
         assert_list_almost_equal(y_pred, y_pred_sympy)
         
-if __name__ == '__main__':
-    test_export_sympy()
 
