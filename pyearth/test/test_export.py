@@ -71,5 +71,3 @@ def test_export_sympy():
                 
         y_pred = model.predict(X_df)
         assert_list_almost_equal(y_pred, y_pred_sympy)
-        
-

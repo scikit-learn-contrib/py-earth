@@ -38,6 +38,7 @@ def export_python_string(earth_model, function_name="model"):
     """.format(function_name, ",\n\t\t".join(accessors))
 
 def export_sympy(earth_model):
+    
     from sympy import Symbol, Add, Mul, Max, RealNumber, Piecewise, Pow, And
     """
     Exports model in Sympy specific syntax for use with Sympy (and conversion with Sympy Codegen)
@@ -115,10 +116,10 @@ def export_sympy(earth_model):
                     terms.append(term)
 
             elif 'MissingnessBasisFunction' in bf_class:
-                print bf_var
+                print(bf_var)
 
             else:
-                print bf_var
+                print(bf_var)
 
             parent = parent.get_parent()
         term_list.append(terms)
