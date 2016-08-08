@@ -56,34 +56,24 @@ def export_sympy(earth_model):
         terms = []
 
 
-
-        # # deals with ConstantBasisFunction errors that are thrown in first cases
-
-#         except AttributeError:
-#             pass
         bf_index = bf_dict[parent_name]
         
-        # creates term by attaching coefs to bfs to create term
         coef = RealNumber(earth_model.coef_[0][bf_index])
         terms.append(coef)
 
         for _ in range(max_degree):
             variable_index =  parent.get_variable()
             variable = earth_model.xlabels_[variable_index]
-            bf_var = Symbol(variable) # sets as Sympy Symbol
+            bf_var = Symbol(variable)
             bf_class = str(type(parent))
 
             if 'LinearBasisFunction' in bf_class:
-                
-#                 return bf_var # testing
                 
                 term =  bf_var
                 terms.append(term)
 
             elif 'SmoothedHingeBasisFunction' in bf_class:
                 
-#                 return bf_var # obviously testing
-             
                 knot = RealNumber(parent.get_knot())
                 knot_minus = RealNumber(parent.get_knot_minus())
                 knot_plus = RealNumber(parent.get_knot_plus())
@@ -91,7 +81,6 @@ def export_sympy(earth_model):
                 p = RealNumber(parent.get_p())
   
                 if parent.get_reverse() == False:
-#                     term = Mul(coef, Piecewise((0, bf_var <= knot_minus),((bf_var - knot), bf_var >= knot_plus), (Add((Mul(p, Pow((bf_var - knot_minus), 2))),(Mul(r, Pow((bf_var - knot_minus), 3)))), (And((knot_minus < bf_var), (bf_var < knot_plus))))))
                 
                     lower_p = (0, bf_var <= knot_minus)
                     upper_p = (bf_var - knot, bf_var >= knot_plus)
@@ -105,8 +94,7 @@ def export_sympy(earth_model):
                     terms.append(term)
   
                 elif parent.get_reverse() == True:
-#                     term = Mul(coef, Piecewise(((-(bf_var - knot)), (bf_var <= knot_minus), (0, bf_var >= knot_plus)), (Add((Mul(p, Pow((bf_var - knot_plus), 2))),(Mul(r, Pow((bf_var - knot_plus), 3)))), (And((knot_minus < bf_var), (bf_var < knot_plus))))))
-
+#
                     lower_p = (-(bf_var - knot)), (bf_var <= knot_minus)
                     upper_p = (0, bf_var >= knot_plus)
                     left_exp = Mul(p, Pow((bf_var - knot_plus), 2))
@@ -118,30 +106,24 @@ def export_sympy(earth_model):
                        
                     terms.append(term)
 
-            elif 'HingeBasisFunction' in bf_class: # unclear if these come out sympified 
-                
-#                 return bf_var # testing
+            elif 'HingeBasisFunction' in bf_class:
+            
                 
                 knot = parent.get_knot()
                 if parent.get_reverse() == False:
-#                     term = (coef * Max(0, bf_var - RealNumber(knot))) # needs a Mul
-#                     term = Mul(coef, Max(0, bf_var - RealNumber(knot))) 
                     term = Max(0, bf_var - RealNumber(knot))
                     terms.append(term)
  
                 elif parent.get_reverse() == True:
-#                     term = (coef * Max(0, RealNumber(knot) - bf_var))
-#                     term = Mul(coef, Max(0, RealNumber(knot) - bf_var))
                     term = Max(0, RealNumber(knot) - bf_var)
                     terms.append(term)
 
             elif 'MissingnessBasisFunction' in bf_class:
-                print "MissingnessBasisFunction"
-                # note: not yet supported
+                print bf_var
 
             else:
-                print "not yet in model"
-                print bf_class
+                print bf_var
+
             parent = parent.get_parent()
         term_list.append(terms)
 
@@ -155,11 +137,8 @@ def export_sympy(earth_model):
             i += 1
 
     flatten_return = [reduce(lambda a,b: a * b, item) for item in term_list]
-    expression = reduce(lambda a,b: a + b, flatten_return) # this is new for testing
+    expression = reduce(lambda a,b: a + b, flatten_return)
     
 
     return expression
 
-#     reduced_term_list = reduce(Add, term_list)
-#     return reduced_term_list
-#     return term_list

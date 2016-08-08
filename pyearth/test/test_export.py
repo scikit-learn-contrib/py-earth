@@ -8,7 +8,7 @@ import six
 from pyearth import Earth
 from pyearth._types import BOOL
 from pyearth.test.testing_utils import if_pandas,\
-    assert_list_almost_equal
+    if_sympy, assert_list_almost_equal
 
 numpy.random.seed(0)
 
@@ -48,40 +48,30 @@ def test_export_python_string():
             assert_almost_equal(exp_pred, model_pred)
 
 @if_pandas
+@if_sympy  
 def test_export_sympy():
     import sympa as sy
     import pandas as pd
-    for smooth in (True, False): # change first arg back to True
+    for smooth in (True, False):
         X_df = pd.DataFrame(X, columns=['x_%d' % i for i in range(X.shape[1])])
         model = Earth(penalty=1, smooth=smooth, max_degree=2, max_terms=80).fit(X_df, y)
         y_pred = model.predict(X_df)
         expression = export_sympy(model)
-        # testing out of list stuff 
-        
-
-        
-        # replace variables from dataframe 
+      
         from sympy import Symbol
         columns = X_df.loc[0, :]
         variables = columns.index.tolist()
-        rows = X_df.shape[0] # grabs the number of rows to go through 
+        rows = 12 # to speed up testing
         y_pred_sympy = []
-
        
         for i in range(rows): 
             row_expr = expression
             for var in variables: 
                 row_expr = row_expr.subs(Symbol(var), X_df.loc[i, var])
-            print row_expr # is it hanging? 
             y_pred_sympy.append(row_expr.evalf())
-                
-        print y_pred_sympy # just for breakpoint
-                
                 
         y_pred = model.predict(X_df)
         assert_list_almost_equal(y_pred, y_pred_sympy)
-            
-        
         
 if __name__ == '__main__':
     test_export_sympy()
