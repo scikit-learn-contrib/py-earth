@@ -14,14 +14,12 @@ requirements:
     - scikit-learn
     - nose
     - six
-    - sympy
   run:
     - python
     - numpy
     - scipy
     - scikit-learn
     - six
-    - sympy
 
 test:
   requires:
@@ -29,7 +27,6 @@ test:
     - scipy
     - scikit-learn
     - nose
-    - sympy
   imports:
     - pyearth
 
