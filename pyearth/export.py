@@ -1,3 +1,5 @@
+import functools
+
 def export_python_function(earth_model):
     """
     Exports model as a pure python function, with no numpy/scipy/sklearn dependencies.
@@ -133,8 +135,8 @@ def export_sympy(earth_model):
             termify(bf, i)
             i += 1
 
-    flatten_return = [reduce(lambda a,b: a * b, item) for item in term_list]
-    expression = reduce(lambda a,b: a + b, flatten_return)
+    flatten_return = [functools.reduce(lambda a,b: a * b, item) for item in term_list]
+    expression = functools.reduce(lambda a,b: a + b, flatten_return)
     
     return expression
 
