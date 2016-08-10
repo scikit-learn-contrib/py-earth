@@ -43,8 +43,11 @@ def export_sympy(earth_model):
     
     from sympy import Symbol, Add, Mul, Max, RealNumber, Piecewise, Pow, And
     """
-    Exports model in Sympy specific syntax for use with Sympy (and conversion with Sympy Codegen)
-    : param earth_model: Trained pyearth model
+    
+    Constructs and exports a sympy expression out of a trained earth model. 
+    
+    :param earth_model: Trained pyearth model
+    :return: a sympy expression that accepts an iterator over examples
 
     """
 
