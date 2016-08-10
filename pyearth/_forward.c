@@ -1074,7 +1074,7 @@ struct __pyx_obj_7pyearth_6_basis_ConstantBasisFunction {
  * 
  * cdef class VariableBasisFunction(BasisFunction):             # <<<<<<<<<<<<<<
  *     cdef INDEX_t variable
- *     cdef label
+ *     cdef readonly label
  */
 struct __pyx_obj_7pyearth_6_basis_VariableBasisFunction {
   struct __pyx_obj_7pyearth_6_basis_BasisFunction __pyx_base;
@@ -1690,7 +1690,7 @@ static struct __pyx_vtabstruct_7pyearth_6_basis_ConstantBasisFunction *__pyx_vta
  * 
  * cdef class VariableBasisFunction(BasisFunction):             # <<<<<<<<<<<<<<
  *     cdef INDEX_t variable
- *     cdef label
+ *     cdef readonly label
  */
 
 struct __pyx_vtabstruct_7pyearth_6_basis_VariableBasisFunction {
