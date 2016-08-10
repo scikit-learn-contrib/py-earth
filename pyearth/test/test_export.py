@@ -51,24 +51,17 @@ def test_export_python_string():
 @if_sympy  
 def test_export_sympy():
     import pandas as pd
+    from sympy.utilities.lambdify import lambdify
+    
     for smooth in (True, False):
         X_df = pd.DataFrame(X, columns=['x_%d' % i for i in range(X.shape[1])])
         model = Earth(penalty=1, smooth=smooth, max_degree=2, max_terms=80).fit(X_df, y)
-        y_pred = model.predict(X_df)
         expression = export_sympy(model)
-      
-        from sympy import Symbol
-        columns = X_df.loc[0, :]
-        variables = columns.index.tolist()
-        rows = 12 # to speed up testing
-        y_pred_sympy = []
-       
-        for i in range(rows): 
-            row_expr = expression
-            for var in variables: 
-                row_expr = row_expr.subs(Symbol(var), X_df.loc[i, var])
-            y_pred_sympy.append(row_expr.evalf())
+        
+        # The lambdified functions for smoothed basis functions only work with modules='numpy' and 
+        # for regular basis functions with modules={'Max':numpy.maximum}.  This is a confusing situation 
+        func = lambdify(X_df.columns, expression, modules=['numpy' if smooth else {'Max':numpy.maximum}])
+        y_pred_sympy = func(*[X_df.loc[:,var] for var in X_df.columns])
                 
         y_pred = model.predict(X_df)
         assert_list_almost_equal(y_pred, y_pred_sympy)
-        
