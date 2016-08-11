@@ -9,6 +9,7 @@ from pyearth import Earth
 from pyearth._types import BOOL
 from pyearth.test.testing_utils import if_pandas,\
     if_sympy, assert_list_almost_equal
+from itertools import product
 
 numpy.random.seed(0)
 
@@ -28,6 +29,10 @@ basis.transform(X, missing, B)
 beta = numpy.random.normal(size=4)
 y = numpy.empty(shape=100, dtype=numpy.float64)
 y[:] = numpy.dot(B, beta) + numpy.random.normal(size=100)
+beta2 = numpy.random.normal(size=4)
+y2 = numpy.empty(shape=100, dtype=numpy.float64)
+y2[:] = numpy.dot(B, beta2) + numpy.random.normal(size=100)
+Y = numpy.concatenate([y[:, None], y2[:, None]], axis=1)
 default_params = {"penalty": 1}
 
 
@@ -48,20 +53,22 @@ def test_export_python_string():
             assert_almost_equal(exp_pred, model_pred)
 
 @if_pandas
-@if_sympy  
+@if_sympy
 def test_export_sympy():
     import pandas as pd
     from sympy.utilities.lambdify import lambdify
     
-    for smooth in (True, False):
+    for smooth, n_cols in product((True, False), (1, 2)):
         X_df = pd.DataFrame(X, columns=['x_%d' % i for i in range(X.shape[1])])
-        model = Earth(penalty=1, smooth=smooth, max_degree=2, max_terms=80).fit(X_df, y)
-        expression = export_sympy(model)
+        y_df = pd.DataFrame(Y[:, :n_cols])
+        model = Earth(penalty=1, smooth=smooth, max_degree=2, max_terms=80).fit(X_df, y_df)
+        expressions = export_sympy(model) if n_cols > 1 else [export_sympy(model)]
         
-        # The lambdified functions for smoothed basis functions only work with modules='numpy' and 
-        # for regular basis functions with modules={'Max':numpy.maximum}.  This is a confusing situation 
-        func = lambdify(X_df.columns, expression, modules=['numpy' if smooth else {'Max':numpy.maximum}])
-        y_pred_sympy = func(*[X_df.loc[:,var] for var in X_df.columns])
-                
-        y_pred = model.predict(X_df)
-        assert_list_almost_equal(y_pred, y_pred_sympy)
+        for i, expression in enumerate(expressions):
+            # The lambdified functions for smoothed basis functions only work with modules='numpy' and 
+            # for regular basis functions with modules={'Max':numpy.maximum}.  This is a confusing situation 
+            func = lambdify(X_df.columns, expression, modules=['numpy' if smooth else {'Max':numpy.maximum}])
+            y_pred_sympy = func(*[X_df.loc[:,var] for var in X_df.columns])
+                    
+            y_pred = model.predict(X_df)[:,i] if n_cols > 1 else model.predict(X_df)
+            assert_list_almost_equal(y_pred, y_pred_sympy)
