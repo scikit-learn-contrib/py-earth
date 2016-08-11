@@ -74,7 +74,7 @@ cdef class ForwardPasser:
         self.minspan       = kwargs.get('minspan', -1)
         self.endspan_alpha = kwargs.get('endspan_alpha', .05)
         self.minspan_alpha = kwargs.get('minspan_alpha', .05)
-        self.max_terms     = kwargs.get('max_terms', 2 * self.n + self.m // 10)
+        self.max_terms     = kwargs.get('max_terms', min(2 * self.n + self.m // 10, 400))
         self.allow_linear  = kwargs.get('allow_linear', True)
         self.max_degree    = kwargs.get('max_degree', 1)
         self.thresh        = kwargs.get('thresh', 0.001)
