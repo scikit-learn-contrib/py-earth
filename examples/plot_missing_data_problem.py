@@ -31,7 +31,6 @@ idx6 = (1 - missing[:, 6]).astype(bool)
 model = Earth(max_degree=5, minspan_alpha=.5, allow_missing=True,
               enable_pruning=True, thresh=.001, smooth=True, verbose=2)
 model.fit(X, y)
-
 # Print the model
 print(model.summary())
 

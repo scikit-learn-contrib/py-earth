@@ -58,17 +58,31 @@ def test_export_sympy():
     import pandas as pd
     from sympy.utilities.lambdify import lambdify
     
-    for smooth, n_cols in product((True, False), (1, 2)):
-        X_df = pd.DataFrame(X, columns=['x_%d' % i for i in range(X.shape[1])])
+    for smooth, n_cols, allow_missing in product((True, False), (1, 2), (True, False)):
+        X_df = pd.DataFrame(X.copy(), columns=['x_%d' % i for i in range(X.shape[1])])
         y_df = pd.DataFrame(Y[:, :n_cols])
-        model = Earth(penalty=1, smooth=smooth, max_degree=2, max_terms=80).fit(X_df, y_df)
+        if allow_missing: 
+            X_df['x_1'][5] = numpy.nan # hardcoded for MissingBasisFunction test
+        
+        model = Earth(penalty=1, allow_missing=allow_missing, smooth=smooth, max_degree=2, max_terms=6).fit(X_df, y_df)
         expressions = export_sympy(model) if n_cols > 1 else [export_sympy(model)]
+        
+        module_dict = {'Piecewise': numpy.select, 'LessThan': numpy.less_equal, 
+                       'GreaterThan':numpy.greater_equal, 'And': numpy.logical_and, 'StrictLessThan': numpy.less, 
+                       'Not':numpy.logical_not, "StrictGreaterThan": numpy.greater,'Max':numpy.maximum, 
+                       'Missing': lambda x: numpy.isnan(x).astype(float), 
+                       'NaNProtect': lambda x: numpy.where(numpy.isnan(x), 0, x) } 
         
         for i, expression in enumerate(expressions):
             # The lambdified functions for smoothed basis functions only work with modules='numpy' and 
             # for regular basis functions with modules={'Max':numpy.maximum}.  This is a confusing situation 
-            func = lambdify(X_df.columns, expression, modules=['numpy' if smooth else {'Max':numpy.maximum}])
+            func = lambdify(X_df.columns, expression, modules=module_dict)
+            print smooth, n_cols, allow_missing
             y_pred_sympy = func(*[X_df.loc[:,var] for var in X_df.columns])
                     
             y_pred = model.predict(X_df)[:,i] if n_cols > 1 else model.predict(X_df)
             assert_list_almost_equal(y_pred, y_pred_sympy)
+            
+if __name__ == '__main__': 
+    test_export_sympy()
+    

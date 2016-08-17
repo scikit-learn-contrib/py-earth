@@ -1,3 +1,4 @@
+from __builtin__ import False
 
 def export_python_function(earth_model):
     """
@@ -47,15 +48,17 @@ def export_sympy_term_expressions(earth_model):
       expressions are the symbolic equivalent of the Earth.transform method.
 
     """
-    from sympy import Symbol, Add, Mul, Max, RealNumber, Piecewise, Pow, And
+    from sympy import Symbol, Add, Mul, Max, RealNumber, Piecewise, Pow, And, nan, Function, Not
     from ._basis import LinearBasisFunction, HingeBasisFunction, SmoothedHingeBasisFunction, \
-          MissingnessBasisFunction, ConstantBasisFunction
-
-    def linear_bf_to_factor(bf):
-        return Symbol(bf.label)
+          MissingnessBasisFunction, ConstantBasisFunction, VariableBasisFunction
+          
+    Missing = Function('Missing')
+    NaNProtect = Function('NaNProtect')
+            
+    def linear_bf_to_factor(bf, bf_var):
+        return bf_var
     
-    def smoothed_hinge_bf_to_factor(bf):
-        bf_var = Symbol(bf.label)
+    def smoothed_hinge_bf_to_factor(bf, bf_var):
         knot = RealNumber(bf.get_knot())
         knot_minus = RealNumber(bf.get_knot_minus())
         knot_plus = RealNumber(bf.get_knot_plus())
@@ -81,8 +84,7 @@ def export_sympy_term_expressions(earth_model):
             factor = piecewise
         return factor
     
-    def hinge_bf_to_factor(bf):
-        bf_var = Symbol(bf.label)
+    def hinge_bf_to_factor(bf, bf_var):
         knot = bf.get_knot()
         if bf.get_reverse():
             factor = Max(0, RealNumber(knot) - bf_var)
@@ -90,14 +92,22 @@ def export_sympy_term_expressions(earth_model):
             factor = Max(0, bf_var - RealNumber(knot))
         return factor
     
-    def missingness_bf_to_factor(bf):
+    def missingness_bf_to_factor(bf, bf_var):
         # This is the error that should be raised when a user attempts to use functionality
         # that has not yet been implemented.
-        # TODO: Implement this
-        raise NotImplementedError
+        if bf.complement: 
+            return Not(Missing(bf_var))
+        else: 
+            return Missing(bf_var)
     
-    def constant_bf_to_factor(bf):
+    def constant_bf_to_factor(bf, bf_var):
         return RealNumber(1)
+    
+    def protect_from_nan(label, missables):
+        return NaNProtect(Symbol(label)) if label in missables else Symbol(label)
+    
+    def dont_protect_from_nan(label, missables):
+        return Symbol(label)
     
     bf_to_factor_dispatcher = {LinearBasisFunction: linear_bf_to_factor,
                                SmoothedHingeBasisFunction: smoothed_hinge_bf_to_factor,
@@ -105,24 +115,58 @@ def export_sympy_term_expressions(earth_model):
                                MissingnessBasisFunction: missingness_bf_to_factor,
                                ConstantBasisFunction: constant_bf_to_factor}
     
-    def bf_to_factor(bf):
+    nan_protect_dispatch = {LinearBasisFunction: protect_from_nan,
+                            SmoothedHingeBasisFunction: protect_from_nan,
+                            HingeBasisFunction: protect_from_nan,
+                            MissingnessBasisFunction: dont_protect_from_nan,
+                            ConstantBasisFunction: protect_from_nan}
+    
+    def bf_to_factor(bf, missables):
         '''
         Convert a BasisFunction to a factor of a term.
         '''
-        return bf_to_factor_dispatcher[bf.__class__](bf)
+        if isinstance(bf, VariableBasisFunction):
+            bf_var = nan_protect_dispatch[bf.__class__](bf.label, missables)
+            
+        else:
+            bf_var = None
+        return bf_to_factor_dispatcher[bf.__class__](bf, bf_var)
+        
+    def missingness_bf_get_missables(bf):
+        bf_var = bf.label
+        return set([bf_var])
+
+    def non_missable(bf):
+        return set()
     
-    def bf_to_term(bf):
+    bf_get_missables_dispatcher = {LinearBasisFunction: non_missable,
+                                   SmoothedHingeBasisFunction: non_missable,
+                                   HingeBasisFunction: non_missable,
+                                   MissingnessBasisFunction: missingness_bf_get_missables,
+                                   ConstantBasisFunction: non_missable}
+    
+    def get_missables(bf):
+        missables = bf_get_missables_dispatcher[bf.__class__](bf)
+        parent = bf.get_parent()
+        if parent is None:
+            return missables
+        else:
+            missables.update(get_missables(parent))
+
+        return missables
+    
+    def bf_to_term(bf, missables):
         '''
         Convert a BasisFunction to a term (without coefficient).
         '''
-        term = bf_to_factor(bf)
+        term = bf_to_factor(bf, missables)
         parent = bf.get_parent()
         if parent is None:
             return term
         else:
-            return Mul(term, bf_to_term(parent))
+            return Mul(term, bf_to_term(parent, missables))
     
-    return [bf_to_term(bf) for bf in earth_model.basis_.piter()]
+    return [bf_to_term(bf, get_missables(bf)) for bf in earth_model.basis_.piter()]
 
 
 def export_sympy(earth_model, columns=None):
@@ -166,8 +210,7 @@ def export_sympy(earth_model, columns=None):
         # Result should be an expression rather than a list of expressions.
         result = result[0]
     return result
-
-        
+  
         
     
     
