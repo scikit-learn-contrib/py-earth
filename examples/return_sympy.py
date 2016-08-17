@@ -1,15 +1,18 @@
 """
-=====================================================
-Exporting a fitted Earth models as a sympy expression
-=====================================================
+=========================================================================
+Exporting a fitted Earth models as a sympy expression and generate C code
+=========================================================================
 
-A simple example returning a sympy expression describing the fit of a sine function computed by Earth.
+A simple example in which an Earth model is fitted, exported as a sympy 
+expression, and used to generate C code for prediction.  This example 
+requires sympy.
 
 """
 
 import numpy
 from pyearth import Earth
 from pyearth import export
+from sympy.utilities.codegen import codegen
 
 # Create some fake data
 numpy.random.seed(2)
@@ -26,7 +29,12 @@ model.fit(X, y)
 
 print(model.summary())
 
-#return sympy expression 
+# Generate a sympy expression from the Earth object
 print('Resulting sympy expression:')
-print(export.export_sympy(model))
+expression = export.export_sympy(model)
+print(expression)
 
+# Generate C code from the sympy expression
+(c_name, c_code), (h_name, h_code) = codegen(('model_predict', expression), 'C')
+print(h_code)
+print(c_code)
