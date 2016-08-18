@@ -98,9 +98,11 @@ def test_export_sympy():
                 assert_array_almost_equal(y_pred, y_pred_sympy)
             except:
                 print('smooth={smooth}, n_cols={n_cols}, allow_missing={allow_missing}'.format(smooth=smooth, n_cols=n_cols, allow_missing=allow_missing))
+                print('column %d' % i)
                 print(expression)
                 print(PyEarthNumpyPrinter().doprint(expression))
                 print(model.summary())
+                
                 raise
 if __name__ == '__main__': 
     test_export_sympy()
