@@ -75,9 +75,10 @@ def test_export_sympy():
         X_df = pd.DataFrame(X.copy(), columns=['x_%d' % i for i in range(X.shape[1])])
         y_df = pd.DataFrame(Y[:, :n_cols])
         if allow_missing: 
-            X_df['x_1'][5] = numpy.nan # hardcoded for MissingBasisFunction test
+            # Randomly remove some values so that the fitted model contains MissingnessBasisFunctions
+            X_df['x_1'][numpy.random.binomial(n=1, p=.1, size=X_df.shape[0]).astype(bool)] = numpy.nan
         
-        model = Earth(penalty=1, allow_missing=allow_missing, smooth=smooth, max_degree=2).fit(X_df, y_df)
+        model = Earth(allow_missing=allow_missing, smooth=smooth, max_degree=2).fit(X_df, y_df)
         expressions = export_sympy(model) if n_cols > 1 else [export_sympy(model)]
         module_dict = {'select': numpy.select, 'less_equal': numpy.less_equal, 'isnan': numpy.isnan,
                        'greater_equal':numpy.greater_equal, 'logical_and': numpy.logical_and, 'less': numpy.less, 
