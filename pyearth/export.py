@@ -1,5 +1,3 @@
-from __builtin__ import False
-
 def export_python_function(earth_model):
     """
     Exports model as a pure python function, with no numpy/scipy/sklearn dependencies.
