@@ -13,6 +13,7 @@ import numpy
 from pyearth import Earth
 from pyearth import export
 from sympy.utilities.codegen import codegen
+from sympy.printing.mathml import MathMLPrinter
 
 # Create some fake data
 numpy.random.seed(2)
@@ -36,5 +37,11 @@ print(expression)
 
 # Generate C code from the sympy expression
 (c_name, c_code), (h_name, h_code) = codegen(('model_predict', expression), 'C')
+print 'Exported C header:'
 print(h_code)
+print 'Exported C implementation:'
 print(c_code)
+
+# Generate MathML from the sympy expression
+print 'Exported MathML:'
+print MathMLPrinter().doprint(expression)
