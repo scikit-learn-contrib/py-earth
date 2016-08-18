@@ -8,8 +8,9 @@ import six
 from pyearth import Earth
 from pyearth._types import BOOL
 from pyearth.test.testing_utils import if_pandas,\
-    if_sympy, assert_list_almost_equal
+    if_sympy
 from itertools import product
+from numpy.testing.utils import assert_array_almost_equal
 
 numpy.random.seed(0)
 
@@ -93,7 +94,7 @@ def test_export_sympy():
             y_pred_sympy = func(*[X_df.loc[:,var] for var in X_df.columns])
                     
             y_pred = model.predict(X_df)[:,i] if n_cols > 1 else model.predict(X_df)
-            assert_list_almost_equal(y_pred, y_pred_sympy)
+            assert_array_almost_equal(y_pred, y_pred_sympy)
             
 if __name__ == '__main__': 
     test_export_sympy()
