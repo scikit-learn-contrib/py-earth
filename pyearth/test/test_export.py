@@ -94,8 +94,14 @@ def test_export_sympy():
             y_pred_sympy = func(*[X_df.loc[:,var] for var in X_df.columns])
                     
             y_pred = model.predict(X_df)[:,i] if n_cols > 1 else model.predict(X_df)
-            assert_array_almost_equal(y_pred, y_pred_sympy)
-            
+            try:
+                assert_array_almost_equal(y_pred, y_pred_sympy)
+            except:
+                print('smooth={smooth}, n_cols={n_cols}, allow_missing={allow_missing}'.format(smooth=smooth, n_cols=n_cols, allow_missing=allow_missing))
+                print(expression)
+                print(PyEarthNumpyPrinter.doprint(expression))
+                print(model.summary())
+                raise
 if __name__ == '__main__': 
     test_export_sympy()
     
