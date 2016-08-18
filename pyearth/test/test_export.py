@@ -99,7 +99,7 @@ def test_export_sympy():
             except:
                 print('smooth={smooth}, n_cols={n_cols}, allow_missing={allow_missing}'.format(smooth=smooth, n_cols=n_cols, allow_missing=allow_missing))
                 print(expression)
-                print(PyEarthNumpyPrinter.doprint(expression))
+                print(PyEarthNumpyPrinter().doprint(expression))
                 print(model.summary())
                 raise
 if __name__ == '__main__': 
