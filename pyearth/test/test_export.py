@@ -77,7 +77,7 @@ def test_export_sympy():
         if allow_missing: 
             X_df['x_1'][5] = numpy.nan # hardcoded for MissingBasisFunction test
         
-        model = Earth(penalty=1, allow_missing=allow_missing, smooth=smooth, max_degree=2, max_terms=6).fit(X_df, y_df)
+        model = Earth(penalty=1, allow_missing=allow_missing, smooth=smooth, max_degree=2).fit(X_df, y_df)
         expressions = export_sympy(model) if n_cols > 1 else [export_sympy(model)]
         module_dict = {'select': numpy.select, 'less_equal': numpy.less_equal, 'isnan': numpy.isnan,
                        'greater_equal':numpy.greater_equal, 'logical_and': numpy.logical_and, 'less': numpy.less, 
