@@ -57,7 +57,19 @@ def test_export_python_string():
 def test_export_sympy():
     import pandas as pd
     from sympy.utilities.lambdify import lambdify
+    from sympy.printing.lambdarepr import NumPyPrinter
     
+    class PyEarthNumpyPrinter(NumPyPrinter):
+        def _print_Max(self, expr):
+            return 'maximum(' + ','.join(self._print(i) for i in expr.args) + ')'
+
+        def _print_NaNProtect(self, expr):
+            return 'where(isnan(' + ','.join(self._print(a) for a in expr.args) + '), 0, ' \
+                + ','.join(self._print(a) for a in expr.args) + ')'
+         
+        def _print_Missing(self, expr):
+            return 'isnan(' + ','.join(self._print(a) for a in expr.args) + ').astype(float)'
+
     for smooth, n_cols, allow_missing in product((True, False), (1, 2), (True, False)):
         X_df = pd.DataFrame(X.copy(), columns=['x_%d' % i for i in range(X.shape[1])])
         y_df = pd.DataFrame(Y[:, :n_cols])
@@ -66,23 +78,19 @@ def test_export_sympy():
         
         model = Earth(penalty=1, allow_missing=allow_missing, smooth=smooth, max_degree=2, max_terms=6).fit(X_df, y_df)
         expressions = export_sympy(model) if n_cols > 1 else [export_sympy(model)]
-        
-        module_dict = {'Piecewise': numpy.select, 'LessThan': numpy.less_equal, 
-                       'GreaterThan':numpy.greater_equal, 'And': numpy.logical_and, 'StrictLessThan': numpy.less, 
-                       'Not':numpy.logical_not, "StrictGreaterThan": numpy.greater,'Max':numpy.maximum, 
+        module_dict = {'select': numpy.select, 'less_equal': numpy.less_equal, 'isnan': numpy.isnan,
+                       'greater_equal':numpy.greater_equal, 'logical_and': numpy.logical_and, 'less': numpy.less, 
+                       'logical_not':numpy.logical_not, "greater": numpy.greater, 'maximum':numpy.maximum, 
                        'Missing': lambda x: numpy.isnan(x).astype(float), 
-                       'NaNProtect': lambda x: numpy.where(numpy.isnan(x), 0, x) } 
+                       'NaNProtect': lambda x: numpy.where(numpy.isnan(x), 0, x), 'nan': numpy.nan,
+                       'float': float, 'where': numpy.where
+                       }
         
         for i, expression in enumerate(expressions):
             # The lambdified functions for smoothed basis functions only work with modules='numpy' and 
             # for regular basis functions with modules={'Max':numpy.maximum}.  This is a confusing situation 
-            func = lambdify(X_df.columns, expression, modules=module_dict)
-            print smooth, n_cols, allow_missing
+            func = lambdify(X_df.columns, expression, printer=PyEarthNumpyPrinter, modules=module_dict)
             y_pred_sympy = func(*[X_df.loc[:,var] for var in X_df.columns])
                     
             y_pred = model.predict(X_df)[:,i] if n_cols > 1 else model.predict(X_df)
             assert_list_almost_equal(y_pred, y_pred_sympy)
-            
-if __name__ == '__main__': 
-    test_export_sympy()
-    
