@@ -64,6 +64,20 @@ def if_pandas(func):
             return func(*args, **kwargs)
     return run_test
 
+def if_sympy(func):
+    """ Test decorator that skips test if sympy not installed """ 
+    
+    @wraps(func)
+    def run_test(*args, **kwargs):
+        try:
+            from sympy import Symbol, Add, Mul, Max, RealNumber, Piecewise, sympify, Pow, And, lambdify
+        except ImportError:
+            raise SkipTest('sympy not available.')
+        else:
+            return func(*args, **kwargs)
+    return run_test
+    
+
 
 def if_patsy(func):
     """Test decorator that skips test if patsy not installed. """

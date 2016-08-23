@@ -91,7 +91,7 @@ cdef class ConstantBasisFunction(RootBasisFunction):
 
 cdef class VariableBasisFunction(BasisFunction):
     cdef INDEX_t variable
-    cdef label
+    cdef readonly label
     
     cpdef INDEX_t degree(VariableBasisFunction self)
     
@@ -117,7 +117,7 @@ cdef class DataVariableBasisFunction(VariableBasisFunction):
                       cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var)
 
 cdef class MissingnessBasisFunction(VariableBasisFunction):
-    cdef bint complement
+    cdef readonly bint complement
     
     cpdef _effective_degree(MissingnessBasisFunction self, dict data_dict, dict missing_dict)
     

@@ -13,13 +13,13 @@ requirements:
     - numpy
     - scikit-learn
     - nose
-    - six  
+    - six
   run:
     - python
     - numpy
     - scipy
     - scikit-learn
-    - six  
+    - six
 
 test:
   requires:
@@ -28,7 +28,7 @@ test:
     - scikit-learn
     - nose
   imports:
-    - pyearth 
+    - pyearth
 
 about:
   home: https://github.com/scikit-learn-contrib/py-earth
