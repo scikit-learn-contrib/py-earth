@@ -22,7 +22,7 @@ It has been modified to include an Earth based classifier.
 
 .. code-block:: python
 
-    print(__doc__)
+
     # Code source: Gael Varoqueux
     #              Andreas Mueller
     # Modified for Documentation merge by Jaques Grobler
@@ -43,11 +43,13 @@ It has been modified to include an Earth based classifier.
     from sklearn.lda import LDA
     from sklearn.qda import QDA
 
-    h = .02  # step size in the mesh
-
     from sklearn.linear_model.logistic import LogisticRegression
     from sklearn.pipeline import Pipeline
     from pyearth.earth import Earth
+
+    print(__doc__)
+
+    h = .02  # step size in the mesh
 
     np.random.seed(1)
 
@@ -144,7 +146,7 @@ It has been modified to include an Earth based classifier.
     plt.show()
 
 **Total running time of the script:**
-(0 minutes 8.596 seconds)
+(0 minutes 8.328 seconds)
 
 
 

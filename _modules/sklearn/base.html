@@ -135,6 +135,7 @@
             
   <h1>Source code for sklearn.base</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Base classes for all estimators.&quot;&quot;&quot;</span>
+
 <span class="c1"># Author: Gael Varoquaux &lt;gael.varoquaux@normalesup.org&gt;</span>
 <span class="c1"># License: BSD 3 clause</span>
 
@@ -145,13 +146,29 @@
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">sparse</span>
 <span class="kn">from</span> <span class="nn">.externals</span> <span class="kn">import</span> <span class="n">six</span>
 <span class="kn">from</span> <span class="nn">.utils.fixes</span> <span class="kn">import</span> <span class="n">signature</span>
+<span class="kn">from</span> <span class="nn">.utils.deprecation</span> <span class="kn">import</span> <span class="n">deprecated</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">ChangedBehaviorWarning</span> <span class="k">as</span> <span class="n">_ChangedBehaviorWarning</span>
 
 
-<span class="k">class</span> <span class="nc">ChangedBehaviorWarning</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">):</span>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="s2">&quot;ChangedBehaviorWarning has been moved into the sklearn.exceptions&quot;</span>
+            <span class="s2">&quot; module. It will not be available here from version 0.19&quot;</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">ChangedBehaviorWarning</span><span class="p">(</span><span class="n">_ChangedBehaviorWarning</span><span class="p">):</span>
     <span class="k">pass</span>
 
 
 <span class="c1">##############################################################################</span>
+<span class="k">def</span> <span class="nf">_first_and_last_element</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns first and last element of numpy array or sparse matrix.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">):</span>
+        <span class="c1"># numpy array or sparse matrix with .data attribute</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="n">sparse</span><span class="o">.</span><span class="n">issparse</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="k">else</span> <span class="n">arr</span>
+        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Sparse matrices without .data attribute. Only dok_matrix at</span>
+        <span class="c1"># the time of writing, in this case indexing is fast</span>
+        <span class="k">return</span> <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">arr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+
 <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="n">estimator</span><span class="p">,</span> <span class="n">safe</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Constructs a new estimator with the same parameters.</span>
 
@@ -204,9 +221,8 @@
                 <span class="n">equality_test</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="n">param1</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">param2</span><span class="o">.</span><span class="n">shape</span>
                     <span class="ow">and</span> <span class="n">param1</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">param2</span><span class="o">.</span><span class="n">dtype</span>
-                    <span class="c1"># We have to use &#39;.flat&#39; for 2D arrays</span>
-                    <span class="ow">and</span> <span class="n">param1</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">param2</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="ow">and</span> <span class="n">param1</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">param2</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="ow">and</span> <span class="p">(</span><span class="n">_first_and_last_element</span><span class="p">(</span><span class="n">param1</span><span class="p">)</span> <span class="o">==</span>
+                         <span class="n">_first_and_last_element</span><span class="p">(</span><span class="n">param2</span><span class="p">))</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">equality_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">param1</span> <span class="o">==</span> <span class="n">param2</span><span class="p">)</span>
@@ -223,8 +239,8 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">equality_test</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="n">param1</span><span class="o">.</span><span class="n">__class__</span> <span class="o">==</span> <span class="n">param2</span><span class="o">.</span><span class="n">__class__</span>
-                    <span class="ow">and</span> <span class="n">param1</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">param2</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="ow">and</span> <span class="n">param1</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">param2</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="ow">and</span> <span class="p">(</span><span class="n">_first_and_last_element</span><span class="p">(</span><span class="n">param1</span><span class="p">)</span> <span class="o">==</span>
+                         <span class="n">_first_and_last_element</span><span class="p">(</span><span class="n">param2</span><span class="p">))</span>
                     <span class="ow">and</span> <span class="n">param1</span><span class="o">.</span><span class="n">nnz</span> <span class="o">==</span> <span class="n">param2</span><span class="o">.</span><span class="n">nnz</span>
                     <span class="ow">and</span> <span class="n">param1</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">param2</span><span class="o">.</span><span class="n">shape</span>
                 <span class="p">)</span>
@@ -373,7 +389,7 @@
         <span class="sd">&quot;&quot;&quot;Set the parameters of this estimator.</span>
 
 <span class="sd">        The method works on simple estimators as well as on nested objects</span>
-<span class="sd">        (such as pipelines). The former have parameters of the form</span>
+<span class="sd">        (such as pipelines). The latter have parameters of the form</span>
 <span class="sd">        ``&lt;component&gt;__&lt;parameter&gt;`` so that it&#39;s possible to update each</span>
 <span class="sd">        component of a nested object.</span>
 
@@ -592,6 +608,24 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># fit method of arity 2 (supervised transformation)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_params</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">DensityMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Mixin class for all density estimators in scikit-learn.&quot;&quot;&quot;</span>
+    <span class="n">_estimator_type</span> <span class="o">=</span> <span class="s2">&quot;DensityEstimator&quot;</span>
+
+    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the score of the model on the data X</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like, shape = (n_samples, n_features)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        score: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
 
 
 <span class="c1">###############################################################################</span>

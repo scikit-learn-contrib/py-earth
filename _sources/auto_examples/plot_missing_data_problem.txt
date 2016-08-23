@@ -7,7 +7,7 @@
 Plotting sine function with redundant predictors an missing data
 ================================================================
 
-An example plotting a fit of the sine function.  There are two 
+An example plotting a fit of the sine function.  There are two
 redundant predictors, each of which has independent and random
 missingness.
 
@@ -40,28 +40,28 @@ missingness.
     iter  bf  terms  mse     gcv      rsq    grsq   
     ------------------------------------------------
     0     -   23     278.84  281.989  0.937  0.936  
-    1     14  22     278.84  281.848  0.937  0.936  
-    2     18  21     278.84  281.706  0.937  0.936  
+    1     8   22     278.84  281.848  0.937  0.936  
+    2     13  21     278.84  281.706  0.937  0.936  
     3     1   20     278.84  281.565  0.937  0.936  
-    4     8   19     278.84  281.423  0.937  0.936  
+    4     17  19     278.84  281.423  0.937  0.936  
     5     19  18     278.85  281.292  0.937  0.936  
     6     21  17     278.92  281.220  0.937  0.936  
     7     16  16     279.59  281.753  0.936  0.936  
     8     22  15     284.83  286.895  0.935  0.935  
-    9     2   14     397.28  399.951  0.910  0.909  
-    10    17  13     502.60  505.730  0.886  0.885  
-    11    20  12     541.66  544.762  0.877  0.876  
-    12    15  11     598.46  601.584  0.864  0.863  
-    13    13  10     649.68  652.740  0.852  0.852  
-    14    4   9      685.12  688.010  0.844  0.844  
-    15    11  8      806.27  809.259  0.817  0.816  
-    16    9   7      1004.03  1007.255  0.772  0.771  
-    17    7   6      1155.43  1158.556  0.737  0.737  
-    18    10  5      1463.02  1466.241  0.667  0.667  
-    19    12  4      1524.86  1527.455  0.653  0.653  
-    20    5   3      3186.18  3190.004  0.276  0.275  
-    21    3   2      3441.68  3444.095  0.218  0.217  
-    22    6   1      4399.48  4400.355  -0.000  -0.000  
+    9     3   14     315.12  317.240  0.928  0.928  
+    10    2   13     397.83  400.308  0.910  0.909  
+    11    18  12     533.09  536.137  0.879  0.878  
+    12    20  11     572.89  575.885  0.870  0.869  
+    13    4   10     637.45  640.460  0.855  0.854  
+    14    6   9      793.57  796.916  0.820  0.819  
+    15    15  8      897.20  900.533  0.796  0.795  
+    16    5   7      934.71  937.707  0.788  0.787  
+    17    14  6      1017.38  1020.134  0.769  0.768  
+    18    11  5      1258.44  1261.214  0.714  0.713  
+    19    7   4      2635.44  2639.922  0.401  0.400  
+    20    9   3      3192.33  3196.161  0.274  0.274  
+    21    12  2      4039.23  4042.060  0.082  0.081  
+    22    10  1      4399.48  4400.355  -0.000  -0.000  
     ----------------------------------------------------
     Selected iteration: 6
     Earth Model
@@ -71,22 +71,22 @@ missingness.
     (Intercept)                                                                                                               No      -477.431     
     present(x6)                                                                                                               Yes     None         
     missing(x6)                                                                                                               No      72.659       
-    C(x6|s=+1,-32.2065,-24.4145,-7.42951)*present(x6)                                                                         No      6.73037      
+    C(x6|s=+1,-32.2065,-24.4145,-7.42951)*present(x6)                                                                         No      1.7703       
     C(x6|s=-1,-32.2065,-24.4145,-7.42951)*present(x6)                                                                         No      10.543       
     C(x6|s=+1,-7.42951,9.55548,21.7265)*C(x6|s=+1,-32.2065,-24.4145,-7.42951)*present(x6)                                     No      -0.232449    
     C(x6|s=-1,-7.42951,9.55548,21.7265)*C(x6|s=+1,-32.2065,-24.4145,-7.42951)*present(x6)                                     No      -0.35568     
     present(x5)                                                                                                               No      113.492      
     missing(x5)                                                                                                               Yes     None         
     C(x5|s=+1,5.38057,22.2377,31.1865)*present(x5)                                                                            No      -11.1024     
-    C(x5|s=-1,5.38057,22.2377,31.1865)*present(x5)                                                                            No      -7.42392     
+    C(x5|s=-1,5.38057,22.2377,31.1865)*present(x5)                                                                            No      -2.39991     
     C(x5|s=+1,-25.8212,-11.4766,5.38057)*C(x5|s=-1,5.38057,22.2377,31.1865)*present(x5)                                       No      0.222427     
     C(x5|s=-1,-25.8212,-11.4766,5.38057)*C(x5|s=-1,5.38057,22.2377,31.1865)*present(x5)                                       No      0.260225     
-    present(x5)*C(x6|s=+1,-32.2065,-24.4145,-7.42951)*present(x6)                                                             No      -4.96007     
-    missing(x5)*C(x6|s=+1,-32.2065,-24.4145,-7.42951)*present(x6)                                                             Yes     None         
+    present(x5)*C(x6|s=+1,-32.2065,-24.4145,-7.42951)*present(x6)                                                             Yes     None         
+    missing(x5)*C(x6|s=+1,-32.2065,-24.4145,-7.42951)*present(x6)                                                             No      4.96007      
     C(x5|s=+1,-15.4729,9.21999,24.6777)*present(x5)*C(x6|s=+1,-32.2065,-24.4145,-7.42951)*present(x6)                         No      0.210823     
     C(x5|s=-1,-15.4729,9.21999,24.6777)*present(x5)*C(x6|s=+1,-32.2065,-24.4145,-7.42951)*present(x6)                         No      0.00366201   
-    present(x6)*C(x5|s=-1,5.38057,22.2377,31.1865)*present(x5)                                                                No      5.024        
-    missing(x6)*C(x5|s=-1,5.38057,22.2377,31.1865)*present(x5)                                                                Yes     None         
+    present(x6)*C(x5|s=-1,5.38057,22.2377,31.1865)*present(x5)                                                                Yes     None         
+    missing(x6)*C(x5|s=-1,5.38057,22.2377,31.1865)*present(x5)                                                                No      -5.024       
     C(x6|s=+1,-25.7228,-11.4472,14.2662)*present(x6)*C(x5|s=-1,5.38057,22.2377,31.1865)*present(x5)                           Yes     None         
     C(x6|s=-1,-25.7228,-11.4472,14.2662)*present(x6)*C(x5|s=-1,5.38057,22.2377,31.1865)*present(x5)                           No      -0.24299     
     C(x6|s=+1,21.7265,33.8976,36.9386)*C(x6|s=+1,-7.42951,9.55548,21.7265)*C(x6|s=+1,-32.2065,-24.4145,-7.42951)*present(x6)  Yes     None         
@@ -123,10 +123,9 @@ missingness.
     idx6 = (1 - missing[:, 6]).astype(bool)
 
     # Fit an Earth model
-    model = Earth(max_degree=5, minspan_alpha=.5, allow_missing=True, 
+    model = Earth(max_degree=5, minspan_alpha=.5, allow_missing=True,
                   enable_pruning=True, thresh=.001, smooth=True, verbose=2)
     model.fit(X, y)
-
     # Print the model
     print(model.summary())
 
@@ -137,14 +136,14 @@ missingness.
     ax1 = fig.add_subplot(3, 2, 1)
     ax1.plot(X_full[idx5, 5], y[idx5], 'b.')
     ax1.plot(X_full[idx5, 5], y_hat[idx5], 'r.')
-    ax1.set_xlim(-40,40)
+    ax1.set_xlim(-40, 40)
     ax1.set_title('x5 present')
     ax1.set_xlabel('x5')
 
     ax2 = fig.add_subplot(3, 2, 2)
     ax2.plot(X_full[idx6, 6], y[idx6], 'b.')
     ax2.plot(X_full[idx6, 6], y_hat[idx6], 'r.')
-    ax2.set_xlim(-40,40)
+    ax2.set_xlim(-40, 40)
     ax2.set_title('x6 present')
     ax2.set_xlabel('x6')
 
@@ -160,7 +159,7 @@ missingness.
     ax4.set_title('x5 missing')
     ax4.set_xlabel('x6')
 
-    ax5 = fig.add_subplot(3, 2, 5,sharex=ax1)
+    ax5 = fig.add_subplot(3, 2, 5, sharex=ax1)
     ax5.plot(X_full[(~idx6) & (~idx5), 5], y[(~idx6) & (~idx5)], 'b.')
     ax5.plot(X_full[(~idx6) & (~idx5), 5], y_hat[(~idx6) & (~idx5)], 'r.')
     ax5.set_title('both missing')
@@ -176,7 +175,7 @@ missingness.
     plt.show()
 
 **Total running time of the script:**
-(0 minutes 12.861 seconds)
+(0 minutes 10.316 seconds)
 
 
 

@@ -5,6 +5,26 @@ This is the gallery of examples.
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="A simple example returning a sympy expression describing the fit of a sine function computed by...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_return_sympy_thumb.png
+
+        :ref:`sphx_glr_auto_examples_return_sympy.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/return_sympy
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="A simple example plotting a fit of the absolute value function.">
 
 .. only:: html
@@ -105,6 +125,26 @@ This is the gallery of examples.
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="A simple example showing how to compute and display feature importances, it is also compared wi...">
+
+.. only:: html
+
+    .. figure:: /auto_examples/images/thumb/sphx_glr_plot_feature_importance_thumb.png
+
+        :ref:`sphx_glr_auto_examples_plot_feature_importance.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/plot_feature_importance
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Each row in the grid is a run of an earth model. Each column is an output. In each run, differe...">
 
 .. only:: html
@@ -125,7 +165,7 @@ This is the gallery of examples.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="An example plotting a fit of the sine function.  There are two  redundant predictors, each of w...">
+    <div class="sphx-glr-thumbcontainer" tooltip="An example plotting a fit of the sine function.  There are two redundant predictors, each of wh...">
 
 .. only:: html
 
@@ -145,7 +185,7 @@ This is the gallery of examples.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="An example plotting a simultaneous fit of the sine and cosine functions.   There are two redund...">
+    <div class="sphx-glr-thumbcontainer" tooltip="An example plotting a simultaneous fit of the sine and cosine functions. There are two redundan...">
 
 .. only:: html
 

@@ -90,11 +90,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../content.html#bibliography">Bibliography</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../content.html#api">API</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Gallery</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="return_sympy.html">Exporting a fitted Earth models as a sympy expression</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_v_function.html">Plotting the absolute value function</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_sine_wave.html">Plotting simple sine function</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_linear_function.html">Plotting a linear function with a categorical variable</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_sine_wave_2d.html">Plotting two simple sine functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_derivatives.html">Plotting derivatives of simple sine function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_feature_importance.html">Plotting feature importance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_output_weight.html">Demonstrating a use of weights in outputs with two sine functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_missing_data_problem.html">Plotting sine function with redundant predictors an missing data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_multicolumn.html">Plotting a multicolumn regression problem that includes missingness</a></li>
@@ -153,8 +155,7 @@
 <a class="reference external" href="http://scikit-learn.org/stable/auto_examples/classification/plot_classifier_comparison.html">http://scikit-learn.org/stable/auto_examples/classification/plot_classifier_comparison.html</a>.
 It has been modified to include an Earth based classifier.</p>
 <img alt="../_images/sphx_glr_plot_classifier_comp_001.png" class="align-center" src="../_images/sphx_glr_plot_classifier_comp_001.png" />
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">__doc__</span><span class="p">)</span>
-<span class="c1"># Code source: Gael Varoqueux</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Code source: Gael Varoqueux</span>
 <span class="c1">#              Andreas Mueller</span>
 <span class="c1"># Modified for Documentation merge by Jaques Grobler</span>
 <span class="c1"># License: BSD 3 clause</span>
@@ -174,11 +175,13 @@ It has been modified to include an Earth based classifier.</p>
 <span class="kn">from</span> <span class="nn">sklearn.lda</span> <span class="kn">import</span> <span class="n">LDA</span>
 <span class="kn">from</span> <span class="nn">sklearn.qda</span> <span class="kn">import</span> <span class="n">QDA</span>
 
-<span class="n">h</span> <span class="o">=</span> <span class="o">.</span><span class="mo">02</span>  <span class="c1"># step size in the mesh</span>
-
 <span class="kn">from</span> <span class="nn">sklearn.linear_model.logistic</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
 <span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
 <span class="kn">from</span> <span class="nn">pyearth.earth</span> <span class="kn">import</span> <span class="n">Earth</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">__doc__</span><span class="p">)</span>
+
+<span class="n">h</span> <span class="o">=</span> <span class="o">.</span><span class="mo">02</span>  <span class="c1"># step size in the mesh</span>
 
 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
@@ -276,7 +279,7 @@ It has been modified to include an Earth based classifier.</p>
 </pre></div>
 </div>
 <p><strong>Total running time of the script:</strong>
-(0 minutes 8.596 seconds)</p>
+(0 minutes 8.328 seconds)</p>
 <div class="sphx-glr-download container">
 <strong>Download Python source code:</strong> <a class="reference download internal" href="../_downloads/plot_classifier_comp.py" download=""><code class="xref download docutils literal"><span class="pre">plot_classifier_comp.py</span></code></a></div>
 <div class="sphx-glr-download container">
