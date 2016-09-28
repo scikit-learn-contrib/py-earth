@@ -30,6 +30,10 @@ cdef class BasisFunction:
     
     cpdef BasisFunction get_coverage(BasisFunction self, INDEX_t variable)
     
+    cpdef bool has_linear(BasisFunction self, INDEX_t variable)
+    
+    cpdef bool linear_in(BasisFunction self, INDEX_t variable)
+    
     cpdef _set_parent(BasisFunction self, BasisFunction parent)
 
     cpdef _add_child(BasisFunction self, BasisFunction child)
@@ -184,6 +188,8 @@ cdef class HingeBasisFunction(HingeBasisFunctionBase):
                             dict knot_dict, dict translation)
 
 cdef class LinearBasisFunction(DataVariableBasisFunction):
+    cpdef bool linear_in(LinearBasisFunction self, INDEX_t variable)
+    
     cpdef _smoothed_version(LinearBasisFunction self, BasisFunction parent,
                             dict knot_dict, dict translation)
 

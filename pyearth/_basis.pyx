@@ -115,7 +115,17 @@ cdef class BasisFunction:
             if child.covered(variable):
                 return child
         return None
-
+    
+    cpdef bool has_linear(BasisFunction self, INDEX_t variable):
+        cdef BasisFunction child  # @DuplicatedSignature
+        for child in self.get_children():
+            if child.linear_in(variable):
+                return True
+        return False
+    
+    cpdef bool linear_in(BasisFunction self, INDEX_t variable):
+        return False
+    
     cpdef _set_parent(BasisFunction self, BasisFunction parent):
         '''Calls _add_child.'''
         self.parent = parent
@@ -849,6 +859,9 @@ cdef class LinearBasisFunction(DataVariableBasisFunction):
         self.variable = variable
         self.label = label if label is not None else 'x' + str(variable)
         self._set_parent(parent)
+    
+    cpdef bool linear_in(LinearBasisFunction self, INDEX_t variable):
+        return variable == self.variable
 
     cpdef _smoothed_version(LinearBasisFunction self, BasisFunction parent,
                             dict knot_dict, dict translation):

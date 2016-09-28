@@ -297,6 +297,7 @@ cdef class ForwardPasser:
             <cnp.ndarray[BOOL_t, ndim = 1] > self.has_missing)
         cdef cnp.ndarray[FLOAT_t, ndim = 1] b
         cdef cnp.ndarray[FLOAT_t, ndim = 1] p
+        cdef bint variable_can_be_linear
         
         if self.use_fast:
             nb_basis = min(self.fast_K, k, len(self.fast_heap))
@@ -337,6 +338,9 @@ cdef class ForwardPasser:
             parent_degree = parent.effective_degree()
             
             for variable in variables:
+                # Determine whether this variable can be linear
+                variable_can_be_linear = self.allow_linear and not parent.has_linear(variable)
+                
                 # Determine whether missingness needs to be accounted for.
                 if self.allow_missing and has_missing[variable]:
                     missing_flag = True
@@ -386,7 +390,7 @@ cdef class ForwardPasser:
 
                 # If a new hinge function does not improve the gcv over the
                 # linear term then just the linear term will be retained
-                # (if allow_linear).  Calculate the gcv with just the linear
+                # (if variable_can_be_linear).  Calculate the gcv with just the linear
                 # term in order to compare later.  Note that the mse with
                 # another term never increases, but the gcv may because it
                 # penalizes additional terms.
@@ -425,8 +429,8 @@ cdef class ForwardPasser:
                         knot_idx = candidates_idx[knot_idx]
                         
                         # If the hinge function does not decrease the gcv then
-                        # just keep the linear term (if allow_linear is True)
-                        if self.allow_linear:
+                        # just keep the linear term (if variable_can_be_linear is True)
+                        if variable_can_be_linear:
                             if missing_flag and not covered:
                                 if gcv_factor_k_plus_4 * mse >= gcv_:
                                     mse = mse_
@@ -436,7 +440,7 @@ cdef class ForwardPasser:
                                     mse = mse_
                                     knot_idx = -1
                     else:
-                        if self.allow_linear:
+                        if variable_can_be_linear:
                             mse = mse_
                             knot_idx = -1
                         else:
