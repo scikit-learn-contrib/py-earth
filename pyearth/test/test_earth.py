@@ -173,7 +173,7 @@ def test_fit():
 #         fl.write(res)
     with open(filename, 'r') as fl:
         prev = fl.read()
-    assert_true(abs(float(res) - float(prev)) < .03)
+    assert_true(abs(float(res) - float(prev)) < .05)
 
 
 def test_smooth():
@@ -186,7 +186,7 @@ def test_smooth():
 #         fl.write(res)
     with open(filename, 'r') as fl:
         prev = fl.read()
-    assert_true(abs(float(res) - float(prev)) < .03)
+    assert_true(abs(float(res) - float(prev)) < .05)
 
 
 def test_linvars():
