@@ -113,8 +113,10 @@ def setup_package():
         'py_modules': ['pyearth.earth', 'pyearth._version'],
         'classifiers': ['Development Status :: 3 - Alpha'],
         'requires': ['numpy', 'scipy'],
-        'install_requires': ['scikit-learn >= 0.16',
-                           'sphinx_gallery'],
+        'install_requires': [
+            'scipy >= 0.16',
+            'scikit-learn >= 0.16',
+            'sphinx_gallery'],
         'setup_requires': ['numpy'],
         'include_package_data': True
     }
