@@ -1051,8 +1051,14 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         gcv0 = gcv(mse0,
                    1, X.shape[0],
                    self.get_penalty())
-        self.rsq_ = 1.0 - (self.mse_ / mse0)
-        self.grsq_ = 1.0 - (self.gcv_ / gcv0)
+        if mse0 != 0.:
+            self.rsq_ = 1.0 - (self.mse_ / mse0)
+        else:
+            self.rsq_ = 1.0
+        if gcv0 != 0.:
+            self.grsq_ = 1.0 - (self.gcv_ / gcv0)
+        else:
+            self.grsq_ = 1.0
 
 #
 #

@@ -186,7 +186,7 @@ cdef class ForwardPasser:
         if self.verbose >= 1:
             print('Beginning forward pass')
             print(self.record.partial_str(slice(-1, None, None), print_footer=False))
-        if self.max_terms > 1:
+        if self.max_terms > 1 and self.record.mse(0) != 0.:
             while True:
                 self.next_pair()
                 if self.stop_check():
@@ -219,7 +219,9 @@ cdef class ForwardPasser:
         if self.record.iterations[last].no_further_candidates():
             self.record.stopping_condition = NOCAND
             return True
-        
+        if self.record.mse(last) == self.zero_tol:
+            self.record.stopping_condition = NOIMPRV
+            return True
         return False
         
     
