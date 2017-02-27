@@ -94,7 +94,7 @@ def export_sympy_term_expressions(earth_model):
         # This is the error that should be raised when a user attempts to use functionality
         # that has not yet been implemented.
         if bf.complement:
-            return Not(Missing(bf_var))
+            return RealNumber(1) - Missing(bf_var)
         else:
             return Missing(bf_var)
 
@@ -163,7 +163,6 @@ def export_sympy_term_expressions(earth_model):
             return term
         else:
             return Mul(term, bf_to_term(parent, missables))
-
     return [bf_to_term(bf, get_missables(bf)) for bf in earth_model.basis_.piter()]
 
 
