@@ -436,7 +436,7 @@ cdef class ConstantBasisFunction(RootBasisFunction):
 
     def func_string_factory(ConstantBasisFunction self, coef):
         if coef is not None:
-            return "lambda x: {:s}".format(str(coef))
+            return "lambda x: {:s}".format(repr(coef))
         else:
             return ''
         
