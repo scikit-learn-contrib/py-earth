@@ -6,3 +6,5 @@ include pyearth/test/pathological_data
 include README.md
 include LICENSE.txt
 include CHANGES.txt
+include versioneer.py
+include pyearth/_version.py

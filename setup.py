@@ -1,9 +1,7 @@
 from setuptools import setup, Extension
 import sys
-import os
 import codecs
-sys.path.insert(0, os.path.join('.', 'pyearth'))
-from _version import __version__
+import versioneer
 
 # Determine whether to use Cython
 if '--cythonize' in sys.argv:
@@ -101,7 +99,7 @@ def setup_package():
     # Create a dictionary of arguments for setup
     setup_args = {
         'name': 'py-earth',
-        'version': __version__,
+        'version': versioneer.get_version(),
         'author': 'Jason Rudy',
         'author_email': 'jcrudy@gmail.com',
         'packages': ['pyearth', 'pyearth.test',
@@ -124,7 +122,9 @@ def setup_package():
     # Add the build_ext command only if cythonizing
     if cythonize_switch:
         from Cython.Distutils import build_ext
-        setup_args['cmdclass'] = {'build_ext': build_ext}
+        setup_args['cmdclass'] = versioneer.get_cmdclass({'build_ext': build_ext})
+    else:
+        setup_args['cmdclass'] = versioneer.get_cmdclass()
     
     def is_special_command():
         special_list = ('--help-commands', 
