@@ -16,11 +16,10 @@ If there are other features or improvements you'd like to see in py-earth, pleas
 1. Improved speed
 2. Exporting models to additional formats
 3. Support for shared memory multiprocessing during fitting
-4. Support for cyclic predictors (such at time of day)
-5. Support for arbitrary weights in multicolumn models (currently the weight matrix must be separable)
-6. Better support for categorical predictors
-7. Better support for large data sets
-8. Iterative reweighting during fitting
+4. Support for cyclic predictors (such as time of day)
+5. Better support for categorical predictors
+6. Better support for large data sets
+7. Iterative reweighting during fitting
 
 ## Installation
 
