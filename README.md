@@ -5,11 +5,11 @@ A Python implementation of Jerome Friedman's Multivariate Adaptive Regression Sp
 in the style of scikit-learn. The py-earth package implements Multivariate Adaptive Regression Splines using Cython and provides an interface that is compatible with scikit-learn's Estimator, Predictor, Transformer, and Model interfaces.  For more information about 
 Multivariate Adaptive Regression Splines, see the references below.
 
-##Now With Missing Data Support!
+## Now With Missing Data Support!
 
 The py-earth package now supports missingness in its predictors.  Just set `allow_missing=True` when constructing an `Earth` object.
 
-##Requesting Feedback
+## Requesting Feedback
 
 If there are other features or improvements you'd like to see in py-earth, please send me an email or open or comment on an issue.  In particular, please let me know if any of the following are important to you:
 
@@ -22,7 +22,7 @@ If there are other features or improvements you'd like to see in py-earth, pleas
 7. Better support for large data sets
 8. Iterative reweighting during fitting
 
-##Installation
+## Installation
 
 Make sure you have numpy and scikit-learn installed.  Then do the following:
 
@@ -32,7 +32,7 @@ cd py-earth
 sudo python setup.py install
 ```
 
-##Usage
+## Usage
 ```python
 import numpy
 from pyearth import Earth
@@ -64,7 +64,7 @@ pyplot.title('Simple Earth Example')
 pyplot.show()
  ```
  
-##Other Implementations
+## Other Implementations
 
 I am aware of the following implementations of Multivariate Adaptive Regression Splines:
 
@@ -79,7 +79,7 @@ I am aware of the following implementations of Multivariate Adaptive Regression 
 The R package earth was most useful to me in understanding the algorithm, particularly because of Stephen Milborrow's 
 thorough and easy to read vignette (http://www.milbo.org/doc/earth-notes.pdf).
  
-##References
+## References
 
 1. Friedman, J. (1991). Multivariate adaptive regression splines. The annals of statistics, 
    19(1), 1–67. http://www.jstor.org/stable/10.2307/2241837
