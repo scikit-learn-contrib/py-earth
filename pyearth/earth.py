@@ -7,7 +7,8 @@ from sklearn.utils.validation import (assert_all_finite, check_is_fitted,
                                       check_X_y)
 import numpy as np
 from scipy import sparse
-
+from ._version import get_versions
+__version__ = get_versions()['version']
 
 class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
@@ -254,6 +255,11 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         array of shape m. If several feature importance types are
         specified, then it is dict where each key is a feature importance type
         name and its corresponding value is an array of shape m.
+    
+    `_version`: string
+        The version of py-earth in which the Earth object was originally 
+        created.  This information may be useful when dealing with 
+        serialized Earth objects.
 
 
     References
@@ -317,6 +323,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         self.enable_pruning = enable_pruning
         self.feature_importance_type = feature_importance_type
         self.verbose = verbose
+        self._version = __version__
 
     def __eq__(self, other):
         if self.__class__ is not other.__class__:

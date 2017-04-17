@@ -18,6 +18,7 @@ from pyearth._types import BOOL
 from pyearth._basis import (Basis, ConstantBasisFunction,
                             HingeBasisFunction, LinearBasisFunction)
 from pyearth import Earth
+import pyearth
 
 numpy.random.seed(0)
 
@@ -304,6 +305,16 @@ def test_pickle_compatibility():
         numpy.all(model.predict(X) == model_copy.predict(X)))
     assert_true(model.basis_[0] is model.basis_[1]._get_root())
     assert_true(model_copy.basis_[0] is model_copy.basis_[1]._get_root())
+
+
+def test_pickle_version_storage():
+    earth = Earth(**default_params)
+    model = earth.fit(X, y)
+    assert_equal(model._version, pyearth.__version__)
+    model._version = 'hello'
+    assert_equal(model._version,'hello')
+    model_copy = pickle.loads(pickle.dumps(model))
+    assert_equal(model_copy._version, model._version)
 
 
 def test_copy_compatibility():
