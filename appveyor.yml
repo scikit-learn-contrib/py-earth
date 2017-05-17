@@ -49,12 +49,6 @@ install:
   - "python setup.py build_ext --inplace --cythonize"
   - "python setup.py bdist_wheel bdist_wininst"
   - ps: "ls"
-  # build the conda package
-  - "conda build conda-recipe"
-  # Move the conda package into the dist directory, to register it
-  # as an "artifact" for Appveyor. cmd.exe does't have good globbing, so
-  # we'll use a simple python script.
-  - "python conda-recipe/move-conda-package.py conda-recipe"
 
   # Install the generated wheel package to test it
   - "pip install --pre --no-index --find-links dist/ py-earth"
