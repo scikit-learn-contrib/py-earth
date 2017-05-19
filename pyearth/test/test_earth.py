@@ -20,8 +20,6 @@ from pyearth._basis import (Basis, ConstantBasisFunction,
 from pyearth import Earth
 import pyearth
 
-numpy.random.seed(0)
-
 basis = Basis(10)
 constant = ConstantBasisFunction()
 basis.append(constant)
@@ -43,6 +41,7 @@ default_params = {"penalty": 1}
 
 @if_sklearn_version_greater_than_or_equal_to('0.17.2')
 def test_check_estimator():
+    numpy.random.seed(0)
     import sklearn.utils.estimator_checks
     sklearn.utils.estimator_checks.MULTI_OUTPUT.append('Earth')
     sklearn.utils.estimator_checks.check_estimator(Earth)
@@ -149,6 +148,7 @@ def test_output_weight():
 
 
 def test_missing_data():
+    numpy.random.seed(0)
     earth = Earth(allow_missing=True, **default_params)
     missing_ = numpy.random.binomial(1, .05, X.shape).astype(bool)
     X_ = X.copy()
@@ -161,8 +161,11 @@ def test_missing_data():
 #         fl.write(res)
     with open(filename, 'r') as fl:
         prev = fl.read()
-    assert_true(abs(float(res) - float(prev)) < .03)
-
+    try:
+        assert_true(abs(float(res) - float(prev)) < .03)
+    except AssertionError:
+        print('Got %f, %f' % (float(res), float(prev)))
+        raise
 
 def test_fit():
     earth = Earth(**default_params)
@@ -318,6 +321,7 @@ def test_pickle_version_storage():
 
 
 def test_copy_compatibility():
+    numpy.random.seed(0)
     model = Earth(**default_params).fit(X, y)
     model_copy = copy.copy(model)
     assert_true(model_copy == model)
