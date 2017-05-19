@@ -463,13 +463,13 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         if sample_weight is None:
             sample_weight = np.ones((y.shape[0], 1), dtype=y.dtype)
         else:
-            sample_weight = np.asarray(sample_weight)
+            sample_weight = np.asarray(sample_weight, dtype=np.float64)
             assert_all_finite(sample_weight)
             if len(sample_weight.shape) == 1:
                 sample_weight = sample_weight[:, np.newaxis]
         # Deal with output_weight
         if output_weight is not None:
-            output_weight = np.asarray(output_weight)
+            output_weight = np.asarray(output_weight, dtype=np.float64)
             assert_all_finite(output_weight)
 
         # Make sure dimensions match
