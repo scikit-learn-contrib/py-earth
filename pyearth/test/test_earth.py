@@ -19,6 +19,7 @@ from pyearth._basis import (Basis, ConstantBasisFunction,
                             HingeBasisFunction, LinearBasisFunction)
 from pyearth import Earth
 import pyearth
+from numpy.testing.utils import assert_array_almost_equal
 
 basis = Basis(10)
 constant = ConstantBasisFunction()
@@ -325,13 +326,7 @@ def test_copy_compatibility():
     model = Earth(**default_params).fit(X, y)
     model_copy = copy.copy(model)
     assert_true(model_copy == model)
-    try:
-        assert_true(
-                    numpy.all(model.predict(X) == model_copy.predict(X)))
-    except:
-        print(model.coef_)
-        print(model_copy.coef_)
-        
+    assert_array_almost_equal(model.predict(X), model_copy.predict(X))
     assert_true(model.basis_[0] is model.basis_[1]._get_root())
     assert_true(model_copy.basis_[0] is model_copy.basis_[1]._get_root())
 
