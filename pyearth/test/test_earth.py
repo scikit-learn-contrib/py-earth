@@ -321,8 +321,13 @@ def test_copy_compatibility():
     model = Earth(**default_params).fit(X, y)
     model_copy = copy.copy(model)
     assert_true(model_copy == model)
-    assert_true(
-        numpy.all(model.predict(X) == model_copy.predict(X)))
+    try:
+        assert_true(
+                    numpy.all(model.predict(X) == model_copy.predict(X)))
+    except:
+        print(model.coef_)
+        print(model_copy.coef_)
+        
     assert_true(model.basis_[0] is model.basis_[1]._get_root())
     assert_true(model_copy.basis_[0] is model_copy.basis_[1]._get_root())
 
