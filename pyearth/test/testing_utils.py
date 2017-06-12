@@ -25,6 +25,7 @@ def if_platform_not_win_32(func):
             raise SkipTest('Skip for 32 bit Windows platforms.')
         else:
             return func(*args, **kwargs)
+    return run_test
             
 def if_sklearn_version_greater_than_or_equal_to(min_version):
     '''
