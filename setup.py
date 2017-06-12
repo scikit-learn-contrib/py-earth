@@ -105,12 +105,13 @@ def setup_package():
         'packages': ['pyearth', 'pyearth.test',
                    'pyearth.test.basis', 'pyearth.test.record'],
         'license': 'LICENSE.txt',
+        'download_url': 'https://github.com/scikit-learn-contrib/py-earth/archive/0.1.tar.gz',
         'description':
         'A Python implementation of Jerome Friedman\'s MARS algorithm.',
         'long_description': codecs.open('README.md', mode='r', encoding='utf-8').read(),
         'py_modules': ['pyearth.earth', 'pyearth._version'],
         'classifiers': ['Development Status :: 3 - Alpha'],
-        'requires': ['numpy', 'scipy'],
+        'requires': ['numpy', 'scipy', 'scikit-learn'],
         'install_requires': [
             'scipy >= 0.16',
             'scikit-learn >= 0.16',
