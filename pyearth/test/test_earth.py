@@ -9,7 +9,8 @@ import os
 from .testing_utils import (if_statsmodels, if_pandas, if_patsy,
                             if_environ_has, assert_list_almost_equal_value,
                             assert_list_almost_equal,
-                            if_sklearn_version_greater_than_or_equal_to)
+                            if_sklearn_version_greater_than_or_equal_to,
+                            if_platform_not_win_32)
 from nose.tools import (assert_equal, assert_true, assert_almost_equal,
                         assert_list_equal, assert_raises, assert_not_equal)
 import numpy
@@ -39,7 +40,7 @@ y = numpy.empty(shape=100, dtype=numpy.float64)
 y[:] = numpy.dot(B, beta) + numpy.random.normal(size=100)
 default_params = {"penalty": 1}
 
-
+@if_platform_not_win_32
 @if_sklearn_version_greater_than_or_equal_to('0.17.2')
 def test_check_estimator():
     numpy.random.seed(0)

@@ -3,7 +3,7 @@ from functools import wraps
 from nose import SkipTest
 from nose.tools import assert_almost_equal
 from distutils.version import LooseVersion
-
+import sys
 
 def if_environ_has(var_name):
     # Test decorator that skips test if environment variable is not defined
@@ -18,7 +18,14 @@ def if_environ_has(var_name):
         return run_test
     return if_environ
 
-
+def if_platform_not_win_32(func):
+    @wraps(func)
+    def run_test(*args, **kwargs):
+        if sys.platform == 'win32':
+            raise SkipTest('Skip for 32 bit Windows platforms.')
+        else:
+            return func(*args, **kwargs)
+            
 def if_sklearn_version_greater_than_or_equal_to(min_version):
     '''
     Test decorator that skips test unless sklearn version is greater than or
