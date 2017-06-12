@@ -111,7 +111,7 @@ def setup_package():
         'long_description': codecs.open('README.md', mode='r', encoding='utf-8').read(),
         'py_modules': ['pyearth.earth', 'pyearth._version'],
         'classifiers': ['Development Status :: 3 - Alpha'],
-        'requires': ['numpy', 'scipy', 'scikit-learn'],
+        'requires': ['numpy', 'scipy'],
         'install_requires': [
             'scipy >= 0.16',
             'scikit-learn >= 0.16',
