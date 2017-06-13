@@ -22,6 +22,8 @@ from pyearth import Earth
 import pyearth
 from numpy.testing.utils import assert_array_almost_equal
 
+regenerate_target_files = False
+
 numpy.random.seed(1)
 basis = Basis(10)
 constant = ConstantBasisFunction()
@@ -32,13 +34,13 @@ bf3 = LinearBasisFunction(bf1, 2, 'x2')
 basis.append(bf1)
 basis.append(bf2)
 basis.append(bf3)
-X = numpy.random.normal(size=(100, 10))
+X = numpy.random.normal(size=(1000, 10))
 missing = numpy.zeros_like(X, dtype=BOOL)
-B = numpy.empty(shape=(100, 4), dtype=numpy.float64)
+B = numpy.empty(shape=(1000, 4), dtype=numpy.float64)
 basis.transform(X, missing, B)
 beta = numpy.random.normal(size=4)
-y = numpy.empty(shape=100, dtype=numpy.float64)
-y[:] = numpy.dot(B, beta) + numpy.random.normal(size=100)
+y = numpy.empty(shape=1000, dtype=numpy.float64)
+y[:] = numpy.dot(B, beta) + numpy.random.normal(size=1000)
 default_params = {"penalty": 1}
 
 @if_platform_not_win_32
@@ -160,8 +162,9 @@ def test_missing_data():
     res = str(earth.score(X_, y))
     filename = os.path.join(os.path.dirname(__file__),
                             'earth_regress_missing_data.txt')
-#     with open(filename, 'w') as fl:
-#         fl.write(res)
+    if regenerate_target_files:
+        with open(filename, 'w') as fl:
+            fl.write(res)
     with open(filename, 'r') as fl:
         prev = fl.read()
     try:
@@ -177,8 +180,9 @@ def test_fit():
     res = str(earth.rsq_)
     filename = os.path.join(os.path.dirname(__file__),
                             'earth_regress.txt')
-#     with open(filename, 'w') as fl:
-#         fl.write(res)
+    if regenerate_target_files:
+        with open(filename, 'w') as fl:
+            fl.write(res)
     with open(filename, 'r') as fl:
         prev = fl.read()
     assert_true(abs(float(res) - float(prev)) < .05)
@@ -191,8 +195,9 @@ def test_smooth():
     res = str(model.rsq_)
     filename = os.path.join(os.path.dirname(__file__),
                             'earth_regress_smooth.txt')
-#     with open(filename, 'w') as fl:
-#         fl.write(res)
+    if regenerate_target_files:
+        with open(filename, 'w') as fl:
+            fl.write(res)
     with open(filename, 'r') as fl:
         prev = fl.read()
     assert_true(abs(float(res) - float(prev)) < .05)
@@ -204,8 +209,9 @@ def test_linvars():
     res = str(earth.trace()) + '\n' + earth.summary()
     filename = os.path.join(os.path.dirname(__file__),
                             'earth_linvars_regress.txt')
-#     with open(filename, 'w') as fl:
-#         fl.write(res)
+    if regenerate_target_files:
+        with open(filename, 'w') as fl:
+            fl.write(res)
     with open(filename, 'r') as fl:
         prev = fl.read()
 
