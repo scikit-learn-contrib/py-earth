@@ -22,6 +22,7 @@ from pyearth import Earth
 import pyearth
 from numpy.testing.utils import assert_array_almost_equal
 
+numpy.random.seed(1)
 basis = Basis(10)
 constant = ConstantBasisFunction()
 basis.append(constant)
@@ -170,6 +171,7 @@ def test_missing_data():
         raise
 
 def test_fit():
+    numpy.random.seed(0)
     earth = Earth(**default_params)
     earth.fit(X, y)
     res = str(earth.rsq_)
@@ -183,6 +185,7 @@ def test_fit():
 
 
 def test_smooth():
+    numpy.random.seed(0)
     model = Earth(penalty=1, smooth=True)
     model.fit(X, y)
     res = str(model.rsq_)
