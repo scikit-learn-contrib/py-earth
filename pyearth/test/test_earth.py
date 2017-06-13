@@ -206,7 +206,7 @@ def test_smooth():
 def test_linvars():
     earth = Earth(**default_params)
     earth.fit(X, y, linvars=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-    res = str(earth.trace()) + '\n' + earth.summary()
+    res = str(earth.rsq_)
     filename = os.path.join(os.path.dirname(__file__),
                             'earth_linvars_regress.txt')
     if regenerate_target_files:
