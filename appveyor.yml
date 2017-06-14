@@ -46,8 +46,9 @@ install:
   # Install the build and runtime dependencies of the project.
   - "conda install --quiet --yes six numpy pandas sympy scipy cython nose scikit-learn wheel conda-build"
   - "pip install sphinx-gallery"
-  - "python setup.py build_ext --inplace --cythonize"
   - "python setup.py bdist_wheel bdist_wininst"
+  - "python setup.py build_ext --inplace --cythonize"
+  
   - ps: "ls"
 
   # Install the generated wheel package to test it
