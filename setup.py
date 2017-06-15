@@ -1,4 +1,4 @@
-from setuptools import setup, Extension
+from setuptools import setup, Extension, find_packages
 import sys
 import codecs
 import versioneer
@@ -102,19 +102,38 @@ def setup_package():
         'version': versioneer.get_version(),
         'author': 'Jason Rudy',
         'author_email': 'jcrudy@gmail.com',
-        'packages': ['pyearth', 'pyearth.test',
-                   'pyearth.test.basis', 'pyearth.test.record'],
+        'packages': find_packages(),
         'license': 'LICENSE.txt',
+        'download_url': 'https://github.com/scikit-learn-contrib/py-earth/archive/0.1.tar.gz',
         'description':
         'A Python implementation of Jerome Friedman\'s MARS algorithm.',
         'long_description': codecs.open('README.md', mode='r', encoding='utf-8').read(),
-        'py_modules': ['pyearth.earth', 'pyearth._version'],
-        'classifiers': ['Development Status :: 3 - Alpha'],
-        'requires': ['numpy', 'scipy'],
+        'classifiers': ['Intended Audience :: Developers',
+                        'Intended Audience :: Science/Research',
+                        'License :: OSI Approved :: BSD License',
+                        'Development Status :: 3 - Alpha',
+                        'Operating System :: MacOS',
+                        'Operating System :: Microsoft :: Windows',
+                        'Operating System :: POSIX',
+                        'Operating System :: Unix',
+                        'Programming Language :: Cython',
+                        'Programming Language :: Python',
+                        'Programming Language :: Python :: 2',
+                        'Programming Language :: Python :: 2.6',
+                        'Programming Language :: Python :: 2.7',
+                        'Programming Language :: Python :: 3',
+                        'Programming Language :: Python :: 3.4',
+                        'Programming Language :: Python :: 3.5',
+                        'Topic :: Scientific/Engineering',
+                        'Topic :: Software Development'],
         'install_requires': [
             'scipy >= 0.16',
-            'scikit-learn >= 0.16',
-            'sphinx_gallery'],
+            'scikit-learn >= 0.16'
+            ],
+        'extras_require': {'docs': ['sphinx_gallery'],
+                           'dev': ['cython'],
+                           'export': ['sympy'],
+                           'all_tests': ['pandas', 'statsmodels', 'patsy', 'sympy']},
         'setup_requires': ['numpy'],
         'include_package_data': True
     }

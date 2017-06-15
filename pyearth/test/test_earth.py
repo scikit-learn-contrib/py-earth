@@ -9,7 +9,8 @@ import os
 from .testing_utils import (if_statsmodels, if_pandas, if_patsy,
                             if_environ_has, assert_list_almost_equal_value,
                             assert_list_almost_equal,
-                            if_sklearn_version_greater_than_or_equal_to)
+                            if_sklearn_version_greater_than_or_equal_to,
+                            if_platform_not_win_32)
 from nose.tools import (assert_equal, assert_true, assert_almost_equal,
                         assert_list_equal, assert_raises, assert_not_equal)
 import numpy
@@ -19,9 +20,11 @@ from pyearth._basis import (Basis, ConstantBasisFunction,
                             HingeBasisFunction, LinearBasisFunction)
 from pyearth import Earth
 import pyearth
+from numpy.testing.utils import assert_array_almost_equal
 
-numpy.random.seed(0)
+regenerate_target_files = False
 
+numpy.random.seed(1)
 basis = Basis(10)
 constant = ConstantBasisFunction()
 basis.append(constant)
@@ -31,18 +34,19 @@ bf3 = LinearBasisFunction(bf1, 2, 'x2')
 basis.append(bf1)
 basis.append(bf2)
 basis.append(bf3)
-X = numpy.random.normal(size=(100, 10))
+X = numpy.random.normal(size=(1000, 10))
 missing = numpy.zeros_like(X, dtype=BOOL)
-B = numpy.empty(shape=(100, 4), dtype=numpy.float64)
+B = numpy.empty(shape=(1000, 4), dtype=numpy.float64)
 basis.transform(X, missing, B)
 beta = numpy.random.normal(size=4)
-y = numpy.empty(shape=100, dtype=numpy.float64)
-y[:] = numpy.dot(B, beta) + numpy.random.normal(size=100)
+y = numpy.empty(shape=1000, dtype=numpy.float64)
+y[:] = numpy.dot(B, beta) + numpy.random.normal(size=1000)
 default_params = {"penalty": 1}
 
-
+@if_platform_not_win_32
 @if_sklearn_version_greater_than_or_equal_to('0.17.2')
 def test_check_estimator():
+    numpy.random.seed(0)
     import sklearn.utils.estimator_checks
     sklearn.utils.estimator_checks.MULTI_OUTPUT.append('Earth')
     sklearn.utils.estimator_checks.check_estimator(Earth)
@@ -149,6 +153,7 @@ def test_output_weight():
 
 
 def test_missing_data():
+    numpy.random.seed(0)
     earth = Earth(allow_missing=True, **default_params)
     missing_ = numpy.random.binomial(1, .05, X.shape).astype(bool)
     X_ = X.copy()
@@ -157,34 +162,42 @@ def test_missing_data():
     res = str(earth.score(X_, y))
     filename = os.path.join(os.path.dirname(__file__),
                             'earth_regress_missing_data.txt')
-#     with open(filename, 'w') as fl:
-#         fl.write(res)
+    if regenerate_target_files:
+        with open(filename, 'w') as fl:
+            fl.write(res)
     with open(filename, 'r') as fl:
         prev = fl.read()
-    assert_true(abs(float(res) - float(prev)) < .03)
-
+    try:
+        assert_true(abs(float(res) - float(prev)) < .03)
+    except AssertionError:
+        print('Got %f, %f' % (float(res), float(prev)))
+        raise
 
 def test_fit():
+    numpy.random.seed(0)
     earth = Earth(**default_params)
     earth.fit(X, y)
     res = str(earth.rsq_)
     filename = os.path.join(os.path.dirname(__file__),
                             'earth_regress.txt')
-#     with open(filename, 'w') as fl:
-#         fl.write(res)
+    if regenerate_target_files:
+        with open(filename, 'w') as fl:
+            fl.write(res)
     with open(filename, 'r') as fl:
         prev = fl.read()
     assert_true(abs(float(res) - float(prev)) < .05)
 
 
 def test_smooth():
+    numpy.random.seed(0)
     model = Earth(penalty=1, smooth=True)
     model.fit(X, y)
     res = str(model.rsq_)
     filename = os.path.join(os.path.dirname(__file__),
                             'earth_regress_smooth.txt')
-#     with open(filename, 'w') as fl:
-#         fl.write(res)
+    if regenerate_target_files:
+        with open(filename, 'w') as fl:
+            fl.write(res)
     with open(filename, 'r') as fl:
         prev = fl.read()
     assert_true(abs(float(res) - float(prev)) < .05)
@@ -193,11 +206,12 @@ def test_smooth():
 def test_linvars():
     earth = Earth(**default_params)
     earth.fit(X, y, linvars=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-    res = str(earth.trace()) + '\n' + earth.summary()
+    res = str(earth.rsq_)
     filename = os.path.join(os.path.dirname(__file__),
                             'earth_linvars_regress.txt')
-#     with open(filename, 'w') as fl:
-#         fl.write(res)
+    if regenerate_target_files:
+        with open(filename, 'w') as fl:
+            fl.write(res)
     with open(filename, 'r') as fl:
         prev = fl.read()
 
@@ -301,8 +315,7 @@ def test_pickle_compatibility():
     model = earth.fit(X, y)
     model_copy = pickle.loads(pickle.dumps(model))
     assert_true(model_copy == model)
-    assert_true(
-        numpy.all(model.predict(X) == model_copy.predict(X)))
+    assert_array_almost_equal(model.predict(X), model_copy.predict(X))
     assert_true(model.basis_[0] is model.basis_[1]._get_root())
     assert_true(model_copy.basis_[0] is model_copy.basis_[1]._get_root())
 
@@ -318,11 +331,11 @@ def test_pickle_version_storage():
 
 
 def test_copy_compatibility():
+    numpy.random.seed(0)
     model = Earth(**default_params).fit(X, y)
     model_copy = copy.copy(model)
     assert_true(model_copy == model)
-    assert_true(
-        numpy.all(model.predict(X) == model_copy.predict(X)))
+    assert_array_almost_equal(model.predict(X), model_copy.predict(X))
     assert_true(model.basis_[0] is model.basis_[1]._get_root())
     assert_true(model_copy.basis_[0] is model_copy.basis_[1]._get_root())
 

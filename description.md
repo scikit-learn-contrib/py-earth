@@ -1,0 +1,1 @@
+The py-earth package implements Multivariate Adaptive Regression Splines and provides an interface that is compatible with scikit-learn's Estimator, Predictor, Transformer, and Model interfaces.
