@@ -421,7 +421,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         # Ensure correct number of columns
         if hasattr(self, 'basis_') and self.basis_ is not None:
             if X.shape[1] != self.basis_.num_variables:
-                raise ValueError('Wrong number of columns in X')
+                raise ValueError('Wrong number of columns in X. Reshape your data.')
         
         # Zero-out any missing spots in X
         if np.any(missing):
