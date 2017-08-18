@@ -400,16 +400,14 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
                             'is required. Use X.toarray() to convert to '
                             'dense.')
         X = np.asarray(X, dtype=np.float64, order='F')
+        
         # Figure out missingness
+        missing_is_nan = False
         if missing is None:
             # Infer missingness
             missing = np.isnan(X)
-
-        # Convert to internally used data type
-        missing = np.asarray(missing, dtype=BOOL, order='F')
-        assert_all_finite(missing)
-        if missing.ndim == 1:
-            missing = missing[:, np.newaxis]
+            missing_is_nan = True
+            
         if not self.allow_missing:
             try:
                 assert_all_finite(X)
@@ -424,7 +422,21 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         if hasattr(self, 'basis_') and self.basis_ is not None:
             if X.shape[1] != self.basis_.num_variables:
                 raise ValueError('Wrong number of columns in X')
-
+        
+        # Zero-out any missing spots in X
+        if np.any(missing):
+            if not self.allow_missing:
+                raise ValueError('Missing data requires allow_missing=True.')
+            if missing_is_nan or np.any(np.isnan(X)):
+                X = X.copy()
+                X[missing] = 0.
+        
+        # Convert to internally used data type
+        missing = np.asarray(missing, dtype=BOOL, order='F')
+        assert_all_finite(missing)
+        if missing.ndim == 1:
+            missing = missing[:, np.newaxis]
+        
         return X, missing
 
     def _scrub(self, X, y, sample_weight, output_weight, missing, **kwargs):
