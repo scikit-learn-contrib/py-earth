@@ -507,7 +507,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         assert_all_finite(output_weight)
 
         # Make sure everything is consistent
-        check_X_y(X, y, accept_sparse=None, multi_output=True,
+        check_X_y(X, y, accept_sparse=False, multi_output=True,
                   force_all_finite=False)
 
         return X, y, sample_weight, None, missing
