@@ -149,7 +149,7 @@ cdef class ForwardPasser:
             self.total_weight += self.outcome.outcomes[i].weight.total_weight
         self.predictors = []
         for i in range(n_predictors):
-            x = self.X[:, i]
+            x = self.X[:, i].copy()
             x[missing[:,i]==1] = 0.
             predictor = PredictorDependentData.alloc(x)
             self.predictors.append(predictor)
