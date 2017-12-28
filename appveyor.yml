@@ -8,6 +8,16 @@ environment:
     CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\build_tools\\appveyor\\run_with_env.cmd"
 
   matrix:
+    - PYTHON: "C:\\Python26"
+      PYTHON_VERSION: "2.6.9"
+      PYTHON_ARCH: "32"
+      MINICONDA: "C:\\Miniconda"
+
+    - PYTHON: "C:\\Python26-x64"
+      PYTHON_VERSION: "2.6.9"
+      PYTHON_ARCH: "64"
+      MINICONDA: "C:\\Miniconda-x64"
+      
     - PYTHON: "C:\\Python27"
       PYTHON_VERSION: "2.7.8"
       PYTHON_ARCH: "32"
@@ -27,6 +37,17 @@ environment:
       PYTHON_VERSION: "3.5.0"
       PYTHON_ARCH: "64"
       MINICONDA: "C:\\Miniconda35-x64"
+    
+    - PYTHON: "C:\\Python36"
+      PYTHON_VERSION: "3.6.3"
+      PYTHON_ARCH: "32"
+      MINICONDA: "C:\\Miniconda36"
+
+    - PYTHON: "C:\\Python36-x64"
+      PYTHON_VERSION: "3.6.3"
+      PYTHON_ARCH: "64"
+      MINICONDA: "C:\\Miniconda36-x64"
+    
 
 
 
@@ -52,7 +73,7 @@ install:
   - ps: "ls"
 
   # Install the generated wheel package to test it
-  - "pip install --pre --no-index --find-links dist/ py-earth"
+  - "pip install --pre --no-index --find-links dist/ sklearn-contrib-py-earth"
 
 # Not a .NET project, we build scikit-learn in the install step instead
 build: false
