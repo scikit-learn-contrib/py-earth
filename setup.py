@@ -98,7 +98,7 @@ def get_ext_modules():
 def setup_package():
     # Create a dictionary of arguments for setup
     setup_args = {
-        'name': 'py-earth',
+        'name': 'sklearn-contrib-py-earth',
         'version': versioneer.get_version(),
         'author': 'Jason Rudy',
         'author_email': 'jcrudy@gmail.com',
@@ -106,7 +106,7 @@ def setup_package():
         'license': 'LICENSE.txt',
         'download_url': 'https://github.com/scikit-learn-contrib/py-earth/archive/0.1.tar.gz',
         'description':
-        'A Python implementation of Jerome Friedman\'s MARS algorithm.',
+        'A Python implementation of Jerome Friedman\'s Multivariate Adaptive Regression Splines.',
         'long_description': codecs.open('README.md', mode='r', encoding='utf-8').read(),
         'classifiers': ['Intended Audience :: Developers',
                         'Intended Audience :: Science/Research',
@@ -124,6 +124,7 @@ def setup_package():
                         'Programming Language :: Python :: 3',
                         'Programming Language :: Python :: 3.4',
                         'Programming Language :: Python :: 3.5',
+                        'Programming Language :: Python :: 3.6',
                         'Topic :: Scientific/Engineering',
                         'Topic :: Software Development'],
         'install_requires': [
