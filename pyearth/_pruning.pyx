@@ -151,7 +151,10 @@ cdef class PruningPasser:
                                     weighted_y) ** 2) #/ np.sum(sample_weight)
                     mse += mse_# * output_weight[p]
                 gcv_ = gcv(mse / np.sum(sample_weight), pruned_basis_size, self.m, self.penalty)
-
+                
+                if self.verbose >= 2:
+                    print(str(bf), gcv_)
+                    
                 if gcv_ <= best_iteration_gcv or first:
                     best_iteration_gcv = gcv_
                     best_iteration_mse = mse
