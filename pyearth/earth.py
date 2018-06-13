@@ -1314,7 +1314,9 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         X, y, sample_weight, output_weight, missing = self._scrub(
             X, y, None, None, missing)
         y_hat = self.predict(X, missing=missing)
-        residual = 1 - (y - y_hat) ** 2 / y**2
+        if y_hat.ndim == 1:
+            y_hat = y_hat.reshape(-1, 1)
+        residual = 1 - (y - y_hat) ** 2 / np.var(y)
         return residual
 
     def transform(self, X, missing=None):
