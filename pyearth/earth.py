@@ -1316,8 +1316,13 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         y_hat = self.predict(X, missing=missing)
         if y_hat.ndim == 1:
             y_hat = y_hat.reshape(-1, 1)
-        residual = 1 - (y - y_hat) ** 2 / np.var(y)
-        return residual
+        squared_errors = (y - y_hat) ** 2
+        variances = np.var(y, axis=0).reshape(1, -1)
+        nze = variances != 0 # non-zero variance
+        nze = nze.ravel()
+        output = np.ones(squared_errors.shape)
+        output[:, nze] = 1 - squared_errors[:, nze] / variances[:, nze]
+        return output
 
     def transform(self, X, missing=None):
         '''
