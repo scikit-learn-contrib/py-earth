@@ -1285,25 +1285,25 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
 #     def score_samples(self, X, y, missing=None):
 #         '''
-#  
+# 
 #         Calculate sample-wise fit scores.
-#  
+# 
 #         Parameters
 #         ----------
-#  
+# 
 #         X : array-like, shape = [m, n] where m is the number of samples
 #             and n is the number of features The training predictors.
 #             The X parameter can be a numpy array, a pandas DataFrame, a patsy
 #             DesignMatrix, or a tuple of patsy DesignMatrix objects as output
 #             by patsy.dmatrices.
-#  
+# 
 #         y : array-like, optional (default=None), shape = [m, p] where m is the
 #             number of samples, p the number of outputs.
 #             The y parameter can be a numpy array, a pandas DataFrame,
 #             a Patsy DesignMatrix, or can be left as None (default) if X was
 #             the output of a call to patsy.dmatrices (in which case, X contains
 #             the response).
-#  
+# 
 #         missing : array-like, shape = [m, n] where m is the number of samples
 #             and n is the number of features.
 #             The missing parameter can be a numpy array, a pandas DataFrame, or
@@ -1312,22 +1312,29 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 #             interpreted as missing.  If the missing argument not used but the X
 #             argument is a pandas DataFrame, missing will be inferred from X if
 #             allow_missing is True.
-#  
+# 
 #         Returns
 #         -------
-#  
+# 
 #         scores : array of shape=[m, p] of floats with maximum value of 1
 #                  (it can be negative).
 #                  The scores represent how good each output of each example is
 #                  predicted, a perfect score would be 1
 #                  (the score can be negative).
-#  
+# 
 #         '''
 #         X, y, sample_weight, output_weight, missing = self._scrub(
 #             X, y, None, None, missing)
 #         y_hat = self.predict(X, missing=missing)
-#         residual = 1 - (y - y_hat) ** 2 / y**2
-#         return residual
+#         if y_hat.ndim == 1:
+#             y_hat = y_hat.reshape(-1, 1)
+#         squared_errors = (y - y_hat) ** 2
+#         variances = np.var(y, axis=0).reshape(1, -1)
+#         nze = variances != 0 # non-zero variance
+#         nze = nze.ravel()
+#         output = np.ones(squared_errors.shape)
+#         output[:, nze] = 1 - squared_errors[:, nze] / variances[:, nze]
+#         return output
 
     def transform(self, X, missing=None):
         '''
