@@ -1064,7 +1064,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             mse0 += np.sum((weighted_y[:, i] -
                             np.average(weighted_y[:, i])) ** 2)
 
-            coef, resid = np.linalg.lstsq(B, weighted_y[:, i])[0:2]
+            coef, resid = np.linalg.lstsq(B, weighted_y[:, i], rcond=None)[0:2]
             self.coef_.append(coef)
             if not resid:
                 resid = np.array(

@@ -79,12 +79,12 @@ def test_updating_qr_with_linear_dependence():
         np.dot(Q_nonzero.T, Q_nonzero), np.eye(n - 1))
 
     # Q_t.T is in the column space of X
-    b = np.linalg.lstsq(X, u.Q_t.T)[0]
+    b = np.linalg.lstsq(X, u.Q_t.T, rcond=None)[0]
     Q_hat = np.dot(X, b)
     np.testing.assert_array_almost_equal(Q_hat, u.Q_t.T)
 
     # X is in the column space of Q_t.T
-    a = np.linalg.lstsq(u.Q_t.T, X)[0]
+    a = np.linalg.lstsq(u.Q_t.T, X, rcond=None)[0]
     X_hat = np.dot(u.Q_t.T, a)
     np.testing.assert_array_almost_equal(X_hat, X)
 

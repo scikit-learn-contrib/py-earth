@@ -249,7 +249,7 @@ def test_pathological_cases():
                           'endspan': 1,
                           'check_every': 1,
                           'sample_weight': 'issue_50_weight.csv'}}
-    for case, settings in cases.iteritems():
+    for case, settings in cases.items():
         data = pandas.read_csv(os.path.join(directory, case + '.csv'))
         y = data['y']
         del data['y']
@@ -262,9 +262,13 @@ def test_pathological_cases():
             sample_weight = None
         model = Earth(**settings)
         model.fit(X, y, sample_weight=sample_weight)
-        with open(os.path.join(directory, case + '.txt'), 'r') as infile:
-            correct = infile.read()
-        assert_equal(model.summary(), correct)
+        score = model.score(X, y, sample_weight=sample_weight)
+        path = os.path.join(directory, case + '.txt')
+#         with open(path, 'w') as outfile:
+#             outfile.write(str(score))
+        with open(path, 'r') as infile:
+            correct = float(infile.read())
+        assert_almost_equal(score, correct)
 
 
 @if_pandas

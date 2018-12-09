@@ -85,7 +85,7 @@ def test_export_sympy():
                        'logical_not':numpy.logical_not, "greater": numpy.greater, 'maximum':numpy.maximum,
                        'Missing': lambda x: numpy.isnan(x).astype(float),
                        'NaNProtect': lambda x: numpy.where(numpy.isnan(x), 0, x), 'nan': numpy.nan,
-                       'float': float, 'where': numpy.where
+                       'float': float, 'where': numpy.where, 'numpy': numpy
                        }
 
         for i, expression in enumerate(expressions):
