@@ -82,7 +82,7 @@ cdef class MultipleOutcomeDependentData:
         self.weights = weights
         
     @classmethod
-    def alloc(cls, FLOAT_t[:,:] y, w, INDEX_t m, INDEX_t n_outcomes, INDEX_t max_terms, FLOAT_t zero_tol):
+    def alloc(cls, const FLOAT_t[:,:] y, w, INDEX_t m, INDEX_t n_outcomes, INDEX_t max_terms, FLOAT_t zero_tol):
         cdef list weights
         cdef list outcomes
         cdef int i, n_weights

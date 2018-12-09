@@ -2963,11 +2963,17 @@ static CYTHON_INLINE int __pyx_memview_set_nn___pyx_t_7pyearth_6_types_INDEX_t(c
 /* ObjectToMemviewSlice.proto */
 static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_ds_nn___pyx_t_7pyearth_6_types_INDEX_t(PyObject *, int writable_flag);
 
+/* ObjectToMemviewSlice.proto */
+static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dsds_nn___pyx_t_7pyearth_6_types_FLOAT_t__const__(PyObject *, int writable_flag);
+
 /* CIntToPy.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
 
 /* CIntToPy.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
+
+/* MemviewDtypeToObject.proto */
+static CYTHON_INLINE PyObject *__pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t__const__(const char *itemp);
 
 /* Print.proto */
 static int __Pyx_Print(PyObject*, PyObject *, int);
@@ -3320,6 +3326,7 @@ static void __pyx_memoryview__slice_assign_scalar(char *, Py_ssize_t *, Py_ssize
 static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *, PyObject *); /*proto*/
 static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t = { "FLOAT_t", NULL, sizeof(__pyx_t_7pyearth_6_types_FLOAT_t), { 0 }, 0, 'R', 0, 0 };
 static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_INDEX_t = { "INDEX_t", NULL, sizeof(__pyx_t_7pyearth_6_types_INDEX_t), { 0 }, 0, IS_UNSIGNED(__pyx_t_7pyearth_6_types_INDEX_t) ? 'U' : 'I', IS_UNSIGNED(__pyx_t_7pyearth_6_types_INDEX_t), 0 };
+static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t__const__ = { "const FLOAT_t", NULL, sizeof(__pyx_t_7pyearth_6_types_FLOAT_t const ), { 0 }, 0, 'R', 0, 0 };
 #define __Pyx_MODULE_NAME "pyearth._knot_search"
 extern int __pyx_module_is_main_pyearth___knot_search;
 int __pyx_module_is_main_pyearth___knot_search = 0;
@@ -5990,7 +5997,7 @@ static int __pyx_pf_7pyearth_12_knot_search_28MultipleOutcomeDependentData___ini
  *         self.weights = weights
  * 
  *     @classmethod             # <<<<<<<<<<<<<<
- *     def alloc(cls, FLOAT_t[:,:] y, w, INDEX_t m, INDEX_t n_outcomes, INDEX_t max_terms, FLOAT_t zero_tol):
+ *     def alloc(cls, const FLOAT_t[:,:] y, w, INDEX_t m, INDEX_t n_outcomes, INDEX_t max_terms, FLOAT_t zero_tol):
  *         cdef list weights
  */
 
@@ -6077,7 +6084,7 @@ static PyObject *__pyx_pw_7pyearth_12_knot_search_28MultipleOutcomeDependentData
       values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
       values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
     }
-    __pyx_v_y = __Pyx_PyObject_to_MemoryviewSlice_dsds_nn___pyx_t_7pyearth_6_types_FLOAT_t(values[0], PyBUF_WRITABLE); if (unlikely(!__pyx_v_y.memview)) __PYX_ERR(0, 85, __pyx_L3_error)
+    __pyx_v_y = __Pyx_PyObject_to_MemoryviewSlice_dsds_nn___pyx_t_7pyearth_6_types_FLOAT_t__const__(values[0], 0); if (unlikely(!__pyx_v_y.memview)) __PYX_ERR(0, 85, __pyx_L3_error)
     __pyx_v_w = values[1];
     __pyx_v_m = __Pyx_PyInt_As_Py_intptr_t(values[2]); if (unlikely((__pyx_v_m == ((npy_intp)-1)) && PyErr_Occurred())) __PYX_ERR(0, 85, __pyx_L3_error)
     __pyx_v_n_outcomes = __Pyx_PyInt_As_Py_intptr_t(values[3]); if (unlikely((__pyx_v_n_outcomes == ((npy_intp)-1)) && PyErr_Occurred())) __PYX_ERR(0, 85, __pyx_L3_error)
@@ -6614,7 +6621,7 @@ __pyx_t_19.strides[0] = __pyx_v_y.strides[0];
         __pyx_t_19.data += __pyx_tmp_idx * __pyx_tmp_stride;
 }
 
-__pyx_t_13 = __pyx_memoryview_fromslice(__pyx_t_19, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7pyearth_6_types_FLOAT_t, 0);; if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 106, __pyx_L1_error)
+__pyx_t_13 = __pyx_memoryview_fromslice(__pyx_t_19, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t__const__, (int (*)(char *, PyObject *)) NULL, 0);; if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 106, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_13);
     __PYX_XDEC_MEMVIEW(&__pyx_t_19, 1);
     __pyx_t_19.memview = NULL;
@@ -6712,7 +6719,7 @@ __pyx_t_13 = __pyx_memoryview_fromslice(__pyx_t_19, 1, (PyObject *(*)(char *)) _
  *         self.weights = weights
  * 
  *     @classmethod             # <<<<<<<<<<<<<<
- *     def alloc(cls, FLOAT_t[:,:] y, w, INDEX_t m, INDEX_t n_outcomes, INDEX_t max_terms, FLOAT_t zero_tol):
+ *     def alloc(cls, const FLOAT_t[:,:] y, w, INDEX_t m, INDEX_t n_outcomes, INDEX_t max_terms, FLOAT_t zero_tol):
  *         cdef list weights
  */
 
@@ -40549,7 +40556,7 @@ if (!__Pyx_RefNanny) {
  *         self.weights = weights
  * 
  *     @classmethod             # <<<<<<<<<<<<<<
- *     def alloc(cls, FLOAT_t[:,:] y, w, INDEX_t m, INDEX_t n_outcomes, INDEX_t max_terms, FLOAT_t zero_tol):
+ *     def alloc(cls, const FLOAT_t[:,:] y, w, INDEX_t m, INDEX_t n_outcomes, INDEX_t max_terms, FLOAT_t zero_tol):
  *         cdef list weights
  */
   __Pyx_GetNameInClass(__pyx_t_1, (PyObject *)__pyx_ptype_7pyearth_12_knot_search_MultipleOutcomeDependentData, __pyx_n_s_alloc); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 84, __pyx_L1_error)
@@ -44400,6 +44407,29 @@ __pyx_fail:
     return result;
 }
 
+/* ObjectToMemviewSlice */
+  static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dsds_nn___pyx_t_7pyearth_6_types_FLOAT_t__const__(PyObject *obj, int writable_flag) {
+    __Pyx_memviewslice result = { 0, 0, { 0 }, { 0 }, { 0 } };
+    __Pyx_BufFmt_StackElem stack[1];
+    int axes_specs[] = { (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_STRIDED), (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_STRIDED) };
+    int retcode;
+    if (obj == Py_None) {
+        result.memview = (struct __pyx_memoryview_obj *) Py_None;
+        return result;
+    }
+    retcode = __Pyx_ValidateAndInit_memviewslice(axes_specs, 0,
+                                                 PyBUF_RECORDS_RO | writable_flag, 2,
+                                                 &__Pyx_TypeInfo_nn___pyx_t_7pyearth_6_types_FLOAT_t__const__, stack,
+                                                 &result, obj);
+    if (unlikely(retcode == -1))
+        goto __pyx_fail;
+    return result;
+__pyx_fail:
+    result.memview = NULL;
+    result.data = NULL;
+    return result;
+}
+
 /* CIntToPy */
   static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
     const int neg_one = (int) ((int) 0 - (int) 1), const_zero = (int) 0;
@@ -44460,6 +44490,11 @@ __pyx_fail:
         return _PyLong_FromByteArray(bytes, sizeof(long),
                                      little, !is_unsigned);
     }
+}
+
+/* MemviewDtypeToObject */
+  static CYTHON_INLINE PyObject *__pyx_memview_get_nn___pyx_t_7pyearth_6_types_FLOAT_t__const__(const char *itemp) {
+    return (PyObject *) PyFloat_FromDouble(*(__pyx_t_7pyearth_6_types_FLOAT_t const  *) itemp);
 }
 
 /* Print */

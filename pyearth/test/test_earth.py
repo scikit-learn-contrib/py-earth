@@ -6,7 +6,7 @@ Created on Feb 24, 2013
 import pickle
 import copy
 import os
-from .testing_utils import (if_statsmodels, if_pandas, if_patsy,
+from pyearth.test.testing_utils import (if_statsmodels, if_pandas, if_patsy,
                             if_environ_has, assert_list_almost_equal_value,
                             assert_list_almost_equal,
                             if_sklearn_version_greater_than_or_equal_to,
@@ -109,31 +109,21 @@ def test_linear_fit():
 def test_sample_weight():
     group = numpy.random.binomial(1, .5, size=1000) == 1
     sample_weight = 1 / (group * 100 + 1.0)
-    x = numpy.random.uniform(-10, 10, size=1000)
-    y = numpy.abs(x)
-    y[group] = numpy.abs(x[group] - 5)
+    x = numpy.random.uniform(-10, 10, size=(1000,1))
+    y = numpy.abs(x[:, 0])
+    y[group] = numpy.abs(x[group, 0] - 5)
     y += numpy.random.normal(0, 1, size=1000)
-    model = Earth().fit(x[:, numpy.newaxis], y, sample_weight=sample_weight)
+    model = Earth().fit(x, y, sample_weight=sample_weight)
 
     # Check that the model fits better for the more heavily weighted group
-    assert_true(model.score(x[group], y[group]) < model.score(
-        x[numpy.logical_not(group)], y[numpy.logical_not(group)]))
+    assert_true(model.score(x[group, :], y[group]) < model.score(
+        x[numpy.logical_not(group), :], y[numpy.logical_not(group)]))
 
     # Make sure that the score function gives the same answer as the trace
     pruning_trace = model.pruning_trace()
     rsq_trace = pruning_trace.rsq(model.pruning_trace().get_selected())
     assert_almost_equal(model.score(x, y, sample_weight=sample_weight),
                         rsq_trace)
-
-    # Uncomment below to see what this test situation looks like
-#     from matplotlib import pyplot
-#     print model.summary()
-#     print model.score(x,y,sample_weight = sample_weight)
-#     pyplot.figure()
-#     pyplot.plot(x,y,'b.')
-#     pyplot.plot(x,model.predict(x),'r.')
-#     pyplot.show()
-
 
 def test_output_weight():
     x = numpy.random.uniform(-1, 1, size=(1000, 1))
@@ -215,7 +205,7 @@ def test_linvars():
     with open(filename, 'r') as fl:
         prev = fl.read()
 
-    assert_equal(res, prev)
+    assert_almost_equal(float(res), float(prev))
 
 
 def test_linvars_coefs():
@@ -323,11 +313,11 @@ def test_pickle_compatibility():
 def test_pickle_version_storage():
     earth = Earth(**default_params)
     model = earth.fit(X, y)
-    assert_equal(model._version, pyearth.__version__)
-    model._version = 'hello'
-    assert_equal(model._version,'hello')
+    assert_equal(model.fit_version_, pyearth.__version__)
+    model.fit_version_ = 'hello'
+    assert_equal(model.fit_version_,'hello')
     model_copy = pickle.loads(pickle.dumps(model))
-    assert_equal(model_copy._version, model._version)
+    assert_equal(model_copy.fit_version_, model.fit_version_)
 
 
 def test_copy_compatibility():
@@ -540,3 +530,13 @@ def test_feature_importance():
             ValueError,
             Earth(feature_importance_type='rss', enable_pruning=False, **default_params).fit,
             X, y)
+
+if __name__ == '__main__':
+    import sys
+    import nose
+    # This code will run the test in this file.'
+    module_name = sys.modules[__name__].__file__
+     
+    result = nose.run(argv=[sys.argv[0],
+                            module_name,
+                            '-s', '-v'])

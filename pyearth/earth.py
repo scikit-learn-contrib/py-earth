@@ -4,10 +4,15 @@ from ._util import ascii_table, apply_weights_2d, gcv
 from ._types import BOOL
 from sklearn.base import RegressorMixin, BaseEstimator, TransformerMixin
 from sklearn.utils.validation import (assert_all_finite, check_is_fitted,
-                                      check_X_y)
+                                      check_X_y, check_array)
 import numpy as np
 from scipy import sparse
 from ._version import get_versions
+try:
+    from sklearn.utils.estimator_checks import check_complex_data
+except ImportError:
+    check_complex_data = lambda x: x
+
 __version__ = get_versions()['version']
 
 class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
@@ -256,11 +261,11 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         specified, then it is dict where each key is a feature importance type
         name and its corresponding value is an array of shape m.
     
-    `_version`: string
-        The version of py-earth in which the Earth object was originally 
-        created.  This information may be useful when dealing with 
+    `fit_version_`: string
+        The version of py-earth with which the Earth object was originally 
+        fitted.  This information may be useful when dealing with 
         serialized Earth objects.
-
+    
 
     References
     ----------
@@ -293,7 +298,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         'feature_importance_type',
         'verbose'
     ])
-
+    
     def __init__(self, max_terms=None, max_degree=None, allow_missing=False,
                  penalty=None, endspan_alpha=None, endspan=None,
                  minspan_alpha=None, minspan=None,
@@ -323,7 +328,6 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
         self.enable_pruning = enable_pruning
         self.feature_importance_type = feature_importance_type
         self.verbose = verbose
-        self._version = __version__
 
     def __eq__(self, other):
         if self.__class__ is not other.__class__:
@@ -399,6 +403,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             raise TypeError('A sparse matrix was passed, but dense data '
                             'is required. Use X.toarray() to convert to '
                             'dense.')
+        check_array(X, ensure_2d=True, force_all_finite=False)
         X = np.asarray(X, dtype=np.float64, order='F')
         
         # Figure out missingness
@@ -466,14 +471,16 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
         # Convert y to internally used data type
         y = np.asarray(y, dtype=np.float64)
-        assert_all_finite(y)
 
         if len(y.shape) == 1:
             y = y[:, np.newaxis]
 
         # Deal with sample_weight
         if sample_weight is None:
-            sample_weight = np.ones((y.shape[0], 1), dtype=y.dtype)
+            try:
+                sample_weight = np.ones((y.shape[0], 1), dtype=y.dtype)
+            except:
+                raise
         else:
             sample_weight = np.asarray(sample_weight, dtype=np.float64)
             assert_all_finite(sample_weight)
@@ -501,10 +508,11 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
         # Make sure everything is finite (except X, which is allowed to have
         # missing values)
-        assert_all_finite(missing)
-        assert_all_finite(y)
-        assert_all_finite(sample_weight)
-        assert_all_finite(output_weight)
+        check_array(missing)
+        check_array(y, ensure_2d=False)
+        check_array(sample_weight, ensure_2d=False)
+        if output_weight is not None:
+            check_array(output_weight, ensure_2d=False)
 
         # Make sure everything is consistent
         check_X_y(X, y, accept_sparse=False, multi_output=True,
@@ -598,7 +606,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             for k in feature_importance_type:
                 if k not in FEAT_IMP_CRITERIA:
                     msg = ("'{}' is not valid value for feature_importance, "
-                           "allowed critera are : {}".format(k, FEAT_IMP_CRITERIA))
+                           "allowed criteria are : {}".format(k, FEAT_IMP_CRITERIA))
                     raise ValueError(msg)
 
             if len(feature_importance_type) > 0 and self.enable_pruning is False:
@@ -622,6 +630,10 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             self.basis_ = self.basis_.smooth(X)
         self.linear_fit(X, y, sample_weight, output_weight, missing,
                         skip_scrub=True)
+        
+        # Record the version used for fitting
+        self.fit_version_ = __version__
+        
         return self
 
 #     def forward_pass2(self, X, y=None,
@@ -1271,51 +1283,51 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 #         mse0 = np.sum(y_sqr * output_weight) / m
         return 1 - (mse / mse0)
 
-    def score_samples(self, X, y=None, missing=None):
-        '''
-
-        Calculate sample-wise fit scores.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [m, n] where m is the number of samples
-            and n is the number of features The training predictors.
-            The X parameter can be a numpy array, a pandas DataFrame, a patsy
-            DesignMatrix, or a tuple of patsy DesignMatrix objects as output
-            by patsy.dmatrices.
-
-        y : array-like, optional (default=None), shape = [m, p] where m is the
-            number of samples, p the number of outputs.
-            The y parameter can be a numpy array, a pandas DataFrame,
-            a Patsy DesignMatrix, or can be left as None (default) if X was
-            the output of a call to patsy.dmatrices (in which case, X contains
-            the response).
-
-        missing : array-like, shape = [m, n] where m is the number of samples
-            and n is the number of features.
-            The missing parameter can be a numpy array, a pandas DataFrame, or
-            a  patsy DesignMatrix.  All entries will be interpreted as boolean
-            values, with True indicating the corresponding entry in X should be
-            interpreted as missing.  If the missing argument not used but the X
-            argument is a pandas DataFrame, missing will be inferred from X if
-            allow_missing is True.
-
-        Returns
-        -------
-
-        scores : array of shape=[m, p] of floats with maximum value of 1
-                 (it can be negative).
-                 The scores represent how good each output of each example is
-                 predicted, a perfect score would be 1
-                 (the score can be negative).
-
-        '''
-        X, y, sample_weight, output_weight, missing = self._scrub(
-            X, y, None, None, missing)
-        y_hat = self.predict(X, missing=missing)
-        residual = 1 - (y - y_hat) ** 2 / y**2
-        return residual
+#     def score_samples(self, X, y, missing=None):
+#         '''
+#  
+#         Calculate sample-wise fit scores.
+#  
+#         Parameters
+#         ----------
+#  
+#         X : array-like, shape = [m, n] where m is the number of samples
+#             and n is the number of features The training predictors.
+#             The X parameter can be a numpy array, a pandas DataFrame, a patsy
+#             DesignMatrix, or a tuple of patsy DesignMatrix objects as output
+#             by patsy.dmatrices.
+#  
+#         y : array-like, optional (default=None), shape = [m, p] where m is the
+#             number of samples, p the number of outputs.
+#             The y parameter can be a numpy array, a pandas DataFrame,
+#             a Patsy DesignMatrix, or can be left as None (default) if X was
+#             the output of a call to patsy.dmatrices (in which case, X contains
+#             the response).
+#  
+#         missing : array-like, shape = [m, n] where m is the number of samples
+#             and n is the number of features.
+#             The missing parameter can be a numpy array, a pandas DataFrame, or
+#             a  patsy DesignMatrix.  All entries will be interpreted as boolean
+#             values, with True indicating the corresponding entry in X should be
+#             interpreted as missing.  If the missing argument not used but the X
+#             argument is a pandas DataFrame, missing will be inferred from X if
+#             allow_missing is True.
+#  
+#         Returns
+#         -------
+#  
+#         scores : array of shape=[m, p] of floats with maximum value of 1
+#                  (it can be negative).
+#                  The scores represent how good each output of each example is
+#                  predicted, a perfect score would be 1
+#                  (the score can be negative).
+#  
+#         '''
+#         X, y, sample_weight, output_weight, missing = self._scrub(
+#             X, y, None, None, missing)
+#         y_hat = self.predict(X, missing=missing)
+#         residual = 1 - (y - y_hat) ** 2 / y**2
+#         return residual
 
     def transform(self, X, missing=None):
         '''
