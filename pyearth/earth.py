@@ -7,6 +7,7 @@ from sklearn.utils.validation import (assert_all_finite, check_is_fitted,
                                       check_X_y, check_array)
 import numpy as np
 from scipy import sparse
+from scipy.linalg import lstsq
 from ._version import get_versions
 try:
     from sklearn.utils.estimator_checks import check_complex_data
@@ -1064,7 +1065,7 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
             mse0 += np.sum((weighted_y[:, i] -
                             np.average(weighted_y[:, i])) ** 2)
 
-            coef, resid = np.linalg.lstsq(B, weighted_y[:, i], rcond=None)[0:2]
+            coef, resid = lstsq(B, weighted_y[:, i], check_finite=False)[0:2]
             self.coef_.append(coef)
             if not resid:
                 resid = np.array(
