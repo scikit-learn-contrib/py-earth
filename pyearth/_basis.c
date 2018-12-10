@@ -3440,7 +3440,7 @@ static int __pyx_pf_7pyearth_6_basis_13BasisFunction___cinit__(struct __pyx_obj_
  * 
  *     def __hash__(BasisFunction self):             # <<<<<<<<<<<<<<
  *         return id(self) % max_int # avoid "OverflowError Python
- *                                      # int too large to convert to C long"
+ *                                   # int too large to convert to C long"
  */
 
 /* Python wrapper */
@@ -3469,7 +3469,7 @@ static Py_hash_t __pyx_pf_7pyearth_6_basis_13BasisFunction_2__hash__(struct __py
  * 
  *     def __hash__(BasisFunction self):
  *         return id(self) % max_int # avoid "OverflowError Python             # <<<<<<<<<<<<<<
- *                                      # int too large to convert to C long"
+ *                                   # int too large to convert to C long"
  * 
  */
   __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_id, ((PyObject *)__pyx_v_self)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 30, __pyx_L1_error)
@@ -3490,7 +3490,7 @@ static Py_hash_t __pyx_pf_7pyearth_6_basis_13BasisFunction_2__hash__(struct __py
  * 
  *     def __hash__(BasisFunction self):             # <<<<<<<<<<<<<<
  *         return id(self) % max_int # avoid "OverflowError Python
- *                                      # int too large to convert to C long"
+ *                                   # int too large to convert to C long"
  */
 
   /* function exit code */
@@ -3507,7 +3507,7 @@ static Py_hash_t __pyx_pf_7pyearth_6_basis_13BasisFunction_2__hash__(struct __py
 }
 
 /* "pyearth/_basis.pyx":33
- *                                      # int too large to convert to C long"
+ *                                   # int too large to convert to C long"
  * 
  *     cpdef smooth(BasisFunction self, dict knot_dict, dict translation):             # <<<<<<<<<<<<<<
  *         '''
@@ -3784,7 +3784,7 @@ static PyObject *__pyx_f_7pyearth_6_basis_13BasisFunction_smooth(struct __pyx_ob
   }
 
   /* "pyearth/_basis.pyx":33
- *                                      # int too large to convert to C long"
+ *                                   # int too large to convert to C long"
  * 
  *     cpdef smooth(BasisFunction self, dict knot_dict, dict translation):             # <<<<<<<<<<<<<<
  *         '''
@@ -17927,7 +17927,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_14__reduce
  * 
  *     def __str__(MissingnessBasisFunction self):             # <<<<<<<<<<<<<<
  *         if self.complement:
- *             result = 'present(%s)' % self.label
+ *             result = 'present(%s)' % str(self.label)
  */
 
 /* Python wrapper */
@@ -17957,7 +17957,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_16__str__(
  * 
  *     def __str__(MissingnessBasisFunction self):
  *         if self.complement:             # <<<<<<<<<<<<<<
- *             result = 'present(%s)' % self.label
+ *             result = 'present(%s)' % str(self.label)
  *         else:
  */
   __pyx_t_1 = (__pyx_v_self->complement != 0);
@@ -17966,42 +17966,48 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_16__str__(
     /* "pyearth/_basis.pyx":619
  *     def __str__(MissingnessBasisFunction self):
  *         if self.complement:
- *             result = 'present(%s)' % self.label             # <<<<<<<<<<<<<<
+ *             result = 'present(%s)' % str(self.label)             # <<<<<<<<<<<<<<
  *         else:
- *             result = 'missing(%s)' % self.label
+ *             result = 'missing(%s)' % str(self.label)
  */
-    __pyx_t_2 = __Pyx_PyString_FormatSafe(__pyx_kp_s_present_s, __pyx_v_self->__pyx_base.label); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 619, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyString_Type)), __pyx_v_self->__pyx_base.label); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 619, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_v_result = ((PyObject*)__pyx_t_2);
-    __pyx_t_2 = 0;
+    __pyx_t_3 = __Pyx_PyString_FormatSafe(__pyx_kp_s_present_s, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 619, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_v_result = ((PyObject*)__pyx_t_3);
+    __pyx_t_3 = 0;
 
     /* "pyearth/_basis.pyx":618
  * 
  *     def __str__(MissingnessBasisFunction self):
  *         if self.complement:             # <<<<<<<<<<<<<<
- *             result = 'present(%s)' % self.label
+ *             result = 'present(%s)' % str(self.label)
  *         else:
  */
     goto __pyx_L3;
   }
 
   /* "pyearth/_basis.pyx":621
- *             result = 'present(%s)' % self.label
+ *             result = 'present(%s)' % str(self.label)
  *         else:
- *             result = 'missing(%s)' % self.label             # <<<<<<<<<<<<<<
+ *             result = 'missing(%s)' % str(self.label)             # <<<<<<<<<<<<<<
  *         parent = (str(self.parent)
  *                   if not self.parent.__class__ is ConstantBasisFunction
  */
   /*else*/ {
-    __pyx_t_2 = __Pyx_PyString_FormatSafe(__pyx_kp_s_missing_s, __pyx_v_self->__pyx_base.label); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 621, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyString_Type)), __pyx_v_self->__pyx_base.label); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 621, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_2 = __Pyx_PyString_FormatSafe(__pyx_kp_s_missing_s, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 621, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_v_result = ((PyObject*)__pyx_t_2);
     __pyx_t_2 = 0;
   }
   __pyx_L3:;
 
   /* "pyearth/_basis.pyx":623
- *             result = 'missing(%s)' % self.label
+ *             result = 'missing(%s)' % str(self.label)
  *         parent = (str(self.parent)
  *                   if not self.parent.__class__ is ConstantBasisFunction             # <<<<<<<<<<<<<<
  *                   else '')
@@ -18015,7 +18021,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_16__str__(
 
     /* "pyearth/_basis.pyx":622
  *         else:
- *             result = 'missing(%s)' % self.label
+ *             result = 'missing(%s)' % str(self.label)
  *         parent = (str(self.parent)             # <<<<<<<<<<<<<<
  *                   if not self.parent.__class__ is ConstantBasisFunction
  *                   else '')
@@ -18090,7 +18096,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_24MissingnessBasisFunction_16__str__(
  * 
  *     def __str__(MissingnessBasisFunction self):             # <<<<<<<<<<<<<<
  *         if self.complement:
- *             result = 'present(%s)' % self.label
+ *             result = 'present(%s)' % str(self.label)
  */
 
   /* function exit code */
@@ -20172,6 +20178,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_14__str_
   PyObject *__pyx_t_4 = NULL;
   PyObject *__pyx_t_5 = NULL;
   PyObject *__pyx_t_6 = NULL;
+  PyObject *__pyx_t_7 = NULL;
   __Pyx_RefNannySetupContext("__str__", 0);
 
   /* "pyearth/_basis.pyx":712
@@ -20189,7 +20196,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_14__str_
  *         result = ''
  *         if self.variable is not None:             # <<<<<<<<<<<<<<
  *             if not self.reverse:
- *                 result = 'C(%s|s=+1,%G,%G,%G)' % (self.label, self.knot_minus,
+ *                 result = 'C(%s|s=+1,%G,%G,%G)' % (str(self.label), self.knot_minus,
  */
   __pyx_t_1 = __Pyx_PyInt_From_Py_intptr_t(__pyx_v_self->__pyx_base.__pyx_base.__pyx_base.variable); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 713, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -20202,7 +20209,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_14__str_
  *         result = ''
  *         if self.variable is not None:
  *             if not self.reverse:             # <<<<<<<<<<<<<<
- *                 result = 'C(%s|s=+1,%G,%G,%G)' % (self.label, self.knot_minus,
+ *                 result = 'C(%s|s=+1,%G,%G,%G)' % (str(self.label), self.knot_minus,
  *                                                   self.knot, self.knot_plus)
  */
     __pyx_t_3 = ((!(__pyx_v_self->__pyx_base.reverse != 0)) != 0);
@@ -20211,57 +20218,59 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_14__str_
       /* "pyearth/_basis.pyx":715
  *         if self.variable is not None:
  *             if not self.reverse:
- *                 result = 'C(%s|s=+1,%G,%G,%G)' % (self.label, self.knot_minus,             # <<<<<<<<<<<<<<
+ *                 result = 'C(%s|s=+1,%G,%G,%G)' % (str(self.label), self.knot_minus,             # <<<<<<<<<<<<<<
  *                                                   self.knot, self.knot_plus)
  *             else:
  */
-      __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->knot_minus); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 715, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyString_Type)), __pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 715, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->knot_minus); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 715, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
 
       /* "pyearth/_basis.pyx":716
  *             if not self.reverse:
- *                 result = 'C(%s|s=+1,%G,%G,%G)' % (self.label, self.knot_minus,
+ *                 result = 'C(%s|s=+1,%G,%G,%G)' % (str(self.label), self.knot_minus,
  *                                                   self.knot, self.knot_plus)             # <<<<<<<<<<<<<<
  *             else:
- *                 result = 'C(%s|s=-1,%G,%G,%G)' % (self.label, self.knot_minus,
+ *                 result = 'C(%s|s=-1,%G,%G,%G)' % (str(self.label), self.knot_minus,
  */
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.knot); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 716, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_self->knot_plus); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 716, __pyx_L1_error)
+      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.knot); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 716, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
+      __pyx_t_6 = PyFloat_FromDouble(__pyx_v_self->knot_plus); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 716, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_6);
 
       /* "pyearth/_basis.pyx":715
  *         if self.variable is not None:
  *             if not self.reverse:
- *                 result = 'C(%s|s=+1,%G,%G,%G)' % (self.label, self.knot_minus,             # <<<<<<<<<<<<<<
+ *                 result = 'C(%s|s=+1,%G,%G,%G)' % (str(self.label), self.knot_minus,             # <<<<<<<<<<<<<<
  *                                                   self.knot, self.knot_plus)
  *             else:
  */
-      __pyx_t_6 = PyTuple_New(4); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 715, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      __Pyx_INCREF(__pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label);
-      __Pyx_GIVEREF(__pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label);
-      PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label);
+      __pyx_t_7 = PyTuple_New(4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 715, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_7);
       __Pyx_GIVEREF(__pyx_t_1);
-      PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_t_1);
+      PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_1);
       __Pyx_GIVEREF(__pyx_t_4);
-      PyTuple_SET_ITEM(__pyx_t_6, 2, __pyx_t_4);
+      PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_4);
       __Pyx_GIVEREF(__pyx_t_5);
-      PyTuple_SET_ITEM(__pyx_t_6, 3, __pyx_t_5);
+      PyTuple_SET_ITEM(__pyx_t_7, 2, __pyx_t_5);
+      __Pyx_GIVEREF(__pyx_t_6);
+      PyTuple_SET_ITEM(__pyx_t_7, 3, __pyx_t_6);
       __pyx_t_1 = 0;
       __pyx_t_4 = 0;
       __pyx_t_5 = 0;
-      __pyx_t_5 = __Pyx_PyString_Format(__pyx_kp_s_C_s_s_1_G_G_G, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 715, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_5);
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __Pyx_DECREF_SET(__pyx_v_result, __pyx_t_5);
-      __pyx_t_5 = 0;
+      __pyx_t_6 = 0;
+      __pyx_t_6 = __Pyx_PyString_Format(__pyx_kp_s_C_s_s_1_G_G_G, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 715, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __Pyx_DECREF_SET(__pyx_v_result, __pyx_t_6);
+      __pyx_t_6 = 0;
 
       /* "pyearth/_basis.pyx":714
  *         result = ''
  *         if self.variable is not None:
  *             if not self.reverse:             # <<<<<<<<<<<<<<
- *                 result = 'C(%s|s=+1,%G,%G,%G)' % (self.label, self.knot_minus,
+ *                 result = 'C(%s|s=+1,%G,%G,%G)' % (str(self.label), self.knot_minus,
  *                                                   self.knot, self.knot_plus)
  */
       goto __pyx_L4;
@@ -20270,46 +20279,48 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_14__str_
     /* "pyearth/_basis.pyx":718
  *                                                   self.knot, self.knot_plus)
  *             else:
- *                 result = 'C(%s|s=-1,%G,%G,%G)' % (self.label, self.knot_minus,             # <<<<<<<<<<<<<<
+ *                 result = 'C(%s|s=-1,%G,%G,%G)' % (str(self.label), self.knot_minus,             # <<<<<<<<<<<<<<
  *                                                   self.knot, self.knot_plus)
  *         parent = (str(self.parent)
  */
     /*else*/ {
-      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_self->knot_minus); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 718, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_5);
+      __pyx_t_6 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyString_Type)), __pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 718, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __pyx_t_7 = PyFloat_FromDouble(__pyx_v_self->knot_minus); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 718, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_7);
 
       /* "pyearth/_basis.pyx":719
  *             else:
- *                 result = 'C(%s|s=-1,%G,%G,%G)' % (self.label, self.knot_minus,
+ *                 result = 'C(%s|s=-1,%G,%G,%G)' % (str(self.label), self.knot_minus,
  *                                                   self.knot, self.knot_plus)             # <<<<<<<<<<<<<<
  *         parent = (str(self.parent)
  *                   if not self.parent.__class__ is ConstantBasisFunction
  */
-      __pyx_t_6 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.knot); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 719, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
+      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.knot); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 719, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
       __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->knot_plus); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 719, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
 
       /* "pyearth/_basis.pyx":718
  *                                                   self.knot, self.knot_plus)
  *             else:
- *                 result = 'C(%s|s=-1,%G,%G,%G)' % (self.label, self.knot_minus,             # <<<<<<<<<<<<<<
+ *                 result = 'C(%s|s=-1,%G,%G,%G)' % (str(self.label), self.knot_minus,             # <<<<<<<<<<<<<<
  *                                                   self.knot, self.knot_plus)
  *         parent = (str(self.parent)
  */
       __pyx_t_1 = PyTuple_New(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 718, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_INCREF(__pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label);
-      __Pyx_GIVEREF(__pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label);
-      PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label);
-      __Pyx_GIVEREF(__pyx_t_5);
-      PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_6);
-      PyTuple_SET_ITEM(__pyx_t_1, 2, __pyx_t_6);
+      PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_6);
+      __Pyx_GIVEREF(__pyx_t_7);
+      PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_7);
+      __Pyx_GIVEREF(__pyx_t_5);
+      PyTuple_SET_ITEM(__pyx_t_1, 2, __pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_4);
       PyTuple_SET_ITEM(__pyx_t_1, 3, __pyx_t_4);
-      __pyx_t_5 = 0;
       __pyx_t_6 = 0;
+      __pyx_t_7 = 0;
+      __pyx_t_5 = 0;
       __pyx_t_4 = 0;
       __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_C_s_s_1_G_G_G_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 718, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
@@ -20324,7 +20335,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_14__str_
  *         result = ''
  *         if self.variable is not None:             # <<<<<<<<<<<<<<
  *             if not self.reverse:
- *                 result = 'C(%s|s=+1,%G,%G,%G)' % (self.label, self.knot_minus,
+ *                 result = 'C(%s|s=+1,%G,%G,%G)' % (str(self.label), self.knot_minus,
  */
   }
 
@@ -20342,7 +20353,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_14__str_
   if ((__pyx_t_3 != 0)) {
 
     /* "pyearth/_basis.pyx":720
- *                 result = 'C(%s|s=-1,%G,%G,%G)' % (self.label, self.knot_minus,
+ *                 result = 'C(%s|s=-1,%G,%G,%G)' % (str(self.label), self.knot_minus,
  *                                                   self.knot, self.knot_plus)
  *         parent = (str(self.parent)             # <<<<<<<<<<<<<<
  *                   if not self.parent.__class__ is ConstantBasisFunction
@@ -20427,6 +20438,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_26SmoothedHingeBasisFunction_14__str_
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_7);
   __Pyx_AddTraceback("pyearth._basis.SmoothedHingeBasisFunction.__str__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
@@ -22712,6 +22724,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_6__str__(struct 
   int __pyx_t_2;
   int __pyx_t_3;
   PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("__str__", 0);
 
   /* "pyearth/_basis.pyx":809
@@ -22743,7 +22756,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_6__str__(struct 
  *         if self.variable is not None:
  *             if not self.reverse:             # <<<<<<<<<<<<<<
  *                 if self.knot >= 0:
- *                     result = 'h(%s-%G)' % (self.label, self.knot)
+ *                     result = 'h(%s-%G)' % (str(self.label), self.knot)
  */
     __pyx_t_3 = ((!(__pyx_v_self->__pyx_base.reverse != 0)) != 0);
     if (__pyx_t_3) {
@@ -22752,7 +22765,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_6__str__(struct 
  *         if self.variable is not None:
  *             if not self.reverse:
  *                 if self.knot >= 0:             # <<<<<<<<<<<<<<
- *                     result = 'h(%s-%G)' % (self.label, self.knot)
+ *                     result = 'h(%s-%G)' % (str(self.label), self.knot)
  *                 else:
  */
       __pyx_t_3 = ((__pyx_v_self->__pyx_base.knot >= 0.0) != 0);
@@ -22761,59 +22774,63 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_6__str__(struct 
         /* "pyearth/_basis.pyx":813
  *             if not self.reverse:
  *                 if self.knot >= 0:
- *                     result = 'h(%s-%G)' % (self.label, self.knot)             # <<<<<<<<<<<<<<
+ *                     result = 'h(%s-%G)' % (str(self.label), self.knot)             # <<<<<<<<<<<<<<
  *                 else:
- *                     result = 'h(%s+%G)' % (self.label, -self.knot)
+ *                     result = 'h(%s+%G)' % (str(self.label), -self.knot)
  */
-        __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.knot); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 813, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyString_Type)), __pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 813, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 813, __pyx_L1_error)
+        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.knot); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 813, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        __Pyx_INCREF(__pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label);
-        __Pyx_GIVEREF(__pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label);
-        PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label);
+        __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 813, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_5);
         __Pyx_GIVEREF(__pyx_t_1);
-        PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_1);
+        PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_1);
+        __Pyx_GIVEREF(__pyx_t_4);
+        PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_4);
         __pyx_t_1 = 0;
-        __pyx_t_1 = __Pyx_PyString_Format(__pyx_kp_s_h_s_G, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 813, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __Pyx_DECREF_SET(__pyx_v_result, __pyx_t_1);
-        __pyx_t_1 = 0;
+        __pyx_t_4 = 0;
+        __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_h_s_G, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 813, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+        __Pyx_DECREF_SET(__pyx_v_result, __pyx_t_4);
+        __pyx_t_4 = 0;
 
         /* "pyearth/_basis.pyx":812
  *         if self.variable is not None:
  *             if not self.reverse:
  *                 if self.knot >= 0:             # <<<<<<<<<<<<<<
- *                     result = 'h(%s-%G)' % (self.label, self.knot)
+ *                     result = 'h(%s-%G)' % (str(self.label), self.knot)
  *                 else:
  */
         goto __pyx_L5;
       }
 
       /* "pyearth/_basis.pyx":815
- *                     result = 'h(%s-%G)' % (self.label, self.knot)
+ *                     result = 'h(%s-%G)' % (str(self.label), self.knot)
  *                 else:
- *                     result = 'h(%s+%G)' % (self.label, -self.knot)             # <<<<<<<<<<<<<<
+ *                     result = 'h(%s+%G)' % (str(self.label), -self.knot)             # <<<<<<<<<<<<<<
  *             else:
- *                 result = 'h(%G-%s)' % (self.knot, self.label)
+ *                 result = 'h(%G-%s)' % (self.knot, str(self.label))
  */
       /*else*/ {
-        __pyx_t_1 = PyFloat_FromDouble((-__pyx_v_self->__pyx_base.knot)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 815, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 815, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyString_Type)), __pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 815, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        __Pyx_INCREF(__pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label);
-        __Pyx_GIVEREF(__pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label);
-        PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label);
-        __Pyx_GIVEREF(__pyx_t_1);
-        PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_1);
-        __pyx_t_1 = 0;
-        __pyx_t_1 = __Pyx_PyString_Format(__pyx_kp_s_h_s_G_2, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 815, __pyx_L1_error)
+        __pyx_t_5 = PyFloat_FromDouble((-__pyx_v_self->__pyx_base.knot)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 815, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_5);
+        __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 815, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __Pyx_DECREF_SET(__pyx_v_result, __pyx_t_1);
-        __pyx_t_1 = 0;
+        __Pyx_GIVEREF(__pyx_t_4);
+        PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_4);
+        __Pyx_GIVEREF(__pyx_t_5);
+        PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_5);
+        __pyx_t_4 = 0;
+        __pyx_t_5 = 0;
+        __pyx_t_5 = __Pyx_PyString_Format(__pyx_kp_s_h_s_G_2, __pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 815, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_5);
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __Pyx_DECREF_SET(__pyx_v_result, __pyx_t_5);
+        __pyx_t_5 = 0;
       }
       __pyx_L5:;
 
@@ -22822,28 +22839,30 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_6__str__(struct 
  *         if self.variable is not None:
  *             if not self.reverse:             # <<<<<<<<<<<<<<
  *                 if self.knot >= 0:
- *                     result = 'h(%s-%G)' % (self.label, self.knot)
+ *                     result = 'h(%s-%G)' % (str(self.label), self.knot)
  */
       goto __pyx_L4;
     }
 
     /* "pyearth/_basis.pyx":817
- *                     result = 'h(%s+%G)' % (self.label, -self.knot)
+ *                     result = 'h(%s+%G)' % (str(self.label), -self.knot)
  *             else:
- *                 result = 'h(%G-%s)' % (self.knot, self.label)             # <<<<<<<<<<<<<<
+ *                 result = 'h(%G-%s)' % (self.knot, str(self.label))             # <<<<<<<<<<<<<<
  *         parent = (str(self.parent)
  *                   if not self.parent.__class__ is ConstantBasisFunction
  */
     /*else*/ {
-      __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.knot); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 817, __pyx_L1_error)
+      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_self->__pyx_base.knot); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 817, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __pyx_t_1 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyString_Type)), __pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 817, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 817, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_GIVEREF(__pyx_t_5);
+      PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_1);
-      PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_1);
-      __Pyx_INCREF(__pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label);
-      __Pyx_GIVEREF(__pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label);
-      PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_v_self->__pyx_base.__pyx_base.__pyx_base.label);
+      PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_1);
+      __pyx_t_5 = 0;
       __pyx_t_1 = 0;
       __pyx_t_1 = __Pyx_PyString_Format(__pyx_kp_s_h_G_s, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 817, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
@@ -22863,7 +22882,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_6__str__(struct 
   }
 
   /* "pyearth/_basis.pyx":819
- *                 result = 'h(%G-%s)' % (self.knot, self.label)
+ *                 result = 'h(%G-%s)' % (self.knot, str(self.label))
  *         parent = (str(self.parent)
  *                   if not self.parent.__class__ is ConstantBasisFunction             # <<<<<<<<<<<<<<
  *                   else '')
@@ -22877,7 +22896,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_6__str__(struct 
 
     /* "pyearth/_basis.pyx":818
  *             else:
- *                 result = 'h(%G-%s)' % (self.knot, self.label)
+ *                 result = 'h(%G-%s)' % (self.knot, str(self.label))
  *         parent = (str(self.parent)             # <<<<<<<<<<<<<<
  *                   if not self.parent.__class__ is ConstantBasisFunction
  *                   else '')
@@ -22959,6 +22978,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_18HingeBasisFunction_6__str__(struct 
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
   __Pyx_AddTraceback("pyearth._basis.HingeBasisFunction.__str__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
@@ -24491,7 +24511,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_6__reduce__(str
  *                 self._getstate())
  * 
  *     def __str__(LinearBasisFunction self):             # <<<<<<<<<<<<<<
- *         result = self.label
+ *         result = str(self.label)
  *         if not self.parent.__class__ is ConstantBasisFunction:
  */
 
@@ -24522,18 +24542,18 @@ static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_8__str__(struct
   /* "pyearth/_basis.pyx":880
  * 
  *     def __str__(LinearBasisFunction self):
- *         result = self.label             # <<<<<<<<<<<<<<
+ *         result = str(self.label)             # <<<<<<<<<<<<<<
  *         if not self.parent.__class__ is ConstantBasisFunction:
  *             parent = str(self.parent)
  */
-  __pyx_t_1 = __pyx_v_self->__pyx_base.__pyx_base.label;
-  __Pyx_INCREF(__pyx_t_1);
+  __pyx_t_1 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyString_Type)), __pyx_v_self->__pyx_base.__pyx_base.label); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 880, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_result = __pyx_t_1;
   __pyx_t_1 = 0;
 
   /* "pyearth/_basis.pyx":881
  *     def __str__(LinearBasisFunction self):
- *         result = self.label
+ *         result = str(self.label)
  *         if not self.parent.__class__ is ConstantBasisFunction:             # <<<<<<<<<<<<<<
  *             parent = str(self.parent)
  *             result += '*' + parent
@@ -24546,7 +24566,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_8__str__(struct
   if (__pyx_t_3) {
 
     /* "pyearth/_basis.pyx":882
- *         result = self.label
+ *         result = str(self.label)
  *         if not self.parent.__class__ is ConstantBasisFunction:
  *             parent = str(self.parent)             # <<<<<<<<<<<<<<
  *             result += '*' + parent
@@ -24574,7 +24594,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_8__str__(struct
 
     /* "pyearth/_basis.pyx":881
  *     def __str__(LinearBasisFunction self):
- *         result = self.label
+ *         result = str(self.label)
  *         if not self.parent.__class__ is ConstantBasisFunction:             # <<<<<<<<<<<<<<
  *             parent = str(self.parent)
  *             result += '*' + parent
@@ -24597,7 +24617,7 @@ static PyObject *__pyx_pf_7pyearth_6_basis_19LinearBasisFunction_8__str__(struct
  *                 self._getstate())
  * 
  *     def __str__(LinearBasisFunction self):             # <<<<<<<<<<<<<<
- *         result = self.label
+ *         result = str(self.label)
  *         if not self.parent.__class__ is ConstantBasisFunction:
  */
 

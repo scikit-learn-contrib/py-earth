@@ -285,6 +285,20 @@ def test_pandas_compatibility():
         colnames, model.forward_trace()._getstate()['xlabels'])
 
 
+@if_pandas
+def test_pandas_non_string_column_names():
+    import pandas
+    X_df = pandas.DataFrame(X)
+    y_df = pandas.DataFrame(y)
+    colnames = [i for i in range(X.shape[1])]
+    X_df.columns = colnames
+
+    earth = Earth(**default_params)
+    model = earth.fit(X_df, y_df)
+    assert_list_equal(
+        colnames, model.forward_trace()._getstate()['xlabels'])
+
+
 @if_patsy
 @if_pandas
 def test_patsy_compatibility():
