@@ -349,6 +349,7 @@ def test_copy_compatibility():
         assert_array_almost_equal(model.predict(X), model_copy.predict(X))
     except:
         assert_array_equal(X, X_copy)
+        raise
     assert_true(model.basis_[0] is model.basis_[1]._get_root())
     assert_true(model_copy.basis_[0] is model_copy.basis_[1]._get_root())
 
