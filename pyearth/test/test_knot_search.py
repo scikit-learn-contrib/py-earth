@@ -97,7 +97,7 @@ def slow_knot_search(p, x, B, candidates, outcomes):
         e_squared = 0.0
         for y, w in outcomes:
             # Solve the system
-            beta = np.linalg.lstsq(w[:, None] * X, w * y)[0]
+            beta = np.linalg.lstsq(w[:, None] * X, w * y, rcond=-1)[0]
 
             # Compute the error
             r = w * (y - np.dot(X, beta))
