@@ -206,16 +206,15 @@ def test_smooth():
 def test_linvars():
     earth = Earth(**default_params)
     earth.fit(X, y, linvars=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-    res = str(earth.rsq_)
-    filename = os.path.join(os.path.dirname(__file__),
-                            'earth_linvars_regress.txt')
+    res = earth.rsq_
+    filename = os.path.join(os.path.dirname(__file__), "earth_linvars_regress.txt")
     if regenerate_target_files:
-        with open(filename, 'w') as fl:
+        with open(filename, "w") as fl:
             fl.write(res)
-    with open(filename, 'r') as fl:
-        prev = fl.read()
+    with open(filename, "r") as fl:
+        prev = float(fl.read())
 
-    assert_equal(res, prev)
+    assert_almost_equal(res, prev, places=7)
 
 
 def test_linvars_coefs():
@@ -249,32 +248,52 @@ def test_score():
 @if_pandas
 @if_environ_has('test_pathological_cases')
 def test_pathological_cases():
-    import pandas
+    import pandas as pd
+
     directory = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'pathological_data')
-    cases = {'issue_44': {},
-             'issue_50': {'penalty': 0.5,
-                          'minspan': 1,
-                          'allow_linear': False,
-                          'endspan': 1,
-                          'check_every': 1,
-                          'sample_weight': 'issue_50_weight.csv'}}
-    for case, settings in cases.iteritems():
-        data = pandas.read_csv(os.path.join(directory, case + '.csv'))
-        y = data['y']
-        del data['y']
-        X = data
-        if 'sample_weight' in settings:
-            filename = os.path.join(directory, settings['sample_weight'])
-            sample_weight = pandas.read_csv(filename)['sample_weight']
-            del settings['sample_weight']
+        os.path.dirname(os.path.abspath(__file__)), "pathological_data"
+    )
+    cases = {
+        "issue_44": {},
+        "issue_50": {
+            "penalty": 0.5,
+            "minspan": 1,
+            "allow_linear": False,
+            "endspan": 1,
+            "check_every": 1,
+            "sample_weight": "issue_50_weight.csv",
+        },
+        "issue_195": {
+            "allow_linear": True,
+            "minspan": 7,
+            "endspan": 7,
+            "max_degree": 1,
+            "thresh": 0.001,
+            "enable_pruning": False,
+            "max_terms": 30,
+            "linvars": True,
+        },
+    }
+    for case, settings in cases.items():
+        data = pd.read_csv(os.path.join(directory, case + ".csv"), index_col=0)
+        y = data["y"]
+        X = data.drop("y", axis=1)
+        if "sample_weight" in settings:
+            filename = os.path.join(directory, settings["sample_weight"])
+            sample_weight = pd.read_csv(filename)["sample_weight"]
+            del settings["sample_weight"]
         else:
             sample_weight = None
-        model = Earth(**settings)
-        model.fit(X, y, sample_weight=sample_weight)
-        with open(os.path.join(directory, case + '.txt'), 'r') as infile:
-            correct = infile.read()
-        assert_equal(model.summary(), correct)
+        if "linvars" in settings:
+            del settings["linvars"]
+            model = Earth(**settings)
+            model.fit(X, y, sample_weight=sample_weight, linvars=X.columns)
+        else:
+            model = Earth(**settings)
+            model.fit(X, y, sample_weight=sample_weight)
+        with open(os.path.join(directory, case + ".txt"), "r") as infile:
+            correct_summary = infile.read()
+        assert_equal(model.summary(), correct_summary)
 
 
 @if_pandas

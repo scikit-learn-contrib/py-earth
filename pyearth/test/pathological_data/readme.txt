@@ -13,3 +13,7 @@ was that the apply methods of the BasisFunctions were not applying the weights, 
 next_pair method of the ForwardPasser class assumed they were.  Now next_pair applies the 
 weights after calling apply.  The same data set exposed issue 51, in which user-specified 
 endspans were not used.  This test case covers both issues.
+
+issue_195:
+This data set exposed a bug when you do not use pruning and only linear variables. In the
+forward pass a variable could be added more than once. This data set covers this issue.
