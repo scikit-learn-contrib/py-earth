@@ -2290,9 +2290,9 @@ typedef struct {
     PyObject_HEAD
     __pyx_coroutine_body_t body;
     PyObject *closure;
-    PyObject *exc_type;
-    PyObject *exc_value;
-    PyObject *exc_traceback;
+    PyObject *curexc_type;
+    PyObject *curexc_value;
+    PyObject *curexc_traceback;
     PyObject *gi_weakreflist;
     PyObject *classobj;
     PyObject *yieldfrom;
@@ -7772,9 +7772,9 @@ static __pyx_t_7pyearth_6_types_INDEX_t __pyx_f_7pyearth_6_basis_13BasisFunction
     } else {
       __pyx_t_1 = __pyx_t_8(__pyx_t_2);
       if (unlikely(!__pyx_t_1)) {
-        PyObject* exc_type = PyErr_Occurred();
-        if (exc_type) {
-          if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+        PyObject* curexc_type = PyErr_Occurred();
+        if (curexc_type) {
+          if (likely(curexc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(curexc_type, PyExc_StopIteration))) PyErr_Clear();
           else __PYX_ERR(0, 177, __pyx_L1_error)
         }
         break;
@@ -26914,9 +26914,9 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_21smooth_knots(struct __pyx_ob
       } else {
         __pyx_t_5 = __pyx_t_9(__pyx_t_6);
         if (unlikely(!__pyx_t_5)) {
-          PyObject* exc_type = PyErr_Occurred();
-          if (exc_type) {
-            if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+          PyObject* curexc_type = PyErr_Occurred();
+          if (curexc_type) {
+            if (likely(curexc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(curexc_type, PyExc_StopIteration))) PyErr_Clear();
             else __PYX_ERR(0, 991, __pyx_L1_error)
           }
           break;
@@ -26988,9 +26988,9 @@ static PyObject *__pyx_pf_7pyearth_6_basis_5Basis_21smooth_knots(struct __pyx_ob
       } else {
         __pyx_t_5 = __pyx_t_9(__pyx_t_6);
         if (unlikely(!__pyx_t_5)) {
-          PyObject* exc_type = PyErr_Occurred();
-          if (exc_type) {
-            if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+          PyObject* curexc_type = PyErr_Occurred();
+          if (curexc_type) {
+            if (likely(curexc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(curexc_type, PyExc_StopIteration))) PyErr_Clear();
             else __PYX_ERR(0, 993, __pyx_L1_error)
           }
           break;
@@ -27987,9 +27987,9 @@ static PyObject *__pyx_f_7pyearth_6_basis_5Basis_smooth(struct __pyx_obj_7pyeart
     } else {
       __pyx_t_3 = __pyx_t_8(__pyx_t_5);
       if (unlikely(!__pyx_t_3)) {
-        PyObject* exc_type = PyErr_Occurred();
-        if (exc_type) {
-          if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+        PyObject* curexc_type = PyErr_Occurred();
+        if (curexc_type) {
+          if (likely(curexc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(curexc_type, PyExc_StopIteration))) PyErr_Clear();
           else __PYX_ERR(0, 1034, __pyx_L1_error)
         }
         break;
@@ -36293,17 +36293,17 @@ bad:
     static CYTHON_INLINE int __Pyx_IterFinish(void) {
 #if CYTHON_FAST_THREAD_STATE
     PyThreadState *tstate = PyThreadState_GET();
-    PyObject* exc_type = tstate->curexc_type;
-    if (unlikely(exc_type)) {
-        if (likely(exc_type == PyExc_StopIteration) || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration)) {
-            PyObject *exc_value, *exc_tb;
-            exc_value = tstate->curexc_value;
+    PyObject* curexc_type = tstate->curexc_type;
+    if (unlikely(curexc_type)) {
+        if (likely(curexc_type == PyExc_StopIteration) || PyErr_GivenExceptionMatches(curexc_type, PyExc_StopIteration)) {
+            PyObject *curexc_value, *exc_tb;
+            curexc_value = tstate->curexc_value;
             exc_tb = tstate->curexc_traceback;
             tstate->curexc_type = 0;
             tstate->curexc_value = 0;
             tstate->curexc_traceback = 0;
-            Py_DECREF(exc_type);
-            Py_XDECREF(exc_value);
+            Py_DECREF(curexc_type);
+            Py_XDECREF(curexc_value);
             Py_XDECREF(exc_tb);
             return 0;
         } else {
@@ -37298,21 +37298,21 @@ static PyObject* __Pyx_PyInt_AddObjC(PyObject *op1, PyObject *op2, CYTHON_UNUSED
 /* SaveResetException */
         #if CYTHON_FAST_THREAD_STATE
 static CYTHON_INLINE void __Pyx__ExceptionSave(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
-    *type = tstate->exc_type;
-    *value = tstate->exc_value;
-    *tb = tstate->exc_traceback;
+    *type = tstate->curexc_type;
+    *value = tstate->curexc_value;
+    *tb = tstate->curexc_traceback;
     Py_XINCREF(*type);
     Py_XINCREF(*value);
     Py_XINCREF(*tb);
 }
 static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb) {
     PyObject *tmp_type, *tmp_value, *tmp_tb;
-    tmp_type = tstate->exc_type;
-    tmp_value = tstate->exc_value;
-    tmp_tb = tstate->exc_traceback;
-    tstate->exc_type = type;
-    tstate->exc_value = value;
-    tstate->exc_traceback = tb;
+    tmp_type = tstate->curexc_type;
+    tmp_value = tstate->curexc_value;
+    tmp_tb = tstate->curexc_traceback;
+    tstate->curexc_type = type;
+    tstate->curexc_value = value;
+    tstate->curexc_traceback = tb;
     Py_XDECREF(tmp_type);
     Py_XDECREF(tmp_value);
     Py_XDECREF(tmp_tb);
@@ -37357,12 +37357,12 @@ static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb) 
     *value = local_value;
     *tb = local_tb;
 #if CYTHON_FAST_THREAD_STATE
-    tmp_type = tstate->exc_type;
-    tmp_value = tstate->exc_value;
-    tmp_tb = tstate->exc_traceback;
-    tstate->exc_type = local_type;
-    tstate->exc_value = local_value;
-    tstate->exc_traceback = local_tb;
+    tmp_type = tstate->curexc_type;
+    tmp_value = tstate->curexc_value;
+    tmp_tb = tstate->curexc_traceback;
+    tstate->curexc_type = local_type;
+    tstate->curexc_value = local_value;
+    tstate->curexc_traceback = local_tb;
     Py_XDECREF(tmp_type);
     Py_XDECREF(tmp_value);
     Py_XDECREF(tmp_tb);
@@ -38599,10 +38599,10 @@ static PyObject* __Pyx_PyFloat_DivideObjC(PyObject *op1, PyObject *op2, double f
 /* PyErrExceptionMatches */
                   #if CYTHON_FAST_THREAD_STATE
 static CYTHON_INLINE int __Pyx_PyErr_ExceptionMatchesInState(PyThreadState* tstate, PyObject* err) {
-    PyObject *exc_type = tstate->curexc_type;
-    if (exc_type == err) return 1;
-    if (unlikely(!exc_type)) return 0;
-    return PyErr_GivenExceptionMatches(exc_type, err);
+    PyObject *curexc_type = tstate->curexc_type;
+    if (curexc_type == err) return 1;
+    if (unlikely(!curexc_type)) return 0;
+    return PyErr_GivenExceptionMatches(curexc_type, err);
 }
 #endif
 
@@ -40016,12 +40016,12 @@ raise_neg_overflow:
                   #if CYTHON_FAST_THREAD_STATE
 static CYTHON_INLINE void __Pyx__ExceptionSwap(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
     PyObject *tmp_type, *tmp_value, *tmp_tb;
-    tmp_type = tstate->exc_type;
-    tmp_value = tstate->exc_value;
-    tmp_tb = tstate->exc_traceback;
-    tstate->exc_type = *type;
-    tstate->exc_value = *value;
-    tstate->exc_traceback = *tb;
+    tmp_type = tstate->curexc_type;
+    tmp_value = tstate->curexc_value;
+    tmp_tb = tstate->curexc_traceback;
+    tstate->curexc_type = *type;
+    tstate->curexc_value = *value;
+    tstate->curexc_traceback = *tb;
     *type = tmp_type;
     *value = tmp_value;
     *tb = tmp_tb;
@@ -40129,15 +40129,15 @@ static int __Pyx_PyGen_FetchStopIterationValue(PyObject **pvalue) {
 #endif
 static CYTHON_INLINE
 void __Pyx_Coroutine_ExceptionClear(__pyx_CoroutineObject *self) {
-    PyObject *exc_type = self->exc_type;
-    PyObject *exc_value = self->exc_value;
-    PyObject *exc_traceback = self->exc_traceback;
-    self->exc_type = NULL;
-    self->exc_value = NULL;
-    self->exc_traceback = NULL;
-    Py_XDECREF(exc_type);
-    Py_XDECREF(exc_value);
-    Py_XDECREF(exc_traceback);
+    PyObject *curexc_type = self->curexc_type;
+    PyObject *curexc_value = self->curexc_value;
+    PyObject *curexc_traceback = self->curexc_traceback;
+    self->curexc_type = NULL;
+    self->curexc_value = NULL;
+    self->curexc_traceback = NULL;
+    Py_XDECREF(curexc_type);
+    Py_XDECREF(curexc_value);
+    Py_XDECREF(curexc_traceback);
 }
 static CYTHON_INLINE
 int __Pyx_Coroutine_CheckRunning(__pyx_CoroutineObject *gen) {
@@ -40169,16 +40169,16 @@ PyObject *__Pyx_Coroutine_SendEx(__pyx_CoroutineObject *self, PyObject *value) {
     if (value) {
 #if CYTHON_COMPILING_IN_PYPY || CYTHON_COMPILING_IN_PYSTON
 #else
-        if (self->exc_traceback) {
-            PyTracebackObject *tb = (PyTracebackObject *) self->exc_traceback;
+        if (self->curexc_traceback) {
+            PyTracebackObject *tb = (PyTracebackObject *) self->curexc_traceback;
             PyFrameObject *f = tb->tb_frame;
             Py_XINCREF(__pyx_tstate->frame);
             assert(f->f_back == NULL);
             f->f_back = __pyx_tstate->frame;
         }
 #endif
-        __Pyx_ExceptionSwap(&self->exc_type, &self->exc_value,
-                            &self->exc_traceback);
+        __Pyx_ExceptionSwap(&self->curexc_type, &self->curexc_value,
+                            &self->curexc_traceback);
     } else {
         __Pyx_Coroutine_ExceptionClear(self);
     }
@@ -40186,12 +40186,12 @@ PyObject *__Pyx_Coroutine_SendEx(__pyx_CoroutineObject *self, PyObject *value) {
     retval = self->body((PyObject *) self, value);
     self->is_running = 0;
     if (retval) {
-        __Pyx_ExceptionSwap(&self->exc_type, &self->exc_value,
-                            &self->exc_traceback);
+        __Pyx_ExceptionSwap(&self->curexc_type, &self->curexc_value,
+                            &self->curexc_traceback);
 #if CYTHON_COMPILING_IN_PYPY || CYTHON_COMPILING_IN_PYSTON
 #else
-        if (self->exc_traceback) {
-            PyTracebackObject *tb = (PyTracebackObject *) self->exc_traceback;
+        if (self->curexc_traceback) {
+            PyTracebackObject *tb = (PyTracebackObject *) self->curexc_traceback;
             PyFrameObject *f = tb->tb_frame;
             Py_CLEAR(f->f_back);
         }
@@ -40411,9 +40411,9 @@ static int __Pyx_Coroutine_traverse(PyObject *self, visitproc visit, void *arg) 
     Py_VISIT(gen->closure);
     Py_VISIT(gen->classobj);
     Py_VISIT(gen->yieldfrom);
-    Py_VISIT(gen->exc_type);
-    Py_VISIT(gen->exc_value);
-    Py_VISIT(gen->exc_traceback);
+    Py_VISIT(gen->curexc_type);
+    Py_VISIT(gen->curexc_value);
+    Py_VISIT(gen->curexc_traceback);
     return 0;
 }
 static int __Pyx_Coroutine_clear(PyObject *self) {
@@ -40421,9 +40421,9 @@ static int __Pyx_Coroutine_clear(PyObject *self) {
     Py_CLEAR(gen->closure);
     Py_CLEAR(gen->classobj);
     Py_CLEAR(gen->yieldfrom);
-    Py_CLEAR(gen->exc_type);
-    Py_CLEAR(gen->exc_value);
-    Py_CLEAR(gen->exc_traceback);
+    Py_CLEAR(gen->curexc_type);
+    Py_CLEAR(gen->curexc_value);
+    Py_CLEAR(gen->curexc_traceback);
     Py_CLEAR(gen->gi_name);
     Py_CLEAR(gen->gi_qualname);
     return 0;
@@ -40556,9 +40556,9 @@ static __pyx_CoroutineObject *__Pyx__Coroutine_New(
     gen->resume_label = 0;
     gen->classobj = NULL;
     gen->yieldfrom = NULL;
-    gen->exc_type = NULL;
-    gen->exc_value = NULL;
-    gen->exc_traceback = NULL;
+    gen->curexc_type = NULL;
+    gen->curexc_value = NULL;
+    gen->curexc_traceback = NULL;
     gen->gi_weakreflist = NULL;
     Py_XINCREF(qualname);
     gen->gi_qualname = qualname;
