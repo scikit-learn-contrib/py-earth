@@ -5509,9 +5509,9 @@ static int __pyx_pf_7pyearth_8_forward_13ForwardPasser___init__(struct __pyx_obj
     } else {
       __pyx_t_11 = __pyx_t_16(__pyx_t_1);
       if (unlikely(!__pyx_t_11)) {
-        PyObject* exc_type = PyErr_Occurred();
-        if (exc_type) {
-          if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+        PyObject* curexc_type = PyErr_Occurred();
+        if (curexc_type) {
+          if (likely(curexc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(curexc_type, PyExc_StopIteration))) PyErr_Clear();
           else __PYX_ERR(0, 127, __pyx_L1_error)
         }
         break;
@@ -8923,9 +8923,9 @@ static PyObject *__pyx_f_7pyearth_8_forward_13ForwardPasser_next_pair(struct __p
       } else {
         __pyx_t_1 = __pyx_t_14(__pyx_t_8);
         if (unlikely(!__pyx_t_1)) {
-          PyObject* exc_type = PyErr_Occurred();
-          if (exc_type) {
-            if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+          PyObject* curexc_type = PyErr_Occurred();
+          if (curexc_type) {
+            if (likely(curexc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(curexc_type, PyExc_StopIteration))) PyErr_Clear();
             else __PYX_ERR(0, 342, __pyx_L1_error)
           }
           break;
@@ -19493,9 +19493,9 @@ static char *__pyx_memoryview_get_item_pointer(struct __pyx_memoryview_obj *__py
     } else {
       __pyx_t_5 = __pyx_t_4(__pyx_t_2);
       if (unlikely(!__pyx_t_5)) {
-        PyObject* exc_type = PyErr_Occurred();
-        if (exc_type) {
-          if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+        PyObject* curexc_type = PyErr_Occurred();
+        if (curexc_type) {
+          if (likely(curexc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(curexc_type, PyExc_StopIteration))) PyErr_Clear();
           else __PYX_ERR(1, 389, __pyx_L1_error)
         }
         break;
@@ -23114,9 +23114,9 @@ static PyObject *_unellipsify(PyObject *__pyx_v_index, int __pyx_v_ndim) {
     } else {
       __pyx_t_7 = __pyx_t_6(__pyx_t_4);
       if (unlikely(!__pyx_t_7)) {
-        PyObject* exc_type = PyErr_Occurred();
-        if (exc_type) {
-          if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+        PyObject* curexc_type = PyErr_Occurred();
+        if (curexc_type) {
+          if (likely(curexc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(curexc_type, PyExc_StopIteration))) PyErr_Clear();
           else __PYX_ERR(1, 665, __pyx_L1_error)
         }
         break;
@@ -23725,9 +23725,9 @@ static struct __pyx_memoryview_obj *__pyx_memview_slice(struct __pyx_memoryview_
     } else {
       __pyx_t_9 = __pyx_t_8(__pyx_t_3);
       if (unlikely(!__pyx_t_9)) {
-        PyObject* exc_type = PyErr_Occurred();
-        if (exc_type) {
-          if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+        PyObject* curexc_type = PyErr_Occurred();
+        if (curexc_type) {
+          if (likely(curexc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(curexc_type, PyExc_StopIteration))) PyErr_Clear();
           else __PYX_ERR(1, 732, __pyx_L1_error)
         }
         break;
@@ -33796,17 +33796,17 @@ static PyObject* __Pyx_PyInt_SubtractCObj(PyObject *op1, PyObject *op2, CYTHON_U
         static CYTHON_INLINE int __Pyx_IterFinish(void) {
 #if CYTHON_FAST_THREAD_STATE
     PyThreadState *tstate = PyThreadState_GET();
-    PyObject* exc_type = tstate->curexc_type;
-    if (unlikely(exc_type)) {
-        if (likely(exc_type == PyExc_StopIteration) || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration)) {
-            PyObject *exc_value, *exc_tb;
-            exc_value = tstate->curexc_value;
+    PyObject* curexc_type = tstate->curexc_type;
+    if (unlikely(curexc_type)) {
+        if (likely(curexc_type == PyExc_StopIteration) || PyErr_GivenExceptionMatches(curexc_type, PyExc_StopIteration)) {
+            PyObject *curexc_value, *exc_tb;
+            curexc_value = tstate->curexc_value;
             exc_tb = tstate->curexc_traceback;
             tstate->curexc_type = 0;
             tstate->curexc_value = 0;
             tstate->curexc_traceback = 0;
-            Py_DECREF(exc_type);
-            Py_XDECREF(exc_value);
+            Py_DECREF(curexc_type);
+            Py_XDECREF(curexc_value);
             Py_XDECREF(exc_tb);
             return 0;
         } else {
@@ -33986,21 +33986,21 @@ bad:
 /* SaveResetException */
         #if CYTHON_FAST_THREAD_STATE
 static CYTHON_INLINE void __Pyx__ExceptionSave(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
-    *type = tstate->exc_type;
-    *value = tstate->exc_value;
-    *tb = tstate->exc_traceback;
+    *type = tstate->curexc_type;
+    *value = tstate->curexc_value;
+    *tb = tstate->curexc_traceback;
     Py_XINCREF(*type);
     Py_XINCREF(*value);
     Py_XINCREF(*tb);
 }
 static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb) {
     PyObject *tmp_type, *tmp_value, *tmp_tb;
-    tmp_type = tstate->exc_type;
-    tmp_value = tstate->exc_value;
-    tmp_tb = tstate->exc_traceback;
-    tstate->exc_type = type;
-    tstate->exc_value = value;
-    tstate->exc_traceback = tb;
+    tmp_type = tstate->curexc_type;
+    tmp_value = tstate->curexc_value;
+    tmp_tb = tstate->curexc_traceback;
+    tstate->curexc_type = type;
+    tstate->curexc_value = value;
+    tstate->curexc_traceback = tb;
     Py_XDECREF(tmp_type);
     Py_XDECREF(tmp_value);
     Py_XDECREF(tmp_tb);
@@ -34010,10 +34010,10 @@ static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject 
 /* PyErrExceptionMatches */
         #if CYTHON_FAST_THREAD_STATE
 static CYTHON_INLINE int __Pyx_PyErr_ExceptionMatchesInState(PyThreadState* tstate, PyObject* err) {
-    PyObject *exc_type = tstate->curexc_type;
-    if (exc_type == err) return 1;
-    if (unlikely(!exc_type)) return 0;
-    return PyErr_GivenExceptionMatches(exc_type, err);
+    PyObject *curexc_type = tstate->curexc_type;
+    if (curexc_type == err) return 1;
+    if (unlikely(!curexc_type)) return 0;
+    return PyErr_GivenExceptionMatches(curexc_type, err);
 }
 #endif
 
@@ -34055,12 +34055,12 @@ static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb) 
     *value = local_value;
     *tb = local_tb;
 #if CYTHON_FAST_THREAD_STATE
-    tmp_type = tstate->exc_type;
-    tmp_value = tstate->exc_value;
-    tmp_tb = tstate->exc_traceback;
-    tstate->exc_type = local_type;
-    tstate->exc_value = local_value;
-    tstate->exc_traceback = local_tb;
+    tmp_type = tstate->curexc_type;
+    tmp_value = tstate->curexc_value;
+    tmp_tb = tstate->curexc_traceback;
+    tstate->curexc_type = local_type;
+    tstate->curexc_value = local_value;
+    tstate->curexc_traceback = local_tb;
     Py_XDECREF(tmp_type);
     Py_XDECREF(tmp_value);
     Py_XDECREF(tmp_tb);
@@ -34261,12 +34261,12 @@ return_ne:
           #if CYTHON_FAST_THREAD_STATE
 static CYTHON_INLINE void __Pyx__ExceptionSwap(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
     PyObject *tmp_type, *tmp_value, *tmp_tb;
-    tmp_type = tstate->exc_type;
-    tmp_value = tstate->exc_value;
-    tmp_tb = tstate->exc_traceback;
-    tstate->exc_type = *type;
-    tstate->exc_value = *value;
-    tstate->exc_traceback = *tb;
+    tmp_type = tstate->curexc_type;
+    tmp_value = tstate->curexc_value;
+    tmp_tb = tstate->curexc_traceback;
+    tstate->curexc_type = *type;
+    tstate->curexc_value = *value;
+    tstate->curexc_traceback = *tb;
     *type = tmp_type;
     *value = tmp_value;
     *tb = tmp_tb;
