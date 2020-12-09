@@ -1,4 +1,4 @@
-PYTHON ?= python
+PYTHON ?= python3.7
 CYTHON ?= cython
 NOSETESTS ?= nosetests
 CYTHONSRC=$(wildcard pyearth/*.pyx)
@@ -7,7 +7,10 @@ CSRC=$(CYTHONSRC:.pyx=.c)
 inplace: cython
 	$(PYTHON) setup.py build_ext -i
 
-all: inplace
+install:
+	$(PYTHON) setup.py install
+
+all: clean inplace install
 
 cython: $(CSRC)
 

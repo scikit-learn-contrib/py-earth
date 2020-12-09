@@ -125,12 +125,14 @@ def setup_package():
                         'Programming Language :: Python :: 3.4',
                         'Programming Language :: Python :: 3.5',
                         'Programming Language :: Python :: 3.6',
+                        'Programming Language :: Python :: 3.7',
                         'Topic :: Scientific/Engineering',
                         'Topic :: Software Development'],
         'install_requires': [
             'scipy >= 0.16',
             'scikit-learn >= 0.16',
-            'six'
+            'six',
+            'numpy>=1.19.0,<2.0.0'
             ],
         'extras_require': {'docs': ['sphinx_gallery'],
                            'dev': ['cython'],
