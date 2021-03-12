@@ -89,7 +89,7 @@ thorough and easy to read vignette (http://www.milbo.org/doc/earth-notes.pdf).
    https://statistics.stanford.edu/sites/default/files/LCS%20110.pdf
 4. Friedman, J. (1991). Estimating functions of mixed ordinal and categorical variables using adaptive splines.
    Stanford University Department of Statistics, Technical Report No 108. 
-   http://media.salford-systems.com/library/MARS_V2_JHF_LCS-108.pdf
+   https://apps.dtic.mil/dtic/tr/fulltext/u2/a590939.pdf
 5. Stewart, G.W. Matrix Algorithms, Volume 1: Basic Decompositions. (1998). Society for Industrial and Applied 
    Mathematics.
 6. Bjorck, A. Numerical Methods for Least Squares Problems. (1996). Society for Industrial and Applied 
