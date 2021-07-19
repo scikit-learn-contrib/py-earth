@@ -9,7 +9,7 @@ import numpy as np
 from scipy import sparse
 from ._version import get_versions
 __version__ = get_versions()['version']
-
+import pandas as pd
 class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
     """
@@ -898,34 +898,35 @@ class Earth(BaseEstimator, RegressorMixin, TransformerMixin):
 
     def summary(self):
         '''Return a string describing the model.'''
-        result = ''
+        result = pd.DataFrame()
         if self.forward_trace() is None:
-            result += 'Untrained Earth Model'
+            result.style.set_caption('Untrained Earth Model')
             return result
         elif self.pruning_trace() is None:
-            result += 'Unpruned Earth Model\n'
+            result.style.set_caption('Unpruned Earth Model')
         else:
-            result += 'Earth Model\n'
-        header = ['Basis Function', 'Pruned']
+            result.style.set_caption('Earth Model')
+            result.insert[0, 'Basis Function']
+            result.insert[1, 'Pruned']
         if self.coef_.shape[0] > 1:
-            header += ['Coefficient %d' %
-                       i for i in range(self.coef_.shape[0])]
+            coefficient_string = ''
+            for i in range(self.coef_.shape[0]):
+                coefficient_string += str(i)
+                result.insert[2 + i, f'Coefficient {coefficient_string}']
         else:
-            header += ['Coefficient']
-        data = []
+            result.insert[2, 'Coefficient']
 
         i = 0
         for bf in self.basis_:
-            data.append([str(bf), 'Yes' if bf.is_pruned() else 'No'] + [
+            result.append(([str(bf), 'Yes' if bf.is_pruned() else 'No'] + [
                           '%g' % self.coef_[c, i] if not bf.is_pruned() else
-                          'None' for c in range(self.coef_.shape[0])])
+                          'None' for c in range(self.coef_.shape[0])]))
             if not bf.is_pruned():
                 i += 1
-        result += ascii_table(header, data)
-        result += '\n'
-        result += 'MSE: %.4f, GCV: %.4f, RSQ: %.4f, GRSQ: %.4f' % (
+        result_string = ''        
+        result_string += 'MSE: %.4f, GCV: %.4f, RSQ: %.4f, GRSQ: %.4f' % (
             self.mse_, self.gcv_, self.rsq_, self.grsq_)
-        return result
+        return result, '\n' + result_string
 
     def summary_feature_importances(self, sort_by=None):
         """
