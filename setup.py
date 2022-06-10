@@ -4,11 +4,14 @@ import codecs
 import versioneer
 
 # Determine whether to use Cython
-if '--cythonize' in sys.argv:
-    cythonize_switch = True
-    del sys.argv[sys.argv.index('--cythonize')]
-else:
-    cythonize_switch = False
+# if '--cythonize' in sys.argv:
+#     cythonize_switch = True
+#     del sys.argv[sys.argv.index('--cythonize')]
+# else:
+#     cythonize_switch = False
+
+# enforce cythonize
+cythonize_switch = True
 
 def get_ext_modules():
     import numpy
@@ -162,6 +165,4 @@ def setup_package():
         setup(**setup_args)
 
 if __name__ == "__main__":
-    # enforce cythonize
-    sys.argv.append('--cythonize')
     setup_package()
