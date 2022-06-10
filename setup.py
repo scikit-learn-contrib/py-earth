@@ -146,13 +146,13 @@ def setup_package():
         setup_args['cmdclass'] = versioneer.get_cmdclass({'build_ext': build_ext})
     else:
         setup_args['cmdclass'] = versioneer.get_cmdclass()
-    
+
     def is_special_command():
-        special_list = ('--help-commands', 
-                        'egg_info',  
+        special_list = ('--help-commands',
+                        'egg_info',
                         '--version',
                         'clean')
-        return ('--help' in sys.argv[1:] or 
+        return ('--help' in sys.argv[1:] or
                 sys.argv[1] in special_list)
 
     if len(sys.argv) >= 2 and is_special_command():
@@ -162,4 +162,6 @@ def setup_package():
         setup(**setup_args)
 
 if __name__ == "__main__":
+    # enforce cythonize
+    sys.argv.append('--cythonize')
     setup_package()
