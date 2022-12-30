@@ -5,6 +5,8 @@
 *.pyc
 *.pyd
 *.so
+*.egg-info
+.idea/
 .DS_Store
 .project
 .pydevproject
@@ -22,4 +24,3 @@ doc/auto_examples
 examples/classifier_comp.pdf
 examples/comparison.csv
 scripts/comparison.csv
-py_earth.egg-info

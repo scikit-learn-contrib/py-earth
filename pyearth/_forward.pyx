@@ -108,10 +108,10 @@ cdef class ForwardPasser:
             content = FastHeapContent(idx=0)
             heappush(self.fast_heap, content)
             
-        self.mwork = np.empty(shape=self.m, dtype=np.int)
+        self.mwork = np.empty(shape=self.m, dtype=np.int_)
         
         self.B = np.ones(
-            shape=(self.m, self.max_terms + 4), order='F', dtype=np.float)
+            shape=(self.m, self.max_terms + 4), order='F', dtype=np.float_)
         self.basis.transform(self.X, self.missing, self.B[:,0:1])
         
         if self.endspan < 0:
@@ -172,7 +172,7 @@ cdef class ForwardPasser:
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
         cdef ConstantBasisFunction root_basis_function = self.basis[0]
         for variable in range(self.n):
-            order = np.argsort(X[:, variable])[::-1].astype(np.int)
+            order = np.argsort(X[:, variable])[::-1].astype(np.int_)
             if root_basis_function.valid_knots(B[order, 0], X[order, variable],
                                                variable, self.check_every,
                                                self.endspan, self.minspan,

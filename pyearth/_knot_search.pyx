@@ -151,7 +151,7 @@ cdef class SingleOutcomeDependentData:
     @classmethod
     def alloc(cls, FLOAT_t[:] y, SingleWeightDependentData weight, INDEX_t m, INDEX_t max_terms):
         cdef FLOAT_t[:] theta
-        cdef FLOAT_t[:] wy = np.empty(shape=m, dtype=np.float)
+        cdef FLOAT_t[:] wy = np.empty(shape=m, dtype=np.float_)
         cdef int i
         for i in range(m):
             wy[i] = weight.w[i] * y[i]
@@ -344,11 +344,11 @@ cdef class KnotSearchWorkingData:
     
     @classmethod
     def alloc(cls, int max_terms):
-        cdef FLOAT_t[:] gamma = np.empty(shape=max_terms, dtype=np.float)
-        cdef FLOAT_t[:] kappa = np.empty(shape=max_terms, dtype=np.float)
-        cdef FLOAT_t[:] delta_kappa = np.empty(shape=max_terms, dtype=np.float)
-        cdef FLOAT_t[:] chi = np.empty(shape=max_terms, dtype=np.float)
-        cdef FLOAT_t[:] psi = np.empty(shape=max_terms, dtype=np.float)
+        cdef FLOAT_t[:] gamma = np.empty(shape=max_terms, dtype=np.float_)
+        cdef FLOAT_t[:] kappa = np.empty(shape=max_terms, dtype=np.float_)
+        cdef FLOAT_t[:] delta_kappa = np.empty(shape=max_terms, dtype=np.float_)
+        cdef FLOAT_t[:] chi = np.empty(shape=max_terms, dtype=np.float_)
+        cdef FLOAT_t[:] psi = np.empty(shape=max_terms, dtype=np.float_)
         cdef INDEX_t q = 0
         cdef KnotSearchState state = KnotSearchState.alloc()
         return cls(gamma, kappa, delta_kappa, chi, psi, state)
