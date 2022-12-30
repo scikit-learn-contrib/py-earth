@@ -4,11 +4,14 @@ import codecs
 import versioneer
 
 # Determine whether to use Cython
-if '--cythonize' in sys.argv:
-    cythonize_switch = True
-    del sys.argv[sys.argv.index('--cythonize')]
-else:
-    cythonize_switch = False
+# if '--cythonize' in sys.argv:
+#     cythonize_switch = True
+#     del sys.argv[sys.argv.index('--cythonize')]
+# else:
+#     cythonize_switch = False
+
+# enforce cythonize
+cythonize_switch = True
 
 def get_ext_modules():
     import numpy
@@ -146,13 +149,13 @@ def setup_package():
         setup_args['cmdclass'] = versioneer.get_cmdclass({'build_ext': build_ext})
     else:
         setup_args['cmdclass'] = versioneer.get_cmdclass()
-    
+
     def is_special_command():
-        special_list = ('--help-commands', 
-                        'egg_info',  
+        special_list = ('--help-commands',
+                        'egg_info',
                         '--version',
                         'clean')
-        return ('--help' in sys.argv[1:] or 
+        return ('--help' in sys.argv[1:] or
                 sys.argv[1] in special_list)
 
     if len(sys.argv) >= 2 and is_special_command():
