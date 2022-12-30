@@ -85,7 +85,7 @@ def test_export_sympy():
                        'logical_not':numpy.logical_not, "greater": numpy.greater, 'maximum':numpy.maximum,
                        'Missing': lambda x: numpy.isnan(x).astype(float),
                        'NaNProtect': lambda x: numpy.where(numpy.isnan(x), 0, x), 'nan': numpy.nan,
-                       'float': float, 'where': numpy.where
+                       'float': float, 'where': numpy.where, 'numpy': numpy
                        }
 
         for i, expression in enumerate(expressions):
@@ -96,3 +96,13 @@ def test_export_sympy():
 
             y_pred = model.predict(X_df)[:,i] if n_cols > 1 else model.predict(X_df)
             assert_array_almost_equal(y_pred, y_pred_sympy)
+
+if __name__ == '__main__':
+    import sys
+    import nose
+    # This code will run the test in this file.'
+    module_name = sys.modules[__name__].__file__
+     
+    result = nose.run(argv=[sys.argv[0],
+                            module_name,
+                            '-s', '-v'])

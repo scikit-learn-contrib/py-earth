@@ -9,7 +9,7 @@ from pyearth._knot_search import (MultipleOutcomeDependentData,
 from nose.tools import assert_equal
 import numpy as np
 from numpy.testing.utils import assert_almost_equal, assert_array_equal
-from scipy.linalg import qr
+from scipy.linalg import qr, lstsq
 
 
 def test_outcome_dependent_data():
@@ -97,7 +97,7 @@ def slow_knot_search(p, x, B, candidates, outcomes):
         e_squared = 0.0
         for y, w in outcomes:
             # Solve the system
-            beta = np.linalg.lstsq(w[:, None] * X, w * y)[0]
+            beta = lstsq(w[:, None] * X, w * y, check_finite=False)[0]
 
             # Compute the error
             r = w * (y - np.dot(X, beta))

@@ -28,7 +28,7 @@ cdef class BasisFunction:
 
     def __hash__(BasisFunction self):
         return id(self) % max_int # avoid "OverflowError Python
-                                     # int too large to convert to C long"
+                                  # int too large to convert to C long"
     
     cpdef smooth(BasisFunction self, dict knot_dict, dict translation):
         '''
@@ -616,9 +616,9 @@ cdef class MissingnessBasisFunction(VariableBasisFunction):
 
     def __str__(MissingnessBasisFunction self):
         if self.complement:
-            result = 'present(%s)' % self.label
+            result = 'present(%s)' % str(self.label)
         else:
-            result = 'missing(%s)' % self.label
+            result = 'missing(%s)' % str(self.label)
         parent = (str(self.parent)
                   if not self.parent.__class__ is ConstantBasisFunction
                   else '')
@@ -712,10 +712,10 @@ cdef class SmoothedHingeBasisFunction(HingeBasisFunctionBase):
         result = ''
         if self.variable is not None:
             if not self.reverse:
-                result = 'C(%s|s=+1,%G,%G,%G)' % (self.label, self.knot_minus,
+                result = 'C(%s|s=+1,%G,%G,%G)' % (str(self.label), self.knot_minus,
                                                   self.knot, self.knot_plus)
             else:
-                result = 'C(%s|s=-1,%G,%G,%G)' % (self.label, self.knot_minus,
+                result = 'C(%s|s=-1,%G,%G,%G)' % (str(self.label), self.knot_minus,
                                                   self.knot, self.knot_plus)
         parent = (str(self.parent)
                   if not self.parent.__class__ is ConstantBasisFunction
@@ -810,11 +810,11 @@ cdef class HingeBasisFunction(HingeBasisFunctionBase):
         if self.variable is not None:
             if not self.reverse:
                 if self.knot >= 0:
-                    result = 'h(%s-%G)' % (self.label, self.knot)
+                    result = 'h(%s-%G)' % (str(self.label), self.knot)
                 else:
-                    result = 'h(%s+%G)' % (self.label, -self.knot)
+                    result = 'h(%s+%G)' % (str(self.label), -self.knot)
             else:
-                result = 'h(%G-%s)' % (self.knot, self.label)
+                result = 'h(%G-%s)' % (self.knot, str(self.label))
         parent = (str(self.parent)
                   if not self.parent.__class__ is ConstantBasisFunction
                   else '')
@@ -877,7 +877,7 @@ cdef class LinearBasisFunction(DataVariableBasisFunction):
                 self._getstate())
 
     def __str__(LinearBasisFunction self):
-        result = self.label
+        result = str(self.label)
         if not self.parent.__class__ is ConstantBasisFunction:
             parent = str(self.parent)
             result += '*' + parent

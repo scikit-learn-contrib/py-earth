@@ -6,7 +6,7 @@ Created on Feb 24, 2013
 import pickle
 import copy
 import os
-from .testing_utils import (if_statsmodels, if_pandas, if_patsy,
+from pyearth.test.testing_utils import (if_statsmodels, if_pandas, if_patsy,
                             if_environ_has, assert_list_almost_equal_value,
                             assert_list_almost_equal,
                             if_sklearn_version_greater_than_or_equal_to,
@@ -109,31 +109,21 @@ def test_linear_fit():
 def test_sample_weight():
     group = numpy.random.binomial(1, .5, size=1000) == 1
     sample_weight = 1 / (group * 100 + 1.0)
-    x = numpy.random.uniform(-10, 10, size=1000)
-    y = numpy.abs(x)
-    y[group] = numpy.abs(x[group] - 5)
+    x = numpy.random.uniform(-10, 10, size=(1000,1))
+    y = numpy.abs(x[:, 0])
+    y[group] = numpy.abs(x[group, 0] - 5)
     y += numpy.random.normal(0, 1, size=1000)
-    model = Earth().fit(x[:, numpy.newaxis], y, sample_weight=sample_weight)
+    model = Earth().fit(x, y, sample_weight=sample_weight)
 
     # Check that the model fits better for the more heavily weighted group
-    assert_true(model.score(x[group], y[group]) < model.score(
-        x[numpy.logical_not(group)], y[numpy.logical_not(group)]))
+    assert_true(model.score(x[group, :], y[group]) < model.score(
+        x[numpy.logical_not(group), :], y[numpy.logical_not(group)]))
 
     # Make sure that the score function gives the same answer as the trace
     pruning_trace = model.pruning_trace()
     rsq_trace = pruning_trace.rsq(model.pruning_trace().get_selected())
     assert_almost_equal(model.score(x, y, sample_weight=sample_weight),
                         rsq_trace)
-
-    # Uncomment below to see what this test situation looks like
-#     from matplotlib import pyplot
-#     print model.summary()
-#     print model.score(x,y,sample_weight = sample_weight)
-#     pyplot.figure()
-#     pyplot.plot(x,y,'b.')
-#     pyplot.plot(x,model.predict(x),'r.')
-#     pyplot.show()
-
 
 def test_output_weight():
     x = numpy.random.uniform(-1, 1, size=(1000, 1))
@@ -206,17 +196,15 @@ def test_smooth():
 def test_linvars():
     earth = Earth(**default_params)
     earth.fit(X, y, linvars=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-    res = str(earth.rsq_)
-    filename = os.path.join(os.path.dirname(__file__),
-                            'earth_linvars_regress.txt')
+    res = earth.rsq_
+    filename = os.path.join(os.path.dirname(__file__), "earth_linvars_regress.txt")
     if regenerate_target_files:
-        with open(filename, 'w') as fl:
+        with open(filename, "w") as fl:
             fl.write(res)
-    with open(filename, 'r') as fl:
-        prev = fl.read()
+    with open(filename, "r") as fl:
+        prev = float(fl.read())
 
-    assert_equal(res, prev)
-
+    assert_almost_equal(res, prev, places=7)
 
 def test_linvars_coefs():
     nb_vars = 11
@@ -249,33 +237,52 @@ def test_score():
 @if_pandas
 @if_environ_has('test_pathological_cases')
 def test_pathological_cases():
-    import pandas
+    import pandas as pd
+
     directory = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'pathological_data')
-    cases = {'issue_44': {},
-             'issue_50': {'penalty': 0.5,
-                          'minspan': 1,
-                          'allow_linear': False,
-                          'endspan': 1,
-                          'check_every': 1,
-                          'sample_weight': 'issue_50_weight.csv'}}
-    for case, settings in cases.iteritems():
-        data = pandas.read_csv(os.path.join(directory, case + '.csv'))
-        y = data['y']
-        del data['y']
-        X = data
-        if 'sample_weight' in settings:
-            filename = os.path.join(directory, settings['sample_weight'])
-            sample_weight = pandas.read_csv(filename)['sample_weight']
-            del settings['sample_weight']
+        os.path.dirname(os.path.abspath(__file__)), "pathological_data"
+    )
+    cases = {
+        "issue_44": {},
+        "issue_50": {
+            "penalty": 0.5,
+            "minspan": 1,
+            "allow_linear": False,
+            "endspan": 1,
+            "check_every": 1,
+            "sample_weight": "issue_50_weight.csv",
+        },
+        "issue_195": {
+            "allow_linear": True,
+            "minspan": 7,
+            "endspan": 7,
+            "max_degree": 1,
+            "thresh": 0.001,
+            "enable_pruning": False,
+            "max_terms": 30,
+            "linvars": True,
+        },
+    }
+    for case, settings in cases.items():
+        data = pd.read_csv(os.path.join(directory, case + ".csv"), index_col=0)
+        y = data["y"]
+        X = data.drop("y", axis=1)
+        if "sample_weight" in settings:
+            filename = os.path.join(directory, settings["sample_weight"])
+            sample_weight = pd.read_csv(filename)["sample_weight"]
+            del settings["sample_weight"]
         else:
             sample_weight = None
-        model = Earth(**settings)
-        model.fit(X, y, sample_weight=sample_weight)
-        with open(os.path.join(directory, case + '.txt'), 'r') as infile:
-            correct = infile.read()
-        assert_equal(model.summary(), correct)
-
+        if "linvars" in settings:
+            del settings["linvars"]
+            model = Earth(**settings)
+            model.fit(X, y, sample_weight=sample_weight, linvars=X.columns)
+        else:
+            model = Earth(**settings)
+            model.fit(X, y, sample_weight=sample_weight)
+        with open(os.path.join(directory, case + ".txt"), "r") as infile:
+            correct_summary = infile.read()
+        assert_equal(model.summary(), correct_summary)
 
 @if_pandas
 def test_pandas_compatibility():
@@ -283,6 +290,20 @@ def test_pandas_compatibility():
     X_df = pandas.DataFrame(X)
     y_df = pandas.DataFrame(y)
     colnames = ['xx' + str(i) for i in range(X.shape[1])]
+    X_df.columns = colnames
+
+    earth = Earth(**default_params)
+    model = earth.fit(X_df, y_df)
+    assert_list_equal(
+        colnames, model.forward_trace()._getstate()['xlabels'])
+
+
+@if_pandas
+def test_pandas_non_string_column_names():
+    import pandas
+    X_df = pandas.DataFrame(X)
+    y_df = pandas.DataFrame(y)
+    colnames = [i for i in range(X.shape[1])]
     X_df.columns = colnames
 
     earth = Earth(**default_params)
@@ -323,11 +344,11 @@ def test_pickle_compatibility():
 def test_pickle_version_storage():
     earth = Earth(**default_params)
     model = earth.fit(X, y)
-    assert_equal(model._version, pyearth.__version__)
-    model._version = 'hello'
-    assert_equal(model._version,'hello')
+    assert_equal(model.fit_version_, pyearth.__version__)
+    model.fit_version_ = 'hello'
+    assert_equal(model.fit_version_,'hello')
     model_copy = pickle.loads(pickle.dumps(model))
-    assert_equal(model_copy._version, model._version)
+    assert_equal(model_copy.fit_version_, model.fit_version_)
 
 
 def test_copy_compatibility():
@@ -540,3 +561,13 @@ def test_feature_importance():
             ValueError,
             Earth(feature_importance_type='rss', enable_pruning=False, **default_params).fit,
             X, y)
+
+if __name__ == '__main__':
+    import sys
+    import nose
+    # This code will run the test in this file.'
+    module_name = sys.modules[__name__].__file__
+     
+    result = nose.run(argv=[sys.argv[0],
+                            module_name,
+                            '-s', '-v'])
