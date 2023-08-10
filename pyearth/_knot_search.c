@@ -45946,7 +45946,7 @@ if (!__Pyx_RefNanny) {
   /* "pyearth/_knot_search.pyx":12
  * from libc.math cimport log
  * cimport numpy as cnp
- * from _types import INDEX, FLOAT             # <<<<<<<<<<<<<<
+ * from ._types import INDEX, FLOAT             # <<<<<<<<<<<<<<
  * from ._util cimport log2
  * 
  */
@@ -45958,7 +45958,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_INCREF(__pyx_n_s_FLOAT);
   __Pyx_GIVEREF(__pyx_n_s_FLOAT);
   PyList_SET_ITEM(__pyx_t_7, 1, __pyx_n_s_FLOAT);
-  __pyx_t_4 = __Pyx_Import(__pyx_n_s_types, __pyx_t_7, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 12, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_Import(__pyx_n_s_types, __pyx_t_7, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __pyx_t_7 = __Pyx_ImportFrom(__pyx_t_4, __pyx_n_s_INDEX); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 12, __pyx_L1_error)

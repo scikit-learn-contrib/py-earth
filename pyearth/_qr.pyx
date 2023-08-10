@@ -7,7 +7,7 @@ import numpy as np
 from scipy.linalg.cython_lapack cimport dlarfg, dlarft, dlarfb
 from scipy.linalg.cython_blas cimport dcopy
 from libc.math cimport abs
-from _types import BOOL, FLOAT
+from ._types import BOOL, FLOAT
 
 cdef class UpdatingQT:
     def __init__(UpdatingQT self, int m, int max_n, Householder householder,

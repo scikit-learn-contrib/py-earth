@@ -42924,7 +42924,7 @@ if (!__Pyx_RefNanny) {
  * from ._types cimport FLOAT_t
  * #cdef FLOAT_t ZERO_TOL = 1e-16
  * cdef cnp.float_t ZERO_TOL = 1e-16             # <<<<<<<<<<<<<<
- * from _types import FLOAT
+ * from ._types import FLOAT
  * import numpy as np
  */
   __pyx_v_7pyearth_6_basis_ZERO_TOL = 1e-16;
@@ -42932,7 +42932,7 @@ if (!__Pyx_RefNanny) {
   /* "pyearth/_basis.pyx":15
  * #cdef FLOAT_t ZERO_TOL = 1e-16
  * cdef cnp.float_t ZERO_TOL = 1e-16
- * from _types import FLOAT             # <<<<<<<<<<<<<<
+ * from ._types import FLOAT             # <<<<<<<<<<<<<<
  * import numpy as np
  * import sys
  */
@@ -42941,7 +42941,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_INCREF(__pyx_n_s_FLOAT);
   __Pyx_GIVEREF(__pyx_n_s_FLOAT);
   PyList_SET_ITEM(__pyx_t_2, 0, __pyx_n_s_FLOAT);
-  __pyx_t_3 = __Pyx_Import(__pyx_n_s_types, __pyx_t_2, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 15, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_Import(__pyx_n_s_types, __pyx_t_2, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 15, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_3, __pyx_n_s_FLOAT); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 15, __pyx_L1_error)
@@ -42952,7 +42952,7 @@ if (!__Pyx_RefNanny) {
 
   /* "pyearth/_basis.pyx":16
  * cdef cnp.float_t ZERO_TOL = 1e-16
- * from _types import FLOAT
+ * from ._types import FLOAT
  * import numpy as np             # <<<<<<<<<<<<<<
  * import sys
  * import six
@@ -42963,7 +42963,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "pyearth/_basis.pyx":17
- * from _types import FLOAT
+ * from ._types import FLOAT
  * import numpy as np
  * import sys             # <<<<<<<<<<<<<<
  * import six

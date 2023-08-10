@@ -12,7 +12,7 @@ cimport numpy as cnp
 from ._types cimport FLOAT_t
 #cdef FLOAT_t ZERO_TOL = 1e-16
 cdef cnp.float_t ZERO_TOL = 1e-16
-from _types import FLOAT
+from ._types import FLOAT
 import numpy as np
 import sys
 import six
