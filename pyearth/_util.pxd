@@ -1,5 +1,5 @@
 cimport numpy as cnp
-from _types cimport FLOAT_t, INT_t, INDEX_t, BOOL_t
+from ._types cimport FLOAT_t, INT_t, INDEX_t, BOOL_t
 
 cdef FLOAT_t log2(FLOAT_t x)
 

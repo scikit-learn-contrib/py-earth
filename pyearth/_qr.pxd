@@ -1,5 +1,5 @@
 from cython cimport view
-from _types cimport FLOAT_t, INT_t, INDEX_t, BOOL_t
+from ._types cimport FLOAT_t, INT_t, INDEX_t, BOOL_t
 
 cdef class UpdatingQT:
     cdef readonly int m

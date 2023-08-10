@@ -1,6 +1,6 @@
 cimport numpy as cnp
-from _types cimport FLOAT_t, INT_t, INDEX_t, BOOL_t
-from _basis cimport Basis
+from ._types cimport FLOAT_t, INT_t, INDEX_t, BOOL_t
+from ._basis cimport Basis
 
 cdef class Record:
     cdef list iterations

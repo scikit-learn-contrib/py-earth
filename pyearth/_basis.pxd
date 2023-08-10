@@ -1,6 +1,6 @@
 from cpython cimport bool
 cimport numpy as cnp
-from _types cimport FLOAT_t, INT_t, INDEX_t, BOOL_t
+from ._types cimport FLOAT_t, INT_t, INDEX_t, BOOL_t
 
 cdef class BasisFunction:
     '''Abstract.  Subclasses must implement the apply and __init__ methods.'''
@@ -11,7 +11,7 @@ cdef class BasisFunction:
     cdef bint pruned
     cdef bint prunable
     cdef bint splittable
-    
+
     cpdef smooth(BasisFunction self, dict knot_dict, dict translation)
 
     cpdef bint has_knot(BasisFunction self)
@@ -27,13 +27,13 @@ cdef class BasisFunction:
     cpdef bint make_unsplittable(BasisFunction self)
 
     cpdef list get_children(BasisFunction self)
-    
+
     cpdef BasisFunction get_coverage(BasisFunction self, INDEX_t variable)
-    
+
     cpdef bool has_linear(BasisFunction self, INDEX_t variable)
-    
+
     cpdef bool linear_in(BasisFunction self, INDEX_t variable)
-    
+
     cpdef _set_parent(BasisFunction self, BasisFunction parent)
 
     cpdef _add_child(BasisFunction self, BasisFunction child)
@@ -62,18 +62,18 @@ cdef class BasisFunction:
 
 cdef class RootBasisFunction(BasisFunction):
     cpdef bint covered(RootBasisFunction self, INDEX_t variable)
-    
+
     cpdef bint eligible(RootBasisFunction self, INDEX_t variable)
-    
+
     cpdef set variables(RootBasisFunction self)
 
     cpdef _smoothed_version(RootBasisFunction self, BasisFunction parent,
                             dict knot_dict, dict translation)
 
     cpdef INDEX_t degree(RootBasisFunction self)
-    
+
     cpdef _effective_degree(RootBasisFunction self, dict data_dict, dict missing_dict)
-    
+
     cpdef _set_parent(RootBasisFunction self, BasisFunction parent)
 
     cpdef BasisFunction get_parent(RootBasisFunction self)
@@ -96,20 +96,20 @@ cdef class ConstantBasisFunction(RootBasisFunction):
 cdef class VariableBasisFunction(BasisFunction):
     cdef INDEX_t variable
     cdef readonly label
-    
+
     cpdef INDEX_t degree(VariableBasisFunction self)
-    
+
     cpdef set variables(VariableBasisFunction self)
 
     cpdef INDEX_t get_variable(VariableBasisFunction self)
 
 cdef class DataVariableBasisFunction(VariableBasisFunction):
     cpdef _effective_degree(DataVariableBasisFunction self, dict data_dict, dict missing_dict)
-    
+
     cpdef bint covered(DataVariableBasisFunction self, INDEX_t variable)
-    
+
     cpdef bint eligible(DataVariableBasisFunction self, INDEX_t variable)
-    
+
     cpdef apply(DataVariableBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
                 cnp.ndarray[BOOL_t, ndim=2] missing,
                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=?)
@@ -122,17 +122,17 @@ cdef class DataVariableBasisFunction(VariableBasisFunction):
 
 cdef class MissingnessBasisFunction(VariableBasisFunction):
     cdef readonly bint complement
-    
+
     cpdef _effective_degree(MissingnessBasisFunction self, dict data_dict, dict missing_dict)
-    
+
     cpdef bint covered(MissingnessBasisFunction self, INDEX_t variable)
-    
+
     cpdef bint eligible(MissingnessBasisFunction self, INDEX_t variable)
-    
+
     cpdef bint covered(MissingnessBasisFunction self, INDEX_t variable)
-    
+
     cpdef bint eligible(MissingnessBasisFunction self, INDEX_t variable)
-    
+
     cpdef apply(MissingnessBasisFunction self, cnp.ndarray[FLOAT_t, ndim=2] X,
                 cnp.ndarray[BOOL_t, ndim=2] missing,
                 cnp.ndarray[FLOAT_t, ndim=1] b, bint recurse=?)
@@ -142,7 +142,7 @@ cdef class MissingnessBasisFunction(VariableBasisFunction):
                       cnp.ndarray[BOOL_t, ndim=2] missing,
                       cnp.ndarray[FLOAT_t, ndim=1] b,
                       cnp.ndarray[FLOAT_t, ndim=1] j, INDEX_t var)
-    
+
     cpdef _smoothed_version(MissingnessBasisFunction self, BasisFunction parent,
                             dict knot_dict, dict translation)
 
@@ -189,7 +189,7 @@ cdef class HingeBasisFunction(HingeBasisFunctionBase):
 
 cdef class LinearBasisFunction(DataVariableBasisFunction):
     cpdef bool linear_in(LinearBasisFunction self, INDEX_t variable)
-    
+
     cpdef _smoothed_version(LinearBasisFunction self, BasisFunction parent,
                             dict knot_dict, dict translation)
 
@@ -201,12 +201,12 @@ cdef class Basis:
     cdef list order
     cdef readonly INDEX_t num_variables
 #     cdef dict coverage
-    
+
 #     cpdef add_coverage(Basis self, int variable, MissingnessBasisFunction b1, \
 #                        MissingnessBasisFunction b2)
-#         
+#
 #     cpdef get_coverage(Basis self, int variable)
-#     
+#
 #     cpdef bint has_coverage(Basis self, int variable)
 
     cpdef int get_num_variables(Basis self)
