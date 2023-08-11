@@ -20,7 +20,7 @@ from pyearth._basis import (Basis, ConstantBasisFunction,
                             HingeBasisFunction, LinearBasisFunction)
 from pyearth import Earth
 import pyearth
-from numpy.testing.utils import assert_array_almost_equal
+from numpy.testing._private.utils import assert_array_almost_equal
 
 regenerate_target_files = False
 
