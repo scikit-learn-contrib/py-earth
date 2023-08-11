@@ -6,7 +6,7 @@
 
 from ._util cimport gcv_adjust, log2, apply_weights_1d, apply_weights_slice
 from ._basis cimport (Basis, BasisFunction, ConstantBasisFunction,
-                      HingeBasisFunction, LinearBasisFunction, 
+                      HingeBasisFunction, LinearBasisFunction,
                       MissingnessBasisFunction)
 from ._record cimport ForwardPassIteration
 from ._types import BOOL, INT
@@ -24,12 +24,12 @@ class FastHeapContent:
         """
         This class defines an entry of the priority queue as defined in [1].
         The entry stores information about parent basis functions and is
-        used by the priority queue in the forward pass 
+        used by the priority queue in the forward pass
         to choose the next parent basis function to try.
 
         References
         ----------
-        .. [1] Fast MARS, Jerome H.Friedman, Technical Report No.110, May 1993. 
+        .. [1] Fast MARS, Jerome H.Friedman, Technical Report No.110, May 1993.
 
         """
         self.idx = idx
@@ -60,7 +60,7 @@ cdef class ForwardPasser:
                  cnp.ndarray[FLOAT_t, ndim=2] y,
                  cnp.ndarray[FLOAT_t, ndim=2] sample_weight,
                  **kwargs):
-        
+
         cdef INDEX_t i
         self.X = X
         self.missing = missing
@@ -90,7 +90,7 @@ cdef class ForwardPasser:
         self.verbose = kwargs.get("verbose", 0)
         if self.allow_missing:
             self.has_missing = np.any(self.missing, axis=0).astype(BOOL)
-            
+
         self.fast_heap = []
 
         if self.xlabels is None:
@@ -99,7 +99,7 @@ cdef class ForwardPasser:
             self.check_every = (<int > (self.m / self.min_search_points)
                                 if self.m > self.min_search_points
                                 else 1)
-        
+
         weighted_mean = np.mean((self.sample_weight ** 2) * self.y)
         self.sst = np.sum((self.sample_weight * (self.y - weighted_mean)) ** 2)
         self.basis = Basis(self.n)
@@ -107,19 +107,19 @@ cdef class ForwardPasser:
         if self.use_fast is True:
             content = FastHeapContent(idx=0)
             heappush(self.fast_heap, content)
-            
-        self.mwork = np.empty(shape=self.m, dtype=np.int)
-        
+
+        self.mwork = np.empty(shape=self.m, dtype=np.int64)
+
         self.B = np.ones(
-            shape=(self.m, self.max_terms + 4), order='F', dtype=np.float)
+            shape=(self.m, self.max_terms + 4), order='F', dtype=float)
         self.basis.transform(self.X, self.missing, self.B[:,0:1])
-        
+
         if self.endspan < 0:
             self.endspan = round(3 - log2(self.endspan_alpha / self.n))
-        
+
         self.linear_variables = np.zeros(shape=self.n, dtype=INT)
         self.init_linear_variables()
-        
+
         # Removed in favor of new knot search code
         self.iteration_number = 0
 
@@ -132,14 +132,14 @@ cdef class ForwardPasser:
             else:
                 raise IndexError(
                     'Unknown variable selected in linvars argument.')
-        
+
         # Initialize the data structures for knot search
         self.n_outcomes = self.y.shape[1]
         n_predictors = self.X.shape[1]
         n_weights = self.sample_weight.shape[1]
         self.workings = []
-        self.outcome = MultipleOutcomeDependentData.alloc(self.y, self.sample_weight, self.m, 
-                                                          self.n_outcomes, self.max_terms + 4, 
+        self.outcome = MultipleOutcomeDependentData.alloc(self.y, self.sample_weight, self.m,
+                                                          self.n_outcomes, self.max_terms + 4,
                                                           self.zero_tol)
         self.outcome.update_from_array(self.B[:,0])
         self.total_weight = 0.
@@ -153,11 +153,11 @@ cdef class ForwardPasser:
             x[missing[:,i]==1] = 0.
             predictor = PredictorDependentData.alloc(x)
             self.predictors.append(predictor)
-        
+
         # Initialize the forward pass record
         self.record = ForwardPassRecord(
             self.m, self.n, self.penalty, self.outcome.mse(), self.xlabels)
-        
+
     cpdef Basis get_basis(ForwardPasser self):
         return self.basis
 
@@ -172,7 +172,7 @@ cdef class ForwardPasser:
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
         cdef ConstantBasisFunction root_basis_function = self.basis[0]
         for variable in range(self.n):
-            order = np.argsort(X[:, variable])[::-1].astype(np.int)
+            order = np.argsort(X[:, variable])[::-1].astype(np.int64)
             if root_basis_function.valid_knots(B[order, 0], X[order, variable],
                                                variable, self.check_every,
                                                self.endspan, self.minspan,
@@ -181,7 +181,7 @@ cdef class ForwardPasser:
                 linear_variables[variable] = 1
             else:
                 linear_variables[variable] = 0
-                
+
     cpdef run(ForwardPasser self):
         if self.verbose >= 1:
             print('Beginning forward pass')
@@ -223,8 +223,8 @@ cdef class ForwardPasser:
             self.record.stopping_condition = NOIMPRV
             return True
         return False
-        
-    
+
+
     cpdef orthonormal_update(ForwardPasser self, b):
         # Update the outcome data
         linear_dependence = False
@@ -235,10 +235,10 @@ cdef class ForwardPasser:
         if return_code == 1:
             linear_dependence = True
         return linear_dependence
-    
+
     cpdef orthonormal_downdate(ForwardPasser self):
         self.outcome.downdate()
-        
+
     def trace(self):
         return self.record
 
@@ -286,7 +286,7 @@ cdef class ForwardPasser:
         cdef bint covered
         cdef bint missing_flag
         cdef bint choice_needs_coverage
-        
+
         cdef cnp.ndarray[FLOAT_t, ndim = 2] X = (
             <cnp.ndarray[FLOAT_t, ndim = 2] > self.X)
         cdef cnp.ndarray[BOOL_t, ndim = 2] missing = (
@@ -300,7 +300,7 @@ cdef class ForwardPasser:
         cdef cnp.ndarray[FLOAT_t, ndim = 1] b
         cdef cnp.ndarray[FLOAT_t, ndim = 1] p
         cdef bint variable_can_be_linear
-        
+
         if self.use_fast:
             nb_basis = min(self.fast_K, k, len(self.fast_heap))
         else:
@@ -336,13 +336,13 @@ cdef class ForwardPasser:
                         variables = range(self.n)
             else:
                 variables = range(self.n)
-            
+
             parent_degree = parent.effective_degree()
-            
+
             for variable in variables:
                 # Determine whether this variable can be linear
                 variable_can_be_linear = self.allow_linear and not parent.has_linear(variable)
-                
+
                 # Determine whether missingness needs to be accounted for.
                 if self.allow_missing and has_missing[variable]:
                     missing_flag = True
@@ -350,14 +350,14 @@ cdef class ForwardPasser:
                     covered = parent.covered(variable)
                 else:
                     missing_flag = False
-                
-                # Make sure not to exceed max_degree (but don't count the 
+
+                # Make sure not to exceed max_degree (but don't count the
                 # covering missingness basis function if required)
                 if self.max_degree >= 0:
                     if parent_degree >= self.max_degree:
                         continue
-                
-                # If there is missing data and this parent is not 
+
+                # If there is missing data and this parent is not
                 # an eligible parent for this variable with missingness
                 # (because it includes a non-missing factor for the variable)
                 # then skip this variable.
@@ -366,14 +366,14 @@ cdef class ForwardPasser:
 
                 # Add the linear term to B
                 predictor = self.predictors[variable]
-                
+
 #                 # If necessary, protect from missing data
 #                 if missing_flag:
 #                     B[missing[:, variable]==1, k] = 0.
 #                     b = B[:, k]
 #                     # Update the outcome data
 #                     linear_dependence = self.orthonormal_update(b)
-                    
+
                 if missing_flag and not covered:
                     p = B[:, parent_idx] * (1 - missing[:, variable])
                     b = B[:, parent_idx] * (1 - missing[:, variable])
@@ -384,7 +384,7 @@ cdef class ForwardPasser:
                 else:
                     p = self.B[:, parent_idx]
                     q = k + 1
-                
+
                 b = p * predictor.x
                 if missing_flag and not covered:
                     b[missing[:, variable] == 1] = 0
@@ -408,7 +408,7 @@ cdef class ForwardPasser:
                 else:
                     # Find the valid knot candidates
                     candidates, candidates_idx = predictor.knot_candidates(p, self.endspan,
-                                                                           self.minspan, 
+                                                                           self.minspan,
                                                                            self.minspan_alpha,
                                                                            self.n, set(parent.knots(variable)))
                     # Choose the best candidate (if no candidate is an
@@ -416,7 +416,7 @@ cdef class ForwardPasser:
                     # is set to -1
                     if len(candidates_idx) > 0:
 #                         candidates = np.array(predictor.x)[candidates_idx]
-                    
+
                         # Find the best knot location for this parent and
                         # variable combination
                         # Assemble the knot search data structure
@@ -424,12 +424,12 @@ cdef class ForwardPasser:
                         search_data = KnotSearchData(constant, self.workings, q)
 
                         # Run knot search
-                        knot, knot_idx, mse = knot_search(search_data, candidates, p, q, 
+                        knot, knot_idx, mse = knot_search(search_data, candidates, p, q,
                                                           self.m, len(candidates), self.n_outcomes,
                                                           self.verbose)
                         mse /= self.total_weight
                         knot_idx = candidates_idx[knot_idx]
-                        
+
                         # If the hinge function does not decrease the gcv then
                         # just keep the linear term (if variable_can_be_linear is True)
                         if variable_can_be_linear:
@@ -453,13 +453,13 @@ cdef class ForwardPasser:
                                 self.orthonormal_downdate()
                             self.orthonormal_downdate()
                             continue
-                        
+
                 # Do an orthonormal downdate
                 if missing_flag and not covered:
                     self.orthonormal_downdate()
                     self.orthonormal_downdate()
                 self.orthonormal_downdate()
-                
+
                 # Update the choices
                 if mse < mse_choice or first:
                     if first:
@@ -477,7 +477,7 @@ cdef class ForwardPasser:
                         choice_needs_coverage = True
                     else:
                         choice_needs_coverage = False
-                
+
                 if self.use_fast is True:
                     if (mse_choice_cur_parent == -1) or \
                        (mse < mse_choice_cur_parent):
@@ -487,7 +487,7 @@ cdef class ForwardPasser:
                 if mse_choice_cur_parent != -1:
                     parent_basis_content.mse = mse_choice_cur_parent
                     parent_basis_content.v = variable_choice_cur_parent
-        
+
         if self.use_fast is True:
             for content in content_to_be_repushed:
                 heappush(self.fast_heap, content)
@@ -496,10 +496,10 @@ cdef class ForwardPasser:
         if first:
             self.record[len(self.record) - 1].set_no_candidates(True)
             return
-        
+
         # Add the new basis functions
         label = self.xlabels[variable_choice]
-        if self.use_fast is True: 
+        if self.use_fast is True:
             parent_basis_content_choice.m = -np.inf
         if choice_needs_coverage:
             new_parent = parent_choice.get_coverage(variable_choice)
@@ -513,7 +513,7 @@ cdef class ForwardPasser:
                     heappush(self.fast_heap, content)
                 self.basis.append(new_basis_function)
                 new_parent = new_basis_function
-                
+
                 new_basis_function = MissingnessBasisFunction(parent_choice, variable_choice,
                                                False, label)
                 new_basis_function.apply(X, missing, B[:, len(self.basis)])
@@ -536,7 +536,7 @@ cdef class ForwardPasser:
                 content = FastHeapContent(idx=len(self.basis))
                 heappush(self.fast_heap, FastHeapContent(idx=len(self.basis)))
             self.basis.append(new_basis_function)
-            
+
             new_basis_function = HingeBasisFunction(new_parent,
                                      knot_choice, knot_idx_choice,
                                      variable_choice,
@@ -547,9 +547,9 @@ cdef class ForwardPasser:
                 content = FastHeapContent(idx=len(self.basis))
                 heappush(self.fast_heap, content)
             self.basis.append(new_basis_function)
-            
+
         elif not dependent and knot_idx_choice == -1:
-            # In this case, only add the linear basis function (in addition to 
+            # In this case, only add the linear basis function (in addition to
             # covering missingness basis functions if needed)
             new_basis_function = LinearBasisFunction(new_parent, variable_choice, label)
             new_basis_function.apply(X, missing, B[:, len(self.basis)])
@@ -563,12 +563,12 @@ cdef class ForwardPasser:
             # the forward pass
             self.record[len(self.record) - 1].set_no_candidates(True)
             return
-        
+
         # Compute the new mse, which is the result of the very stable
-        # orthonormal updates and not the mse that comes directly from 
+        # orthonormal updates and not the mse that comes directly from
         # the knot search
         cdef FLOAT_t final_mse = self.outcome.mse()
-        
+
         # Update the build record
         self.record.append(ForwardPassIteration(parent_idx_choice,
                                                 variable_choice,

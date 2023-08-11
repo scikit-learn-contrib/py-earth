@@ -16,8 +16,8 @@ FEAT_IMP_CRITERIA = (GCV, RSS, NB_SUBSETS)
 cdef class PruningPasser:
     '''Implements the generic pruning pass as described by Friedman, 1991.'''
     def __init__(PruningPasser self, Basis basis,
-                 cnp.ndarray[FLOAT_t, ndim=2] X, 
-                 cnp.ndarray[BOOL_t, ndim=2] missing, 
+                 cnp.ndarray[FLOAT_t, ndim=2] X,
+                 cnp.ndarray[BOOL_t, ndim=2] missing,
                  cnp.ndarray[FLOAT_t, ndim=2] y,
                  cnp.ndarray[FLOAT_t, ndim=2] sample_weight, int verbose,
                  **kwargs):
@@ -29,7 +29,7 @@ cdef class PruningPasser:
         self.sample_weight = sample_weight
         self.verbose = verbose
         self.basis = basis
-        self.B = np.empty(shape=(self.m, len(self.basis) + 1), dtype=np.float)
+        self.B = np.empty(shape=(self.m, len(self.basis) + 1), dtype=float)
         self.penalty = kwargs.get('penalty', 3.0)
         if sample_weight.shape[1] == 1:
             y_avg = np.average(self.y, weights=sample_weight[:,0], axis=0)
@@ -103,14 +103,14 @@ cdef class PruningPasser:
                 mse_ = np.sum(
                     (np.dot(B[:, 0:basis_size], beta) - weighted_y) ** 2)
             mse += mse_
-        
+
         # Create the record object
         self.record = PruningPassRecord(
             self.m, self.n, self.penalty, mse0 / total_weight, pruned_basis_size, mse / total_weight)
         gcv_ = self.record.gcv(0)
         best_gcv = gcv_
         best_iteration = 0
-        
+
         if self.verbose >= 1:
             print(self.record.partial_str(slice(-1, None, None), print_footer=False))
 
@@ -131,7 +131,7 @@ cdef class PruningPasser:
                 if not bf.is_prunable():
                     continue
                 bf.prune()
-                
+
 
                 mse = 0.
                 for p in range(y.shape[1]):
@@ -164,7 +164,7 @@ cdef class PruningPasser:
                 # having selected the best basis to prune, we compute how much
                 # that basis decreased the mse and gcv relative to the previous mse and gcv
                 # respectively.
-                mse_decrease = (best_iteration_mse - prev_best_iteration_mse) 
+                mse_decrease = (best_iteration_mse - prev_best_iteration_mse)
                 gcv_decrease = (best_iteration_gcv - prev_best_iteration_gcv)
                 variables = set()
                 bf = self.basis[best_bf_to_prune]
@@ -172,7 +172,7 @@ cdef class PruningPasser:
                     variables.add(v)
                 for v in variables:
                     if RSS in self.feature_importance:
-                        self.feature_importance[RSS][v] += mse_decrease 
+                        self.feature_importance[RSS][v] += mse_decrease
                     if GCV in self.feature_importance:
                         self.feature_importance[GCV][v] += gcv_decrease
                     if NB_SUBSETS in self.feature_importance:
@@ -183,14 +183,14 @@ cdef class PruningPasser:
             if best_iteration_gcv <= best_gcv:
                 best_gcv = best_iteration_gcv
                 best_iteration = i
-            
+
             prev_best_iteration_gcv = best_iteration_gcv
             prev_best_iteration_mse = best_iteration_mse
             # Update the record and prune the selected basis function
             self.record.append(PruningPassIteration(
                 best_bf_to_prune, pruned_basis_size, best_iteration_mse / total_weight))
             self.basis[best_bf_to_prune].prune()
-            
+
             if self.verbose >= 1:
                 print(self.record.partial_str(slice(-1, None, None), print_header=False, print_footer=(pruned_basis_size == 1)))
 
@@ -206,7 +206,7 @@ cdef class PruningPasser:
                 val[val < 0] = 0 # gcv can have negative feature importance correponding to an increase of gcv, set them to zero
             if val.sum() > 0:
                 val /= val.sum()
-            self.feature_importance[name] = val 
+            self.feature_importance[name] = val
 
     cpdef PruningPassRecord trace(PruningPasser self):
         return self.record
