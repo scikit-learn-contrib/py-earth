@@ -10,7 +10,7 @@ from pyearth._types import BOOL
 from pyearth.test.testing_utils import if_pandas,\
     if_sympy
 from itertools import product
-from numpy.testing.utils import assert_array_almost_equal
+from numpy.testing._private.utils import assert_array_almost_equal
 
 numpy.random.seed(0)
 
